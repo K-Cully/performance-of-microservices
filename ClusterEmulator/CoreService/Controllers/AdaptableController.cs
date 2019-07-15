@@ -99,7 +99,7 @@ namespace CoreService.Controllers
         [HttpPost("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Post(string name, [FromBody] string payload, [FromBody] string caller)
+        public ActionResult Post(string name, [FromBody] string payload, [FromQuery] string caller)
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(payload))
             {
@@ -126,7 +126,7 @@ namespace CoreService.Controllers
         [HttpPut("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Put(string name, [FromBody] string payload, [FromBody] string caller)
+        public ActionResult Put(string name, [FromBody] string payload, [FromQuery] string caller)
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(payload))
             {
