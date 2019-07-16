@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CoreService.Model
 {
@@ -6,6 +7,6 @@ namespace CoreService.Model
     {
        [JsonProperty("payload")]
        [JsonRequired]
-       public string Payload { get; set; }
+       public IEnumerable<string> Payload { get; set; }
     }
 }
