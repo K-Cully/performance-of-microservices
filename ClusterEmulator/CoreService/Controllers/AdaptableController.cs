@@ -1,13 +1,15 @@
 ﻿
-using System.Collections.Generic;
+using CoreService.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreService.Controllers
 {
-    // TODO: return type JSON
+    // TODO: make calls use async - await
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     public class AdaptableController : ControllerBase
     {
         private ActionResult ProcessRequest(string name, string caller)
@@ -22,7 +24,6 @@ namespace CoreService.Controllers
                 // TODO log caller, if present
             }
 
-            // TODO: serialize some standard result object to reflect a true system
             return Ok();
         }
 
@@ -34,9 +35,9 @@ namespace CoreService.Controllers
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>A list of strings representing the simulated response payload.</returns>
         [HttpGet("{name}")]
-        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AdaptableResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<IEnumerable<string>> Get(string name, [FromQuery] string caller)
+        public ActionResult<AdaptableResponse> Get(string name, [FromQuery] string caller)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -49,7 +50,7 @@ namespace CoreService.Controllers
             }
 
             // TODO: return set of standard values, based on payload size
-            return Ok(new string[] { "test" });
+            return Ok(new AdaptableResponse(){ Values = new string[] { "test" } });
         }
 
 
@@ -93,14 +94,12 @@ namespace CoreService.Controllers
         [HttpPost("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Post(string name, [FromBody] string payload, [FromQuery] string caller)
+        public ActionResult Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (string.IsNullOrWhiteSpace(payload))
+            if (request == null)
             {
-                return BadRequest($"{nameof(payload)} is required");
+                return BadRequest($"{nameof(request)} is required");
             }
-
-            // TODO: do I need to process payload? (should probably desearilize to some custom type to reflect load)
 
             return ProcessRequest(name, caller);
         }
@@ -116,14 +115,12 @@ namespace CoreService.Controllers
         [HttpPut("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Put(string name, [FromBody] string payload, [FromQuery] string caller)
+        public ActionResult Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (string.IsNullOrWhiteSpace(payload))
+            if (request == null)
             {
-                return BadRequest($"{nameof(payload)} is required");
+                return BadRequest($"{nameof(request)} is required");
             }
-
-            // TODO: do I need to process payload? (should probably desearilize to some custom type to reflect load)
 
             return ProcessRequest(name, caller);
         }
