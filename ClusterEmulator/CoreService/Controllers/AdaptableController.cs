@@ -88,7 +88,7 @@ namespace CoreService.Controllers
         /// POST api/adaptable/name
         /// </summary>
         /// <param name="name">The name of the path to execute.</param>
-        /// <param name="payload">The request payload.</param>
+        /// <param name="request">The request payload.</param>
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpPost("{name}")]
@@ -109,7 +109,7 @@ namespace CoreService.Controllers
         /// PUT api/adaptable/name
         /// </summary>
         /// <param name="name">The name of the path to execute.</param>
-        /// <param name="payload">The request payload.</param>
+        /// <param name="request">The request payload.</param>
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpPut("{name}")]
