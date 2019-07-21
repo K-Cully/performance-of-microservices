@@ -28,7 +28,7 @@ namespace CoreService.Simulation
 
             foreach (string stepName in processor.Steps)
             {
-
+                IStep step = registry.GetStep(stepName);
             }
             // TODO
 
