@@ -22,6 +22,6 @@ namespace CoreService.Simulation
         private IDictionary<string, IProcessor> Processors { get; set; }
 
 
-        private IDictionary<string, Step> Steps { get; set; }
+        private IDictionary<string, IStep> Steps { get; set; }
     }
 }

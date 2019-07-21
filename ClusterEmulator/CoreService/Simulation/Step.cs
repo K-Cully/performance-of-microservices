@@ -2,11 +2,12 @@
 
 namespace CoreService.Simulation
 {
-    public abstract class Step
+    public interface IStep
     {
-        public string Name { get; set; }
+        // TODO: restrict
+        string Name { get; set; }
 
 
-        public abstract ActionResult<string> Execute();
+        ActionResult<string> Execute();
     }
 }
