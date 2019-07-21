@@ -26,13 +26,18 @@ namespace CoreService.Simulation
 
             IProcessor processor = registry.GetProcessor(name);
 
+            ActionResult<string> result = new ActionResult<string>(string.Empty);
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
+                result = step.Execute();
+
+                // TODO: if result not null or OkayResult, return
             }
+
             // TODO
 
-            return name;
+            return result;
         }
     }
 }

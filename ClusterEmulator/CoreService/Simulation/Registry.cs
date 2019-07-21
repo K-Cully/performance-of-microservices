@@ -17,7 +17,7 @@ namespace CoreService.Simulation
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"Processor name cannot be null or whitespace", nameof(name));
+                throw new ArgumentException("Processor name cannot be null or whitespace", nameof(name));
             }
 
             if (!Processors.TryGetValue(name, out IProcessor processor))
@@ -38,7 +38,7 @@ namespace CoreService.Simulation
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"Step name cannot be null or whitespace", nameof(name));
+                throw new ArgumentException("Step name cannot be null or whitespace", nameof(name));
             }
 
             if (!Steps.TryGetValue(name, out IStep step))
