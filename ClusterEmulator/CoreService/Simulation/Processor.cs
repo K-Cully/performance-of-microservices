@@ -20,5 +20,9 @@ namespace CoreService.Simulation
 
 
         public IList<string> Steps { get; set; }
+
+        public string ErrorPayload => new string(new char[ErrorPayloadSize]); // TODO: clean up
+
+        public string SuccessPayload => new string(new char[SuccessPayloadSize]); // TODO: clean up
     }
 }

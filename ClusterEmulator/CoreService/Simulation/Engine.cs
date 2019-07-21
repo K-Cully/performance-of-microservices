@@ -19,6 +19,8 @@ namespace CoreService.Simulation
 
         public ActionResult<string> ProcessRequest(string name)
         {
+            // TODO: explicit handling of excptions to avoid impaciting test results
+
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"{nameof(name)} cannot be null or whitespace", nameof(name));
@@ -26,13 +28,20 @@ namespace CoreService.Simulation
 
             IProcessor processor = registry.GetProcessor(name);
 
-            ActionResult<string> result = new ActionResult<string>(string.Empty);
+            // TODO: add success data
+            ActionResult<string> result = new OkObjectResult(processor.SuccessPayload);
+
+
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
-                result = step.Execute();
+                ActionResult<string> currentResult = step.Execute();
 
                 // TODO: if result not null or OkayResult, return
+                if (currentResult is OkResult || currentResult is OkObjectResult)
+                {
+
+                }
             }
 
             // TODO
