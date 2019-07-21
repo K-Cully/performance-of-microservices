@@ -7,6 +7,9 @@ namespace CoreService.Simulation
     {
         // TODO: restrict?
 
+        public string Name { get; set; }
+
+
         public int IngressLatencyMilliseconds { get; set; }
 
 
@@ -16,6 +19,6 @@ namespace CoreService.Simulation
         public int SuccessPayloadSize { get; set; }
 
 
-        public IEnumerable<string> Steps { get; set; }
+        public IList<string> Steps { get; set; }
     }
 }
