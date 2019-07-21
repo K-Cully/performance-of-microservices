@@ -33,9 +33,25 @@ namespace CoreService.Simulation
             return processor;
         }
 
-        public bool TryGetStep(string name, out IStep step)
+
+        public IStep GetStep(string name)
         {
-            return Steps.TryGetValue(name, out step);
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name), "Step name cannot be null");
+            }
+
+            if (!Steps.TryGetValue(name, out IStep step))
+            {
+                throw new InvalidOperationException($"Step '{name}' is not registered");
+            }
+
+            if (step == null)
+            {
+                throw new InvalidOperationException($"Registration for step '{name}' is null");
+            }
+
+            return step;
         }
 
 
