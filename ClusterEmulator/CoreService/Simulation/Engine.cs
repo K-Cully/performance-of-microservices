@@ -19,16 +19,17 @@ namespace CoreService.Simulation
 
         public ActionResult<string> ProcessRequest(string name)
         {
-            if (!registry.TryGetProcessor(name, out IProcessor processor))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new InvalidOperationException($"Processor {name} is not registered");
+                throw new ArgumentException($"{nameof(name)} cannot be null or whitespace", nameof(name));
             }
 
-            if (processor == null)
-            {
-                throw new InvalidOperationException($"Processor {name} is null");
-            }
+            IProcessor processor = registry.GetProcessor(name);
 
+            foreach (string stepName in processor.Steps)
+            {
+
+            }
             // TODO
 
             return name;

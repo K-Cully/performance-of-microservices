@@ -13,9 +13,29 @@ namespace CoreService.Simulation
         }
 
 
-        public bool TryGetProcessor(string name, out IProcessor processor)
+        public IProcessor GetProcessor(string name)
         {
-            return Processors.TryGetValue(name, out processor);
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name), "Processor name cannot be null");
+            }
+
+            if (!Processors.TryGetValue(name, out IProcessor processor))
+            {
+                throw new InvalidOperationException($"Processor '{name}' is not registered");
+            }
+
+            if (processor == null)
+            {
+                throw new InvalidOperationException($"Registration for processor '{name}' is null");
+            }
+
+            return processor;
+        }
+
+        public bool TryGetStep(string name, out IStep step)
+        {
+            return Steps.TryGetValue(name, out step);
         }
 
 
