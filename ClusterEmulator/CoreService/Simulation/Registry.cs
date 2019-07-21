@@ -7,9 +7,21 @@ namespace CoreService.Simulation
 {
     public class Registry
     {
-        public IDictionary<string, Processor> Processors { get; set; }
+        public Registry()
+        {
+            // TODO: load settings
+        }
 
 
-        public IDictionary<string, Step> Steps { get; set; } // TODO restrict access
+        public bool TryGetProcessor(string name, out IProcessor processor)
+        {
+            return Processors.TryGetValue(name, out processor);
+        }
+
+
+        private IDictionary<string, IProcessor> Processors { get; set; }
+
+
+        private IDictionary<string, Step> Steps { get; set; }
     }
 }

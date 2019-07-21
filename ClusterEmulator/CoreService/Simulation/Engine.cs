@@ -19,7 +19,18 @@ namespace CoreService.Simulation
 
         public ActionResult<string> ProcessRequest(string name)
         {
+            if (!registry.TryGetProcessor(name, out IProcessor processor))
+            {
+                throw new InvalidOperationException($"Processor {name} is not registered");
+            }
+
+            if (processor == null)
+            {
+                throw new InvalidOperationException($"Processor {name} is null");
+            }
+
             // TODO
+
             return name;
         }
     }
