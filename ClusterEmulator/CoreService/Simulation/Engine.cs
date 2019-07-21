@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreService.Simulation
 {
-    public class Engine
+    public class Engine : IEngine
     {
         private readonly Registry registry;
 
