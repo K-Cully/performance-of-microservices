@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoreService.Simulation
 {
-    public class ProcessorConfiguration
+    public class Processor
     {
         // TODO: restrict?
 
