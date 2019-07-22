@@ -5,7 +5,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Test
+namespace CoreService.Test.Simulation
 {
     [TestClass]
     public class EngineUnitTests
