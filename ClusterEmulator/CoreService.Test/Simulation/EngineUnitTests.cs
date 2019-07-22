@@ -12,7 +12,7 @@ namespace CoreService.Test
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Throws_WhenPassedNull()
         {
-            _ = new Engine(null);
+            Engine engine = new Engine(null);
         }
     }
 }
