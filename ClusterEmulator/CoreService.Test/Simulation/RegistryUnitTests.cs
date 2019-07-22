@@ -1,21 +1,21 @@
-﻿using CoreService.Controllers;
+﻿using CoreService.Simulation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Test.Controllers
+namespace CoreService.Test.Simulation
 {
     [TestClass]
-    public class AdaptableControllerUnitTests
+    public class RegistryUnitTests
     {
         // TODO: write UTs
 
         [TestMethod]
         public void Dummy()
         {
-            AdaptableController controller = new AdaptableController();
+            Registry registry = new Registry();
 
             Assert.IsTrue(false);
         }
