@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CoreService.Simulation
 {
-    public class Registry
+    public class Registry : IRegistry
     {
         public Registry()
         {

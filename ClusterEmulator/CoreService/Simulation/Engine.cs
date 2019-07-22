@@ -8,10 +8,10 @@ namespace CoreService.Simulation
 {
     public class Engine : IEngine
     {
-        private readonly Registry registry;
+        private readonly IRegistry registry;
 
 
-        public Engine(Registry simulationRegistry)
+        public Engine(IRegistry simulationRegistry)
         {
             registry = simulationRegistry ?? throw new ArgumentNullException(nameof(simulationRegistry));
         }
