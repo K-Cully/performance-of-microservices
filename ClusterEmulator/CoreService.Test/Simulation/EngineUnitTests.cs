@@ -25,45 +25,45 @@ namespace CoreService.Test.Simulation
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentException))]
-        public void ProcessRequest_Throws_WhenPassedNull()
+        public async Task ProcessRequest_Throws_WhenPassedNullAsync()
         {
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(registryMock.Object);
 
-            engine.ProcessRequest(null);
+            await engine.ProcessRequest(null).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentException))]
-        public void ProcessRequest_Throws_WhenPassedEmpty()
+        public async Task ProcessRequest_Throws_WhenPassedEmptyAsync()
         {
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(registryMock.Object);
 
-            engine.ProcessRequest(string.Empty);
+            await engine.ProcessRequest(string.Empty).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
         [ExpectedException(typeof(NullReferenceException))]
-        public void ProcessRequest_Throws_WhenProcessorIsNull()
+        public async Task ProcessRequest_Throws_WhenProcessorIsNullAsync()
         {
             string name = "test";
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             registryMock.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-            _ = engine.ProcessRequest(name);
+            await engine.ProcessRequest(name).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
         [ExpectedException(typeof(NullReferenceException))]
-        public void ProcessRequest_Throws_WhenStepIsNull()
+        public async Task ProcessRequest_Throws_WhenStepIsNullAsync()
         {
             string name = "test";
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
@@ -77,13 +77,13 @@ namespace CoreService.Test.Simulation
                 .Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-           _ = engine.ProcessRequest(name);
+           await engine.ProcessRequest(name).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
-        public void ProcessRequest_ReturnsOkayObjectResult_WhenStepsAreSuccessful()
+        public async Task ProcessRequest_ReturnsOkayObjectResult_WhenStepsAreSuccessfulAsync()
         {
             string processorName = "processor";
             string stepName = "step";
@@ -106,7 +106,7 @@ namespace CoreService.Test.Simulation
 
             Engine engine = new Engine(registryMock.Object);
 
-            IActionResult result = engine.ProcessRequest(processorName);
+            IActionResult result = await engine.ProcessRequest(processorName).ConfigureAwait(false);
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be OkObjectResult");
             OkObjectResult objectResult = result as OkObjectResult;
@@ -119,7 +119,7 @@ namespace CoreService.Test.Simulation
 
         [TestMethod]
         [TestCategory("Functional")]
-        public void ProcessRequest_ReturnsInternalServerError_WhenStepsFail()
+        public async Task ProcessRequest_ReturnsInternalServerError_WhenStepsFailAsync()
         {
             string processorName = "processor";
             string okayStepName = "step";
@@ -150,7 +150,7 @@ namespace CoreService.Test.Simulation
 
             Engine engine = new Engine(registryMock.Object);
 
-            IActionResult result = engine.ProcessRequest(processorName);
+            IActionResult result = await engine.ProcessRequest(processorName).ConfigureAwait(false);
 
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
