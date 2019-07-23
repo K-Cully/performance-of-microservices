@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CoreService.Simulation
 {
     public interface IEngine
     {
-        IActionResult ProcessRequest(string name);
+        Task<IActionResult> ProcessRequest(string name);
     }
 }

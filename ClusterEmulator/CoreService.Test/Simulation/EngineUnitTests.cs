@@ -151,6 +151,7 @@ namespace CoreService.Test.Simulation
             Engine engine = new Engine(registryMock.Object);
 
             IActionResult result = engine.ProcessRequest(processorName);
+
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
             ObjectResult objectResult = result as ObjectResult;
