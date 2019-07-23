@@ -1,4 +1,5 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -28,26 +29,29 @@ namespace CoreService.Simulation
             }
 
             IProcessor processor = registry.GetProcessor(name);
-
-            // TODO: add success data
-            ActionResult<string> result = new OkObjectResult(processor.SuccessPayload);
-
-
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
-                ActionResult<string> currentResult = step.Execute();
+
+                // TODO: await
+                ExecutionStatus status = step.Execute().GetAwaiter().GetResult();
 
                 // TODO: if result not null or OkayResult, return
-                if (currentResult is OkResult || currentResult is OkObjectResult)
+                switch (status)
                 {
-
+                    case ExecutionStatus.Fail:
+                        ObjectResult result = new ObjectResult(processor.ErrorPayload)
+                        { StatusCode = StatusCodes.Status500InternalServerError };
+                        return result;
+                    case ExecutionStatus.Success:
+                    case ExecutionStatus.Unexpected:
+                    default:
+                        // TODO: handle specific cases
+                        break;
                 }
             }
 
-            // TODO
-
-            return result;
+            return new OkObjectResult(processor.SuccessPayload);
         }
     }
 }

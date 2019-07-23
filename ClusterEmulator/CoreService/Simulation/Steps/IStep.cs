@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
 {
@@ -8,6 +9,6 @@ namespace CoreService.Simulation.Steps
         string Name { get; set; }
 
 
-        ActionResult<string> Execute();
+        Task<ExecutionStatus> Execute();
     }
 }
