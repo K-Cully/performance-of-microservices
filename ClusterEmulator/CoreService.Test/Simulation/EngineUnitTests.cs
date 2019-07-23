@@ -1,5 +1,6 @@
 using CoreService.Simulation;
 using CoreService.Simulation.Steps;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -82,7 +83,7 @@ namespace CoreService.Test.Simulation
 
         [TestMethod]
         [TestCategory("Functional")]
-        public void ProcessRequest_ExecutesSuccessfully_WhenStepsAreSuccessful()
+        public void ProcessRequest_ReturnsOkayObjectResult_WhenStepsAreSuccessful()
         {
             string processorName = "processor";
             string stepName = "step";
@@ -113,6 +114,53 @@ namespace CoreService.Test.Simulation
             string value = objectResult.Value as string;
             Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
             Assert.AreEqual(value.Length, payloadSize, "Value should be of the correct length");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public void ProcessRequest_ReturnsInternalServerError_WhenStepsFail()
+        {
+            string processorName = "processor";
+            string okayStepName = "step";
+            string failStepName = "nope";
+            int payloadSize = 42;
+            int errorPayloadSize = 7;
+
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { okayStepName, failStepName };
+            processor.Name = processorName;
+            processor.SuccessPayloadSize = payloadSize;
+            processor.ErrorPayloadSize = errorPayloadSize;
+
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Success);
+            Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Fail);
+
+            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
+            registryMock.Setup(reg => reg.GetProcessor(processorName))
+                .Returns<string>(n => processor);
+            registryMock.Setup(reg => reg.GetStep(okayStepName))
+                .Returns<string>(n => stepMock.Object);
+            registryMock.Setup(reg => reg.GetStep(failStepName))
+                .Returns<string>(n => failStepMock.Object);
+
+            Engine engine = new Engine(registryMock.Object);
+
+            IActionResult result = engine.ProcessRequest(processorName);
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, objectResult.StatusCode.Value, "Status code should be InternalServerError");
+            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
+            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
+            string value = objectResult.Value as string;
+            Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
+            Assert.AreEqual(value.Length, errorPayloadSize, "Value should be of the correct length");
         }
 
 
