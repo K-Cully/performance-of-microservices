@@ -9,6 +9,6 @@ namespace CoreService.Simulation.Steps
         string Name { get; set; }
 
 
-        Task<ExecutionStatus> Execute();
+        Task<ExecutionStatus> ExecuteAsync();
     }
 }

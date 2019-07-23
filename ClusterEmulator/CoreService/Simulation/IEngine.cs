@@ -4,6 +4,6 @@ namespace CoreService.Simulation
 {
     public interface IEngine
     {
-        ActionResult<string> ProcessRequest(string name);
+        IActionResult ProcessRequest(string name);
     }
 }

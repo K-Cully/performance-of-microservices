@@ -19,7 +19,7 @@ namespace CoreService.Simulation
         }
 
 
-        public ActionResult<string> ProcessRequest(string name)
+        public IActionResult ProcessRequest(string name)
         {
             // TODO: explicit handling of excptions to avoid impaciting test results
 
@@ -34,7 +34,7 @@ namespace CoreService.Simulation
                 IStep step = registry.GetStep(stepName);
 
                 // TODO: await
-                ExecutionStatus status = step.Execute().GetAwaiter().GetResult();
+                ExecutionStatus status = step.ExecuteAsync().GetAwaiter().GetResult();
 
                 // TODO: if result not null or OkayResult, return
                 switch (status)

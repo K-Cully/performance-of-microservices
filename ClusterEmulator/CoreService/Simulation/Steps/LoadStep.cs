@@ -14,7 +14,7 @@ namespace CoreService.Simulation.Steps
             set => throw new NotImplementedException();
         }
 
-        public async Task<ExecutionStatus> Execute()
+        public async Task<ExecutionStatus> ExecuteAsync()
         {
             // TODO
             return await Task.Run(() => ExecutionStatus.Success);

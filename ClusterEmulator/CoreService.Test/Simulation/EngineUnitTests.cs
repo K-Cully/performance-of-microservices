@@ -1,9 +1,11 @@
 using CoreService.Simulation;
+using CoreService.Simulation.Steps;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation
 {
@@ -53,7 +55,7 @@ namespace CoreService.Test.Simulation
             registryMock.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-            ActionResult<string> result = engine.ProcessRequest(name);
+            _ = engine.ProcessRequest(name);
         }
 
 
@@ -74,7 +76,7 @@ namespace CoreService.Test.Simulation
                 .Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-            ActionResult<string> result = engine.ProcessRequest(name);
+           _ = engine.ProcessRequest(name);
         }
 
 
@@ -82,21 +84,35 @@ namespace CoreService.Test.Simulation
         [TestCategory("Functional")]
         public void ProcessRequest_ExecutesSuccessfully_WhenStepsAreSuccessful()
         {
-            string name = "test";
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            IProcessor processor = defaultProcessor;
-            processor.Steps = new List<string> { "step1" };
-            processor.Name = name;
+            string processorName = "processor";
+            string stepName = "step";
+            int payloadSize = 42;
 
-            // TODO: return valid step
-            registryMock.Setup(reg => reg.GetProcessor(name))
-                .Returns<string>((n) => processor);
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { stepName, stepName };
+            processor.Name = processorName;
+            processor.SuccessPayloadSize = payloadSize;
+
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Success);
+
+            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
+            registryMock.Setup(reg => reg.GetProcessor(processorName))
+                .Returns<string>(n => processor);
             registryMock.Setup(reg => reg.GetStep(It.IsAny<string>()))
-                .Returns<string>(null);
+                .Returns<string>(n => stepMock.Object);
+
             Engine engine = new Engine(registryMock.Object);
 
-            // TODO: verify result
-            ActionResult<string> result = engine.ProcessRequest(name);
+            IActionResult result = engine.ProcessRequest(processorName);
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be OkObjectResult");
+            OkObjectResult objectResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
+            string value = objectResult.Value as string;
+            Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
+            Assert.AreEqual(value.Length, payloadSize, "Value should be of the correct length");
         }
 
 
