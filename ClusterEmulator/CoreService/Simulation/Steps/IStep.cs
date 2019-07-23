@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Steps
 {
     public interface IStep
     {
