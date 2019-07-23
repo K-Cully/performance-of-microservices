@@ -1,4 +1,6 @@
-﻿namespace CoreService.Simulation
+﻿using CoreService.Simulation.Steps;
+
+namespace CoreService.Simulation
 {
     public interface IRegistry
     {

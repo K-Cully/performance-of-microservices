@@ -17,7 +17,7 @@ namespace CoreService.Simulation.Steps
         public async Task<ExecutionStatus> Execute()
         {
             // TODO
-            return ExecutionStatus.Success;
+            return await Task.Run(() => ExecutionStatus.Success);
         }
     }
 }
