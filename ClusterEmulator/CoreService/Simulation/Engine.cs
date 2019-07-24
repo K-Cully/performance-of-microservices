@@ -21,33 +21,31 @@ namespace CoreService.Simulation
 
         public async Task<IActionResult> ProcessRequest(string name)
         {
-            // TODO: explicit handling of excptions to avoid impaciting test results
-
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"{nameof(name)} cannot be null or whitespace", nameof(name));
             }
 
             IProcessor processor = registry.GetProcessor(name);
+            await Task.Delay(processor.IngressLatencyMilliseconds);
+
+            ObjectResult errorResult = new ObjectResult(processor.ErrorPayload);
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
-
-                // TODO: await
                 ExecutionStatus status = await step.ExecuteAsync();
 
-                // TODO: if result not null or OkayResult, return
                 switch (status)
                 {
-                    case ExecutionStatus.Fail:
-                        ObjectResult result = new ObjectResult(processor.ErrorPayload)
-                        { StatusCode = StatusCodes.Status500InternalServerError };
-                        return result;
                     case ExecutionStatus.Success:
+                        continue;
+                    case ExecutionStatus.Fail:
+                        errorResult.StatusCode = StatusCodes.Status404NotFound;
+                        return errorResult;
                     case ExecutionStatus.Unexpected:
                     default:
-                        // TODO: handle specific cases
-                        break;
+                        errorResult.StatusCode = StatusCodes.Status500InternalServerError;
+                        return errorResult;
                 }
             }
 
