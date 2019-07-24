@@ -1,4 +1,5 @@
 ﻿using CoreService.Controllers;
+using CoreService.Simulation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +16,7 @@ namespace CoreService.Test.Controllers
         [TestMethod]
         public void Dummy()
         {
-            AdaptableController controller = new AdaptableController();
+            AdaptableController controller = new AdaptableController(new Engine(new Registry()));
 
             Assert.IsTrue(false);
         }
