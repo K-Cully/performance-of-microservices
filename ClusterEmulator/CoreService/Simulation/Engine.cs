@@ -2,23 +2,37 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation
 {
+    /// <summary>
+    /// Loads and executes emulated and simulated request components.
+    /// </summary>
     public class Engine : IEngine
     {
         private readonly IRegistry registry;
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Engine"/> class.
+        /// </summary>
+        /// <param name="simulationRegistry">The simulation registry to load content from.</param>
         public Engine(IRegistry simulationRegistry)
         {
             registry = simulationRegistry ?? throw new ArgumentNullException(nameof(simulationRegistry));
         }
 
 
+        /// <summary>
+        /// Emulates the processing of the request based on the named configuration.
+        /// </summary>
+        /// <param name="name">The name of the processor configuration.</param>
+        /// <returns>
+        /// An <see cref="OkObjectResult"/> if all steps successful.
+        /// An <see cref="ObjectResult"/> with Status404NotFound when configured to simulate an error.
+        /// An <see cref="ObjectResult"/> with Status500InternalServerError if an unexpected error occurs.
+        /// </returns>
         public async Task<IActionResult> ProcessRequest(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
