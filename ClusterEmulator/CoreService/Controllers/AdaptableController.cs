@@ -1,7 +1,9 @@
 ﻿
 using CoreService.Model;
+using CoreService.Simulation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace CoreService.Controllers
 {
@@ -12,6 +14,20 @@ namespace CoreService.Controllers
     [Consumes("application/json")]
     public class AdaptableController : ControllerBase
     {
+        private readonly IEngine engine;
+
+
+        /// <summary>
+        /// Creates a new instance of <see cref="AdaptableController"/>.
+        /// </summary>
+        /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
+        public AdaptableController(IEngine simulationEngine)
+        {
+            engine = simulationEngine ??
+                throw new ArgumentException("Simulation engine must be initialized", nameof(simulationEngine));
+        }
+
+
         private ActionResult ProcessRequest(string name, string caller)
         {
             if (string.IsNullOrWhiteSpace(name))

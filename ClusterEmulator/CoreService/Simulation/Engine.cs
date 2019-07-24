@@ -15,7 +15,7 @@ namespace CoreService.Simulation
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Engine"/> class.
+        /// Initializes a new instance of <see cref="Engine"/>.
         /// </summary>
         /// <param name="simulationRegistry">The simulation registry to load content from.</param>
         public Engine(IRegistry simulationRegistry)
