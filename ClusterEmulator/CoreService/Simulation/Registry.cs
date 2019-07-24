@@ -1,16 +1,22 @@
 ﻿using CoreService.Simulation.Steps;
 using System;
 using System.Collections.Generic;
+using System.Fabric.Description;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace CoreService.Simulation
 {
     public class Registry : IRegistry
     {
-        public Registry()
+        private ConfigurationSettings Settings { get; set; }
+
+
+        public void Initialze(ConfigurationSettings configurationSettings)
         {
-            // TODO: load settings
+            Settings = configurationSettings ??
+                throw new ArgumentNullException(nameof(configurationSettings));
         }
 
 
@@ -30,6 +36,9 @@ namespace CoreService.Simulation
             {
                 throw new InvalidOperationException($"Registration for processor '{name}' is null");
             }
+
+
+            // TODO: Settings.Sections["Processors"].Parameters["Procesor_1"];
 
             return processor;
         }
