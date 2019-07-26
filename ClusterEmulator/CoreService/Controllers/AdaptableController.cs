@@ -46,14 +46,14 @@ namespace CoreService.Controllers
                 IActionResult result = await engine.ProcessRequest(name).ConfigureAwait(false);
                 return result;
             }
-            catch(Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
-                // TODO: log and add error details
-                return BadRequest();
+                // TODO: log exception
+                return BadRequest(new { error = ex.Message });
             }
             catch (Exception ex)
             {
-                // TODO: log and add error details
+                // TODO: log exception
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
