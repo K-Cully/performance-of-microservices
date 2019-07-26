@@ -42,8 +42,8 @@ namespace CoreService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
-                                            .AddTransient<IRegistry, Registry>()
-                                            .AddTransient<IEngine, Engine>())
+                                            .AddSingleton<IRegistry, Registry>()
+                                            .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
