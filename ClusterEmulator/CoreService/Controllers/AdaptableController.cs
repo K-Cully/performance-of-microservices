@@ -41,7 +41,21 @@ namespace CoreService.Controllers
                 // TODO log caller, if present
             }
 
-            return await engine.ProcessRequest(name).ConfigureAwait(false);
+            try
+            {
+                IActionResult result = await engine.ProcessRequest(name).ConfigureAwait(false);
+                return result;
+            }
+            catch(Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
+            {
+                // TODO: log and add error details
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                // TODO: log and add error details
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
 

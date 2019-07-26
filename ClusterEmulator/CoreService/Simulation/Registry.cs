@@ -5,6 +5,8 @@ using System.Fabric.Description;
 
 namespace CoreService.Simulation
 {
+    // TODO: refactor duplicate logic, add comments and tests
+
     public class Registry : IRegistry
     {
         private ConfigurationSettings Settings { get; set; }
@@ -21,7 +23,15 @@ namespace CoreService.Simulation
             Settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));
 
-            // TODO: load processors and steps into cache
+            Processors = new Dictionary<string, IProcessor>();
+            foreach (var property in Settings.Sections["Processors"].Parameters)
+            {
+                // TODO: parse processor from value
+                Processors.Add(property.Name, new Processor());
+            }
+
+            // TODO: load steps
+            Steps = new Dictionary<string, IStep>();
         }
 
 
@@ -41,11 +51,6 @@ namespace CoreService.Simulation
             {
                 throw new InvalidOperationException($"Registration for processor '{name}' is null");
             }
-
-            // TODO: parse value into processor
-            string value = Settings.Sections["Processors"].Parameters[name].Value;
-
-            // TODO use cache
 
             return processor;
         }
@@ -67,8 +72,6 @@ namespace CoreService.Simulation
             {
                 throw new InvalidOperationException($"Registration for step '{name}' is null");
             }
-
-            string value = Settings.Sections["Processors"].Parameters[name].Value;
 
             return step;
         }
