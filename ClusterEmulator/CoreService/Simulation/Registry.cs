@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
-using System.Linq;
-using System.Threading.Tasks;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace CoreService.Simulation
 {
@@ -13,10 +10,18 @@ namespace CoreService.Simulation
         private ConfigurationSettings Settings { get; set; }
 
 
+        private IDictionary<string, IProcessor> Processors { get; set; }
+
+
+        private IDictionary<string, IStep> Steps { get; set; }
+
+
         public Registry(ConfigurationSettings configurationSettings)
         {
             Settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));
+
+            // TODO: load processors and steps into cache
         }
 
 
@@ -37,8 +42,10 @@ namespace CoreService.Simulation
                 throw new InvalidOperationException($"Registration for processor '{name}' is null");
             }
 
+            // TODO: parse value into processor
+            string value = Settings.Sections["Processors"].Parameters[name].Value;
 
-            // TODO: Settings.Sections["Processors"].Parameters["Procesor_1"];
+            // TODO use cache
 
             return processor;
         }
@@ -61,13 +68,9 @@ namespace CoreService.Simulation
                 throw new InvalidOperationException($"Registration for step '{name}' is null");
             }
 
+            string value = Settings.Sections["Processors"].Parameters[name].Value;
+
             return step;
         }
-
-
-        private IDictionary<string, IProcessor> Processors { get; set; }
-
-
-        private IDictionary<string, IStep> Steps { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using CoreService.Simulation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace CoreService.Controllers
 {
@@ -28,7 +29,7 @@ namespace CoreService.Controllers
         }
 
 
-        private ActionResult ProcessRequest(string name, string caller)
+        private async Task<IActionResult> ProcessRequestAsync(string name, string caller)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -40,7 +41,7 @@ namespace CoreService.Controllers
                 // TODO log caller, if present
             }
 
-            return Ok();
+            return await engine.ProcessRequest(name).ConfigureAwait(false);
         }
 
 
@@ -53,7 +54,7 @@ namespace CoreService.Controllers
         [HttpGet("{name}")]
         [ProducesResponseType(typeof(AdaptableResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<AdaptableResponse> Get(string name, [FromQuery] string caller)
+        public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -66,7 +67,9 @@ namespace CoreService.Controllers
             }
 
             // TODO: return set of standard values, based on payload size
-            return Ok(new AdaptableResponse(){ Values = new string[] { "test" } });
+            //return Ok(new AdaptableResponse(){ Values = new string[] { "test" } });
+
+            return await ProcessRequestAsync(name, caller);
         }
 
 
@@ -79,9 +82,9 @@ namespace CoreService.Controllers
         [HttpDelete("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Delete(string name, [FromQuery] string caller)
+        public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
-            return ProcessRequest(name, caller);
+            return await ProcessRequestAsync(name, caller);
         }
 
 
@@ -94,9 +97,9 @@ namespace CoreService.Controllers
         [HttpOptions("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Options(string name, [FromQuery] string caller)
+        public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
-            return ProcessRequest(name, caller);
+            return await ProcessRequestAsync(name, caller);
         }
 
 
@@ -110,14 +113,14 @@ namespace CoreService.Controllers
         [HttpPost("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
+        public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
             if (request == null)
             {
                 return BadRequest($"{nameof(request)} is required");
             }
 
-            return ProcessRequest(name, caller);
+            return await ProcessRequestAsync(name, caller);
         }
 
 
@@ -131,14 +134,14 @@ namespace CoreService.Controllers
         [HttpPut("{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
+        public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
             if (request == null)
             {
                 return BadRequest($"{nameof(request)} is required");
             }
 
-            return ProcessRequest(name, caller);
+            return await ProcessRequestAsync(name, caller);
         }
     }
 }
