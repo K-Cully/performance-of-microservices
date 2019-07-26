@@ -5,9 +5,6 @@ namespace CoreService.Simulation
 {
     public interface IRegistry
     {
-        void Initialze(ConfigurationSettings configurationSettings);
-
-
         IProcessor GetProcessor(string name);
 
 

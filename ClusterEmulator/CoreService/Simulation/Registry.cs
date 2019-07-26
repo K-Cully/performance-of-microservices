@@ -13,7 +13,7 @@ namespace CoreService.Simulation
         private ConfigurationSettings Settings { get; set; }
 
 
-        public void Initialze(ConfigurationSettings configurationSettings)
+        public Registry(ConfigurationSettings configurationSettings)
         {
             Settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));

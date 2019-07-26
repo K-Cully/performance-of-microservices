@@ -37,12 +37,14 @@ namespace CoreService
                     {
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
 
+                        // TODO: test Registry registration is correct
                         return new WebHostBuilder()
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
-                                            .AddSingleton<IRegistry, Registry>()
+                                            .AddSingleton<IRegistry>(new Registry(
+                                                serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings))
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
