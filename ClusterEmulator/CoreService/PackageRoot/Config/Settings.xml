@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="Processor_1" Value="{ ErrorPayloadSize : 100, IngressLatencyMilliseconds : 50, Steps : [ 'Step_1' ], SuccessPayloadSize : 20 }" />
-    <Parameter Name="Processor_2" Value="{ }" />
+    <Parameter Name="1" Value="{ ErrorPayloadSize : 100, IngressLatencyMilliseconds : 50, Steps : [ 'A' ], SuccessPayloadSize : 20 }" />
+    <Parameter Name="2" Value="{ ErrorPayloadSize : 15, IngressLatencyMilliseconds : 0, Steps : [ 'B', 'A' ], SuccessPayloadSize : 0 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="Step_1" Value="{ name : Step_1 }" />
-    <Parameter Name="Step_2" Value="{ name : Step_2 }" />
+    <Parameter Name="1" Value="{  }" />
+    <Parameter Name="2" Value="{  }" />
   </Section>
 </Settings>
