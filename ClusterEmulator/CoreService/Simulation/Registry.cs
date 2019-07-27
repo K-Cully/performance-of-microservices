@@ -21,7 +21,7 @@ namespace CoreService.Simulation
         private IDictionary<string, IStep> Steps { get; set; }
 
 
-        public Registry(ConfigurationSettings configurationSettings)
+        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory)
         {
             settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));
@@ -38,11 +38,7 @@ namespace CoreService.Simulation
             foreach (var property in settings.Sections["Steps"].Parameters)
             {
                 // TODO: log & handle deserialization errors
-
-                // TODO: inject
-                StepFactory factory = new StepFactory();
-
-                IStep step = factory.Create(property.Value);
+                IStep step = stepFactory.Create(property.Value);
                 Steps.Add(property.Name, step);
             }
         }
