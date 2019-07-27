@@ -5,7 +5,7 @@
     <Parameter Name="Processor_2" Value="{ name : Processor_2 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="Step_1" Value="{ name : Step_1 }" />
-    <Parameter Name="Step_2" Value="{ name : Step_2 }" />
+    <Parameter Name="Step_1" Type="LoadStep" Value="{ name : Step_1 }" />
+    <Parameter Name="Step_2" Type="LoadStep" Value="{ name : Step_2 }" />
   </Section>
 </Settings>
