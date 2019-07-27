@@ -38,8 +38,6 @@ namespace CoreService.Simulation
             foreach (var property in settings.Sections["Steps"].Parameters)
             {
                 // TODO: log & handle deserialization errors
-                
-                // TODO: offload to factory
 
                 // TODO: inject
                 StepFactory factory = new StepFactory();

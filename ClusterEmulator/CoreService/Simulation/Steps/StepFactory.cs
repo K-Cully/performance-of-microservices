@@ -1,16 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
 {
     /// <summary>
     /// Creates step instances.
     /// </summary>
-    public class StepFactory
+    public class StepFactory : IStepFactory
     {
         private readonly string stepNamespace = typeof(StepFactory).Namespace;
 
@@ -19,24 +16,26 @@ namespace CoreService.Simulation.Steps
         /// Creates a concrete step object from a setting value.
         /// </summary>
         /// <param name="settingValue">The step setting value.</param>
-        /// <returns>An initialized step instance.</returns>
+        /// <returns>An initialized <see cref="IStep"/> instance.</returns>
         /// <remarks>
-        /// Expected setting value form:
+        /// Expected setting form:
         /// { type : <typename>, step : { <object> } }
         /// </remarks>
         public IStep Create(dynamic settingValue)
         {
+            // Deserialize JSON to dynamic object
             dynamic json = JsonConvert.DeserializeObject(settingValue);
 
-            // TODO
+            // Extract the step type
             Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
+            if (type == null)
+            {
+                throw new InvalidOperationException($"{stepNamespace}.{json.type.Value} did not resolve to a Type");
+            }
 
+            // Convert the step JSON object to the identified concrete type
             JObject stepJson = json.step;
-            object stepObject = stepJson.ToObject(type);
-            IStep step = stepObject as IStep;
-
-            // TODO: update
-            return step;
+            return stepJson.ToObject(type) as IStep;
         }
     }
 }
