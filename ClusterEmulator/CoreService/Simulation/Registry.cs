@@ -30,8 +30,12 @@ namespace CoreService.Simulation
                 Processors.Add(property.Name, new Processor());
             }
 
-            // TODO: load steps
             Steps = new Dictionary<string, IStep>();
+            foreach (var property in settings.Sections["Steps"].Parameters)
+            {
+                // TODO: Identify type and parse step from value
+                Steps.Add(property.Name, new LoadStep());
+            }
         }
 
 

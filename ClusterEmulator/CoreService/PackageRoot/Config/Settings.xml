@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="Processor_1" Value="" />
-    <Parameter Name="Processor_2" Value="" />
+    <Parameter Name="Processor_1" Value="{ name : Processor_1 }" />
+    <Parameter Name="Processor_2" Value="{ name : Processor_2 }" />
+  </Section>
+  <Section Name="Steps">
+    <Parameter Name="Step_1" Value="{ name : Step_1 }" />
+    <Parameter Name="Step_2" Value="{ name : Step_2 }" />
   </Section>
 </Settings>

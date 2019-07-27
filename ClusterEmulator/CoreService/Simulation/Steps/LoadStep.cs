@@ -8,10 +8,12 @@ namespace CoreService.Simulation.Steps
 {
     public class LoadStep : IStep
     {
+        // TODO
+
         public string Name
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get;
+            set;
         }
 
         public async Task<ExecutionStatus> ExecuteAsync()
