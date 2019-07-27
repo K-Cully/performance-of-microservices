@@ -57,7 +57,6 @@ namespace CoreService.Simulation.Steps
 
         private async Task GenerateLoad(int seconds, int percentage)
         {
-            // TODO: fix
             DateTime start = DateTime.UtcNow;
             Stopwatch watch = new Stopwatch();
 

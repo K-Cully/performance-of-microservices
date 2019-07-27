@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="1" Value="{ errorSize : 100, latency : 50, steps : [ 'A' ], successSize : 20 }" />
+    <Parameter Name="1" Value="{ errorSize : 100, latency : 0, steps : [ 'A' ], successSize : 20 }" />
     <Parameter Name="2" Value="{ errorSize : 15, latency : 0, steps : [ 'B', 'A' ], successSize : 0 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="A" Value="{ type : 'CoreService.Simulation.Steps.LoadStep', Step : { time : 10, percent : 20 } }" />
-    <Parameter Name="B" Value="{  }" />
+    <Parameter Name="A" Value="{ type : 'CoreService.Simulation.Steps.LoadStep', step : { time : 10, percent : 20 } }" />
+    <Parameter Name="B" Value="{ type : 'CoreService.Simulation.Steps.LoadStep', step : { time : 3, percent : 90 } }" />
   </Section>
 </Settings>
