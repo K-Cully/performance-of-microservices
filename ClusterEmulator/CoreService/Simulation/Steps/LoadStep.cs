@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace CoreService.Simulation.Steps
@@ -19,6 +18,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         [JsonProperty("time")]
         [JsonRequired]
+        [Range(0, int.MaxValue, ErrorMessage = "time must be greater than {1}")]
         public int TimeInSeconds { get; set; }
 
 
@@ -27,6 +27,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         [JsonProperty("percent")]
         [JsonRequired]
+        [Range(1, 100, ErrorMessage = "time must be in the range 1 - 100")]
         public int CpuPercentage { get; set; }
 
 
