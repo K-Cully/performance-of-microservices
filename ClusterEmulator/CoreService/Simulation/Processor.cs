@@ -12,7 +12,7 @@ namespace CoreService.Simulation
         /// <summary>
         /// Gets the error payload data.
         /// </summary>
-        public string ErrorPayload => new string(new char[ErrorPayloadSize]); // TODO: clean up
+        public object ErrorPayload => new { error = new string(new char[ErrorPayloadSize]) }; // TODO: clean up
 
 
         /// <summary>
@@ -42,6 +42,6 @@ namespace CoreService.Simulation
         /// <summary>
         /// Gets the success payload data.
         /// </summary>
-        public string SuccessPayload => new string(new char[SuccessPayloadSize]); // TODO: clean up
+        public object SuccessPayload => new { result = new string(new char[SuccessPayloadSize]) }; // TODO: clean up
     }
 }

@@ -10,7 +10,7 @@ namespace CoreService.Simulation
         /// <summary>
         /// Gets the error payload data.
         /// </summary>
-        string ErrorPayload { get; }
+        object ErrorPayload { get; }
 
 
         /// <summary>
@@ -40,6 +40,6 @@ namespace CoreService.Simulation
         /// <summary>
         /// Gets the success payload data.
         /// </summary>
-        string SuccessPayload { get; }
+        object SuccessPayload { get; }
     }
 }
