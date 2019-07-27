@@ -34,7 +34,6 @@ interface IProcessor {
     + ErrorPayload : string
     + ErrorPayloadSize : integer
     + IngressLatencyMilliseconds : integer
-    + Name : string
     + Steps : IList<string>
     + SuccessPayload : string
     + SuccessPayloadSize : integer
@@ -50,7 +49,6 @@ enum ExecutionStatus {
 }
 
 interface IStep {
-    + Name : string
     + ExecuteAsync() : ExecutionStatus
 }
 
