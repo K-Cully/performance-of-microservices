@@ -3,24 +3,12 @@
   <Parameters>
     <Parameter Name="CoreService_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
     <Parameter Name="CoreService_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="CoreService_Processor_1" DefaultValue="{ &quot;name&quot; : &quot;value&quot; }" />
-    <Parameter Name="CoreService_Processor_2" DefaultValue="{ name : value }" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="CoreServicePkg" ServiceManifestVersion="1.0.0" />
-    <ConfigOverrides>
-      <ConfigOverride Name="Config">
-        <Settings>
-          <Section Name="Processors">
-            <Parameter Name="Processor_1" Value="[CoreService_Processor_1]" />
-            <Parameter Name="Processor_2" Value="[CoreService_Processor_2]" />
-          </Section>
-        </Settings>
-      </ConfigOverride>
-    </ConfigOverrides>
     <EnvironmentOverrides CodePackageRef="code">
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[CoreService_ASPNETCORE_ENVIRONMENT]" />
     </EnvironmentOverrides>
