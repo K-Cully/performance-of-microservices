@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoreService.Simulation
 {
@@ -24,6 +25,7 @@ namespace CoreService.Simulation
         /// 
         [JsonProperty("errorSize")]
         [JsonRequired]
+        [Range(0, int.MaxValue, ErrorMessage = "errorSize cannot be negative")]
         public int ErrorPayloadSize { get; set; }
 
 
@@ -32,6 +34,7 @@ namespace CoreService.Simulation
         /// </summary>
         [JsonProperty("latency")]
         [JsonRequired]
+        [Range(0, int.MaxValue, ErrorMessage = "latency cannot be negative")]
         public int IngressLatencyMilliseconds { get; set; }
 
 
@@ -48,6 +51,7 @@ namespace CoreService.Simulation
         /// </summary>
         [JsonProperty("successSize")]
         [JsonRequired]
+        [Range(0, int.MaxValue, ErrorMessage = "successSize cannot be negative")]
         public int SuccessPayloadSize { get; set; }
 
 

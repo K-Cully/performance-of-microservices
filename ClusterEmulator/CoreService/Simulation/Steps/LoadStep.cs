@@ -18,7 +18,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         [JsonProperty("time")]
         [JsonRequired]
-        [Range(0, int.MaxValue, ErrorMessage = "time must be greater than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "time cannot be negative")]
         public int TimeInSeconds { get; set; }
 
 
@@ -27,7 +27,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         [JsonProperty("percent")]
         [JsonRequired]
-        [Range(1, 100, ErrorMessage = "time must be in the range 1 - 100")]
+        [Range(1, 100, ErrorMessage = "percent must be in the range 1 - 100")]
         public int CpuPercentage { get; set; }
 
 
