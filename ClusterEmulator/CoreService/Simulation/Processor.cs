@@ -6,6 +6,7 @@ namespace CoreService.Simulation
     /// <summary>
     /// Defines request processing configuration.
     /// </summary>
+    [System.Serializable]
     public class Processor : IProcessor
     {
         /// <summary>

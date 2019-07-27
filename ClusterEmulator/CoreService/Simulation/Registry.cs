@@ -1,4 +1,5 @@
 ﻿using CoreService.Simulation.Steps;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
@@ -26,8 +27,11 @@ namespace CoreService.Simulation
             Processors = new Dictionary<string, IProcessor>();
             foreach (var property in settings.Sections["Processors"].Parameters)
             {
-                // TODO: parse processor from value
-                Processors.Add(property.Name, new Processor());
+                // TODO: log
+
+                // TODO: handle deserialization errors
+                var processor = JsonConvert.DeserializeObject<Processor>(property.Value);
+                Processors.Add(property.Name, processor);
             }
 
             Steps = new Dictionary<string, IStep>();
