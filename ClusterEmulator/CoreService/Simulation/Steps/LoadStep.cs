@@ -30,7 +30,6 @@ namespace CoreService.Simulation.Steps
         [Range(1, 100, ErrorMessage = "percent must be in the range 1 - 100")]
         public int CpuPercentage { get; set; }
 
-        // TODO: update comment
 
         /// <summary>
         /// Executes the action defined by the step.
@@ -38,17 +37,11 @@ namespace CoreService.Simulation.Steps
         /// <returns><see cref="ExecutionStatus.Success"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
-            // TODO
-
-            // TODO: validate and get from settings
-            int seconds = 5;
-            int percentage = 50;
-
             List<Task> coreTasks = new List<Task>();
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
                 // TODO: support cancellation
-                coreTasks.Add(GenerateLoad(seconds, percentage));
+                coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
