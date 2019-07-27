@@ -30,6 +30,7 @@ namespace CoreService.Simulation.Steps
         [Range(1, 100, ErrorMessage = "percent must be in the range 1 - 100")]
         public int CpuPercentage { get; set; }
 
+        // TODO: update comment
 
         /// <summary>
         /// Executes the action defined by the step.

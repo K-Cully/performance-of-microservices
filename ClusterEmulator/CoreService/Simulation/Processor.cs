@@ -22,7 +22,6 @@ namespace CoreService.Simulation
         /// <summary>
         /// The size of the error payload.
         /// </summary>
-        /// 
         [JsonProperty("errorSize")]
         [JsonRequired]
         [Range(0, int.MaxValue, ErrorMessage = "errorSize cannot be negative")]

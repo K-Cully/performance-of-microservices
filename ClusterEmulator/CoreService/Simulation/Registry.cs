@@ -1,4 +1,5 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -37,16 +38,14 @@ namespace CoreService.Simulation
             foreach (var property in settings.Sections["Steps"].Parameters)
             {
                 // TODO: log & handle deserialization errors
-
+                
                 // TODO: offload to factory
 
                 // TODO: inject
                 StepFactory factory = new StepFactory();
 
-                dynamic value = JsonConvert.DeserializeObject(property.Value);
-
-                IStep step = factory.Create(value);
-                Steps.Add(property.Name, new LoadStep());
+                IStep step = factory.Create(property.Value);
+                Steps.Add(property.Name, step);
             }
         }
 
