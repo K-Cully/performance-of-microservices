@@ -50,24 +50,23 @@ namespace CoreService.Simulation.Steps
                 coreTasks.Add(GenerateLoad(seconds, percentage));
             }
 
-            await Task.WhenAll(coreTasks);
+            await Task.WhenAll(coreTasks).ConfigureAwait(false);
             return ExecutionStatus.Success;
         }
 
 
         private async Task GenerateLoad(int seconds, int percentage)
         {
+            // TODO: fix
+            DateTime start = DateTime.UtcNow;
             Stopwatch watch = new Stopwatch();
 
-            long runtime = (long)seconds * 1000;
-            long elapsed = 0;
             watch.Start();
-            while (elapsed < runtime)
+            while (seconds > DateTime.UtcNow.Subtract(start).Seconds)
             {
                 // Generate load for the target percentage, sleep for the remaining time
                 if (watch.ElapsedMilliseconds > percentage)
                 {
-                    elapsed += watch.ElapsedMilliseconds;
                     await Task.Delay(100 - percentage).ConfigureAwait(false);
                     watch.Reset();
                     watch.Start();
