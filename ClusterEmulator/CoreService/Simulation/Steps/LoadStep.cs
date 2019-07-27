@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CoreService.Simulation.Steps
 {
@@ -16,12 +17,16 @@ namespace CoreService.Simulation.Steps
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
+        [JsonProperty("time")]
+        [JsonRequired]
         public int TimeInSeconds { get; set; }
 
 
         /// <summary>
         /// The percentage of processor time that should be consumed.
         /// </summary>
+        [JsonProperty("percent")]
+        [JsonRequired]
         public int CpuPercentage { get; set; }
 
 
