@@ -7,10 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoreService.Simulation.Steps
 {
+    /// <summary>
+    /// A step that simulates CPU bound operations.
+    /// </summary>
+    [Serializable]
     public class LoadStep : IStep
     {
-        // TODO
+        /// <summary>
+        /// The length of time the load should last for.
+        /// </summary>
+        public int TimeInSeconds { get; set; }
 
+
+        /// <summary>
+        /// The percentage of processor time that should be consumed.
+        /// </summary>
+        public int CpuPercentage { get; set; }
+
+
+        /// <summary>
+        /// Executes the action defined by the step.
+        /// </summary>
+        /// <returns><see cref="ExecutionStatus.Success"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
             // TODO
@@ -22,6 +40,7 @@ namespace CoreService.Simulation.Steps
             List<Task> coreTasks = new List<Task>();
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
+                // TODO: support cancellation
                 coreTasks.Add(GenerateLoad(seconds, percentage));
             }
 

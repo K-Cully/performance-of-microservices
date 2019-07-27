@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace CoreService.Simulation
@@ -6,7 +7,7 @@ namespace CoreService.Simulation
     /// <summary>
     /// Defines request processing configuration.
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class Processor : IProcessor
     {
         /// <summary>
