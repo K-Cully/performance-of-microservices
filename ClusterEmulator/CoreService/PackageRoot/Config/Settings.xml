@@ -5,7 +5,7 @@
     <Parameter Name="2" Value="{ ErrorPayloadSize : 15, IngressLatencyMilliseconds : 0, Steps : [ 'B', 'A' ], SuccessPayloadSize : 0 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="1" Value="{  }" />
-    <Parameter Name="2" Value="{  }" />
+    <Parameter Name="A" Value="{  }" />
+    <Parameter Name="B" Value="{  }" />
   </Section>
 </Settings>
