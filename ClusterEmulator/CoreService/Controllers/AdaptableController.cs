@@ -43,7 +43,7 @@ namespace CoreService.Controllers
 
             try
             {
-                IActionResult result = await engine.ProcessRequest(name).ConfigureAwait(false);
+                IActionResult result = await engine.ProcessRequestAsync(name).ConfigureAwait(false);
                 return result;
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)

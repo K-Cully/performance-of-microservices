@@ -9,7 +9,7 @@ namespace CoreService.Simulation
 
     public class Registry : IRegistry
     {
-        private ConfigurationSettings Settings { get; set; }
+        private readonly ConfigurationSettings settings;
 
 
         private IDictionary<string, IProcessor> Processors { get; set; }
@@ -20,11 +20,11 @@ namespace CoreService.Simulation
 
         public Registry(ConfigurationSettings configurationSettings)
         {
-            Settings = configurationSettings ??
+            settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));
 
             Processors = new Dictionary<string, IProcessor>();
-            foreach (var property in Settings.Sections["Processors"].Parameters)
+            foreach (var property in settings.Sections["Processors"].Parameters)
             {
                 // TODO: parse processor from value
                 Processors.Add(property.Name, new Processor());

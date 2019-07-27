@@ -5,6 +5,6 @@ namespace CoreService.Simulation
 {
     public interface IEngine
     {
-        Task<IActionResult> ProcessRequest(string name);
+        Task<IActionResult> ProcessRequestAsync(string name);
     }
 }

@@ -1,0 +1,69 @@
+@startuml
+title Core Service Class Diagram
+
+class AdaptableController {
+    - engine : IEngine
+    - ProcessRequestAsync(name, caller) : IActionResult
+    + Get(name, caller) : IActionResult
+    + Delete(name, caller) : IActionResult
+    + Options(name, caller) : IActionResult
+    + Post(name, request, caller) : IActionResult
+    + Put(name, request, caller) : IActionResult
+}
+
+interface IEngine {
+    + ProcessRequestAsync(name) : IActionResult
+}
+
+class Engine implements IEngine {
+    - IRegistry registry
+}
+
+interface IRegistry {
+    + GetProcessor(name) : IProcessor
+    + GetStep(name) : IStep
+}
+
+class Registry implements IRegistry {
+    - Settings : ConfigurationSettings
+    - Processors : IDictionary<string, IProcessor>
+    - Steps : IDictionary<string, IStep>
+}
+
+interface IProcessor {
+    + ErrorPayload : string
+    + ErrorPayloadSize : integer
+    + IngressLatencyMilliseconds : integer
+    + Name : string
+    + Steps : IList<string>
+    + SuccessPayload : string
+    + SuccessPayloadSize : integer
+}
+
+class Processor implements IProcessor {
+}
+
+enum ExecutionStatus {
+    Unexpected : 0
+    Success : 1
+    Fail : 2
+}
+
+interface IStep {
+    + Name : string
+    + ExecuteAsync() : ExecutionStatus
+}
+
+IStep --|> ExecutionStatus : uses >
+
+class GenerateLoadStep implements IStep
+class ExternalRequestStep implements IStep
+class ProbabalisticErrorStep implements IStep
+
+AdaptableController --|> IEngine : ProcessRequestAsync(name) >
+Engine --|> IRegistry : GetProcessor(name) >
+Engine --|> IProcessor : Steps,\nIngressLatencyMilliseconds,\nSuccessPayload,\nErrorPayload >
+Engine --|> IRegistry : GetStep(name) >
+Engine --|> IStep : ExecuteAsync()
+
+@enduml

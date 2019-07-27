@@ -4,6 +4,9 @@ namespace CoreService.Simulation
 {
     public interface IProcessor
     {
+        string ErrorPayload { get; }
+
+
         int ErrorPayloadSize { get; set; }
 
 
@@ -17,9 +20,6 @@ namespace CoreService.Simulation
 
 
         int SuccessPayloadSize { get; set; }
-
-
-        string ErrorPayload { get; }
 
 
         string SuccessPayload { get; }

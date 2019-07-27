@@ -33,7 +33,7 @@ namespace CoreService.Simulation
         /// An <see cref="ObjectResult"/> with Status404NotFound when configured to simulate an error.
         /// An <see cref="ObjectResult"/> with Status500InternalServerError if an unexpected error occurs.
         /// </returns>
-        public async Task<IActionResult> ProcessRequest(string name)
+        public async Task<IActionResult> ProcessRequestAsync(string name)
         {
             // TODO: return adaptable response
 
