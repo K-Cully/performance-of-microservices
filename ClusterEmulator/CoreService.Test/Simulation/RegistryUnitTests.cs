@@ -15,7 +15,7 @@ namespace CoreService.Test.Simulation
         [TestMethod]
         public void Dummy()
         {
-            Registry registry = new Registry();
+            //Registry registry = new Registry();
 
             Assert.IsTrue(false);
         }

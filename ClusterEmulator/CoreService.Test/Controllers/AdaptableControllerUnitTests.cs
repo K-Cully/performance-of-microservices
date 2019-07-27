@@ -16,7 +16,7 @@ namespace CoreService.Test.Controllers
         [TestMethod]
         public void Dummy()
         {
-            AdaptableController controller = new AdaptableController(new Engine(new Registry()));
+            //AdaptableController controller = new AdaptableController(new Engine(new Registry()));
 
             Assert.IsTrue(false);
         }
