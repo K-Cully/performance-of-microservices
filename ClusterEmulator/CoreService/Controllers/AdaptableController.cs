@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace CoreService.Controllers
 {
-    // TODO: make calls use async - await
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
