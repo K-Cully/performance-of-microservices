@@ -19,9 +19,15 @@ namespace CoreService.Simulation.Steps
         /// Expected setting value form:
         /// { type : <typename>, step : { <object> } }
         /// </remarks>
-        public IStep Create(string settingValue)
+        public IStep Create(dynamic settingValue)
         {
             // TODO
+            Type type = Type.GetType(settingValue.type.Value);
+
+
+
+            var step = settingValue.step;
+
             return null;
         }
     }

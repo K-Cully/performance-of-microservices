@@ -39,7 +39,13 @@ namespace CoreService.Simulation
                 // TODO: log & handle deserialization errors
 
                 // TODO: offload to factory
+
+                // TODO: inject
+                StepFactory factory = new StepFactory();
+
                 dynamic value = JsonConvert.DeserializeObject(property.Value);
+
+                IStep step = factory.Create(value);
                 Steps.Add(property.Name, new LoadStep());
             }
         }
