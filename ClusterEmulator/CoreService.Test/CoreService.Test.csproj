@@ -22,4 +22,8 @@
     <ProjectReference Include="..\CoreService\CoreService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Simulation\Steps\" />
+  </ItemGroup>
+
 </Project>

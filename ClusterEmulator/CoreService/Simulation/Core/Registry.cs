@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Core
 {
     // TODO: refactor duplicate logic, add comments and tests
 

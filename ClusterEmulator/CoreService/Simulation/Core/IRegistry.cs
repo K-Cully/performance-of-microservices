@@ -1,7 +1,6 @@
 ﻿using CoreService.Simulation.Steps;
-using System.Fabric.Description;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Core
 {
     public interface IRegistry
     {

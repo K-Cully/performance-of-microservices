@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Core
 {
     /// <summary>
     /// Loads and executes emulated and simulated request components.

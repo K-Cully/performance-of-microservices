@@ -1,11 +1,11 @@
-﻿using CoreService.Simulation;
+﻿using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Test.Simulation
+namespace CoreService.Test.Simulation.Core
 {
     [TestClass]
     public class RegistryUnitTests

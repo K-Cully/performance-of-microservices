@@ -1,4 +1,5 @@
 using CoreService.Simulation;
+using CoreService.Simulation.Core;
 using CoreService.Simulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoreService.Test.Simulation
+namespace CoreService.Test.Simulation.Core
 {
     [TestClass]
     public class EngineUnitTests
@@ -25,51 +26,50 @@ namespace CoreService.Test.Simulation
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task ProcessRequest_Throws_WhenPassedNull()
+        public async Task ProcessRequestAsync_Throws_WhenPassedNull()
         {
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(registryMock.Object);
 
-            await engine.ProcessRequest(null).ConfigureAwait(false);
+            await engine.ProcessRequestAsync(null).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task ProcessRequest_Throws_WhenPassedEmpty()
+        public async Task ProcessRequestAsync_Throws_WhenPassedEmpty()
         {
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(registryMock.Object);
 
-            await engine.ProcessRequest(string.Empty).ConfigureAwait(false);
+            await engine.ProcessRequestAsync(string.Empty).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
         [ExpectedException(typeof(NullReferenceException))]
-        public async Task ProcessRequest_Throws_WhenProcessorIsNull()
+        public async Task ProcessRequestAsync_Throws_WhenProcessorIsNull()
         {
             string name = "test";
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             registryMock.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-            await engine.ProcessRequest(name).ConfigureAwait(false);
+            await engine.ProcessRequestAsync(name).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
         [ExpectedException(typeof(NullReferenceException))]
-        public async Task ProcessRequest_Throws_WhenStepIsNull()
+        public async Task ProcessRequestAsync_Throws_WhenStepIsNull()
         {
             string name = "test";
             Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             IProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { null };
-            processor.Name = name;
 
             registryMock.Setup(reg => reg.GetProcessor(name))
                 .Returns<string>((n) => processor);
@@ -77,13 +77,13 @@ namespace CoreService.Test.Simulation
                 .Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-           await engine.ProcessRequest(name).ConfigureAwait(false);
+           await engine.ProcessRequestAsync(name).ConfigureAwait(false);
         }
 
 
         [TestMethod]
         [TestCategory("Functional")]
-        public async Task ProcessRequest_ReturnsOkayObjectResult_WhenStepsAreSuccessful()
+        public async Task ProcessRequestAsync_ReturnsOkayObjectResult_WhenStepsAreSuccessful()
         {
             string processorName = "processor";
             string stepName = "step";
@@ -94,7 +94,6 @@ namespace CoreService.Test.Simulation
 
             IProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName, stepName };
-            processor.Name = processorName;
             processor.SuccessPayloadSize = payloadSize;
             processor.IngressLatencyMilliseconds = latency;
 
@@ -110,7 +109,7 @@ namespace CoreService.Test.Simulation
 
             Engine engine = new Engine(registryMock.Object);
 
-            IActionResult result = await engine.ProcessRequest(processorName).ConfigureAwait(false);
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 
             Assert.IsTrue(DateTime.Now.Subtract(start).TotalMilliseconds > latency, "Latency should be applied correctly");
             Assert.IsNotNull(result, "Result should not be null");
@@ -126,7 +125,7 @@ namespace CoreService.Test.Simulation
 
         [TestMethod]
         [TestCategory("Functional")]
-        public async Task ProcessRequest_ReturnsInternalServerError_WhenStepReturnsUnexpected()
+        public async Task ProcessRequestAsync_ReturnsInternalServerError_WhenStepReturnsUnexpected()
         {
             string processorName = "processor";
             string okayStepName = "step";
@@ -136,7 +135,6 @@ namespace CoreService.Test.Simulation
 
             IProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
-            processor.Name = processorName;
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
 
@@ -157,7 +155,7 @@ namespace CoreService.Test.Simulation
 
             Engine engine = new Engine(registryMock.Object);
 
-            IActionResult result = await engine.ProcessRequest(processorName).ConfigureAwait(false);
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
@@ -174,7 +172,7 @@ namespace CoreService.Test.Simulation
 
         [TestMethod]
         [TestCategory("Functional")]
-        public async Task ProcessRequest_ReturnsNotFoundError_WhenStepsFail()
+        public async Task ProcessRequestAsync_ReturnsNotFoundError_WhenStepsFail()
         {
             string processorName = "processor";
             string okayStepName = "step";
@@ -184,7 +182,6 @@ namespace CoreService.Test.Simulation
 
             IProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
-            processor.Name = processorName;
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
 
@@ -205,7 +202,7 @@ namespace CoreService.Test.Simulation
 
             Engine engine = new Engine(registryMock.Object);
 
-            IActionResult result = await engine.ProcessRequest(processorName).ConfigureAwait(false);
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
@@ -222,7 +219,6 @@ namespace CoreService.Test.Simulation
 
         private readonly Processor defaultProcessor = new Processor
             {
-                Name = string.Empty,
                 Steps = new List<string>(),
                 ErrorPayloadSize = 0,
                 SuccessPayloadSize = 0,
