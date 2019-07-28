@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CoreService.Model;
+using System.Collections.Generic;
 
 namespace CoreService.Simulation.Processors
 {
@@ -10,7 +11,7 @@ namespace CoreService.Simulation.Processors
         /// <summary>
         /// Gets the error payload data.
         /// </summary>
-        object ErrorPayload { get; }
+        ErrorResponse ErrorPayload { get; }
 
 
         /// <summary>
@@ -40,6 +41,6 @@ namespace CoreService.Simulation.Processors
         /// <summary>
         /// Gets the success payload data.
         /// </summary>
-        object SuccessPayload { get; }
+        SuccessResponse SuccessPayload { get; }
     }
 }

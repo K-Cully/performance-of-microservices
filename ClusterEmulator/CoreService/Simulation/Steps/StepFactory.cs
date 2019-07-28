@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreService.Simulation.Steps
 {
@@ -27,10 +28,18 @@ namespace CoreService.Simulation.Steps
         /// </remarks>
         public IStep Create(string settingValue)
         {
-            // TODO: log
+            if (string.IsNullOrWhiteSpace(settingValue))
+            {
+                throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
+            }
 
             // Deserialize JSON to dynamic object
             dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);
+            if (errors.Any())
+            {
+                // TODO: log errors
+                return null;
+            }
 
             // Extract the step type
             Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
@@ -42,7 +51,14 @@ namespace CoreService.Simulation.Steps
             // Convert the step JSON object to the identified concrete type
             JObject stepJson = json.step;
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
-            return stepJson.ToObject(type, serializer) as IStep;
+            IStep step = stepJson.ToObject(type, serializer) as IStep;
+            if (errors.Any())
+            {
+                // TODO: log errors
+                return null;
+            }
+
+            return step;
         }
 
 
@@ -57,7 +73,6 @@ namespace CoreService.Simulation.Steps
                     {
                         Error = (o, e) =>
                         {
-                            // TODO: log
                             e.ErrorContext.Handled = true;
                             errors.Add(e.ErrorContext?.Error?.Message);
                         },

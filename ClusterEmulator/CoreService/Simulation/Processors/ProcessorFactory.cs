@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreService.Simulation.Processors
 {
@@ -23,8 +24,19 @@ namespace CoreService.Simulation.Processors
         /// </remarks>
         public IProcessor Create(string settingValue)
         {
-            // TODO: log
-            return JsonConvert.DeserializeObject<Processor>(settingValue, SerializerSettings);
+            if (string.IsNullOrWhiteSpace(settingValue))
+            {
+                throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
+            }
+
+            IProcessor processor = JsonConvert.DeserializeObject<Processor>(settingValue, SerializerSettings);
+            if (errors.Any())
+            {
+                // TODO: log errors
+                return null;
+            }
+
+            return processor;
         }
 
 
@@ -39,7 +51,6 @@ namespace CoreService.Simulation.Processors
                     {
                         Error = (o, e) =>
                         {
-                            // TODO: log
                             e.ErrorContext.Handled = true;
                             errors.Add(e.ErrorContext?.Error?.Message);
                         },
