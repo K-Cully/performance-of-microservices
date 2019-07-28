@@ -8,6 +8,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using CoreService.Simulation.Steps;
 using CoreService.Simulation.Core;
+using CoreService.Simulation.Processors;
 
 namespace CoreService
 {
@@ -40,7 +41,8 @@ namespace CoreService
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
                                             .AddSingleton<IRegistry>(new Registry(
                                                 serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings,
-                                                new StepFactory()))
+                                                new StepFactory(),
+                                                new ProcessorFactory()))
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()

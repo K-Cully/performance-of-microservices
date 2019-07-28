@@ -1,12 +1,12 @@
-﻿using CoreService.Simulation.Steps;
-using Newtonsoft.Json;
+﻿using CoreService.Simulation.Processors;
+using CoreService.Simulation.Steps;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
 
 namespace CoreService.Simulation.Core
 {
-    // TODO: refactor duplicate logic, add comments and tests
+    // TODO: add tests
 
 
     /// <summary>
@@ -28,7 +28,8 @@ namespace CoreService.Simulation.Core
         /// </summary>
         /// <param name="configurationSettings">Service configuration settings from the service context.</param>
         /// <param name="stepFactory">A factory to create steps from settings.</param>
-        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory)
+        /// <param name="processorFactory">A factory to create processors from settings.</param>
+        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory, IProcessorFactory processorFactory)
         {
             settings = configurationSettings ??
                 throw new ArgumentNullException(nameof(configurationSettings));
@@ -36,8 +37,7 @@ namespace CoreService.Simulation.Core
             Processors = new Dictionary<string, IProcessor>();
             foreach (var property in settings.Sections["Processors"].Parameters)
             {
-                // TODO: log & handle deserialization errors
-                var processor = JsonConvert.DeserializeObject<Processor>(property.Value);
+                IProcessor processor = processorFactory.Create(property.Value);
                 Processors.Add(property.Name, processor);
             }
 
