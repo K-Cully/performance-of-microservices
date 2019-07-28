@@ -54,7 +54,7 @@ namespace CoreService.Simulation.Core
         /// Retrieves the processor with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
-        /// <returns>The <see cref="Processor"/> instance.</returns>
+        /// <returns>The <see cref="IProcessor"/> instance.</returns>
         /// <exception cref="ArgumentException">
         /// name is null or white space.
         /// </exception>
@@ -71,7 +71,7 @@ namespace CoreService.Simulation.Core
         /// Retrieves the step with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the step.</param>
-        /// <returns>The <see cref="Step"/> instance.</returns>
+        /// <returns>The <see cref="IStep"/> instance.</returns>
         /// <exception cref="ArgumentException">
         /// name is null or white space.
         /// </exception>
