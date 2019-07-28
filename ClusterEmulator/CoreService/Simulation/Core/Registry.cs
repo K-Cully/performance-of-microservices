@@ -47,16 +47,15 @@ namespace CoreService.Simulation.Core
                     $"{nameof(processorFactory)} cannot be null");
             }
 
-
             Processors = new Dictionary<string, IProcessor>();
-            foreach (var property in settings.Sections["Processors"].Parameters)
+            Steps = new Dictionary<string, IStep>();
+            foreach (var property in settings.Sections["Processors"]?.Parameters)
             {
                 IProcessor processor = processorFactory.Create(property.Value);
                 Processors.Add(property.Name, processor);
             }
 
-            Steps = new Dictionary<string, IStep>();
-            foreach (var property in settings.Sections["Steps"].Parameters)
+            foreach (var property in settings.Sections["Steps"]?.Parameters)
             {
                 IStep step = stepFactory.Create(property.Value);
                 Steps.Add(property.Name, step);
@@ -110,7 +109,7 @@ namespace CoreService.Simulation.Core
                 throw new InvalidOperationException($"{typeName} '{name}' is not registered");
             }
 
-            if (value is null)
+            if (value == null)
             {
                 throw new InvalidOperationException($"Registration for {typeName} '{name}' is null");
             }
