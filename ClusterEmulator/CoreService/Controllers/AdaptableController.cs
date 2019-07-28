@@ -24,7 +24,7 @@ namespace CoreService.Controllers
         public AdaptableController(IEngine simulationEngine)
         {
             engine = simulationEngine ??
-                throw new ArgumentException("Simulation engine must be initialized", nameof(simulationEngine));
+                throw new ArgumentNullException(nameof(simulationEngine), "Simulation engine must be initialized");
         }
 
 
@@ -32,7 +32,7 @@ namespace CoreService.Controllers
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponse($"{nameof(name)} is required"));
             }
 
             if (!string.IsNullOrWhiteSpace(caller))
@@ -42,8 +42,7 @@ namespace CoreService.Controllers
 
             try
             {
-                IActionResult result = await engine.ProcessRequestAsync(name).ConfigureAwait(false);
-                return result;
+                return await engine.ProcessRequestAsync(name).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
@@ -67,21 +66,9 @@ namespace CoreService.Controllers
         [HttpGet("{name}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return BadRequest();
-            }
-
-            if (!string.IsNullOrWhiteSpace(caller))
-            {
-                // TODO log caller, if present
-            }
-
-            // TODO: return set of standard values, based on payload size
-            //return Ok(new AdaptableResponse(){ Values = new string[] { "test" } });
-
             return await ProcessRequestAsync(name, caller);
         }
 
@@ -95,6 +82,7 @@ namespace CoreService.Controllers
         [HttpDelete("{name}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
             return await ProcessRequestAsync(name, caller);
@@ -110,6 +98,7 @@ namespace CoreService.Controllers
         [HttpOptions("{name}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
             return await ProcessRequestAsync(name, caller);
@@ -125,14 +114,19 @@ namespace CoreService.Controllers
         /// <returns>An action result indicating processing status.</returns>
         [HttpPost("{name}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            // TODO: validate ModelState
+            // TODO: validate ModelState correctly
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             if (request is null)
             {
-                return BadRequest($"{nameof(request)} is required");
+                return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
             }
 
             return await ProcessRequestAsync(name, caller);
@@ -148,14 +142,19 @@ namespace CoreService.Controllers
         /// <returns>An action result indicating processing status.</returns>
         [HttpPut("{name}")]
         [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            // TODO: validate ModelState
+            // TODO: validate ModelState correctly
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             if (request is null)
             {
-                return BadRequest($"{nameof(request)} is required");
+                return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
             }
 
             return await ProcessRequestAsync(name, caller);
