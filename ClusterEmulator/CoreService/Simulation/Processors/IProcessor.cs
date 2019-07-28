@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Processors
 {
     /// <summary>
     /// An interface to define request processing configuration.

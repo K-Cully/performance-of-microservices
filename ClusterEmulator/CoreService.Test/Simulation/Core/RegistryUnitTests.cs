@@ -1,4 +1,5 @@
-﻿using CoreService.Simulation.Core;
+﻿using CoreService.Simulation;
+using CoreService.Simulation.Core;
 using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Microsoft.AspNetCore.Mvc;
@@ -89,6 +90,131 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
         }
 
+
+        [TestMethod]
+        public void GetProcessor_ReturnsCorrectValue_WhenRegistered()
+        {
+            string processorName = "Bob";
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>((s) => mockProcessor.Object);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+            IProcessor processor = registry.GetProcessor(processorName);
+
+            // Verify
+            Assert.IsNotNull(processor, "GetProcessor should return the registered value");
+        }
+
+
+        [TestMethod]
+        public void GetProcessor_Throws_WhenRegisteredValueIsNull()
+        {
+            string processorName = "Bob";
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
+        }
+
+
+        [TestMethod]
+        public void GetProcessor_Throws_WhenNameIsNotRegistered()
+        {
+            string processorName = "Xi";
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => mockProcessor.Object);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
+        }
+
+
+        [TestMethod]
+        public void GetProcessor_Throws_WhenNameIsNull()
+        {
+            string processorName = null;
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => mockProcessor.Object);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<ArgumentException>(() => registry.GetProcessor(processorName));
+        }
+
+
+        [TestMethod]
+        public void GetStep_ReturnsCorrectValue_WhenRegistered()
+        {
+            string stepName = "Mary";
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => stepMock.Object);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+            IStep step = registry.GetStep(stepName);
+
+            // Verify
+            Assert.IsNotNull(step, "GetStep should return the registered value");
+        }
 
 
         private ConfigurationSettings CreateDefaultSettings()

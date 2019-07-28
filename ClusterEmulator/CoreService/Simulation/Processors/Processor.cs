@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CoreService.Simulation
+namespace CoreService.Simulation.Processors
 {
     /// <summary>
     /// Defines request processing configuration.
