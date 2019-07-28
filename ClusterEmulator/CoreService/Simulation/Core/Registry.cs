@@ -14,10 +14,10 @@ namespace CoreService.Simulation.Core
     /// </summary>
     public class Registry : IRegistry
     {
-        private IDictionary<string, IProcessor> Processors { get; set; }
+        private IDictionary<string, IProcessor> processors;
 
 
-        private IDictionary<string, IStep> Steps { get; set; }
+        private IDictionary<string, IStep> steps;
 
 
         /// <summary>
@@ -58,55 +58,8 @@ namespace CoreService.Simulation.Core
                     $"{nameof(processorFactory)} cannot be null");
             }
 
-            InitializeFromSettings(configurationSettings, ProcessorsSection, Processors, (s) => processorFactory.Create(s));
-            InitializeFromSettings(configurationSettings, StepsSection, Steps, (s) => stepFactory.Create(s));
-
-
-
-            //Processors = new Dictionary<string, IProcessor>();
-            //Steps = new Dictionary<string, IStep>();
-            //if (configurationSettings.Sections.TryGetValue(ProcessorsSection, out ConfigurationSection processors))
-            //{
-            //    foreach (var property in processors.Parameters)
-            //    {
-            //        Processors.Add(property.Name, processorFactory.Create(property.Value));
-            //    }
-            //}
-            //else
-            //{
-            //    // TODO: log
-            //}
-
-            //if (configurationSettings.Sections.TryGetValue(StepsSection, out ConfigurationSection steps))
-            //{
-            //    foreach (var property in steps.Parameters)
-            //    {
-            //        Steps.Add(property.Name, stepFactory.Create(property.Value));
-            //    }
-            //}
-            //else
-            //{
-            //    // TODO: log
-            //}
-        }
-
-
-        private void InitializeFromSettings<T>(ConfigurationSettings settings, string sectionName, IDictionary<string, T> registry, Func<string, T> factory)
-        {
-            registry = new Dictionary<string, T>();
-
-            if (settings.Sections.TryGetValue(sectionName, out ConfigurationSection section))
-            {
-                foreach (var property in section.Parameters)
-                {
-                    registry.Add(property.Name, factory(property.Value));
-                }
-            }
-            else
-            {
-                // TODO: log
-            }
-
+            InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
+            InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
         }
 
 
@@ -123,7 +76,7 @@ namespace CoreService.Simulation.Core
         /// </exception>
         public IProcessor GetProcessor(string name)
         {
-            return GetRegisteredValue(name, Processors, "Processor");
+            return GetRegisteredValue(name, processors, "Processor");
         }
 
 
@@ -140,7 +93,26 @@ namespace CoreService.Simulation.Core
         /// </exception>
         public IStep GetStep(string name)
         {
-            return GetRegisteredValue(name, Steps, "Step");
+            return GetRegisteredValue(name, steps, "Step");
+        }
+
+
+        private void InitializeFromSettings<T>(ConfigurationSettings settings, string sectionName,
+            out IDictionary<string, T> registry, Func<string, T> factory)
+        {
+            registry = new Dictionary<string, T>();
+
+            if (settings.Sections.TryGetValue(sectionName, out ConfigurationSection section))
+            {
+                foreach (var property in section.Parameters)
+                {
+                    registry.Add(property.Name, factory(property.Value));
+                }
+            }
+            else
+            {
+                // TODO: log
+            }
         }
 
 
