@@ -6,18 +6,15 @@ using System.Fabric.Description;
 
 namespace CoreService.Simulation.Core
 {
-    // TODO: add tests
-
-
     /// <summary>
     /// Handles registration and retrieval of simulation configuration settings for a service.
     /// </summary>
     public class Registry : IRegistry
     {
-        private IDictionary<string, IProcessor> processors;
+        private readonly IDictionary<string, IProcessor> processors;
 
 
-        private IDictionary<string, IStep> steps;
+        private readonly IDictionary<string, IStep> steps;
 
 
         /// <summary>
