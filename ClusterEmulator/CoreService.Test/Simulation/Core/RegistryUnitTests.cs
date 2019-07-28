@@ -50,50 +50,73 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         public void Constructor_DoesNotCallFactories_WhenSettingsAreMissing()
         {
+            // Create SF.Mock settings
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
-            // TODO: Mock factories
-            
-            Registry registry = new Registry(settings, new StepFactory(), new ProcessorFactory());
+            // Create Moq proxy instances
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
 
-            Assert.IsTrue(true);
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+
+            // Verify
+            stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Never);
+            processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Never);
         }
 
 
         [TestMethod]
         public void Constructor_CallsFactoriesCorrectly_WhenSettingsArePresent()
         {
-            //Registry registry = new Registry();
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
 
-            Assert.IsTrue(false);
+            // Create Moq proxy instances
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+
+            // Verify
+            stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(2));
+            processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
         }
 
 
 
-        private void Create()
+        private ConfigurationSettings CreateDefaultSettings()
         {
-            // TODO: remvove/ update
-
             // Create configuration structures
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
-            var section = MockConfigurationPackage.CreateConfigurationSection("Processors");
-            configurations.Add(section);
 
-            // Add Parameter entries
-            ConfigurationProperty processor1 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("1", "{ errorSize: 100, latency: 0, steps: ['A'], successSize: 20 }");
-            section.Parameters.Add(processor1);
-            ConfigurationProperty processor2 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("2", "{ errorSize : 15, latency : 0, steps : [ 'B', 'A' ], successSize : 0 }");
-            section.Parameters.Add(processor2);
+            // Add sections
+            var processorSection = MockConfigurationPackage.CreateConfigurationSection(Registry.ProcessorsSection);
+            var stepSection = MockConfigurationPackage.CreateConfigurationSection(Registry.StepsSection);
+            configurations.Add(processorSection);
+            configurations.Add(stepSection);
 
-            // TODO: remove?
-            // Register settings
-            ConfigurationPackage configPackage = MockConfigurationPackage.
-                CreateConfigurationPackage(settings, "");
+            // Add processors parameters
+            ConfigurationProperty processor = MockConfigurationPackage
+                .CreateConfigurationSectionParameters("Bob", "");
+            processorSection.Parameters.Add(processor);
 
+            // Add step parameters
+            ConfigurationProperty step1 = MockConfigurationPackage
+                .CreateConfigurationSectionParameters("Frank", "");
+            ConfigurationProperty step2 = MockConfigurationPackage
+                .CreateConfigurationSectionParameters("Mary", "");
+            stepSection.Parameters.Add(step1);
+            stepSection.Parameters.Add(step2);
+
+            return settings;
         }
     }
 }
