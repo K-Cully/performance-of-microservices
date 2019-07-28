@@ -13,7 +13,16 @@ namespace CoreService.Test.Simulation.Core
         // TODO: write UTs
 
         [TestMethod]
-        public void Dummy()
+        public void Constructor_CallsFactoriesCorrectly_WhenSettingsArePresent()
+        {
+            //Registry registry = new Registry();
+
+            Assert.IsTrue(false);
+        }
+
+
+        [TestMethod]
+        public void Constructor_Throws_WhenConfigurationSettinsIsNull()
         {
             //Registry registry = new Registry();
 

@@ -30,7 +30,7 @@ namespace CoreService.Simulation.Steps
 
             // Extract the step type
             Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
-            if (type == null)
+            if (type is null)
             {
                 throw new InvalidOperationException($"{stepNamespace}.{json.type.Value} did not resolve to a Type");
             }

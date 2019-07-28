@@ -32,7 +32,21 @@ namespace CoreService.Simulation.Core
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory, IProcessorFactory processorFactory)
         {
             settings = configurationSettings ??
-                throw new ArgumentNullException(nameof(configurationSettings));
+                throw new ArgumentNullException(nameof(configurationSettings),
+                    $"{nameof(configurationSettings)} cannot be null");
+
+            if (stepFactory is null)
+            {
+                throw new ArgumentNullException(nameof(stepFactory), 
+                    $"{nameof(stepFactory)} cannot be null");
+            }
+
+            if (processorFactory is null)
+            {
+                throw new ArgumentNullException(nameof(processorFactory),
+                    $"{nameof(processorFactory)} cannot be null");
+            }
+
 
             Processors = new Dictionary<string, IProcessor>();
             foreach (var property in settings.Sections["Processors"].Parameters)
@@ -96,7 +110,7 @@ namespace CoreService.Simulation.Core
                 throw new InvalidOperationException($"{typeName} '{name}' is not registered");
             }
 
-            if (value == null)
+            if (value is null)
             {
                 throw new InvalidOperationException($"Registration for {typeName} '{name}' is null");
             }

@@ -128,7 +128,9 @@ namespace CoreService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (request == null)
+            // TODO: validate ModelState
+
+            if (request is null)
             {
                 return BadRequest($"{nameof(request)} is required");
             }
@@ -149,7 +151,9 @@ namespace CoreService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (request == null)
+            // TODO: validate ModelState
+
+            if (request is null)
             {
                 return BadRequest($"{nameof(request)} is required");
             }
