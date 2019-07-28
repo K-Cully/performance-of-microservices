@@ -41,6 +41,12 @@ namespace CoreService.Simulation.Steps
                 return null;
             }
 
+            if (json?.type?.Value is null)
+            {
+                // TODO: log error
+                return null;
+            }
+
             // Extract the step type
             Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
             if (type is null)

@@ -29,7 +29,7 @@ namespace CoreService.Test.Simulation.Processors
 
             Assert.IsNotNull(processor, "Processor should not be null");
             Assert.AreEqual(100, processor.ErrorPayloadSize, "Error size should be set correctly");
-            Assert.AreEqual(42, processor.IngressLatencyMilliseconds, "Lavency should be set correctly");
+            Assert.AreEqual(42, processor.IngressLatencyMilliseconds, "Latency should be set correctly");
             Assert.AreEqual(steps.Count, processor.Steps.Count, "Steps should have the correct number of entries");
             Assert.IsTrue(steps.SetEquals(processor.Steps), "Steps should be set correctly");
             Assert.AreEqual(20, processor.SuccessPayloadSize, "Success size should be set correctly");
@@ -39,9 +39,20 @@ namespace CoreService.Test.Simulation.Processors
 
 
         [TestMethod]
-        public void Create_WithEmptySetting_ReturnsNull()
+        public void Create_WithNonJsonData_ReturnsNull()
         {
-            HashSet<string> steps = new HashSet<string> { "A" };
+            string setting = "???";
+            var factory = new ProcessorFactory();
+
+            IProcessor processor = factory.Create(setting);
+
+            Assert.IsNull(processor, "Processor should be null");
+        }
+
+
+        [TestMethod]
+        public void Create_WithEmptyJson_ReturnsNull()
+        {
             string setting = "{ }";
             var factory = new ProcessorFactory();
 
