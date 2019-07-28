@@ -1,3 +1,4 @@
+using CoreService.Model;
 using CoreService.Simulation;
 using CoreService.Simulation.Core;
 using CoreService.Simulation.Steps;
@@ -115,10 +116,10 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsNotNull(result, "Result should not be null");
             Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be OkObjectResult");
             OkObjectResult objectResult = result as OkObjectResult;
-            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
-            string value = objectResult.Value as string;
-            Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
-            Assert.AreEqual(value.Length, payloadSize, "Value should be of the correct length");
+            Assert.IsInstanceOfType(objectResult.Value, typeof(SuccessResponse), "Result value should be a SuccessResponse");
+            SuccessResponse value = objectResult.Value as SuccessResponse;
+            Assert.IsFalse(string.IsNullOrEmpty(value.Result), "Result should be initialized with a valid string");
+            Assert.AreEqual(value.Result.Length, payloadSize, "Result should be of the correct length");
 
         }
 
@@ -163,11 +164,10 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
             Assert.AreEqual(StatusCodes.Status500InternalServerError, objectResult.StatusCode.Value,
                 "Status code should be InternalServerError");
-            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
-            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
-            string value = objectResult.Value as string;
-            Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
-            Assert.AreEqual(value.Length, errorPayloadSize, "Value should be of the correct length");
+            Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
+            ErrorResponse value = objectResult.Value as ErrorResponse;
+            Assert.IsFalse(string.IsNullOrEmpty(value.Error), "Error should be initialized with a valid string");
+            Assert.AreEqual(value.Error.Length, errorPayloadSize, "Error should be of the correct length");
         }
 
 
@@ -211,11 +211,10 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
             Assert.AreEqual(StatusCodes.Status404NotFound, objectResult.StatusCode.Value,
                 "Status code should be InternalServerError");
-            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
-            Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
-            string value = objectResult.Value as string;
-            Assert.IsFalse(string.IsNullOrEmpty(value), "Value should be initialized with a valid string");
-            Assert.AreEqual(value.Length, errorPayloadSize, "Value should be of the correct length");
+            Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
+            ErrorResponse value = objectResult.Value as ErrorResponse;
+            Assert.IsFalse(string.IsNullOrEmpty(value.Error), "Error should be initialized with a valid string");
+            Assert.AreEqual(value.Error.Length, errorPayloadSize, "Erorr should be of the correct length");
         }
 
 
