@@ -78,7 +78,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             Engine engine = new Engine(registryMock.Object);
 
-           await engine.ProcessRequestAsync(name).ConfigureAwait(false);
+            await engine.ProcessRequestAsync(name).ConfigureAwait(false);
         }
 
 
@@ -219,11 +219,11 @@ namespace CoreService.Test.Simulation.Core
 
 
         private readonly Processor defaultProcessor = new Processor
-            {
-                Steps = new List<string>(),
-                ErrorPayloadSize = 0,
-                SuccessPayloadSize = 0,
-                IngressLatencyMilliseconds = 0
-            };
+        {
+            Steps = new List<string>(),
+            ErrorPayloadSize = 0,
+            SuccessPayloadSize = 0,
+            IngressLatencyMilliseconds = 0
+        };
     }
 }

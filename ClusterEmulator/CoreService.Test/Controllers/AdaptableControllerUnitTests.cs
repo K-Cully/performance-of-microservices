@@ -1,14 +1,11 @@
 ﻿using CoreService.Controllers;
 using CoreService.Model;
-using CoreService.Simulation;
 using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Controllers
@@ -16,7 +13,7 @@ namespace CoreService.Test.Controllers
     [TestClass]
     public class AdaptableControllerUnitTests
     {
-        private OkObjectResult okResult = new OkObjectResult(new SuccessResponse("success"));
+        private readonly OkObjectResult okResult = new OkObjectResult(new SuccessResponse("success"));
 
 
         [TestMethod]

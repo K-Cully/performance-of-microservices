@@ -45,7 +45,7 @@ namespace CoreService.Simulation.Core
 
             if (stepFactory is null)
             {
-                throw new ArgumentNullException(nameof(stepFactory), 
+                throw new ArgumentNullException(nameof(stepFactory),
                     $"{nameof(stepFactory)} cannot be null");
             }
 
