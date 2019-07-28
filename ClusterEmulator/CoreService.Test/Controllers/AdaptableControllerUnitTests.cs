@@ -2,6 +2,7 @@
 using CoreService.Model;
 using CoreService.Simulation;
 using CoreService.Simulation.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -14,7 +15,6 @@ namespace CoreService.Test.Controllers
     [TestClass]
     public class AdaptableControllerUnitTests
     {
-        // TODO: write UTs
         private OkObjectResult okResult = new OkObjectResult(new SuccessResponse("success"));
 
 
@@ -210,14 +210,56 @@ namespace CoreService.Test.Controllers
 
             // Verify
             Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be an Ok result object");
-            var resultObject = result as BadRequestObjectResult;
-            Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
-            var response = resultObject.Value as ErrorResponse;
-            Assert.AreEqual("['value_1 is not valid']", response.Error, "Error should be set correctly");
+            var resultObject = result as OkObjectResult;
+            Assert.AreEqual(okResult, resultObject, "Result should match expected");
         }
 
 
-        // TODO: exception handling validation
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task Get_WhenEngineThrowsArgumentException_ReturnsBadRequest()
+        {
+            string message = "boom";
+
+            // Setup
+            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
+                .ThrowsAsync(new ArgumentException(message));
+            AdaptableController controller = new AdaptableController(engine.Object);
+
+            // Act
+            IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
+
+            // Verify
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request result object");
+            var resultObject = result as BadRequestObjectResult;
+            Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
+            var response = resultObject.Value as ErrorResponse;
+            Assert.AreEqual(message, response.Error, "Error should be set correctly");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task Get_WhenEngineThrowsException_ReturnsServerError()
+        {
+            string message = "boom";
+
+            // Setup
+            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
+                .ThrowsAsync(new Exception(message));
+            AdaptableController controller = new AdaptableController(engine.Object);
+
+            // Act
+            IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
+
+            // Verify
+            Assert.IsInstanceOfType(result, typeof(StatusCodeResult), "Result should be a status code result object");
+            var statusCode = result as StatusCodeResult;
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, statusCode.StatusCode,
+                "Status code should be 500");
+        }
 
         // TODO: model validation
 
