@@ -1,7 +1,5 @@
 ﻿using CoreService.Simulation.Steps;
-using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
@@ -10,6 +8,10 @@ namespace CoreService.Simulation.Core
 {
     // TODO: refactor duplicate logic, add comments and tests
 
+
+    /// <summary>
+    /// Handles registration and retrieval of simulation configuration settings for a service.
+    /// </summary>
     public class Registry : IRegistry
     {
         private readonly ConfigurationSettings settings;
@@ -21,6 +23,11 @@ namespace CoreService.Simulation.Core
         private IDictionary<string, IStep> Steps { get; set; }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Registry"/>.
+        /// </summary>
+        /// <param name="configurationSettings">Service configuration settings from the service context.</param>
+        /// <param name="stepFactory">A factory to create steps from settings.</param>
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory)
         {
             settings = configurationSettings ??
@@ -37,52 +44,64 @@ namespace CoreService.Simulation.Core
             Steps = new Dictionary<string, IStep>();
             foreach (var property in settings.Sections["Steps"].Parameters)
             {
-                // TODO: log & handle deserialization errors
                 IStep step = stepFactory.Create(property.Value);
                 Steps.Add(property.Name, step);
             }
         }
 
 
+        /// <summary>
+        /// Retrieves the processor with a given name, if it is registered.
+        /// </summary>
+        /// <param name="name">The name of the processor.</param>
+        /// <returns>The <see cref="Processor"/> instance.</returns>
+        /// <exception cref="ArgumentException">
+        /// name is null or white space.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// The processor is not registered or the registration is not valid.
+        /// </exception>
         public IProcessor GetProcessor(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Processor name cannot be null or whitespace", nameof(name));
-            }
-
-            if (!Processors.TryGetValue(name, out IProcessor processor))
-            {
-                throw new InvalidOperationException($"Processor '{name}' is not registered");
-            }
-
-            if (processor == null)
-            {
-                throw new InvalidOperationException($"Registration for processor '{name}' is null");
-            }
-
-            return processor;
+            return GetRegisteredValue(name, Processors, "Processor");
         }
 
 
+        /// <summary>
+        /// Retrieves the step with a given name, if it is registered.
+        /// </summary>
+        /// <param name="name">The name of the step.</param>
+        /// <returns>The <see cref="Step"/> instance.</returns>
+        /// <exception cref="ArgumentException">
+        /// name is null or white space.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// The step is not registered or the registration is not valid.
+        /// </exception>
         public IStep GetStep(string name)
+        {
+            return GetRegisteredValue(name, Steps, "Step");
+        }
+
+
+        private T GetRegisteredValue<T>(string name, IDictionary<string, T> registry, string typeName)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException("Step name cannot be null or whitespace", nameof(name));
+                throw new ArgumentException($"{typeName} name cannot be null or whitespace", nameof(name));
             }
 
-            if (!Steps.TryGetValue(name, out IStep step))
+            if (!registry.TryGetValue(name, out T value))
             {
-                throw new InvalidOperationException($"Step '{name}' is not registered");
+                throw new InvalidOperationException($"{typeName} '{name}' is not registered");
             }
 
-            if (step == null)
+            if (value == null)
             {
-                throw new InvalidOperationException($"Registration for step '{name}' is null");
+                throw new InvalidOperationException($"Registration for {typeName} '{name}' is null");
             }
 
-            return step;
+            return value;
         }
     }
 }

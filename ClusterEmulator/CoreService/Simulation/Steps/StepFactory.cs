@@ -23,6 +23,8 @@ namespace CoreService.Simulation.Steps
         /// </remarks>
         public IStep Create(dynamic settingValue)
         {
+            // TODO: log and handle deserialization errors
+
             // Deserialize JSON to dynamic object
             dynamic json = JsonConvert.DeserializeObject(settingValue);
 
