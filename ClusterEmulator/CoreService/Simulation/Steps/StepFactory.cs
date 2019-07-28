@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace CoreService.Simulation.Steps
 {
@@ -10,6 +11,9 @@ namespace CoreService.Simulation.Steps
     public class StepFactory : IStepFactory
     {
         private readonly string stepNamespace = typeof(StepFactory).Namespace;
+
+
+        private List<string> errors;
 
 
         /// <summary>
@@ -23,10 +27,10 @@ namespace CoreService.Simulation.Steps
         /// </remarks>
         public IStep Create(string settingValue)
         {
-            // TODO: log and handle deserialization errors
+            // TODO: log
 
             // Deserialize JSON to dynamic object
-            dynamic json = JsonConvert.DeserializeObject(settingValue);
+            dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);
 
             // Extract the step type
             Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
@@ -37,7 +41,35 @@ namespace CoreService.Simulation.Steps
 
             // Convert the step JSON object to the identified concrete type
             JObject stepJson = json.step;
-            return stepJson.ToObject(type) as IStep;
+            var serializer = JsonSerializer.CreateDefault(SerializerSettings);
+            return stepJson.ToObject(type, serializer) as IStep;
         }
+
+
+        private JsonSerializerSettings SerializerSettings
+        {
+            get
+            {
+                errors = new List<string>();
+                if (serializerSettings is null)
+                {
+                    serializerSettings = new JsonSerializerSettings()
+                    {
+                        Error = (o, e) =>
+                        {
+                            // TODO: log
+                            e.ErrorContext.Handled = true;
+                            errors.Add(e.ErrorContext?.Error?.Message);
+                        },
+                        NullValueHandling = NullValueHandling.Ignore,
+                    };
+                }
+
+                return serializerSettings;
+            }
+        }
+
+
+        private JsonSerializerSettings serializerSettings;
     }
 }

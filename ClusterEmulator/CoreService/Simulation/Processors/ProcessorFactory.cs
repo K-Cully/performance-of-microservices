@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace CoreService.Simulation.Processors
 {
@@ -7,6 +9,9 @@ namespace CoreService.Simulation.Processors
     /// </summary>
     public class ProcessorFactory : IProcessorFactory
     {
+        private List<string> errors;
+
+
         /// <summary>
         /// Creates a concrete step object from a setting value.
         /// </summary>
@@ -18,8 +23,35 @@ namespace CoreService.Simulation.Processors
         /// </remarks>
         public IProcessor Create(string settingValue)
         {
-            // TODO: log & handle deserialization errors
-            return JsonConvert.DeserializeObject<Processor>(settingValue);
+            // TODO: log
+            return JsonConvert.DeserializeObject<Processor>(settingValue, SerializerSettings);
         }
+
+
+        private JsonSerializerSettings SerializerSettings
+        {
+            get
+            {
+                errors = new List<string>();
+                if (serializerSettings is null)
+                {
+                    serializerSettings = new JsonSerializerSettings()
+                    {
+                        Error = (o, e) =>
+                        {
+                            // TODO: log
+                            e.ErrorContext.Handled = true;
+                            errors.Add(e.ErrorContext?.Error?.Message);
+                        },
+                        NullValueHandling = NullValueHandling.Ignore,
+                    };
+                }
+
+                return serializerSettings;
+            }
+        }
+
+
+        private JsonSerializerSettings serializerSettings;
     }
 }
