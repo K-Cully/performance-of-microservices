@@ -48,7 +48,7 @@ namespace CoreService.Controllers
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 // TODO: log exception
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(new ErrorResponse(ex.Message));
             }
             catch (Exception)
             {
@@ -63,9 +63,9 @@ namespace CoreService.Controllers
         /// </summary>
         /// <param name="name">The name of the path to execute.</param>
         /// <param name="caller">The identity of the caller.</param>
-        /// <returns>A list of strings representing the simulated response payload.</returns>
+        /// <returns>An action result indicating processing status.</returns>
         [HttpGet("{name}")]
-        [ProducesResponseType(typeof(AdaptableResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
@@ -93,7 +93,7 @@ namespace CoreService.Controllers
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpDelete("{name}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
@@ -108,7 +108,7 @@ namespace CoreService.Controllers
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpOptions("{name}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
@@ -124,7 +124,7 @@ namespace CoreService.Controllers
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpPost("{name}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
@@ -145,7 +145,7 @@ namespace CoreService.Controllers
         /// <param name="caller">The identity of the caller.</param>
         /// <returns>An action result indicating processing status.</returns>
         [HttpPut("{name}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {

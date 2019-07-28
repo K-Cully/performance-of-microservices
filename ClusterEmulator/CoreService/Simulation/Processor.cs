@@ -1,4 +1,5 @@
 ﻿
+using CoreService.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace CoreService.Simulation
         /// Gets the error payload data.
         /// </summary>
         [JsonIgnore]
-        public object ErrorPayload => new { error = new string(new char[ErrorPayloadSize]) }; // TODO: clean up
+        public object ErrorPayload => new ErrorResponse(new string(new char[ErrorPayloadSize])); // TODO: clean up
 
 
         /// <summary>
@@ -58,6 +59,6 @@ namespace CoreService.Simulation
         /// Gets the success payload data.
         /// </summary>
         [JsonIgnore]
-        public object SuccessPayload => new { result = new string(new char[SuccessPayloadSize]) }; // TODO: clean up
+        public object SuccessPayload => new SuccessResponse(new string(new char[SuccessPayloadSize])); // TODO: clean up
     }
 }

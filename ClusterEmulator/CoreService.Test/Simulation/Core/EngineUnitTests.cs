@@ -161,7 +161,8 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
             ObjectResult objectResult = result as ObjectResult;
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
-            Assert.AreEqual(StatusCodes.Status500InternalServerError, objectResult.StatusCode.Value, "Status code should be InternalServerError");
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, objectResult.StatusCode.Value,
+                "Status code should be InternalServerError");
             Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
             Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
             string value = objectResult.Value as string;
@@ -208,7 +209,8 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
             ObjectResult objectResult = result as ObjectResult;
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
-            Assert.AreEqual(StatusCodes.Status404NotFound, objectResult.StatusCode.Value, "Status code should be InternalServerError");
+            Assert.AreEqual(StatusCodes.Status404NotFound, objectResult.StatusCode.Value,
+                "Status code should be InternalServerError");
             Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
             Assert.IsInstanceOfType(objectResult.Value, typeof(string), "Result value should be a string");
             string value = objectResult.Value as string;
