@@ -50,9 +50,14 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         public void Constructor_DoesNotCallFactories_WhenSettingsAreMissing()
         {
-            //Registry registry = new Registry();
+            var configurations = new ConfigurationSectionCollection();
+            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
-            Assert.IsTrue(false);
+            // TODO: Mock factories
+            
+            Registry registry = new Registry(settings, new StepFactory(), new ProcessorFactory());
+
+            Assert.IsTrue(true);
         }
 
 

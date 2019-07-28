@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="settingValue">The step setting value.</param>
         /// <returns>An initialized <see cref="IStep"/> instance.</returns>
-        IStep Create(dynamic settingValue);
+        IStep Create(string settingValue);
     }
 }

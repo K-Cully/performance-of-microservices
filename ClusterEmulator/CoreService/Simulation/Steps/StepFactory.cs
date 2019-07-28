@@ -21,7 +21,7 @@ namespace CoreService.Simulation.Steps
         /// Expected setting form:
         /// { type : <typename>, step : { <object> } }
         /// </remarks>
-        public IStep Create(dynamic settingValue)
+        public IStep Create(string settingValue)
         {
             // TODO: log and handle deserialization errors
 
