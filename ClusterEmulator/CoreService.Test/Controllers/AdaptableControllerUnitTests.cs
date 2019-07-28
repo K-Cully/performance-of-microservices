@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Controllers
@@ -260,8 +261,5 @@ namespace CoreService.Test.Controllers
             Assert.AreEqual(StatusCodes.Status500InternalServerError, statusCode.StatusCode,
                 "Status code should be 500");
         }
-
-        // TODO: model validation
-
     }
 }

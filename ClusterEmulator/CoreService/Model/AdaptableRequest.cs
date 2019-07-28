@@ -13,7 +13,7 @@ namespace CoreService.Model
         /// <summary>
         /// The request payload
         /// </summary>
-        [JsonProperty("payload")]
+        [JsonProperty("payload", Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
         [JsonRequired]
         public IEnumerable<string> Payload { get; set; }
     }
