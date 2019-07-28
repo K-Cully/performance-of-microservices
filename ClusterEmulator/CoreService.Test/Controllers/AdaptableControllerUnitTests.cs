@@ -39,7 +39,7 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Get(null, "test").ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
@@ -59,7 +59,7 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Options(null, null).ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
@@ -80,7 +80,7 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Post(null, request, "test").ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
@@ -100,12 +100,35 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
             Assert.AreEqual("request is required", response.Error, "Error should be set correctly");
         }
+
+
+        [TestMethod]
+        [TestCategory("Input")]
+        public async Task Post_WithInvalidModel_ReturnsBadRequest()
+        {
+            // Setup
+            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            AdaptableController controller = new AdaptableController(engine.Object);
+            controller.ModelState.AddModelError("value_1", "value_1 is not valid");
+            controller.ModelState.AddModelError("value_2", "value_2 is not valid");
+
+            // Act
+            IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
+
+            // Verify
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
+            var resultObject = result as BadRequestObjectResult;
+            Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
+            var response = resultObject.Value as ErrorResponse;
+            Assert.AreEqual("['value_1 is not valid', 'value_2 is not valid']", response.Error, "Error should be set correctly");
+        }
+
 
 
         [TestMethod]
@@ -121,7 +144,7 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Put(null, request, "test").ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
@@ -141,7 +164,7 @@ namespace CoreService.Test.Controllers
             IActionResult result = await controller.Put("test", null, "test").ConfigureAwait(false);
 
             // Verify
-            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad request object");
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
             var resultObject = result as BadRequestObjectResult;
             Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
             var response = resultObject.Value as ErrorResponse;
@@ -149,7 +172,54 @@ namespace CoreService.Test.Controllers
         }
 
 
+        [TestMethod]
+        [TestCategory("Input")]
+        public async Task Put_WithInvalidModel_ReturnsBadRequest()
+        {
+            // Setup
+            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            AdaptableController controller = new AdaptableController(engine.Object);
+            controller.ModelState.AddModelError("value_1", "value_1 is not valid");
 
+            // Act
+            IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
+
+            // Verify
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult), "Result should be a bad result object");
+            var resultObject = result as BadRequestObjectResult;
+            Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
+            var response = resultObject.Value as ErrorResponse;
+            Assert.AreEqual("['value_1 is not valid']", response.Error, "Error should be set correctly");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task Get_WithValidData_ReturnsCorrectResponse()
+        {
+            string name = "Bob";
+
+            // Setup
+            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            engine.Setup(e => e.ProcessRequestAsync(name))
+                .ReturnsAsync(okResult);
+            AdaptableController controller = new AdaptableController(engine.Object);
+
+            // Act
+            IActionResult result = await controller.Get(name, "test").ConfigureAwait(false);
+
+            // Verify
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be an Ok result object");
+            var resultObject = result as BadRequestObjectResult;
+            Assert.IsInstanceOfType(resultObject.Value, typeof(ErrorResponse), "Value should be an error response");
+            var response = resultObject.Value as ErrorResponse;
+            Assert.AreEqual("['value_1 is not valid']", response.Error, "Error should be set correctly");
+        }
+
+
+        // TODO: exception handling validation
+
+        // TODO: model validation
 
     }
 }

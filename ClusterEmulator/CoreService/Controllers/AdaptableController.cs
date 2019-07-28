@@ -4,6 +4,9 @@ using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreService.Controllers
@@ -118,10 +121,10 @@ namespace CoreService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            // TODO: validate ModelState correctly
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
             }
 
             if (request is null)
@@ -146,10 +149,10 @@ namespace CoreService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            // TODO: validate ModelState correctly
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
             }
 
             if (request is null)
