@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
@@ -61,10 +62,11 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("bytes must be in the range 0 - 2,147,483,647");
             }
 
-            char[] temporary = null;
+            IntPtr memory = IntPtr.Zero;
             if (MemoryInBytes > 0)
             {
-                temporary = new char[(MemoryInBytes / 2) + 1];
+                // TODO: change from comitted to assigned memory
+                memory = Marshal.AllocHGlobal(MemoryInBytes);
             }
 
             List<Task> coreTasks = new List<Task>();
@@ -74,10 +76,9 @@ namespace CoreService.Simulation.Steps
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
-            if (temporary != null)
+            if (memory != IntPtr.Zero)
             {
-                // Using temporary to avoid compiler optimization removing it
-                temporary[0] = 'P';
+                Marshal.FreeHGlobal(memory);
             }
 
             return ExecutionStatus.Success;
