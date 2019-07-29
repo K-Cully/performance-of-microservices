@@ -37,10 +37,19 @@ namespace CoreService.Simulation.Steps
         /// <returns><see cref="ExecutionStatus.Success"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
+            if (TimeInSeconds < 0)
+            {
+                throw new InvalidOperationException("time cannot be negative");
+            }
+
+            if (CpuPercentage < 1 || CpuPercentage > 100)
+            {
+                throw new InvalidOperationException("percent must be in the range 1 - 100");
+            }
+
             List<Task> coreTasks = new List<Task>();
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
-                // TODO: support cancellation
                 coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
             }
 

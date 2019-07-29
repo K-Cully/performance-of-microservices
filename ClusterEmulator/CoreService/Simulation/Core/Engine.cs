@@ -36,8 +36,6 @@ namespace CoreService.Simulation.Core
         /// </returns>
         public async Task<IActionResult> ProcessRequestAsync(string name)
         {
-            // TODO: return adaptable response
-
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException($"{nameof(name)} cannot be null or whitespace", nameof(name));
