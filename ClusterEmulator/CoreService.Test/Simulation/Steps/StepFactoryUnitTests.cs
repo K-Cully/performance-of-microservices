@@ -68,7 +68,7 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public void Create_WithValidSetting_ReturnsProcessor()
         {
-            string setting = "{ type : 'LoadStep', step : { time : 10, percent : 20 } }";
+            string setting = "{ type : 'LoadStep', step : { bytes : 2, time : 10, percent : 20 } }";
             var factory = new StepFactory();
 
             IStep step = factory.Create(setting);

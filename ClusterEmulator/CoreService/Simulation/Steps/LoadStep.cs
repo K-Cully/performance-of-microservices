@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CoreService.Simulation.Steps
 {
     /// <summary>
-    /// A step that simulates CPU bound operations.
+    /// A step that simulates CPU bound operations and memory allocation.
     /// </summary>
     [Serializable]
     public class LoadStep : IStep
@@ -32,6 +32,15 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
+        /// The percentage of processor time that should be consumed.
+        /// </summary>
+        [JsonProperty("bytes")]
+        [JsonRequired]
+        [Range(0, int.MaxValue, ErrorMessage = "bytes must be in the range 0 - 2,147,483,647")]
+        public int MemoryInBytes { get; set; }
+
+
+        /// <summary>
         /// Executes the action defined by the step.
         /// </summary>
         /// <returns><see cref="ExecutionStatus.Success"/></returns>
@@ -47,6 +56,17 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
             }
 
+            if (MemoryInBytes < 0)
+            {
+                throw new InvalidOperationException("bytes must be in the range 0 - 2,147,483,647");
+            }
+
+            char[] temporary = null;
+            if (MemoryInBytes > 0)
+            {
+                temporary = new char[(MemoryInBytes / 2) + 1];
+            }
+
             List<Task> coreTasks = new List<Task>();
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
@@ -54,6 +74,12 @@ namespace CoreService.Simulation.Steps
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
+            if (temporary != null)
+            {
+                // Using temporary to avoid compiler optimization removing it
+                temporary[0] = 'P';
+            }
+
             return ExecutionStatus.Success;
         }
 

@@ -5,7 +5,7 @@
     <Parameter Name="2" Value="{ errorSize : 15, latency : 0, steps : [ 'B', 'A' ], successSize : 0 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="A" Value="{ type : 'LoadStep', step : { time : 10, percent : 20 } }" />
-    <Parameter Name="B" Value="{ type : 'LoadStep', step : { time : 3, percent : 90 } }" />
+    <Parameter Name="A" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
+    <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512,000,000, time : 3, percent : 90 } }" />
   </Section>
 </Settings>
