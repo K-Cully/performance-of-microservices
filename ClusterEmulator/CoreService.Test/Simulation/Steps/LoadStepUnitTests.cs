@@ -12,11 +12,12 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public void Deserialization_ValidData_CreatesValidInstance()
         {
+            ulong expectedBytes = 0;
             LoadStep step = JsonConvert.DeserializeObject<LoadStep>("{ bytes: 0, time : 10, percent : 20 }");
 
             Assert.AreEqual(20, step.CpuPercentage);
             Assert.AreEqual(10, step.TimeInSeconds);
-            Assert.AreEqual(0, step.MemoryInBytes);
+            Assert.AreEqual(expectedBytes, step.MemoryInBytes);
         }
 
 
