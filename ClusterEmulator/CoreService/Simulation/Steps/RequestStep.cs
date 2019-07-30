@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
@@ -24,7 +24,8 @@ namespace CoreService.Simulation.Steps
 
             // TODO: add caller identifier to request
 
-            AdaptableRequest request = new AdaptableRequest<AdaptableRequest>();
+            AdaptableRequest request = new AdaptableRequest();
+            // TODO: add payload
 
             // TODO: add cancellation token
             // TODO: use factory
@@ -34,9 +35,9 @@ namespace CoreService.Simulation.Steps
                     await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
             }
 
-            //client.
-            //HttpClient.PostJsonAsync()
-            //throw new NotImplementedException();
+
+            // TODO: remove this
+            return ExecutionStatus.Success;
         }
 
 
