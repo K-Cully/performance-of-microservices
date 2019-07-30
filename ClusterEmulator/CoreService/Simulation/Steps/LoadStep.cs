@@ -33,12 +33,11 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// The percentage of processor time that should be consumed.
+        /// The amount of memory to consume.
         /// </summary>
         [JsonProperty("bytes")]
         [JsonRequired]
-        [Range(0, int.MaxValue, ErrorMessage = "bytes must be in the range 0 - 2,147,483,647")]
-        public int MemoryInBytes { get; set; }
+        public ulong MemoryInBytes { get; set; }
 
 
         /// <summary>
@@ -57,16 +56,20 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
             }
 
-            if (MemoryInBytes < 0)
-            {
-                throw new InvalidOperationException("bytes must be in the range 0 - 2,147,483,647");
-            }
-
-            IntPtr memory = IntPtr.Zero;
+            List<List<byte>> block = new List<List<byte>>();
             if (MemoryInBytes > 0)
             {
-                // TODO: change from comitted to assigned memory
-                memory = Marshal.AllocHGlobal(MemoryInBytes);
+                ulong remaining = MemoryInBytes;
+
+                while (remaining > int.MaxValue)
+                {
+                    block.Add(new List<byte>(new byte[int.MaxValue]));
+                }
+
+                if (remaining > 0)
+                {
+                    block.Add(new List<byte>(new byte[(int)remaining]));
+                }
             }
 
             List<Task> coreTasks = new List<Task>();
@@ -76,11 +79,6 @@ namespace CoreService.Simulation.Steps
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
-            if (memory != IntPtr.Zero)
-            {
-                Marshal.FreeHGlobal(memory);
-            }
-
             return ExecutionStatus.Success;
         }
 

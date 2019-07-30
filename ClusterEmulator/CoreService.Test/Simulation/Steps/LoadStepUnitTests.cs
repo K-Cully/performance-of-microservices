@@ -52,17 +52,6 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_InvalidBytes_Throws()
-        {
-            var step = new LoadStep()
-            { MemoryInBytes = -2, TimeInSeconds = 1, CpuPercentage = 5 };
-
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                () => step.ExecuteAsync());
-        }
-
-
-        [TestMethod]
         public async Task ExecuteAsync_ValidState_ExecutesCorrectly()
         {
             var start = DateTime.UtcNow;
@@ -91,16 +80,13 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_ValidBytesMax_ExecutesCorrectly()
+        public async Task ExecuteAsync_ValidBytesMax_Throws()
         {
-            var start = DateTime.UtcNow;
             var step = new LoadStep()
-            { MemoryInBytes = int.MaxValue, TimeInSeconds = 1, CpuPercentage = 1 };
+            { MemoryInBytes = ulong.MaxValue, TimeInSeconds = 15, CpuPercentage = 50 };
 
-            await step.ExecuteAsync();
-            var timeSpan = DateTime.UtcNow.Subtract(start);
-
-            Assert.IsTrue(timeSpan.TotalSeconds >= 1.0d);
+            await Assert.ThrowsExceptionAsync<OutOfMemoryException>(
+                () => step.ExecuteAsync());
         }
     }
 }
