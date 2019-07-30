@@ -1,15 +1,57 @@
-﻿using System;
+﻿using CoreService.Model;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
 {
     public class RequestStep : IStep
     {
-        public Task<ExecutionStatus> ExecuteAsync()
+        /// <summary>
+        /// The request url.
+        /// </summary>
+        [JsonProperty("url")]
+        [JsonRequired]
+        public string Url { get; set; }
+
+
+        public async Task<ExecutionStatus> ExecuteAsync()
         {
-            throw new NotImplementedException();
+            // TODO: if dealing with responses >50MB, implement streaming
+
+            // TODO: add caller identifier to request
+
+            AdaptableRequest request = new AdaptableRequest<AdaptableRequest>();
+
+            // TODO: add cancellation token
+            // TODO: use factory
+            using (var client = new HttpClient())
+            {
+                HttpResponseMessage response =
+                    await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
+            }
+
+            //client.
+            //HttpClient.PostJsonAsync()
+            //throw new NotImplementedException();
         }
+
+
+        /// <summary>
+        /// Enumerable of supported Http methods in uppercase
+        /// </summary>
+        private readonly IEnumerable<string> supportedMethods = new List<HttpMethod>()
+        {
+            HttpMethod.Get,
+            HttpMethod.Post,
+            HttpMethod.Put,
+            HttpMethod.Head,
+            HttpMethod.Delete,
+            HttpMethod.Trace,
+            HttpMethod.Options
+        }.Select(m => m.Method.ToUpperInvariant());
     }
 }

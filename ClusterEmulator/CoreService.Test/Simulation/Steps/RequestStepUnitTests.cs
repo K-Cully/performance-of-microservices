@@ -2,8 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Steps
@@ -15,7 +13,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Deserialization_ValidData_CreatesValidInstance()
         {
             ulong expectedBytes = 0;
-            RequestStep step = JsonConvert.DeserializeObject<RequestStep>("{ url: http://localhost/, size : 10 }");
+            RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
+                "{ url: http://localhost/, size : 10, timeout: 3, retries : 0, retryPloicy : None }");
 
             Assert.AreEqual("http://localhost/", step.Url);
             Assert.AreEqual(10, step.PayloadSize);
@@ -34,7 +33,7 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_MissingUrl_Throws()
         {
             var step = new RequestStep()
-            { Url = string.Empty, PayloadSize = 15 };
+            { Url = string.Empty, PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -45,7 +44,7 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_FileUrl_Throws()
         {
             var step = new RequestStep()
-            { Url = "file://test.txt", PayloadSize = 15 };
+            { Url = "file://test.txt", PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -56,7 +55,84 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_RelativeUrl_Throws()
         {
             var step = new RequestStep()
-            { Url = "/test.html", PayloadSize = 15 };
+            { Url = "/test.html", PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_InvalidPayloadSize_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = -1, Timeout = 1, Retries = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_MissingPayloadSize_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", Timeout = 15, Retries = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_InvalidTimeout_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = 15, Timeout = -1, Retries = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_MissingTimeout_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = 15, Retries = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_InvalidRetries_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = -1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_MissingRetries_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = 15, Timeout = 1, RetryPolicy = None };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_MissingRetryPolicy_Throws()
+        {
+            var step = new RequestStep()
+            { Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1 };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -68,7 +144,7 @@ namespace CoreService.Test.Simulation.Steps
         {
             // TODO: mock endpoint
             var step = new RequestStep()
-            { Url = "http://test.html", PayloadSize = 15 };
+            { Url = "http://test.html", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
 
             ExecutionStatus status = await step.ExecuteAsync();
             Assert.AreEqual(ExecutionStatus.Success, status);
@@ -80,10 +156,12 @@ namespace CoreService.Test.Simulation.Steps
         {
             // TODO: mock endpoint
             var step = new RequestStep()
-            { Url = "http://test.html", PayloadSize = 15 };
+            { Url = "http://test.html", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
 
             ExecutionStatus status = await step.ExecuteAsync();
             Assert.AreEqual(ExecutionStatus.Fail, status);
         }
+
+        // TODO: add UTs with complex timeout and retry policies
     }
  }
