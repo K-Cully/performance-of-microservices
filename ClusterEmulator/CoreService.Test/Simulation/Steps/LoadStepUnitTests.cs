@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Steps
@@ -58,10 +57,11 @@ namespace CoreService.Test.Simulation.Steps
             var step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 1, CpuPercentage = 10 };
 
-            await step.ExecuteAsync();
+            ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
 
             Assert.IsTrue(timeSpan.TotalSeconds >= 1.0d);
+            Assert.AreEqual(ExecutionStatus.Success, status);
         }
 
 
@@ -72,10 +72,11 @@ namespace CoreService.Test.Simulation.Steps
             var step = new LoadStep()
             { MemoryInBytes = 1, TimeInSeconds = 1, CpuPercentage = 1 };
 
-            await step.ExecuteAsync();
+            ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
 
             Assert.IsTrue(timeSpan.TotalSeconds >= 1.0d);
+            Assert.AreEqual(ExecutionStatus.Success, status);
         }
 
 
