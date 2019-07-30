@@ -56,6 +56,8 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
             }
 
+            // TODO: modify steps to not throw for unexpected cases
+
             List<List<byte>> block = new List<List<byte>>();
             if (MemoryInBytes > 0)
             {
