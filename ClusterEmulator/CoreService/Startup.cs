@@ -14,6 +14,9 @@ namespace CoreService
 {
     public class Startup
     {
+        // TODO: add registry and construct http clients
+        // as per https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,7 +29,7 @@ namespace CoreService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
 

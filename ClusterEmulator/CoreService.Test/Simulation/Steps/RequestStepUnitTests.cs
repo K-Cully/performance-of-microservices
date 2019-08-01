@@ -150,10 +150,10 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_MissingMethod_Throws()
+        public async Task ExecuteAsync_UnknownMethod_Throws()
         {
             var step = new RequestStep()
-            { Method = "FRY", Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1, RetryPolicy = None };
+            { Method = "UNKNOWN", Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1, RetryPolicy = None };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
