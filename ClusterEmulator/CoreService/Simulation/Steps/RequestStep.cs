@@ -38,6 +38,13 @@ namespace CoreService.Simulation.Steps
 
         public async Task<ExecutionStatus> ExecuteAsync()
         {
+            // Policy -> name and details
+
+            // HttpClient -> name, policies and details (host and headers?)
+
+            // Request -> if reusable_http_client_name, path and request else host, path, headers, policy and request
+
+
             // TODO: if dealing with responses >50MB, implement streaming
 
             // TODO: unify sizes to be in bytes
@@ -63,13 +70,14 @@ namespace CoreService.Simulation.Steps
             // TODO: add payload
 
             // TODO: add cancellation token
-            // TODO: use factory
+            // TODO: use factory with optional "reuse sockets" flag
             using (var client = new HttpClient())
             {
                 HttpResponseMessage response =
                     await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
             }
 
+            // TODO: add configuration of Handler lifetime
 
             // TODO: remove this
             return ExecutionStatus.Success;

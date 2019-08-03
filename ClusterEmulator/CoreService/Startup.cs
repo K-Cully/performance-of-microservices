@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,14 @@ namespace CoreService
 {
     public class Startup
     {
-        // TODO: add registry and construct http clients
-        // as per https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory
-
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IRegistry registry)
         {
-            Configuration = configuration;
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Registry = registry ?? throw new ArgumentNullException(nameof(registry));
         }
+
+
+        private IRegistry Registry { get; }
 
 
         public IConfiguration Configuration { get; }
@@ -40,6 +42,11 @@ namespace CoreService
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // TODO: use polly
+            // TODO: add registry and construct http clients
+            // as per https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory
+            // and https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.1
 
             app.UseMvc();
         }
