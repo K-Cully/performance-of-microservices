@@ -24,9 +24,9 @@ namespace CoreService.Test.Simulation.Steps
             string setting = "???";
             var factory = new StepFactory();
 
-            IStep processor = factory.Create(setting);
+            IStep step = factory.Create(setting);
 
-            Assert.IsNull(processor, "Processor should be null");
+            Assert.IsNull(step, "Step should be null");
         }
 
 
@@ -66,7 +66,7 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public void Create_WithValidSetting_ReturnsProcessor()
+        public void Create_WithValidSetting_ReturnsStep()
         {
             string setting = "{ type : 'LoadStep', step : { bytes : 2, time : 10, percent : 20 } }";
             var factory = new StepFactory();
