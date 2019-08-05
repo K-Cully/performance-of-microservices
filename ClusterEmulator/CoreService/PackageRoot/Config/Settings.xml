@@ -6,7 +6,7 @@
   </Section>
   <Section Name="Steps">
     <Parameter Name="A" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
-    <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512,000,000, time : 3, percent : 90 } }" />
+    <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
   </Section>
   <Section Name="Policies">
     <Parameter Name="A" Value="{ type : 'RetryConfiguration', policy : { retries : 3, delays : [ 1, 5 ] } }" />
