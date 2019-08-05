@@ -61,9 +61,9 @@ namespace CoreService.Simulation.HttpClient
             }
 
             // Convert the step JSON object to the identified concrete type
-            JObject stepJson = json.step;
+            JObject policyJson = json.policy;
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
-            var config = stepJson.ToObject(type, serializer) as IPolicyConfiguration;
+            var config = policyJson.ToObject(type, serializer) as IPolicyConfiguration;
             if (errors.Any())
             {
                 // TODO: log errors
