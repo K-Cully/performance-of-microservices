@@ -56,6 +56,8 @@ namespace CoreService
             var registry = services.AddPolicyRegistry();
             string policyName = "sample_policy";
 
+
+
             registry.Add(policyName,
                 HttpPolicyExtensions.HandleTransientHttpError()
                 .WaitAndRetryAsync(new[]
