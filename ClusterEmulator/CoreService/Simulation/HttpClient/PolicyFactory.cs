@@ -62,6 +62,11 @@ namespace CoreService.Simulation.HttpClient
 
             // Convert the step JSON object to the identified concrete type
             JObject policyJson = json.policy;
+            if (policyJson is null)
+            {
+                throw new InvalidOperationException($"No policy found in setting '{settingValue}'");
+            }
+
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
             var config = policyJson.ToObject(type, serializer) as IPolicyConfiguration;
             if (errors.Any())

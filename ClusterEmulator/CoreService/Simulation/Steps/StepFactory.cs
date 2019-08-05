@@ -56,6 +56,11 @@ namespace CoreService.Simulation.Steps
 
             // Convert the step JSON object to the identified concrete type
             JObject stepJson = json.step;
+            if (stepJson is null)
+            {
+                throw new InvalidOperationException($"No step found in setting '{settingValue}'");
+            }
+
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
             IStep step = stepJson.ToObject(type, serializer) as IStep;
             if (errors.Any())

@@ -44,7 +44,7 @@ namespace CoreService.Test.Simulation.HttpClient
 
 
         [TestMethod]
-        public void Create_WithUnknownType_ThrowsException()
+        public void Create_WithUnknownType_Throws()
         {
             string setting = "{ type : 'JunkConfiguration', policy : {  } }";
             var factory = new PolicyFactory();
@@ -55,7 +55,18 @@ namespace CoreService.Test.Simulation.HttpClient
 
 
         [TestMethod]
-        public void Create_WithInvalidSetting_ReturnsNull()
+        public void Create_WithMissingPolicy_Throws()
+        {
+            string setting = "{ type : 'RetryConfiguration' }";
+            var factory = new PolicyFactory();
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => factory.Create(setting), "Create should throw");
+        }
+
+
+        [TestMethod]
+        public void Create_WithInvalidPolicy_ReturnsNull()
         {
             string setting = "{ type : 'RetryConfiguration', policy : {  } }";
             var factory = new PolicyFactory();

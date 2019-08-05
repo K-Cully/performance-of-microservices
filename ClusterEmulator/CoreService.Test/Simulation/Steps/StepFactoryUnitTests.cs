@@ -54,7 +54,7 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public void Create_WithInValidSetting_ReturnsNull()
+        public void Create_WithInvalidStep_ReturnsNull()
         {
             string setting = "{ type : 'LoadStep', step : {  } }";
             var factory = new StepFactory();
@@ -62,6 +62,17 @@ namespace CoreService.Test.Simulation.Steps
             IStep step = factory.Create(setting);
 
             Assert.IsNull(step, "Step should be null");
+        }
+
+
+        [TestMethod]
+        public void Create_WithMissingStep_Throws()
+        {
+            string setting = "{ type : 'LoadStep' }";
+            var factory = new StepFactory();
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => factory.Create(setting), "Create should throw");
         }
 
 
