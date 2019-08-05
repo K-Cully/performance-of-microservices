@@ -1,5 +1,8 @@
-﻿using CoreService.Simulation.Processors;
+﻿using CoreService.Simulation.HttpClient;
+using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
+using Polly;
+using Polly.Registry;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
@@ -11,20 +14,38 @@ namespace CoreService.Simulation.Core
     /// </summary>
     public class Registry : IRegistry
     {
+        // TODO: add logigng throughtout
+
+
         private readonly IDictionary<string, IProcessor> processors;
 
 
         private readonly IDictionary<string, IStep> steps;
 
 
+        private readonly IDictionary<string, IsPolicy> policies;
+
+
         /// <summary>
-        /// The identifier of the processors settings section
+        /// Gets the policy registry initialized from settings.
+        /// </summary>
+        public PolicyRegistry PolicyRegistry { get; private set; }
+
+
+        /// <summary>
+        /// The identifier of the policies settings section.
+        /// </summary>
+        public const string PoliciesSection = "Policies";
+
+
+        /// <summary>
+        /// The identifier of the processors settings section.
         /// </summary>
         public const string ProcessorsSection = "Processors";
 
 
         /// <summary>
-        /// The identifier of the steps settings section
+        /// The identifier of the steps settings section.
         /// </summary>
         public const string StepsSection = "Steps";
 
@@ -35,7 +56,9 @@ namespace CoreService.Simulation.Core
         /// <param name="configurationSettings">Service configuration settings from the service context.</param>
         /// <param name="stepFactory">A factory to create steps from settings.</param>
         /// <param name="processorFactory">A factory to create processors from settings.</param>
-        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory, IProcessorFactory processorFactory)
+        /// <param name="policyFactory">A factory to create http client policies from settings.</param>
+        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
+            IProcessorFactory processorFactory, IPolicyFactory policyFactory)
         {
             if (configurationSettings is null)
             {
@@ -57,6 +80,30 @@ namespace CoreService.Simulation.Core
 
             InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
             InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
+            InitializeFromSettings(configurationSettings, PoliciesSection, out policies, (s) => policyFactory.Create(s));
+
+            PolicyRegistry = new PolicyRegistry();
+            foreach (var policy in policies)
+            {
+                PolicyRegistry.Add(policy.Key, policy.Value);
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieves the policy with a given name, if it is registered.
+        /// </summary>
+        /// <param name="name">The name of the policy.</param>
+        /// <returns>The <see cref="IsPolicy"/> instance.</returns>
+        /// <exception cref="ArgumentException">
+        /// name is null or white space.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// The policy is not registered or the registration is not valid.
+        /// </exception>
+        public IsPolicy GetPolicy(string name)
+        {
+            return GetRegisteredValue(name, policies, "Policy");
         }
 
 
@@ -108,7 +155,6 @@ namespace CoreService.Simulation.Core
             }
             else
             {
-                // TODO: log
                 throw new InvalidOperationException($"Section '{sectionName}' was not found in the configuration file");
             }
         }
