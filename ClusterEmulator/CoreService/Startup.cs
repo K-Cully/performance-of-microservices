@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
+using Polly.Extensions.Http;
 
 namespace CoreService
 {
@@ -51,7 +52,16 @@ namespace CoreService
 
             // TODO: get policy registry from retistry
             var registry = services.AddPolicyRegistry();
+            string policyName = "sample_policy";
 
+            registry.Add(policyName,
+                HttpPolicyExtensions.HandleTransientHttpError()
+                .WaitAndRetryAsync(new[]
+                    {
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromSeconds(5),
+                        TimeSpan.FromSeconds(10)
+                    }));
 
 
             // TODO: replace with actual implementation (example code only)
@@ -62,12 +72,7 @@ namespace CoreService
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
                 // TODO: add useragent c.DefaultRequestHeaders.Add(Headers.)
             })
-            .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(new[]
-            {
-                TimeSpan.FromSeconds(1),
-                TimeSpan.FromSeconds(5),
-                TimeSpan.FromSeconds(10)
-            }));
+            .AddPolicyHandlerFromRegistry(policyName);
         }
 
 
