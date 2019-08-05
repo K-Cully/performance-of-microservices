@@ -45,7 +45,7 @@ namespace CoreService.Test.Simulation.Core
 
 
         [TestMethod]
-        public void Constructor_DoesNotCallFactories_WhenSettingsAreMissing()
+        public void Constructor_Throws_WhenSettingsSectionsAreMissing()
         {
             // Create SF.Mock settings
             var configurations = new ConfigurationSectionCollection();
@@ -56,7 +56,7 @@ namespace CoreService.Test.Simulation.Core
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object);
+            Assert.ThrowsException<InvalidOperationException>(() => new Registry(settings, stepFactory.Object, processorFactory.Object));            
 
             // Verify
             stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Never);

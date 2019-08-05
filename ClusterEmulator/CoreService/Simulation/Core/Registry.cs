@@ -109,6 +109,7 @@ namespace CoreService.Simulation.Core
             else
             {
                 // TODO: log
+                throw new InvalidOperationException($"Section '{sectionName}' was not found in the configuration file");
             }
         }
 
