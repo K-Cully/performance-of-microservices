@@ -49,23 +49,12 @@ namespace CoreService
             //  httpClientBuilder.AddPolicyHandlerFromRegistry(policyName)
 
 
-            IPolicyRegistry<string> policyRegistry = new PolicyRegistry();
-            //policyRegistry.Add()
+            // TODO: add a sample policy to settings and load from registry
+            services.AddPolicyRegistry(Registry.PolicyRegistry);
 
-            // TODO: get policy registry from retistry
-            var registry = services.AddPolicyRegistry();
+
+            // TODO: get policy names from client configuration and enumerate
             string policyName = "sample_policy";
-
-
-
-            registry.Add(policyName,
-                HttpPolicyExtensions.HandleTransientHttpError()
-                .WaitAndRetryAsync(new[]
-                    {
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromSeconds(5),
-                        TimeSpan.FromSeconds(10)
-                    }));
 
             // TODO: replace with actual implementation (example code only)
             services.AddHttpClient("test", c =>

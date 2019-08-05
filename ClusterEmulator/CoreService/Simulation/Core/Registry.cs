@@ -29,7 +29,7 @@ namespace CoreService.Simulation.Core
         /// <summary>
         /// Gets the policy registry initialized from settings.
         /// </summary>
-        public PolicyRegistry PolicyRegistry { get; private set; } = new PolicyRegistry();
+        public IPolicyRegistry<string> PolicyRegistry { get; private set; } = new PolicyRegistry();
 
 
         /// <summary>
