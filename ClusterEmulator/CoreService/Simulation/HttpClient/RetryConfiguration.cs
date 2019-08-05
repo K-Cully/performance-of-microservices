@@ -1,15 +1,18 @@
 ﻿using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 
 namespace CoreService.Simulation.HttpClient
 {
     /// <summary>
-    /// Configurable components of a retyp policy.
+    /// Configurable components of a retry policy.
     /// </summary>
     [Serializable]
-    public class RetryConfiguration
+    public class RetryConfiguration : IPolicyConfiguration
     {
         /// <summary>
         /// The number of retries to attempt.
@@ -39,5 +42,25 @@ namespace CoreService.Simulation.HttpClient
         [JsonProperty("jitter")]
         [Range(1, int.MaxValue, ErrorMessage = "jitter cannot be negative")]
         public int JitterMilliseconds;
+
+
+        /// <summary>
+        /// Generates a Polly <see cref="RetryPolicy"/> from the configuration.
+        /// </summary>
+        /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
+        public IsPolicy AsPolicy()
+        {
+            // TODO: implement fully and comment
+
+            var policy = Policy.Handle<HttpRequestException>()
+                .WaitAndRetry(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3)
+                });
+
+            return policy;
+        }
     }
 }

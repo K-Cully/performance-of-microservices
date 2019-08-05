@@ -14,11 +14,7 @@ namespace CoreService.Simulation.HttpClient
         /// <returns>An initialized <see cref="IsPolicy"/> instance.</returns>
         /// <remarks>
         /// Expected setting form:
-        /// 
-        /// TODO: fill this in
-        /// 
-        /// 
-        /// { type : <typename>, step : { <object> } }
+        /// { type : <typename>, policy : { <object> } }
         /// </remarks>
         IsPolicy Create(string settingValue);
     }
