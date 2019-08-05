@@ -27,12 +27,15 @@ namespace CoreService.Simulation.HttpClient
         /// TODO: fill this in
         /// 
         /// 
-        /// { type : <typename>, step : { <object> } }
+        /// { type : <typename>, policy : { <object> } }
         /// </remarks>
         public IsPolicy Create(string settingValue)
         {
             // TODO: flesh out properly
             // See docs: https://github.com/App-vNext/Polly/blob/master/README.md#retry
+
+            var timeoutPolicy = Policy.Timeout(5);
+            // TODO: add logging to timeout
 
             var policy = Policy.Handle<HttpRequestException>()
                 .WaitAndRetry(new[]

@@ -275,8 +275,6 @@ namespace CoreService.Test.Simulation.Core
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
             IsPolicy policy = registry.GetPolicy(policyName);
-            PolicyRegistry policyRegistry = registry.PolicyRegistry;
-
 
             // Verify
             Assert.IsNotNull(policy, "GetPolicy should return the registered value");

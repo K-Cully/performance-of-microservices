@@ -80,7 +80,7 @@ namespace CoreService.Simulation.Steps
             // TODO: add configuration of Handler lifetime
 
             // TODO: remove this
-            return ExecutionStatus.Success;
+            return await Task.FromResult(ExecutionStatus.Success);
         }
 
 
