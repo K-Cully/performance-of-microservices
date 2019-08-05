@@ -29,7 +29,7 @@ namespace CoreService.Simulation.Core
         /// <summary>
         /// Gets the policy registry initialized from settings.
         /// </summary>
-        public PolicyRegistry PolicyRegistry { get; private set; }
+        public PolicyRegistry PolicyRegistry { get; private set; } = new PolicyRegistry();
 
 
         /// <summary>
@@ -78,11 +78,16 @@ namespace CoreService.Simulation.Core
                     $"{nameof(processorFactory)} cannot be null");
             }
 
+            if (policyFactory is null)
+            {
+                throw new ArgumentNullException(nameof(policyFactory),
+                    $"{nameof(policyFactory)} cannot be null");
+            }
+
             InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
             InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
             InitializeFromSettings(configurationSettings, PoliciesSection, out policies, (s) => policyFactory.Create(s));
 
-            PolicyRegistry = new PolicyRegistry();
             foreach (var policy in policies)
             {
                 PolicyRegistry.Add(policy.Key, policy.Value);

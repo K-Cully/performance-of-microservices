@@ -71,11 +71,11 @@ namespace CoreService.Simulation.Steps
 
             // TODO: add cancellation token
             // TODO: use factory with optional "reuse sockets" flag
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage response =
-                    await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
-            }
+            //using (var client = new HttpClient())
+            //{
+            //    HttpResponseMessage response =
+            //       await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
+            //}
 
             // TODO: add configuration of Handler lifetime
 
