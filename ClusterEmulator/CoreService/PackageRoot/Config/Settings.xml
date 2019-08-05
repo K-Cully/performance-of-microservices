@@ -9,7 +9,7 @@
     <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
   </Section>
   <Section Name="Policies">
-    <Parameter Name="A" Value="{ type : 'RetryConfiguration', policy : { retries : 3, delays : [ 1, 5 ] } }" />
-    <Parameter Name="B" Value="{ type : 'RetryConfiguration', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
+    <Parameter Name="A" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
+    <Parameter Name="B" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
   </Section>
 </Settings>

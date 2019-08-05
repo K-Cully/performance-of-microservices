@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO: UTs
-
 namespace CoreService.Simulation.HttpClient
 {
     /// <summary>

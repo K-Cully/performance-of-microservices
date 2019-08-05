@@ -12,7 +12,7 @@ namespace CoreService.Simulation.HttpClient
     /// Configurable components of a retry policy.
     /// </summary>
     [Serializable]
-    public class RetryConfiguration : IPolicyConfiguration
+    public class RetryConfig : IPolicyConfiguration
     {
         /// <summary>
         /// The number of retries to attempt.

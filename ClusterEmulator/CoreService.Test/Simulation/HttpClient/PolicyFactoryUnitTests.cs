@@ -57,7 +57,7 @@ namespace CoreService.Test.Simulation.HttpClient
         [TestMethod]
         public void Create_WithMissingPolicy_Throws()
         {
-            string setting = "{ type : 'RetryConfiguration' }";
+            string setting = "{ type : 'RetryConfig' }";
             var factory = new PolicyFactory();
 
             Assert.ThrowsException<InvalidOperationException>(
@@ -68,7 +68,7 @@ namespace CoreService.Test.Simulation.HttpClient
         [TestMethod]
         public void Create_WithInvalidPolicy_ReturnsNull()
         {
-            string setting = "{ type : 'RetryConfiguration', policy : {  } }";
+            string setting = "{ type : 'RetryConfig', policy : {  } }";
             var factory = new PolicyFactory();
 
             IsPolicy policy = factory.Create(setting);
@@ -80,7 +80,7 @@ namespace CoreService.Test.Simulation.HttpClient
         [TestMethod]
         public void Create_WithValidSetting_ReturnsPolicy()
         {
-            string setting = "{ type : 'RetryConfiguration', policy : { retries : 1, delays : [ 2 ] } }";
+            string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ] } }";
             var factory = new PolicyFactory();
 
             IsPolicy policy = factory.Create(setting);

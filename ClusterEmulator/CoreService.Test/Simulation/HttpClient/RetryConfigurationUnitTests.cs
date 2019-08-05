@@ -3,7 +3,7 @@
 namespace CoreService.Test.Simulation.HttpClient
 {
     [TestClass]
-    public class RetryConfigurationUnitTests
+    public class RetryConfigUnitTests
     {
         [TestMethod]
         public void Fail()
