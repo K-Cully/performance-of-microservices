@@ -59,17 +59,25 @@ namespace CoreService.Simulation.HttpClient
         /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
         public IsPolicy AsPolicy()
         {
+            if (DelaysInSeconds is null)
+            {
+                throw new InvalidOperationException("delays cannot be null");
+            }
+
+            if (JitterMilliseconds < 0)
+            {
+                throw new InvalidOperationException("jitter cannot be negative");
+            }
+
             // TODO: UTs and comments
 
             // TODO: add a logging function call to all policies
 
+            PolicyBuilder builder = Policy.Handle<HttpRequestException>();
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
+
             bool immediate = !delays.Any();
-            bool exponential = delays.Count == 1 && delays.First() == -1;
-
-            PolicyBuilder builder = Policy.Handle<HttpRequestException>();
-
             if (immediate)
             {
                 if (Async && forever)
@@ -90,50 +98,48 @@ namespace CoreService.Simulation.HttpClient
                 }
             }
 
-            if (exponential)
-            {
-                if (Async && forever)
-                {
-                    return builder.WaitAndRetryForeverAsync(c => ExponentialDelay(c));
-                }
-                else if (forever)
-                {
-                    return builder.WaitAndRetryForever(c => ExponentialDelay(c));
-                }
-                else if (Async)
-                {
-                    return builder.WaitAndRetryAsync(Retries, c => ExponentialDelay(c));
-                }
-                else
-                {
-                    return builder.WaitAndRetry(Retries, c => ExponentialDelay(c));
-                }
-            }
+            bool exponential = delays.Count == 1 && delays.First() == -1;
 
-            // Use delays only
-            if (delays.Any(d => d < 0))
+            // Defined delays rely on the list being initialized with positive delay values 
+            if (!exponential && delays.Any(d => d < 0))
             {
                 throw new InvalidOperationException($"delay values cannot be negative");
             }
 
-            if (Retries < delays.Count)
+            if (Async && forever)
             {
-                throw new InvalidOperationException($"retries cannot be lower than the number of delays");
+                return builder.WaitAndRetryForeverAsync(c => Delay(c, exponential));
             }
-
-            // Extend delays length to number of retries
-            IEnumerable<TimeSpan> delaySpans = delays
-                .Concat(Enumerable.Repeat(delays.Last(), delays.Count - Retries))
-                .Select(d => DelayWithJitter(d));
-
-            if (Async)
+            else if (forever)
             {
-                return builder.WaitAndRetryAsync(delaySpans);
+                return builder.WaitAndRetryForever(c => Delay(c, exponential));
+            }
+            else if (Async)
+            {
+                return builder.WaitAndRetryAsync(Retries, c => Delay(c, exponential));
             }
             else
             {
-                return builder.WaitAndRetry(delaySpans);
+                return builder.WaitAndRetry(Retries, c => Delay(c, exponential));
             }
+        }
+
+
+        private TimeSpan Delay(int retry, bool exponential)
+        {
+            if (exponential)
+            {
+                return ExponentialDelay(retry);
+            }
+
+            List<double> delays = DelaysInSeconds.ToList();
+            if (retry > delays.Count)
+            {
+                return DelayWithJitter(delays.Last());
+            }
+
+            // retry - 1 to convert from count to index
+            return DelayWithJitter(delays[retry - 1]);
         }
 
 
