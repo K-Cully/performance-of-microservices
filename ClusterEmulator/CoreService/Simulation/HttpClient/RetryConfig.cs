@@ -98,7 +98,7 @@ namespace CoreService.Simulation.HttpClient
                 }
             }
 
-            bool exponential = delays.Count == 1 && delays.First() == -1;
+            bool exponential = delays.Count == 1 && delays.First() == -1.0d;
 
             // Defined delays rely on the list being initialized with positive delay values 
             if (!exponential && delays.Any(d => d < 0))
@@ -151,18 +151,8 @@ namespace CoreService.Simulation.HttpClient
 
         private TimeSpan DelayWithJitter(double delay)
         {
-            TimeSpan jitter;
-
-            if (JitterMilliseconds < 1)
-            {
-                jitter = TimeSpan.Zero;
-            }
-            else
-            {
-                var jitterer = new Random();
-                return TimeSpan.FromMilliseconds(jitterer.Next(0, JitterMilliseconds));
-            }
-
+            var jitterer = new Random();
+            TimeSpan jitter = TimeSpan.FromMilliseconds(jitterer.Next(0, JitterMilliseconds));
             return TimeSpan.FromSeconds(delay) + jitter;
         }
     }

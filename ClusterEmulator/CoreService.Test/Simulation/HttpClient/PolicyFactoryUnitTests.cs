@@ -80,7 +80,7 @@ namespace CoreService.Test.Simulation.HttpClient
         [TestMethod]
         public void Create_WithValidSetting_ReturnsPolicy()
         {
-            string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ] } }";
+            string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ], async : true } }";
             var factory = new PolicyFactory();
 
             IsPolicy policy = factory.Create(setting);
