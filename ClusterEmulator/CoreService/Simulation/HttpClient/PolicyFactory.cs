@@ -15,6 +15,7 @@ namespace CoreService.Simulation.HttpClient
     {
         private List<string> errors;
 
+
         /// <summary>
         /// Creates a concrete policy object from a setting value.
         /// </summary>
