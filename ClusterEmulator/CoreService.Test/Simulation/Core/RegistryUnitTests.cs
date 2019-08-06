@@ -281,9 +281,6 @@ namespace CoreService.Test.Simulation.Core
         }
 
 
-        // TODO: test GetPolicies and PolicyRegistry
-
-
         private ConfigurationSettings CreateDefaultSettings()
         {
             // Create configuration structures
