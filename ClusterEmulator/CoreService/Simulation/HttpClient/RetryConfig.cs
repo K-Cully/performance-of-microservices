@@ -57,7 +57,7 @@ namespace CoreService.Simulation.HttpClient
         /// Generates a Polly <see cref="RetryPolicy"/> from the configuration.
         /// </summary>
         /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
-        public IsPolicy AsPolicy()
+        public Policy AsPolicy()
         {
             if (DelaysInSeconds is null)
             {
@@ -68,8 +68,6 @@ namespace CoreService.Simulation.HttpClient
             {
                 throw new InvalidOperationException("jitter cannot be negative");
             }
-
-            // TODO: UTs and comments
 
             // TODO: add a logging function call to all policies
 

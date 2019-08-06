@@ -53,7 +53,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = -1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -71,7 +71,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 0
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -89,7 +89,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -107,7 +107,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 12
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -157,7 +157,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -175,7 +175,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 5
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -193,7 +193,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 0
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -211,7 +211,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = -100
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -229,7 +229,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -247,7 +247,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -265,7 +265,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -283,7 +283,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 1
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -301,7 +301,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 5
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -319,7 +319,7 @@ namespace CoreService.Test.Simulation.HttpClient
                 Retries = 100
             };
 
-            IsPolicy policy = retryConfig.AsPolicy();
+            Policy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));

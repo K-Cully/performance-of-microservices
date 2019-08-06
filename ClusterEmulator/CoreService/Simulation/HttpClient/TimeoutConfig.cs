@@ -8,7 +8,7 @@ namespace CoreService.Simulation.HttpClient
 {
     public class TimeoutConfig : IPolicyConfiguration
     {
-        public IsPolicy AsPolicy()
+        public Policy AsPolicy()
         {
 			// TODO
             throw new NotImplementedException();

@@ -261,7 +261,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = CreateDefaultSettings();
 
             // Create Moq proxy instances
-            Mock<IsPolicy> policyMock = new Mock<IsPolicy>(MockBehavior.Strict);
+            Mock<Policy> policyMock = new Mock<Policy>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
@@ -274,7 +274,7 @@ namespace CoreService.Test.Simulation.Core
 
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
-            IsPolicy policy = registry.GetPolicy(policyName);
+            Policy policy = registry.GetPolicy(policyName);
 
             // Verify
             Assert.IsNotNull(policy, "GetPolicy should return the registered value");

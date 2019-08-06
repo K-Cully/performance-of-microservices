@@ -20,8 +20,8 @@ namespace CoreService.Simulation.Core
         /// Retrieves the policy with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the policy.</param>
-        /// <returns>The <see cref="IsPolicy"/> instance.</returns>
-        IsPolicy GetPolicy(string name);
+        /// <returns>The <see cref="Policy"/> instance.</returns>
+        Policy GetPolicy(string name);
 
 
         /// <summary>

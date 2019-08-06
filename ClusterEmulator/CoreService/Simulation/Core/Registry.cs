@@ -23,7 +23,7 @@ namespace CoreService.Simulation.Core
         private readonly IDictionary<string, IStep> steps;
 
 
-        private readonly IDictionary<string, IsPolicy> policies;
+        private readonly IDictionary<string, Policy> policies;
 
 
         /// <summary>
@@ -99,14 +99,14 @@ namespace CoreService.Simulation.Core
         /// Retrieves the policy with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the policy.</param>
-        /// <returns>The <see cref="IsPolicy"/> instance.</returns>
+        /// <returns>The <see cref="Policy"/> instance.</returns>
         /// <exception cref="ArgumentException">
         /// name is null or white space.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// The policy is not registered or the registration is not valid.
         /// </exception>
-        public IsPolicy GetPolicy(string name)
+        public Policy GetPolicy(string name)
         {
             return GetRegisteredValue(name, policies, "Policy");
         }

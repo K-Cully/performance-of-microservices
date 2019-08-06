@@ -25,7 +25,7 @@ namespace CoreService.Test.Simulation.HttpClient
             string setting = "???";
             var factory = new PolicyFactory();
 
-            IsPolicy policy = factory.Create(setting);
+            Policy policy = factory.Create(setting);
 
             Assert.IsNull(policy, "Policy should be null");
         }
@@ -37,7 +37,7 @@ namespace CoreService.Test.Simulation.HttpClient
             string setting = "{ }";
             var factory = new PolicyFactory();
 
-            IsPolicy policy = factory.Create(setting);
+            Policy policy = factory.Create(setting);
 
             Assert.IsNull(policy, "Policy should be null");
         }
@@ -71,7 +71,7 @@ namespace CoreService.Test.Simulation.HttpClient
             string setting = "{ type : 'RetryConfig', policy : {  } }";
             var factory = new PolicyFactory();
 
-            IsPolicy policy = factory.Create(setting);
+            Policy policy = factory.Create(setting);
 
             Assert.IsNull(policy, "Policy should be null");
         }
@@ -83,7 +83,7 @@ namespace CoreService.Test.Simulation.HttpClient
             string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ], async : true } }";
             var factory = new PolicyFactory();
 
-            IsPolicy policy = factory.Create(setting);
+            Policy policy = factory.Create(setting);
 
             Assert.IsNotNull(policy, "Policy should not be null");
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "Policy should be a RetryPolicy instance");
