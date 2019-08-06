@@ -60,7 +60,7 @@ namespace CoreService.Test.Simulation.HttpClient
             var retryConfig = new TimeoutConfig
             {
                 Async = true,
-                TimeoutInSeconds = double.MaxValue,
+                TimeoutInSeconds = 1.0d,
                 CancelDelegates = true
             };
 
@@ -77,7 +77,7 @@ namespace CoreService.Test.Simulation.HttpClient
             var retryConfig = new TimeoutConfig
             {
                 Async = false,
-                TimeoutInSeconds = double.MaxValue,
+                TimeoutInSeconds = 5.0d,
                 CancelDelegates = true
             };
 
@@ -94,7 +94,7 @@ namespace CoreService.Test.Simulation.HttpClient
             var retryConfig = new TimeoutConfig
             {
                 Async = true,
-                TimeoutInSeconds = double.MaxValue,
+                TimeoutInSeconds = 1000.0d,
                 CancelDelegates = false
             };
 
@@ -111,7 +111,7 @@ namespace CoreService.Test.Simulation.HttpClient
             var retryConfig = new TimeoutConfig
             {
                 Async = false,
-                TimeoutInSeconds = double.MaxValue,
+                TimeoutInSeconds = 0.001d,
                 CancelDelegates = false
             };
 
@@ -119,14 +119,6 @@ namespace CoreService.Test.Simulation.HttpClient
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
-        }
-
-
-        [TestMethod]
-        public void Fail()
-        {
-            // TODO
-            Assert.IsTrue(false);
         }
     }
 }
