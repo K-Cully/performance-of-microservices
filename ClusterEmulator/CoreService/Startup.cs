@@ -48,13 +48,11 @@ namespace CoreService
             //  foreach policyName in client.Policies
             //  httpClientBuilder.AddPolicyHandlerFromRegistry(policyName)
 
-
-            // TODO: add a sample policy to settings and load from registry
-            services.AddPolicyRegistry(Registry.PolicyRegistry);
-
-
             // TODO: get policy names from client configuration and enumerate
-            string policyName = "sample_policy";
+            string policyName = "C";
+
+            // Register initialised policy registry
+            services.AddPolicyRegistry(Registry.PolicyRegistry);
 
             // TODO: replace with actual implementation (example code only)
             services.AddHttpClient("test", c =>

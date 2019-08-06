@@ -11,5 +11,6 @@
   <Section Name="Policies">
     <Parameter Name="A" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ], async : true } }" />
     <Parameter Name="B" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300, async : false } }" />
+    <Parameter Name="C" Value="{ type : 'TimeoutConfig', policy : { async : true, cancelDelegates : false, time : 3.1 } }" />
   </Section>
 </Settings>
