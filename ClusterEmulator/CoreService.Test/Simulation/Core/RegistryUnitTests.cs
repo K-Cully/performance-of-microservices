@@ -259,9 +259,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
+            var expectedPolicy = Policy.NoOp();
 
             // Create Moq proxy instances
-            Mock<Policy> policyMock = new Mock<Policy>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
@@ -270,7 +270,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => policyMock.Object);
+                .Returns<string>(s => expectedPolicy);
 
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
