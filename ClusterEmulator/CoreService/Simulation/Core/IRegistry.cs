@@ -1,5 +1,6 @@
 ﻿using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
+using CoreService.Simulation.HttpClient;
 using Polly;
 using Polly.Registry;
 
@@ -14,6 +15,14 @@ namespace CoreService.Simulation.Core
         /// Gets the policy registry
         /// </summary>
         IPolicyRegistry<string> PolicyRegistry { get; }
+
+
+        /// <summary>
+        /// Retrieves the client config with a given name, if it is registered.
+        /// </summary>
+        /// <param name="name">The name of the client.</param>
+        /// <returns>The <see cref="ClientConfig"/> instance.</returns>
+        ClientConfig GetClient(string name);
 
 
         /// <summary>

@@ -17,19 +17,28 @@ namespace CoreService.Simulation.Core
         // TODO: add logigng throughtout
 
 
+        private readonly IDictionary<string, ClientConfig> clients;
+
+
+        private readonly IDictionary<string, Policy> policies;
+
+
         private readonly IDictionary<string, IProcessor> processors;
 
 
         private readonly IDictionary<string, IStep> steps;
 
 
-        private readonly IDictionary<string, Policy> policies;
-
-
         /// <summary>
         /// Gets the policy registry initialized from settings.
         /// </summary>
         public IPolicyRegistry<string> PolicyRegistry { get; private set; } = new PolicyRegistry();
+
+
+        /// <summary>
+        /// The identifier of the clients settings section.
+        /// </summary>
+        public const string ClientsSection = "Clients";
 
 
         /// <summary>
@@ -57,8 +66,9 @@ namespace CoreService.Simulation.Core
         /// <param name="stepFactory">A factory to create steps from settings.</param>
         /// <param name="processorFactory">A factory to create processors from settings.</param>
         /// <param name="policyFactory">A factory to create http client policies from settings.</param>
+        /// <param name="clientFactory">A factory to create http client configurations from settings.</param>
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
-            IProcessorFactory processorFactory, IPolicyFactory policyFactory)
+            IProcessorFactory processorFactory, IPolicyFactory policyFactory, IClientFactory clientFactory)
         {
             if (configurationSettings is null)
             {
@@ -84,14 +94,38 @@ namespace CoreService.Simulation.Core
                     $"{nameof(policyFactory)} cannot be null");
             }
 
+            if (clientFactory is null)
+            {
+                throw new ArgumentNullException(nameof(clientFactory),
+                    $"{nameof(clientFactory)} cannot be null");
+            }
+
             InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
             InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
             InitializeFromSettings(configurationSettings, PoliciesSection, out policies, (s) => policyFactory.Create(s));
+            InitializeFromSettings(configurationSettings, ClientsSection, out clients, (s) => clientFactory.Create(s));
 
             foreach (var policy in policies)
             {
                 PolicyRegistry.Add(policy.Key, policy.Value);
             }
+        }
+
+
+        /// <summary>
+        /// Retrieves the client config with a given name, if it is registered.
+        /// </summary>
+        /// <param name="name">The name of the client.</param>
+        /// <returns>The <see cref="ClientConfig"/> instance.</returns>
+        /// <exception cref="ArgumentException">
+        /// name is null or white space.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// The policy is not registered or the registration is not valid.
+        /// </exception>
+        public ClientConfig GetClient(string name)
+        {
+            return GetRegisteredValue(name, clients, "Client");
         }
 
 

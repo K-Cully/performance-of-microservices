@@ -69,6 +69,8 @@ namespace CoreService.Simulation.Steps
             AdaptableRequest request = new AdaptableRequest();
             // TODO: add payload
 
+            // Policy.Wrap(fallback, cache, retry, breaker, timeout, bulkhead)
+
             // TODO: add cancellation token
             // TODO: use factory with optional "reuse sockets" flag
             //using (var client = new HttpClient())
@@ -80,6 +82,17 @@ namespace CoreService.Simulation.Steps
             // TODO: add configuration of Handler lifetime
 
             // TODO: remove this
+
+
+            // Example usage of policy
+            //Policy timeoutPolicy = Policy.TimeoutAsync(30, TimeoutStrategy.Optimistic);
+
+            //HttpResponseMessage httpResponse = await timeoutPolicy
+            //    .ExecuteAsync(
+            //        async ct => await httpClient.GetAsync(requestEndpoint, ct),
+            //        userCancellationSource.Token
+            //        );
+
             return await Task.FromResult(ExecutionStatus.Success);
         }
 

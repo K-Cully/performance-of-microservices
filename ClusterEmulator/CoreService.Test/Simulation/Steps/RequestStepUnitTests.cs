@@ -9,6 +9,13 @@ namespace CoreService.Test.Simulation.Steps
     [TestClass]
     public class RequestStepUnitTests
     {
+        [TestMethod]
+        public void Fail_Todo()
+        {
+            // TODO: write UTs
+            Assert.IsTrue(false);
+        }
+
         //[TestMethod]
         //public void Deserialization_ValidData_CreatesValidInstance()
         //{
@@ -258,4 +265,4 @@ namespace CoreService.Test.Simulation.Steps
 
         // TODO: add UTs with complex timeout and retry policies
     }
- }
+}

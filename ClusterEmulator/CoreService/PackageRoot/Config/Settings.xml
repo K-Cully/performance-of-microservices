@@ -8,6 +8,9 @@
     <Parameter Name="A" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
   </Section>
+  <Section Name="Clients">
+    <Parameter Name="A" Value="{ baseAddress : 'https://github.com/', policies : [ 'C', 'A' ], headers : { 'Accept' : 'application/json' } }" />
+  </Section>
   <Section Name="Policies">
     <Parameter Name="A" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ], async : true } }" />
     <Parameter Name="B" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300, async : false } }" />
