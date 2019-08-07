@@ -21,7 +21,7 @@ namespace CoreService.Test.Simulation.Core
         public void Constructor_Throws_WhenConfigurationSettingsIsNull()
         {
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(null, new StepFactory(), new ProcessorFactory(), new PolicyFactory()));
+                () => _ = new Registry(null, new StepFactory(), new ProcessorFactory(), new PolicyFactory(), new ClientFactory()));
         }
 
 
@@ -32,7 +32,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, null, new ProcessorFactory(), new PolicyFactory()));
+                () => _ = new Registry(settings, null, new ProcessorFactory(), new PolicyFactory(), new ClientFactory()));
         }
 
 
@@ -43,7 +43,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), null, new PolicyFactory()));
+                () => _ = new Registry(settings, new StepFactory(), null, new PolicyFactory(), new ClientFactory()));
         }
 
 
@@ -54,7 +54,18 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ProcessorFactory(), null));
+                () => _ = new Registry(settings, new StepFactory(), new ProcessorFactory(), null, new ClientFactory()));
+        }
+
+
+        [TestMethod]
+        public void Constructor_Throws_WhenClientFactoryIsNull()
+        {
+            var configurations = new ConfigurationSectionCollection();
+            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => _ = new Registry(settings, new StepFactory(), new ProcessorFactory(), new PolicyFactory(), null));
         }
 
 
@@ -69,10 +80,11 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
 
             // Act
             Assert.ThrowsException<InvalidOperationException>(()
-                => new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object));
+                => new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object));
 
             // Verify
             stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Never);
@@ -91,21 +103,25 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
             var policyRegistry = registry.PolicyRegistry;
 
             // Verify
             stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(2));
             processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             policyFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(3));
+            clientFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             Assert.IsNotNull(policyRegistry, "Policy regsistry should be initialized");
             Assert.AreEqual(3, policyRegistry.Count);
         }
@@ -124,15 +140,18 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>((s) => mockProcessor.Object);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
             IProcessor processor = registry.GetProcessor(processorName);
 
             // Verify
@@ -152,15 +171,18 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
@@ -180,15 +202,18 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => mockProcessor.Object);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
@@ -208,15 +233,18 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => mockProcessor.Object);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentException>(() => registry.GetProcessor(processorName));
@@ -236,15 +264,18 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => stepMock.Object);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
             IStep step = registry.GetStep(stepName);
 
             // Verify
@@ -265,19 +296,54 @@ namespace CoreService.Test.Simulation.Core
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedPolicy);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object);
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
             Policy policy = registry.GetPolicy(policyName);
 
             // Verify
             Assert.IsNotNull(policy, "GetPolicy should return the registered value");
+        }
+
+
+        [TestMethod]
+        public void GetClient_ReturnsCorrectValue_WhenRegistered()
+        {
+            string clientName = "Xi";
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+            var expectedPolicy = new ClientConfig();
+
+            // Create Moq proxy instances
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedPolicy);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+            ClientConfig config = registry.GetClient(clientName);
+
+            // Verify
+            Assert.IsNotNull(config, "GetClient should return the registered value");
         }
 
 
@@ -291,9 +357,11 @@ namespace CoreService.Test.Simulation.Core
             var processorSection = MockConfigurationPackage.CreateConfigurationSection(Registry.ProcessorsSection);
             var stepSection = MockConfigurationPackage.CreateConfigurationSection(Registry.StepsSection);
             var policiesSection = MockConfigurationPackage.CreateConfigurationSection(Registry.PoliciesSection);
+            var clientsSection = MockConfigurationPackage.CreateConfigurationSection(Registry.ClientsSection);
             configurations.Add(processorSection);
             configurations.Add(stepSection);
             configurations.Add(policiesSection);
+            configurations.Add(clientsSection);
 
             // Add processors parameters
             ConfigurationProperty processor = MockConfigurationPackage
@@ -318,6 +386,11 @@ namespace CoreService.Test.Simulation.Core
             policiesSection.Parameters.Add(policy1);
             policiesSection.Parameters.Add(policy2);
             policiesSection.Parameters.Add(policy3);
+
+            // Add processors parameters
+            ConfigurationProperty client = MockConfigurationPackage
+                .CreateConfigurationSectionParameters("Xi", "");
+            clientsSection.Parameters.Add(client);
 
             return settings;
         }

@@ -44,7 +44,8 @@ namespace CoreService
                                                 serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings,
                                                 new StepFactory(),
                                                 new ProcessorFactory(),
-                                                new PolicyFactory()))
+                                                new PolicyFactory(),
+                                                new ClientFactory()))
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
