@@ -30,6 +30,12 @@ namespace CoreService.Simulation.Core
 
 
         /// <summary>
+        /// Gets the list of http clients and their configs.
+        /// </summary>
+        public IEnumerable<KeyValuePair<string, ClientConfig>> Clients => clients;
+
+
+        /// <summary>
         /// Gets the policy registry initialized from settings.
         /// </summary>
         public IPolicyRegistry<string> PolicyRegistry { get; private set; } = new PolicyRegistry();

@@ -3,6 +3,7 @@ using CoreService.Simulation.Steps;
 using CoreService.Simulation.HttpClient;
 using Polly;
 using Polly.Registry;
+using System.Collections.Generic;
 
 namespace CoreService.Simulation.Core
 {
@@ -12,9 +13,15 @@ namespace CoreService.Simulation.Core
     public interface IRegistry
     {
         /// <summary>
-        /// Gets the policy registry
+        /// Gets the policy registry.
         /// </summary>
         IPolicyRegistry<string> PolicyRegistry { get; }
+
+
+        /// <summary>
+        /// Gets the list of http clients and their configs.
+        /// </summary>
+        IEnumerable<KeyValuePair<string, ClientConfig>> Clients { get; }
 
 
         /// <summary>

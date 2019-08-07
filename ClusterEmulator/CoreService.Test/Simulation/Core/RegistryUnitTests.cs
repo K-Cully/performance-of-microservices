@@ -8,6 +8,7 @@ using Polly;
 using Polly.Registry;
 using ServiceFabric.Mocks;
 using System;
+using System.Collections.Generic;
 using System.Fabric.Description;
 
 using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
@@ -116,14 +117,19 @@ namespace CoreService.Test.Simulation.Core
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
             var policyRegistry = registry.PolicyRegistry;
+            var clients = new List<KeyValuePair<string, ClientConfig>>(registry.Clients);
 
             // Verify
             stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(2));
             processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             policyFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(3));
             clientFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
-            Assert.IsNotNull(policyRegistry, "Policy regsistry should be initialized");
+            Assert.IsNotNull(policyRegistry);
             Assert.AreEqual(3, policyRegistry.Count);
+            Assert.IsNotNull(clients);
+            Assert.AreEqual(1, clients.Count);
+            Assert.AreEqual("Xi", clients[0].Key);
+            Assert.AreEqual(null, clients[0].Value);
         }
 
 
