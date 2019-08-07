@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreService.Simulation.Core;
+using CoreService.Simulation.HttpClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -48,21 +49,33 @@ namespace CoreService
             //  foreach policyName in client.Policies
             //  httpClientBuilder.AddPolicyHandlerFromRegistry(policyName)
 
-            // TODO: get policy names from client configuration and enumerate
-            string policyName = "C";
 
             // Register initialised policy registry
             services.AddPolicyRegistry(Registry.PolicyRegistry);
 
-            // TODO: replace with actual implementation (example code only)
-            services.AddHttpClient("test", c =>
+            // Enumerate all registered clients
+            var clients = new List<KeyValuePair<string, ClientConfig>>(Registry.Clients);
+            foreach ((string name, var config) in clients)
             {
-                c.BaseAddress = new Uri("http://hostname.com/");
-                c.Timeout = TimeSpan.FromSeconds(5);
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-                // TODO: add useragent c.DefaultRequestHeaders.Add(Headers.)
-            })
-            .AddPolicyHandlerFromRegistry(policyName);
+                IHttpClientBuilder builder = services.AddHttpClient(name, c =>
+                {
+                    c.BaseAddress = new Uri(config.BaseAddress);
+
+                    // TODO: deal with RequestHeaders null
+                    foreach ((string key, string value) in config.RequestHeaders)
+                    {
+                        c.DefaultRequestHeaders.Add(key, value);
+                    }
+
+                    // TODO: add useragent c.DefaultRequestHeaders.Add(Headers.)
+                });
+
+                foreach(string policy in config.Policies)
+                {
+                    // TODO: E2E test this registers correctly
+                    builder = builder.AddPolicyHandlerFromRegistry(policy);
+                }
+            }
         }
 
 
