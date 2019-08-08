@@ -6,6 +6,8 @@ using Polly.Registry;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
+using System.Linq;
+using System.Net.Http;
 
 namespace CoreService.Simulation.Core
 {
@@ -183,6 +185,30 @@ namespace CoreService.Simulation.Core
         public IStep GetStep(string name)
         {
             return GetRegisteredValue(name, steps, "Step");
+        }
+
+
+        /// <summary>
+        /// Adds the <see cref="IHttpClientFactory"/> instance to any requests steps which reuse clients.
+        /// </summary>
+        /// <param name="httpClientFactory">The http client factory</param>
+        public void ConfigureHttpClients(IHttpClientFactory httpClientFactory)
+        {
+            var query = steps.Values
+                .Where(s => s is RequestStep)
+                .Select(s => s as RequestStep);
+
+            foreach (var requestStep in query)
+            {
+                if (requestStep.ReuseHttpClient)
+                {
+                    // TODO: initialize factory
+                }
+                else
+                {
+                    // TODO: initialize policys
+                }
+            }
         }
 
 

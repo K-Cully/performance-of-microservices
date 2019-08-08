@@ -4,6 +4,7 @@ using CoreService.Simulation.HttpClient;
 using Polly;
 using Polly.Registry;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace CoreService.Simulation.Core
 {
@@ -22,6 +23,13 @@ namespace CoreService.Simulation.Core
         /// Gets the list of http clients and their configs.
         /// </summary>
         IEnumerable<KeyValuePair<string, ClientConfig>> Clients { get; }
+
+
+        /// <summary>
+        /// Adds the <see cref="IHttpClientFactory"/> instance to any steps which reuse clients.
+        /// </summary>
+        /// <param name="httpClientFactory">The http client factory</param>
+        void ConfigureHttpClients(IHttpClientFactory httpClientFactory);
 
 
         /// <summary>

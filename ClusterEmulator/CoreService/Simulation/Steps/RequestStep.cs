@@ -12,6 +12,17 @@ namespace CoreService.Simulation.Steps
     public class RequestStep : IStep
     {
         /// <summary>
+        /// Whether the request should reuse HttpClient instances or not.
+        /// </summary>
+        /// <remarks>
+        /// Reusing Http clients prevents creation of new connections on new sockets for every request.
+        /// </remarks>
+        [JsonProperty("reuseSockets")]
+        [JsonRequired]
+        public bool ReuseHttpClient { get; set; }
+
+
+        /// <summary>
         /// The http protocol.
         /// </summary>
         [JsonProperty("method")]
@@ -73,11 +84,21 @@ namespace CoreService.Simulation.Steps
 
             // TODO: add cancellation token
             // TODO: use factory with optional "reuse sockets" flag
-            //using (var client = new HttpClient())
-            //{
-            //    HttpResponseMessage response =
-            //       await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
-            //}
+
+            if (ReuseHttpClient)
+            {
+
+            }
+            else
+            {
+
+            }
+
+            using (var client = new HttpClient())
+            {
+                HttpResponseMessage response =
+                   await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
+            }
 
             // TODO: add configuration of Handler lifetime
 
