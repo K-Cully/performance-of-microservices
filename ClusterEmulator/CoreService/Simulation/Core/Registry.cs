@@ -202,11 +202,12 @@ namespace CoreService.Simulation.Core
             {
                 if (requestStep.ReuseHttpClient)
                 {
-                    // TODO: initialize factory
+                    requestStep.Configure(httpClientFactory);
                 }
                 else
                 {
-                    // TODO: initialize policys
+                    // TODO: get name, client config and policies
+                    // requestStep.Configure()
                 }
             }
         }

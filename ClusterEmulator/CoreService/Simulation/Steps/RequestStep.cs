@@ -139,6 +139,8 @@ namespace CoreService.Simulation.Steps
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         public void Configure(IHttpClientFactory httpClientFactory)
         {
+            // TODO: add to interface and UT
+
             if (configured)
             {
                 throw new InvalidOperationException("The step is already configured");
@@ -162,6 +164,8 @@ namespace CoreService.Simulation.Steps
         /// <param name="clientHeaders">Headers to send with all requests.</param>
         public void Configure(PolicyWrap requestPolicies, string clientBaseAddress, IDictionary<string, string> clientHeaders)
         {
+            // TODO: add to interface and UT
+
             if (configured)
             {
                 throw new InvalidOperationException("The step is already configured");
@@ -194,12 +198,10 @@ namespace CoreService.Simulation.Steps
                     var uri = new UriBuilder(Url).Uri;
                     valid = uri.IsAbsoluteUri;
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
                 catch (UriFormatException)
                 {
                     valid = false;
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
             }
 
             return valid;
