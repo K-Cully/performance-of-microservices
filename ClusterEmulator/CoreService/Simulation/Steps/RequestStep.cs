@@ -1,10 +1,13 @@
 ﻿using CoreService.Model;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Wrap;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
@@ -47,6 +50,10 @@ namespace CoreService.Simulation.Steps
         public int PayloadSize { get; set; }
 
 
+        /// <summary>
+        /// Executes the action defined by the step.
+        /// </summary>
+        /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
             // Policy -> name and details
@@ -79,42 +86,101 @@ namespace CoreService.Simulation.Steps
 
             AdaptableRequest request = new AdaptableRequest();
             // TODO: add payload
-
-            // Policy.Wrap(fallback, cache, retry, breaker, timeout, bulkhead)
-
+            
             // TODO: add cancellation token
-            // TODO: use factory with optional "reuse sockets" flag
+
+            // TODO: add optional true async vs await
 
             if (ReuseHttpClient)
             {
+                // TODO: use correct name and make actual request
+                HttpClient client = clientFactory.CreateClient("Todo");
 
+                // TODO: refactor
+                HttpResponseMessage response =
+                       await client.PostAsJsonAsync(Url, request);
             }
             else
             {
+                // TODO: add policies and make actual request
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseAddessPath);
+                    foreach ((var key, var value) in headers)
+                    {
+                        client.DefaultRequestHeaders.Add(key, value);
+                    }
 
+                    if (policies is null)
+                    {
+                        // TODO: refactor
+                        HttpResponseMessage response =
+                            await client.PostAsJsonAsync(Url, request);
+                    }
+                    else
+                    {
+                        // TODO: refactor
+                        // TODO: should this support local cancellation?
+                        HttpResponseMessage response =
+                            await policies.ExecuteAsync(
+                                async ct => await client.PostAsJsonAsync(Url, request, ct),
+                                CancellationToken.None);
+                    }
+                }
             }
-
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage response =
-                   await client.PostAsJsonAsync<AdaptableRequest>(Url, request);
-            }
-
-            // TODO: add configuration of Handler lifetime
-
-            // TODO: remove this
-
-
-            // Example usage of policy
-            //Policy timeoutPolicy = Policy.TimeoutAsync(30, TimeoutStrategy.Optimistic);
-
-            //HttpResponseMessage httpResponse = await timeoutPolicy
-            //    .ExecuteAsync(
-            //        async ct => await httpClient.GetAsync(requestEndpoint, ct),
-            //        userCancellationSource.Token
-            //        );
 
             return await Task.FromResult(ExecutionStatus.Success);
+        }
+
+
+        /// <summary>
+        /// Configures the request step for resolving  http clients from a client factory.
+        /// </summary>
+        /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
+        public void Configure(IHttpClientFactory httpClientFactory)
+        {
+            if (configured)
+            {
+                throw new InvalidOperationException("The step is already configured");
+            }
+
+            if (!ReuseHttpClient)
+            {
+                throw new InvalidOperationException("This step cannot use http client factory");
+            }
+
+            clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            configured = true;
+        }
+
+
+        /// <summary>
+        /// Configures the request step for managment of the http client lifetime.
+        /// </summary>
+        /// <param name="requestPolicies">The wrapped policies to apply to all requests.</param>
+        /// <param name="clientBaseAddress">The base address for the http client.</param>
+        /// <param name="clientHeaders">Headers to send with all requests.</param>
+        public void Configure(PolicyWrap requestPolicies, string clientBaseAddress, IDictionary<string, string> clientHeaders)
+        {
+            if (configured)
+            {
+                throw new InvalidOperationException("The step is already configured");
+            }
+
+            if (ReuseHttpClient)
+            {
+                throw new InvalidOperationException("This step must use http client factory");
+            }
+
+            if (string.IsNullOrWhiteSpace(baseAddessPath))
+            {
+                throw new ArgumentNullException(nameof(clientBaseAddress));
+            }
+
+            baseAddessPath = clientBaseAddress;
+            policies = requestPolicies ?? throw new ArgumentNullException(nameof(requestPolicies));
+            headers = clientHeaders ?? throw new ArgumentNullException(nameof(clientHeaders));
+            configured = true;
         }
 
 
@@ -140,9 +206,25 @@ namespace CoreService.Simulation.Steps
         }
 
 
+        private bool configured = false;
+
+
+        private PolicyWrap policies;
+
+
+        private string baseAddessPath;
+
+
+        private IDictionary<string, string> headers;
+
+
+        private IHttpClientFactory clientFactory;
+
+
         /// <summary>
         /// Enumerable of supported Http methods in uppercase
         /// </summary>
+        [JsonIgnore]
         private readonly IEnumerable<string> supportedMethods = new List<HttpMethod>()
         {
             HttpMethod.Delete,

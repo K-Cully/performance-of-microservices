@@ -1,6 +1,6 @@
 ﻿using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
-using CoreService.Simulation.HttpClient;
+using CoreService.Simulation.HttpClientConfiguration;
 using Polly;
 using Polly.Registry;
 using System.Collections.Generic;

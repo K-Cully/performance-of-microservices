@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using CoreService.Simulation.Steps;
 using CoreService.Simulation.Core;
 using CoreService.Simulation.Processors;
-using CoreService.Simulation.HttpClient;
+using CoreService.Simulation.HttpClientConfiguration;
 
 namespace CoreService
 {

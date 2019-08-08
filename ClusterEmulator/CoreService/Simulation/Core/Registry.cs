@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.HttpClient;
+﻿using CoreService.Simulation.HttpClientConfiguration;
 using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Polly;

@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.HttpClient;
+﻿using CoreService.Simulation.HttpClientConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

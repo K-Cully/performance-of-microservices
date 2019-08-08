@@ -1,6 +1,6 @@
 ﻿using Polly;
 
-namespace CoreService.Simulation.HttpClient
+namespace CoreService.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Creates policy instances.

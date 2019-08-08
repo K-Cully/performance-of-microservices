@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.HttpClient;
+﻿using CoreService.Simulation.HttpClientConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polly;
 using Polly.Timeout;

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Simulation.HttpClient
+namespace CoreService.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Creates policy instances.

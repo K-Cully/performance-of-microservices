@@ -1,5 +1,5 @@
 ﻿using CoreService.Simulation.Core;
-using CoreService.Simulation.HttpClient;
+using CoreService.Simulation.HttpClientConfiguration;
 using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

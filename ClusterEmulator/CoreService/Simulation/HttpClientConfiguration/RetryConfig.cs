@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 
-namespace CoreService.Simulation.HttpClient
+namespace CoreService.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a retry policy.
