@@ -3,6 +3,7 @@ using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Polly;
 using Polly.Registry;
+using Polly.Wrap;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
@@ -194,11 +195,15 @@ namespace CoreService.Simulation.Core
         /// <param name="httpClientFactory">The http client factory</param>
         public void ConfigureHttpClients(IHttpClientFactory httpClientFactory)
         {
-            var query = steps.Values
+            // TODO: UTs
+
+            var requestSteps = steps.Values
                 .Where(s => s is RequestStep)
                 .Select(s => s as RequestStep);
 
-            foreach (var requestStep in query)
+            // TODO: refactor configuration
+
+            foreach (var requestStep in requestSteps)
             {
                 if (requestStep.ReuseHttpClient)
                 {
@@ -206,8 +211,10 @@ namespace CoreService.Simulation.Core
                 }
                 else
                 {
-                    // TODO: get name, client config and policies
-                    // requestStep.Configure()
+                    ClientConfig config = GetClient(requestStep.ClientName);
+                    var policies = config.Policies.Select(n => GetPolicy(n));
+                    PolicyWrap wrap = Policy.WrapAsync(policies.ToArray());
+                    requestStep.Configure(wrap, config.BaseAddress, config.RequestHeaders);
                 }
             }
         }

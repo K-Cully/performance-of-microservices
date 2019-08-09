@@ -14,6 +14,18 @@ namespace CoreService.Simulation.Steps
 {
     public class RequestStep : IStep
     {
+        // TODO: add UTs
+        // TODO: flesh out model
+
+
+        /// <summary>
+        /// The name of the client to use
+        /// </summary>
+        [JsonProperty("client")]
+        [JsonRequired]
+        public string ClientName { get; set; }
+
+
         /// <summary>
         /// Whether the request should reuse HttpClient instances or not.
         /// </summary>
@@ -34,11 +46,11 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// The request url.
+        /// The request path.
         /// </summary>
-        [JsonProperty("url")]
+        [JsonProperty("path")]
         [JsonRequired]
-        public string Url { get; set; }
+        public string Path { get; set; }
 
 
         /// <summary>
@@ -67,9 +79,9 @@ namespace CoreService.Simulation.Steps
 
             // TODO: unify sizes to be in bytes
 
-            if (!UrlIsValid())
+            if (!PathIsValid())
             {
-                throw new InvalidOperationException("url must be a valid absolute URI");
+                throw new InvalidOperationException("path must be a relative URI");
             }
 
             if (string.IsNullOrWhiteSpace(Method) || !supportedMethods.Contains(Method, StringComparer.OrdinalIgnoreCase))
@@ -183,20 +195,22 @@ namespace CoreService.Simulation.Steps
 
             baseAddessPath = clientBaseAddress;
             policies = requestPolicies ?? throw new ArgumentNullException(nameof(requestPolicies));
-            headers = clientHeaders ?? throw new ArgumentNullException(nameof(clientHeaders));
+            headers = clientHeaders ?? default;
             configured = true;
         }
 
 
-        private bool UrlIsValid()
+        private bool PathIsValid()
         {
+            // TODO: update to allow relative urls
+
             bool valid = false;
-            if (!string.IsNullOrWhiteSpace(Url))
+            if (!string.IsNullOrWhiteSpace(Path))
             {
                 try
                 {
-                    var uri = new UriBuilder(Url).Uri;
-                    valid = uri.IsAbsoluteUri;
+                    var uri = new UriBuilder(Path).Uri;
+                    valid = !uri.IsAbsoluteUri;
                 }
                 catch (UriFormatException)
                 {
