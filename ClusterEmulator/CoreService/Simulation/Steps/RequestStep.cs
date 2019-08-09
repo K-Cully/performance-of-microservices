@@ -79,7 +79,7 @@ namespace CoreService.Simulation.Steps
 
             // TODO: unify sizes to be in bytes
 
-            if (!PathIsValid())
+            if (string.IsNullOrWhiteSpace(Path) || !Uri.TryCreate(Path, UriKind.Relative, out _))
             {
                 throw new InvalidOperationException("path must be a relative URI");
             }
@@ -95,53 +95,69 @@ namespace CoreService.Simulation.Steps
             }
 
             // TODO: add caller identifier to request
-
-            AdaptableRequest request = new AdaptableRequest();
             // TODO: add payload
-            
+            AdaptableRequest request = new AdaptableRequest();
+
+
             // TODO: add cancellation token
 
             // TODO: add optional true async vs await
 
             if (ReuseHttpClient)
             {
-                // TODO: use correct name and make actual request
-                HttpClient client = clientFactory.CreateClient("Todo");
+                // TODO: update client and make actual request
+                HttpClient client = clientFactory.CreateClient(ClientName);
 
                 // TODO: refactor
-                HttpResponseMessage response =
-                       await client.PostAsJsonAsync(Url, request);
+                using (HttpResponseMessage response =
+                      await client.PostAsJsonAsync(Path, request, CancellationToken.None))
+                {
+                    // TODO: set status based off response
+                }
             }
             else
             {
                 // TODO: add policies and make actual request
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri(baseAddessPath);
+                    client.BaseAddress = new Uri(baseAddess);
                     foreach ((var key, var value) in headers)
                     {
                         client.DefaultRequestHeaders.Add(key, value);
                     }
 
+                    Func<CancellationToken, Task<HttpResponseMessage>> action;
+
                     if (policies is null)
                     {
                         // TODO: refactor
-                        HttpResponseMessage response =
-                            await client.PostAsJsonAsync(Url, request);
+                        action = ct => client.PostAsJsonAsync(Path, request, ct);
                     }
                     else
                     {
                         // TODO: refactor
                         // TODO: should this support local cancellation?
-                        HttpResponseMessage response =
-                            await policies.ExecuteAsync(
-                                async ct => await client.PostAsJsonAsync(Url, request, ct),
-                                CancellationToken.None);
+                        action = token => policies.ExecuteAsync(
+                                    ct => client.PostAsJsonAsync(Path, request, ct), token);
+
+                    }
+
+                    using (HttpResponseMessage response =
+                        await ExecuteRequestAsync(action, CancellationToken.None))
+                    {
+                        // TODO: set status based off response
                     }
                 }
             }
 
+            // TODO
             return await Task.FromResult(ExecutionStatus.Success);
+        }
+
+
+        private async Task<HttpResponseMessage> ExecuteRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
+        {
+            return await action(token).ConfigureAwait(false);
         }
 
 
@@ -188,52 +204,40 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("This step must use http client factory");
             }
 
-            if (string.IsNullOrWhiteSpace(baseAddessPath))
+            if (string.IsNullOrWhiteSpace(baseAddess))
             {
                 throw new ArgumentNullException(nameof(clientBaseAddress));
             }
 
-            baseAddessPath = clientBaseAddress;
+            if (!Uri.TryCreate(baseAddess, UriKind.Absolute, out _))
+            {
+                throw new ArgumentException($"{nameof(clientBaseAddress)} must be an absolute URI", nameof(clientBaseAddress));
+            }
+
+            baseAddess = clientBaseAddress;
             policies = requestPolicies ?? throw new ArgumentNullException(nameof(requestPolicies));
             headers = clientHeaders ?? default;
             configured = true;
         }
 
 
-        private bool PathIsValid()
-        {
-            // TODO: update to allow relative urls
-
-            bool valid = false;
-            if (!string.IsNullOrWhiteSpace(Path))
-            {
-                try
-                {
-                    var uri = new UriBuilder(Path).Uri;
-                    valid = !uri.IsAbsoluteUri;
-                }
-                catch (UriFormatException)
-                {
-                    valid = false;
-                }
-            }
-
-            return valid;
-        }
-
-
+        [JsonIgnore]
         private bool configured = false;
 
 
+        [JsonIgnore]
         private PolicyWrap policies;
 
 
-        private string baseAddessPath;
+        [JsonIgnore]
+        private string baseAddess;
 
 
+        [JsonIgnore]
         private IDictionary<string, string> headers;
 
 
+        [JsonIgnore]
         private IHttpClientFactory clientFactory;
 
 
