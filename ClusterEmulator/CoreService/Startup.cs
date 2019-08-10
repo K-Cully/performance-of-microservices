@@ -62,7 +62,7 @@ namespace CoreService
                         c.DefaultRequestHeaders.Add(key, value);
                     }
 
-                    // TODO: add useragent c.DefaultRequestHeaders.Add(Headers.)
+                    // TODO: add user agent c.DefaultRequestHeaders.Add(Headers.)
                 });
 
                 foreach(string policy in config.Policies)

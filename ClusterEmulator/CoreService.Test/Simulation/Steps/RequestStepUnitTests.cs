@@ -2,11 +2,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Contrib.HttpClient;
-using Moq.Protected;
 using Newtonsoft.Json;
 using Polly;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -148,10 +148,10 @@ namespace CoreService.Test.Simulation.Steps
             Uri baseUri = new Uri("http://test.com/");
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
 
-            // TODO: return correct response
-            handler.SetupRequest(HttpMethod.Get, $"{baseUri}/api/stuff")
-                .ReturnsResponse("stuff");
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .Throws(new Exception("test exception"));
 
             var factory = handler.CreateClientFactory();
 
@@ -166,32 +166,118 @@ namespace CoreService.Test.Simulation.Steps
             var result = await step.ExecuteAsync();
 
             Assert.AreEqual(ExecutionStatus.Success, result);
+            client.Dispose();
         }
 
 
         [TestMethod]
-        public async Task ExecuteAsync_ReuseHttpClient_CreateClientReturnsClient_Throws()
+        public async Task ExecuteAsync_ReuseClient_Asynchronous_ResponseOk_ReturnsSuccess()
         {
-            // TODO: rename and update
+            Uri baseUri = new Uri("http://test.com/");
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            var client = new HttpClient(handler.Object, false);
-            handler.Protected().As<IHttpMessageHandler>()
-                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()));
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Head, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.OK);
 
-            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            factory.Setup(x => x.CreateClient(It.IsAny<string>()))
-                .Returns(client);
+            var factory = handler.CreateClientFactory();
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
-            step.Configure(factory.Object);
+            { Asynchrounous = true, ClientName = "testClient", Method = "HEAD", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory);
 
-            await Assert.ThrowsExceptionAsync<NullReferenceException>(
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ReuseHttpClient_ExceptionThrown_Throws()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Delete, $"{baseUri}test/")
+                .Throws(new Exception("test exception"));
+
+            var factory = handler.CreateClientFactory();
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "DELETE", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory);
+
+            await Assert.ThrowsExceptionAsync<Exception>(
                 () => step.ExecuteAsync());
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ReuseHttpClient_ResponseOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.OK);
+
+            var factory = handler.CreateClientFactory();
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ReuseHttpClient_ResponseNotOk_ReturnsFail()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.BadRequest);
+
+            var factory = handler.CreateClientFactory();
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Fail, result);
+            client.Dispose();
         }
 
 
         // TODO: complete ExecuteAsync
+        [TestMethod]
+        public void Fail()
+        {
+            // TODO:
+            Assert.IsTrue(false);
+        }
 
 
         [TestMethod]

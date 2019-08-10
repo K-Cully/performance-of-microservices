@@ -139,6 +139,7 @@ namespace CoreService.Simulation.Steps
             }
             else
             {
+                // TODO: move initialization to factory
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(baseAddess);

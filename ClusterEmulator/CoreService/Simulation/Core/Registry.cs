@@ -201,8 +201,6 @@ namespace CoreService.Simulation.Core
                 .Where(s => s is RequestStep)
                 .Select(s => s as RequestStep);
 
-            // TODO: refactor configuration
-
             foreach (var requestStep in requestSteps)
             {
                 if (requestStep.ReuseHttpClient)
@@ -211,6 +209,7 @@ namespace CoreService.Simulation.Core
                 }
                 else
                 {
+                    // TODO: send SimpleHttpClientFactory
                     ClientConfig config = GetClient(requestStep.ClientName);
                     var policies = config.Policies.Select(n => GetPolicy(n));
                     PolicyWrap wrap = Policy.WrapAsync(policies.ToArray());
