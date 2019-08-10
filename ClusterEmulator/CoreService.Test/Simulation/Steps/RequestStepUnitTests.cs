@@ -1,7 +1,11 @@
 ﻿using CoreService.Simulation.Steps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
+using Polly;
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Steps
@@ -10,259 +14,264 @@ namespace CoreService.Test.Simulation.Steps
     public class RequestStepUnitTests
     {
         [TestMethod]
-        public void Fail_Todo()
+        public void Deserialization_ValidData_CreatesValidInstance()
         {
-            // TODO: write UTs
-            Assert.IsTrue(false);
+            RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
+                "{ async : true, client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true }");
+
+            Assert.IsTrue(step.Async);
+            Assert.AreEqual("testClient", step.ClientName);
+            Assert.AreEqual("get", step.Method);
+            Assert.AreEqual("test/", step.Path);
+            Assert.AreEqual(128, step.PayloadSize);
+            Assert.AreEqual(true, step.ReuseHttpClient);
         }
 
-        //[TestMethod]
-        //public void Deserialization_ValidData_CreatesValidInstance()
-        //{
-        //    RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
-        //        "{ method : GET, url : http://localhost/, size : 10, timeout: 3, retries : 0, retryPloicy : None }");
 
-        //    Assert.AreEqual("http://localhost/", step.Url);
-        //    Assert.AreEqual(10, step.PayloadSize);
-        //}
+        [TestMethod]
+        public void Deserialization_InvalidData_Throws()
+        {
+            Assert.ThrowsException<JsonSerializationException>(
+                () => JsonConvert.DeserializeObject<RequestStep>("{ }"));
+        }
 
 
-        //[TestMethod]
-        //public void Deserialization_InvalidData_Throws()
-        //{
-        //    Assert.ThrowsException<JsonSerializationException>(
-        //        () => JsonConvert.DeserializeObject<RequestStep>("{ }"));
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_MissingClientName_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = string.Empty, Method = "GET", Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingUrl_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = string.Empty, PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_MissingPath_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = string.Empty, PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_FileUrl_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "file://test.txt", PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_FilePath_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "file://test.txt", PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_RelativeUrl_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "/test.html", PayloadSize = 15, Timeout = 2, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_AbsoluteUrl_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "http://test.html", PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_InvalidPayloadSize_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = -1, Timeout = 1, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_MissingMethod_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = string.Empty, Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingPayloadSize_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", Timeout = 15, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_UnsupportedMethod_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "BREAK", Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_InvalidTimeout_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = -1, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_InvalidPayloadSize_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = -1, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingTimeout_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_NotConfigured_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_InvalidRetries_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = -1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public async Task ExecuteAsync_ReuseHttpClient_CreateClientReturnsNull_Throws()
+        {
+            Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            // TODO: factory.Setup(f => f.CreateClient()).Returns<HttpClient>(null);
 
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory.Object);
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingRetries_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = 1, RetryPolicy = None };
+            await Assert.ThrowsExceptionAsync<NullReferenceException>(
+                () => step.ExecuteAsync());
+        }
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
 
+        // TODO: complete ExecuteAsync
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingRetryPolicy_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1 };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public void Configure_Factory_ReuseHttpClientFalse_Throws()
+        {
+            Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
+            Assert.ThrowsException<InvalidOperationException>(
+                () => step.Configure(factory.Object));
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MissingMethod_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public void Configure_Factory_NullFactory_Throws()
+        {
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.Configure(null));
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_UnknownMethod_Throws()
-        //{
-        //    var step = new RequestStep()
-        //    { Method = "UNKNOWN", Url = "http://test.html", PayloadSize = 15, Timeout = 1, Retries = 1, RetryPolicy = None };
 
-        //    await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-        //        () => step.ExecuteAsync());
-        //}
+        [TestMethod]
+        public void Configure_Factory_ValidFactory_SetsConfigured()
+        {
+            Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
+            step.Configure(factory.Object);
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_AbsoluteUrlSuccess_ReturnsSuccess()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+            Assert.IsTrue(step.Configured);
+        }
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
 
+        [TestMethod]
+        public void Configure_Factory_Twice_Throws()
+        {
+            Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_AbsoluteUrlError_ReturnsFail()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "GET", Url = "http://test.html", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+            step.Configure(factory.Object);
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Fail, status);
-        //}
+            Assert.IsTrue(step.Configured);
+            Assert.ThrowsException<InvalidOperationException>(
+                () => step.Configure(factory.Object));
+        }
 
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodDelete_CallsDelete()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "DELETE", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+        [TestMethod]
+        public void Configure_Local_ReuseHttpClientTrue_Throws()
+        {
+            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
+            var headers = new Dictionary<string, string>();
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
+            Assert.ThrowsException<InvalidOperationException>(
+                () => step.Configure(policies, "http://test.com/", headers));
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodHead_CallsHead()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "HEAD", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
+        [TestMethod]
+        public void Configure_Local_BaseAddressEmpty_Throws()
+        {
+            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
+            var headers = new Dictionary<string, string>();
 
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodOptions_CallsOptions()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "OPTIONS", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.Configure(policies, string.Empty, headers));
+        }
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
 
+        [TestMethod]
+        public void Configure_Local_BaseAddressRelative_Throws()
+        {
+            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
+            var headers = new Dictionary<string, string>();
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodPost_CallsPost()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "post", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
+            Assert.ThrowsException<ArgumentException>(
+                () => step.Configure(policies, "/test/", headers));
+        }
 
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodPut_CallsPut()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "PUT", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
+        [TestMethod]
+        public void Configure_Local_PoliciesNull_Throws()
+        {
+            var headers = new Dictionary<string, string>();
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.Configure(null, "http://test.com/", headers));
+        }
 
-        //[TestMethod]
-        //public async Task ExecuteAsync_MethodTrace_CallsTrace()
-        //{
-        //    // TODO: mock endpoint
-        //    var step = new RequestStep()
-        //    { Method = "TRACE", Url = "http://test/name", PayloadSize = 15, Timeout = 0, Retries = 0, RetryPolicy = None };
 
-        //    ExecutionStatus status = await step.ExecuteAsync();
-        //    Assert.AreEqual(ExecutionStatus.Success, status);
-        //}
+        [TestMethod]
+        public void Configure_Local_HeadersNull_SetsConfigured()
+        {
+            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
 
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
-        // TODO: add UTs with complex timeout and retry policies
+            step.Configure(policies, "http://test.com/", null);
+            Assert.IsTrue(step.Configured);
+        }
+
+
+        [TestMethod]
+        public void Configure_Local_AllValuesProvided_SetsConfigured()
+        {
+            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
+            var headers = new Dictionary<string, string>();
+
+            var step = new RequestStep()
+            { Async = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+
+            step.Configure(policies, "http://test.com/", headers);
+            Assert.IsTrue(step.Configured);
+        }
     }
 }

@@ -70,12 +70,24 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
+        /// Gets a value indicating if the request step is configured or not.
+        /// </summary>
+        [JsonIgnore]
+        public bool Configured { get { return configured; } }
+
+
+        /// <summary>
         /// Executes the action defined by the step.
         /// </summary>
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
             // TODO: Add logging throughout
+
+            if (string.IsNullOrWhiteSpace(ClientName))
+            {
+                throw new InvalidOperationException("client must be set");
+            }
 
             if (string.IsNullOrWhiteSpace(Path) || !Uri.TryCreate(Path, UriKind.Relative, out _))
             {
@@ -90,6 +102,11 @@ namespace CoreService.Simulation.Steps
             if (PayloadSize < 0)
             {
                 throw new InvalidOperationException("size cannot be negative");
+            }
+
+            if (!configured)
+            {
+                throw new InvalidOperationException("Http client is not configured");
             }
 
             // TODO: unify sizes to be in bytes
@@ -292,12 +309,12 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("This step must use http client factory");
             }
 
-            if (string.IsNullOrWhiteSpace(baseAddess))
+            if (string.IsNullOrWhiteSpace(clientBaseAddress))
             {
                 throw new ArgumentNullException(nameof(clientBaseAddress));
             }
 
-            if (!Uri.TryCreate(baseAddess, UriKind.Absolute, out _))
+            if (!Uri.TryCreate(clientBaseAddress, UriKind.Absolute, out _))
             {
                 throw new ArgumentException($"{nameof(clientBaseAddress)} must be an absolute URI", nameof(clientBaseAddress));
             }
