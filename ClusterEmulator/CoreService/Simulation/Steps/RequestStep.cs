@@ -1,6 +1,6 @@
 ﻿using CoreService.Model;
 using Newtonsoft.Json;
-using Polly.Wrap;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
 {
-    public class RequestStep : IStep
+    public class RequestStep : IStep, IRequestStep
     {
         // TODO: add UTs
         // TODO: flesh out model
@@ -144,13 +144,13 @@ namespace CoreService.Simulation.Steps
                 {
                     request = GetRequestAction(client);
                     Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
-                    if (policies is null)
+                    if (policy is null)
                     {
                         combinedAction = token => request(token);
                     }
                     else
                     {
-                        combinedAction = token => policies.ExecuteAsync(
+                        combinedAction = token => policy.ExecuteAsync(
                             ct => request(ct), token);
                     }
 
@@ -288,11 +288,9 @@ namespace CoreService.Simulation.Steps
         /// Configures the request step for managment of the http client lifetime.
         /// </summary>
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
-        /// <param name="requestPolicies">The wrapped policies to apply to all requests.</param>
-        public void Configure(IHttpClientFactory httpClientFactory, PolicyWrap requestPolicies)
+        /// <param name="requestPolicy">The policy or wrapped policies to apply to requests.</param>
+        public void Configure(IHttpClientFactory httpClientFactory, Policy requestPolicy)
         {
-            // TODO: add to interface and UT
-
             if (configured)
             {
                 throw new InvalidOperationException("The step is already configured");
@@ -304,7 +302,7 @@ namespace CoreService.Simulation.Steps
             }
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            policies = requestPolicies;
+            policy = requestPolicy;
             configured = true;
         }
 
@@ -314,7 +312,7 @@ namespace CoreService.Simulation.Steps
 
 
         [JsonIgnore]
-        private PolicyWrap policies;
+        private Policy policy;
 
 
         [JsonIgnore]

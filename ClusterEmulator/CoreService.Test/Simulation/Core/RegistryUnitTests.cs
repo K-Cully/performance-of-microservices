@@ -5,12 +5,11 @@ using CoreService.Simulation.Steps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Polly;
-using Polly.Registry;
 using ServiceFabric.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
-
+using System.Net.Http;
 using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
 
 namespace CoreService.Test.Simulation.Core
@@ -328,7 +327,7 @@ namespace CoreService.Test.Simulation.Core
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
-            var expectedPolicy = new ClientConfig();
+            var expectedConfig = new ClientConfig();
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -342,7 +341,7 @@ namespace CoreService.Test.Simulation.Core
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => expectedPolicy);
+                .Returns<string>(s => expectedConfig);
 
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
@@ -350,6 +349,93 @@ namespace CoreService.Test.Simulation.Core
 
             // Verify
             Assert.IsNotNull(config, "GetClient should return the registered value");
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_NullFactory_Throws()
+        {
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<ArgumentNullException>(
+                () => registry.ConfigureHttpClients(null));
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_NoRequestSteps_DoesNothing()
+        {
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            registry.ConfigureHttpClients(httpClientFactory.Object);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_RequestSteps_DoesNothing()
+        {
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq proxy instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Act
+            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            registry.ConfigureHttpClients(httpClientFactory.Object);
         }
 
 

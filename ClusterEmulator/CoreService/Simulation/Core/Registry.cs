@@ -203,11 +203,14 @@ namespace CoreService.Simulation.Core
         /// <param name="httpClientFactory">The http client factory</param>
         public void ConfigureHttpClients(IHttpClientFactory httpClientFactory)
         {
-            // TODO: UTs
+            if (httpClientFactory is null)
+            {
+                throw new ArgumentNullException(nameof(httpClientFactory));
+            }
 
             var requestSteps = steps.Values
-                .Where(s => s is RequestStep)
-                .Select(s => s as RequestStep);
+                .Where(s => s is IRequestStep)
+                .Select(s => s as IRequestStep);
 
             foreach (var requestStep in requestSteps)
             {

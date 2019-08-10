@@ -405,7 +405,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policy = Policy.NoOpAsync();
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -413,7 +413,7 @@ namespace CoreService.Test.Simulation.Steps
 
             var step = new RequestStep()
             { Asynchrounous = false, ClientName = "testClient", Method = "PUT", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
-            step.Configure(factory, policies);
+            step.Configure(factory, policy);
             var result = await step.ExecuteAsync();
 
             Assert.AreEqual(ExecutionStatus.Success, result);
@@ -611,6 +611,20 @@ namespace CoreService.Test.Simulation.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
             step.Configure(factory.Object, policies);
+            Assert.IsTrue(step.Configured);
+        }
+
+
+        [TestMethod]
+        public void Configure_Local_SingularPolicy_SetsConfigured()
+        {
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var policy = Policy.NoOp();
+
+            var step = new RequestStep()
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+
+            step.Configure(factory.Object, policy);
             Assert.IsTrue(step.Configured);
         }
     }
