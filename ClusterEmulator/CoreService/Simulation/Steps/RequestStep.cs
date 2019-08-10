@@ -140,14 +140,8 @@ namespace CoreService.Simulation.Steps
             else
             {
                 // TODO: move initialization to factory
-                using (var client = new HttpClient())
+                using (var client = clientFactory.CreateClient(ClientName))
                 {
-                    client.BaseAddress = new Uri(baseAddess);
-                    foreach ((var key, var value) in headers)
-                    {
-                        client.DefaultRequestHeaders.Add(key, value);
-                    }
-
                     request = GetRequestAction(client);
                     Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                     if (policies is null)
@@ -156,7 +150,8 @@ namespace CoreService.Simulation.Steps
                     }
                     else
                     {
-                        combinedAction = token => policies.ExecuteAsync(ct => request(ct), token);
+                        combinedAction = token => policies.ExecuteAsync(
+                            ct => request(ct), token);
                     }
 
                     if (Asynchrounous)
@@ -212,7 +207,6 @@ namespace CoreService.Simulation.Steps
             }
             if (method == HttpMethod.Post)
             {
-                // TODO: create AdaptableRequest
                 // TODO: add payload
                 // TODO: add caller identifier to request
                 var request = new AdaptableRequest();
@@ -220,7 +214,6 @@ namespace CoreService.Simulation.Steps
             }
             if (method == HttpMethod.Put)
             {
-                // TODO: create AdaptableRequest
                 // TODO: add payload
                 // TODO: add caller identifier to request
                 var request = new AdaptableRequest();
@@ -263,7 +256,7 @@ namespace CoreService.Simulation.Steps
 
             requestTask.ContinueWith(t =>
             {
-                t.Result?.Content?.Dispose();
+                t?.Result?.Content?.Dispose();
                 // TODO: Log error
                 // t.Exception.Message;
 
@@ -297,10 +290,9 @@ namespace CoreService.Simulation.Steps
         /// <summary>
         /// Configures the request step for managment of the http client lifetime.
         /// </summary>
+        /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         /// <param name="requestPolicies">The wrapped policies to apply to all requests.</param>
-        /// <param name="clientBaseAddress">The base address for the http client.</param>
-        /// <param name="clientHeaders">Headers to send with all requests.</param>
-        public void Configure(PolicyWrap requestPolicies, string clientBaseAddress, IDictionary<string, string> clientHeaders)
+        public void Configure(IHttpClientFactory httpClientFactory, PolicyWrap requestPolicies)
         {
             // TODO: add to interface and UT
 
@@ -314,19 +306,8 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("This step must use http client factory");
             }
 
-            if (string.IsNullOrWhiteSpace(clientBaseAddress))
-            {
-                throw new ArgumentNullException(nameof(clientBaseAddress));
-            }
-
-            if (!Uri.TryCreate(clientBaseAddress, UriKind.Absolute, out _))
-            {
-                throw new ArgumentException($"{nameof(clientBaseAddress)} must be an absolute URI", nameof(clientBaseAddress));
-            }
-
-            baseAddess = clientBaseAddress;
-            policies = requestPolicies ?? throw new ArgumentNullException(nameof(requestPolicies));
-            headers = clientHeaders ?? default;
+            clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            policies = requestPolicies;
             configured = true;
         }
 
@@ -337,14 +318,6 @@ namespace CoreService.Simulation.Steps
 
         [JsonIgnore]
         private PolicyWrap policies;
-
-
-        [JsonIgnore]
-        private string baseAddess;
-
-
-        [JsonIgnore]
-        private IDictionary<string, string> headers;
 
 
         [JsonIgnore]

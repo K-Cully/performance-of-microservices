@@ -32,6 +32,9 @@ namespace CoreService.Simulation.Core
         private readonly IDictionary<string, IStep> steps;
 
 
+        private readonly SimpleHttpClientFactory simpleClientFactory;
+
+
         /// <summary>
         /// Gets the list of http clients and their configs.
         /// </summary>
@@ -118,6 +121,11 @@ namespace CoreService.Simulation.Core
             {
                 PolicyRegistry.Add(policy.Key, policy.Value);
             }
+
+            simpleClientFactory = new SimpleHttpClientFactory
+            {
+                Clients = clients
+            };
         }
 
 
@@ -209,11 +217,10 @@ namespace CoreService.Simulation.Core
                 }
                 else
                 {
-                    // TODO: send SimpleHttpClientFactory
-                    ClientConfig config = GetClient(requestStep.ClientName);
-                    var policies = config.Policies.Select(n => GetPolicy(n));
+                    var policies = GetClient(requestStep.ClientName)
+                        .Policies.Select(n => GetPolicy(n));
                     PolicyWrap wrap = Policy.WrapAsync(policies.ToArray());
-                    requestStep.Configure(wrap, config.BaseAddress, config.RequestHeaders);
+                    requestStep.Configure(simpleClientFactory, wrap);
                 }
             }
         }

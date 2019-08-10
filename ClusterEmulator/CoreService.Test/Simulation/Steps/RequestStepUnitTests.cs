@@ -271,12 +271,242 @@ namespace CoreService.Test.Simulation.Steps
         }
 
 
-        // TODO: complete ExecuteAsync
         [TestMethod]
-        public void Fail()
+        public async Task ExecuteAsync_Asynchronous_TaskFaulted_ReturnsSuccess()
         {
-            // TODO:
-            Assert.IsTrue(false);
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .Throws(new Exception("test exception"));
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_Asynchronous_ResponseOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.OK);
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_Asynchronous_ResponseNotOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.BadRequest);
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ThrowsException_Throws()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .Throws(new Exception("test exception"));
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+
+            await Assert.ThrowsExceptionAsync<Exception>(
+                () => step.ExecuteAsync());
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ResponseOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.OK);
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_ResponseNotOk_ReturnsFail()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.BadRequest);
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.Wrap(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, policies);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Fail, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_PoliciesNull_ResponseOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+                .ReturnsResponse(HttpStatusCode.OK);
+
+            var factory = handler.CreateClientFactory();
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, null);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_PoliciesNull_Asynchronous_TaskFaulted_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+                .Throws(new Exception("test exception"));
+
+            var factory = handler.CreateClientFactory();
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            step.Configure(factory, null);
+
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
         }
 
 
@@ -334,67 +564,39 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public void Configure_Local_ReuseHttpClientTrue_Throws()
         {
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
-            var headers = new Dictionary<string, string>();
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => step.Configure(policies, "http://test.com/", headers));
+                () => step.Configure(factory.Object, policies));
         }
 
 
         [TestMethod]
-        public void Configure_Local_BaseAddressEmpty_Throws()
+        public void Configure_Local_FactoryNull_Throws()
         {
             var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
-            var headers = new Dictionary<string, string>();
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => step.Configure(policies, string.Empty, headers));
+                () => step.Configure(null, policies));
         }
 
 
         [TestMethod]
-        public void Configure_Local_BaseAddressRelative_Throws()
+        public void Configure_Local_PoliciesNull_SetsConfigured()
         {
-            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
-            var headers = new Dictionary<string, string>();
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
-            Assert.ThrowsException<ArgumentException>(
-                () => step.Configure(policies, "/test/", headers));
-        }
-
-
-        [TestMethod]
-        public void Configure_Local_PoliciesNull_Throws()
-        {
-            var headers = new Dictionary<string, string>();
-
-            var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
-
-            Assert.ThrowsException<ArgumentNullException>(
-                () => step.Configure(null, "http://test.com/", headers));
-        }
-
-
-        [TestMethod]
-        public void Configure_Local_HeadersNull_SetsConfigured()
-        {
-            var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
-
-            var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
-
-            step.Configure(policies, "http://test.com/", null);
+            step.Configure(factory.Object, null);
             Assert.IsTrue(step.Configured);
         }
 
@@ -402,13 +604,13 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public void Configure_Local_AllValuesProvided_SetsConfigured()
         {
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var policies = Policy.Wrap(Policy.NoOp(), Policy.NoOp());
-            var headers = new Dictionary<string, string>();
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
 
-            step.Configure(policies, "http://test.com/", headers);
+            step.Configure(factory.Object, policies);
             Assert.IsTrue(step.Configured);
         }
     }
