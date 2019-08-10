@@ -189,7 +189,6 @@ namespace CoreService.Simulation.Steps
             }
             if (method == HttpMethod.Head)
             {
-                // TODO: test
                 return token =>
                 {
                     using (var request = new HttpRequestMessage(HttpMethod.Head, Path))
@@ -198,7 +197,6 @@ namespace CoreService.Simulation.Steps
             }
             if (method == HttpMethod.Options)
             {
-                // TODO: test
                 return token =>
                 {
                     using (var request = new HttpRequestMessage(HttpMethod.Options, Path))
@@ -221,7 +219,6 @@ namespace CoreService.Simulation.Steps
             }
             if (method == HttpMethod.Trace)
             {
-                // TODO: test
                 return token =>
                 {
                     using (var request = new HttpRequestMessage(HttpMethod.Trace, Path))

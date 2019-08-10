@@ -253,7 +253,7 @@ namespace CoreService.Test.Simulation.Steps
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var client = handler.CreateClient();
             client.BaseAddress = baseUri;
-            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+            handler.SetupRequest(HttpMethod.Trace, $"{baseUri}test/")
                 .ReturnsResponse(HttpStatusCode.BadRequest);
 
             var factory = handler.CreateClientFactory();
@@ -262,7 +262,7 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = false, ClientName = "testClient", Method = "TRACE", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
@@ -310,7 +310,7 @@ namespace CoreService.Test.Simulation.Steps
             var client = handler.CreateClient();
             client.BaseAddress = baseUri;
 
-            handler.SetupRequest(HttpMethod.Get, $"{baseUri}test/")
+            handler.SetupRequest(HttpMethod.Post, $"{baseUri}test/")
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
@@ -321,7 +321,7 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "POST", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -401,7 +401,7 @@ namespace CoreService.Test.Simulation.Steps
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var client = handler.CreateClient();
             client.BaseAddress = baseUri;
-            handler.SetupRequest(HttpMethod.Options, $"{baseUri}test/")
+            handler.SetupRequest(HttpMethod.Put, $"{baseUri}test/")
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
@@ -412,7 +412,7 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = false, ClientName = "testClient", Method = "PUT", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
             step.Configure(factory, policies);
             var result = await step.ExecuteAsync();
 
