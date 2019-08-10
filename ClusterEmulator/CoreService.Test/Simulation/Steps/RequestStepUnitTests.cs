@@ -1,6 +1,7 @@
 ﻿using CoreService.Simulation.Steps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Moq.Contrib.HttpClient;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Polly;
@@ -144,20 +145,23 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public async Task ExecuteAsync_ReuseClient_Asynchronous_TaskFaulted_ReturnsSuccess()
         {
+            Uri baseUri = new Uri("http://test.com/");
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            var client = new HttpClient(handler.Object, false);
-            handler.Protected().As<IHttpMessageHandler>()
-                .Setup(x => x.SendAsync(
-                    It.IsAny<HttpRequestMessage>(),
-                    It.IsAny<CancellationToken>()));
+            var client = handler.CreateClient();
 
-            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            factory.Setup(x => x.CreateClient(It.IsAny<string>()))
-                .Returns(client);
+            // TODO: return correct response
+            handler.SetupRequest(HttpMethod.Get, $"{baseUri}/api/stuff")
+                .ReturnsResponse("stuff");
+
+            var factory = handler.CreateClientFactory();
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
-            step.Configure(factory.Object);
+            step.Configure(factory);
 
             var result = await step.ExecuteAsync();
 
@@ -320,15 +324,6 @@ namespace CoreService.Test.Simulation.Steps
 
             step.Configure(policies, "http://test.com/", headers);
             Assert.IsTrue(step.Configured);
-        }
-
-
-        /// <summary>
-        /// Dummy interface for mocking HttpClient's underlying HttpMessageHandler
-        /// </summary>
-        private interface IHttpMessageHandler
-        {
-            Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);
         }
     }
 }
