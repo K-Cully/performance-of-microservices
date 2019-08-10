@@ -1,6 +1,5 @@
 ﻿using CoreService.Model;
 using Newtonsoft.Json;
-using Polly;
 using Polly.Wrap;
 using System;
 using System.Collections.Generic;
@@ -19,22 +18,19 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
+        /// Whether the request should be truely async (fire and forget) or should await responses.
+        /// </summary>
+        [JsonProperty("async")]
+        [JsonRequired]
+        public bool Async { get; set; }
+
+
+        /// <summary>
         /// The name of the client to use
         /// </summary>
         [JsonProperty("client")]
         [JsonRequired]
         public string ClientName { get; set; }
-
-
-        /// <summary>
-        /// Whether the request should reuse HttpClient instances or not.
-        /// </summary>
-        /// <remarks>
-        /// Reusing Http clients prevents creation of new connections on new sockets for every request.
-        /// </remarks>
-        [JsonProperty("reuseSockets")]
-        [JsonRequired]
-        public bool ReuseHttpClient { get; set; }
 
 
         /// <summary>
@@ -58,8 +54,19 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         [JsonProperty("size")]
         [JsonRequired]
-        [Range(0, int.MaxValue, ErrorMessage = "size must be greater than 0")]
+        [Range(0, int.MaxValue, ErrorMessage = "size cannot be negative")]
         public int PayloadSize { get; set; }
+
+
+        /// <summary>
+        /// Whether the request should reuse HttpClient instances or not.
+        /// </summary>
+        /// <remarks>
+        /// Reusing Http clients prevents creation of new connections on new sockets for every request.
+        /// </remarks>
+        [JsonProperty("reuseSockets")]
+        [JsonRequired]
+        public bool ReuseHttpClient { get; set; }
 
 
         /// <summary>
@@ -68,16 +75,7 @@ namespace CoreService.Simulation.Steps
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
-            // Policy -> name and details
-
-            // HttpClient -> name, policies and details (host and headers?)
-
-            // Request -> if reusable_http_client_name, path and request else host, path, headers, policy and request
-
-
-            // TODO: if dealing with responses >50MB, implement streaming
-
-            // TODO: unify sizes to be in bytes
+            // TODO: Add logging throughout
 
             if (string.IsNullOrWhiteSpace(Path) || !Uri.TryCreate(Path, UriKind.Relative, out _))
             {
@@ -91,33 +89,35 @@ namespace CoreService.Simulation.Steps
 
             if (PayloadSize < 0)
             {
-                throw new InvalidOperationException("size must be greater than 0");
+                throw new InvalidOperationException("size cannot be negative");
             }
 
-            // TODO: add caller identifier to request
-            // TODO: add payload
-            AdaptableRequest request = new AdaptableRequest();
+            // TODO: unify sizes to be in bytes
 
+            // TODO: add caller identifier
 
-            // TODO: add cancellation token
+            // Note: Will need to be updated to use streaming if support for responses >50MB is ever required.
 
-            // TODO: add optional true async vs await
-
+            Func<CancellationToken, Task<HttpResponseMessage>> request;
             if (ReuseHttpClient)
             {
-                // TODO: update client and make actual request
                 HttpClient client = clientFactory.CreateClient(ClientName);
+                request = GetRequestAction(client);
 
-                // TODO: refactor
-                using (HttpResponseMessage response =
-                      await client.PostAsJsonAsync(Path, request, CancellationToken.None))
+                if (Async)
                 {
-                    // TODO: set status based off response
+                    SendRequest(ExecuteRequestAsync(request, CancellationToken.None));
+                }
+                else
+                {
+                    using (HttpResponseMessage response = await ExecuteRequestAsync(request, CancellationToken.None))
+                    {
+                        return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
+                    }
                 }
             }
             else
             {
-                // TODO: add policies and make actual request
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(baseAddess);
@@ -126,38 +126,126 @@ namespace CoreService.Simulation.Steps
                         client.DefaultRequestHeaders.Add(key, value);
                     }
 
-                    Func<CancellationToken, Task<HttpResponseMessage>> action;
-
+                    request = GetRequestAction(client);
+                    Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                     if (policies is null)
                     {
-                        // TODO: refactor
-                        action = ct => client.PostAsJsonAsync(Path, request, ct);
+                        combinedAction = token => request(token);
                     }
                     else
                     {
-                        // TODO: refactor
-                        // TODO: should this support local cancellation?
-                        action = token => policies.ExecuteAsync(
-                                    ct => client.PostAsJsonAsync(Path, request, ct), token);
-
+                        combinedAction = token => policies.ExecuteAsync(ct => request(ct), token);
                     }
 
-                    using (HttpResponseMessage response =
-                        await ExecuteRequestAsync(action, CancellationToken.None))
+                    if (Async)
                     {
-                        // TODO: set status based off response
+                        SendRequest(ExecuteRequestAsync(combinedAction, CancellationToken.None));
+                    }
+                    else
+                    {
+                        using (HttpResponseMessage response =
+                            await ExecuteRequestAsync(combinedAction, CancellationToken.None))
+                        {
+                            return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
+                        }
                     }
                 }
             }
 
-            // TODO
-            return await Task.FromResult(ExecutionStatus.Success);
+            return ExecutionStatus.Success;
         }
 
 
-        private async Task<HttpResponseMessage> ExecuteRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
+        private Func<CancellationToken, Task<HttpResponseMessage>> GetRequestAction(HttpClient client)
+        {
+            // TODO: refactor to remove duplication
+
+            var method = new HttpMethod(Method);
+
+            if (method == HttpMethod.Delete)
+            {
+                return token => client.DeleteAsync(Path, token);
+            }
+            if (method == HttpMethod.Get)
+            {
+                return token => client.GetAsync(Path, token);
+            }
+            if (method == HttpMethod.Head)
+            {
+                // TODO: test
+                return token =>
+                {
+                    using (var request = new HttpRequestMessage(HttpMethod.Head, Path))
+                        return client.SendAsync(request, token);
+                };
+            }
+            if (method == HttpMethod.Options)
+            {
+                // TODO: test
+                return token =>
+                {
+                    using (var request = new HttpRequestMessage(HttpMethod.Options, Path))
+                        return client.SendAsync(request, token);
+                };
+            }
+            if (method == HttpMethod.Post)
+            {
+                // TODO: create AdaptableRequest
+                // TODO: add payload
+                // TODO: add caller identifier to request
+                var request = new AdaptableRequest();
+                return token => client.PostAsJsonAsync(Path, request, token);
+            }
+            if (method == HttpMethod.Put)
+            {
+                // TODO: create AdaptableRequest
+                // TODO: add payload
+                // TODO: add caller identifier to request
+                var request = new AdaptableRequest();
+                return token => client.PutAsJsonAsync(Path, request, token);
+            }
+            if (method == HttpMethod.Trace)
+            {
+                // TODO: test
+                return token =>
+                {
+                    using (var request = new HttpRequestMessage(HttpMethod.Trace, Path))
+                        return client.SendAsync(request, token);
+                };
+            }
+
+            throw new InvalidOperationException($"{Method} is not supported");
+        }
+
+
+        /// <summary>
+        /// Executes the request following the async-await pattern, freeing the current thread back to the thread pool.
+        /// </summary>
+        /// <param name="action">The request action.</param>
+        /// <param name="token">The local cacellation token.</param>
+        /// <returns>The response message from the request.</returns>
+        private async Task<HttpResponseMessage> ExecuteRequestAsync(
+            Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
         {
             return await action(token).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Sends the request asynchronously with error handling if the task faults.
+        /// </summary>
+        /// <param name="requestTask">The request task to execute asynchronously.</param>
+        private void SendRequest(Task<HttpResponseMessage> requestTask)
+        {
+            // TODO: test this acts as expected and object is disposed correctly on error and success
+
+            requestTask.ContinueWith(t =>
+            {
+                t.Result.Content.Dispose();
+                // TODO: Log error
+                // requestTask.Exception.Message;
+
+            }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
 
