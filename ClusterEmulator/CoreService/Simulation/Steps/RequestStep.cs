@@ -18,11 +18,11 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// Whether the request should be truely async (fire and forget) or should await responses.
+        /// Whether the request should be truely asynchronous (fire and forget) or should await responses.
         /// </summary>
         [JsonProperty("async")]
         [JsonRequired]
-        public bool Async { get; set; }
+        public bool Asynchrounous { get; set; }
 
 
         /// <summary>
@@ -119,9 +119,13 @@ namespace CoreService.Simulation.Steps
             if (ReuseHttpClient)
             {
                 HttpClient client = clientFactory.CreateClient(ClientName);
-                request = GetRequestAction(client);
+                if (client is null)
+                {
+                    return ExecutionStatus.Unexpected;
+                }
 
-                if (Async)
+                request = GetRequestAction(client);
+                if (Asynchrounous)
                 {
                     SendRequest(ExecuteRequestAsync(request, CancellationToken.None));
                 }
@@ -154,7 +158,7 @@ namespace CoreService.Simulation.Steps
                         combinedAction = token => policies.ExecuteAsync(ct => request(ct), token);
                     }
 
-                    if (Async)
+                    if (Asynchrounous)
                     {
                         SendRequest(ExecuteRequestAsync(combinedAction, CancellationToken.None));
                     }
@@ -258,9 +262,9 @@ namespace CoreService.Simulation.Steps
 
             requestTask.ContinueWith(t =>
             {
-                t.Result.Content.Dispose();
+                t.Result?.Content?.Dispose();
                 // TODO: Log error
-                // requestTask.Exception.Message;
+                // t.Exception.Message;
 
             }, TaskContinuationOptions.OnlyOnFaulted);
         }
