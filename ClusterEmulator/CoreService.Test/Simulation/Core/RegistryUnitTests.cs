@@ -411,33 +411,60 @@ namespace CoreService.Test.Simulation.Core
 
 
         [TestMethod]
-        public void ConfigureHttpClients_RequestSteps_DoesNothing()
+        public void ConfigureHttpClients_EmptyPolicies_CallsConfigureForReuseHttpClientOnly()
         {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string>()
+            };
+
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
-
-            // Create Moq proxy instances
+            
+            // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
-            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(null);
+
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(null);
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var requestStep1 = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep1.Setup(rs => rs.ReuseHttpClient).Returns(true);
+            requestStep1.Setup(rs => rs.Configure(httpClientFactory.Object));
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(s => requestStep1.Object as RequestStep);
+
+            var requestStep2 = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep2.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep2.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep2.Setup(rs => rs.Configure(httpClientFactory.Object));
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => requestStep2.Object as RequestStep);
 
             // Act
             Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
 
             // Verify
             registry.ConfigureHttpClients(httpClientFactory.Object);
+ 
+            requestStep1.Verify(rs => rs.Configure(httpClientFactory.Object), Times.Once);
+            requestStep2.Verify(rs => rs.Configure(httpClientFactory.Object), Times.Never);
         }
 
+
+        [TestMethod]
+        public void Fail()
+        {
+            Assert.IsTrue(false);
+        }
 
         private ConfigurationSettings CreateDefaultSettings()
         {
@@ -457,31 +484,31 @@ namespace CoreService.Test.Simulation.Core
 
             // Add processors parameters
             ConfigurationProperty processor = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Bob", "");
+                .CreateConfigurationSectionParameters("Bob", "Bob");
             processorSection.Parameters.Add(processor);
 
             // Add step parameters
             ConfigurationProperty step1 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Frank", "");
+                .CreateConfigurationSectionParameters("Frank", "Frank");
             ConfigurationProperty step2 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Mary", "");
+                .CreateConfigurationSectionParameters("Mary", "Mary");
             stepSection.Parameters.Add(step1);
             stepSection.Parameters.Add(step2);
 
             // Add policy parameters
             ConfigurationProperty policy1 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Amanda", "");
+                .CreateConfigurationSectionParameters("Amanda", "Amanda");
             ConfigurationProperty policy2 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Max", "");
+                .CreateConfigurationSectionParameters("Max", "Max");
             ConfigurationProperty policy3 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Ted", "");
+                .CreateConfigurationSectionParameters("Ted", "Ted");
             policiesSection.Parameters.Add(policy1);
             policiesSection.Parameters.Add(policy2);
             policiesSection.Parameters.Add(policy3);
 
-            // Add processors parameters
+            // Add clients parameters
             ConfigurationProperty client = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Xi", "");
+                .CreateConfigurationSectionParameters("Xi", "Xi");
             clientsSection.Parameters.Add(client);
 
             return settings;

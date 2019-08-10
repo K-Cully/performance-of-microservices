@@ -220,10 +220,17 @@ namespace CoreService.Simulation.Core
                 }
                 else
                 {
-                    var policies = GetClient(requestStep.ClientName)
-                        .Policies.Select(n => GetPolicy(n));
-                    PolicyWrap wrap = Policy.WrapAsync(policies.ToArray());
-                    requestStep.Configure(simpleClientFactory, wrap);
+                    var policies = GetClient(requestStep.ClientName).Policies
+                        .Select(n => GetPolicy(n))
+                        .ToArray();
+                    Policy policy = null;
+                    if (policies.Any())
+                    {
+                        policy = policies.Length == 1 ?
+                            policies.First() : Policy.WrapAsync(policies);
+                    }
+
+                    requestStep.Configure(simpleClientFactory, policy);
                 }
             }
         }
