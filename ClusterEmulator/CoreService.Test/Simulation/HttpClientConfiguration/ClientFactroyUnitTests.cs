@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Test.Simulation.Processors
+namespace CoreService.Test.Simulation.HttpClientConfiguration
 {
     [TestClass]
     public class ClientFactroyUnitTests

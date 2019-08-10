@@ -4,7 +4,7 @@ using Polly;
 using Polly.Retry;
 using System;
 
-namespace CoreService.Test.Simulation.HttpClient
+namespace CoreService.Test.Simulation.HttpClientConfiguration
 {
     [TestClass]
     public class PolicyFactoryUnitTests

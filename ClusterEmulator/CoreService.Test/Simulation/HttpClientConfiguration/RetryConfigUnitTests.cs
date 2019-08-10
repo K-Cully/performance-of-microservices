@@ -5,7 +5,7 @@ using Polly.Retry;
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Test.Simulation.HttpClient
+namespace CoreService.Test.Simulation.HttpClientConfiguration
 {
     [TestClass]
     public class RetryConfigUnitTests
