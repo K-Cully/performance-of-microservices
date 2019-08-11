@@ -38,13 +38,6 @@ namespace CoreService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // TODO: add registry and construct http clients
-            // as per https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory
-            // and https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.1
-
-            // On initializing registry create ClientConfiguration definitions
-            // ClientConfiguration should have name and http client Action
-
             // Register initialised policy registry
             services.AddPolicyRegistry(Registry.PolicyRegistry);
 
@@ -55,19 +48,22 @@ namespace CoreService
                 IHttpClientBuilder builder = services.AddHttpClient(name, c =>
                 {
                     c.BaseAddress = new Uri(config.BaseAddress);
-
-                    // TODO: deal with RequestHeaders null
-                    foreach ((string key, string value) in config.RequestHeaders)
+                    if (config.RequestHeaders != null)
                     {
-                        c.DefaultRequestHeaders.Add(key, value);
+                        foreach ((string key, string value) in config.RequestHeaders)
+                        {
+                            c.DefaultRequestHeaders.Add(key, value);
+                        }
                     }
 
                     // TODO: add user agent c.DefaultRequestHeaders.Add(Headers.)
                 });
 
+                // Add Polly policies to http client builder.
+                // Note that any policies added through the http client factory initialization
+                // must be of type IAsyncPolicy<HttpResponseMessage> or Polly will throw errors.
                 foreach(string policy in config.Policies)
                 {
-                    // TODO: E2E test this registers correctly
                     builder = builder.AddPolicyHandlerFromRegistry(policy);
                 }
             }

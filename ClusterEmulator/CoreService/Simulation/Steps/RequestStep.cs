@@ -20,7 +20,7 @@ namespace CoreService.Simulation.Steps
         /// <summary>
         /// Whether the request should be truely asynchronous (fire and forget) or should await responses.
         /// </summary>
-        [JsonProperty("async")]
+        [JsonProperty("trueAsync")]
         [JsonRequired]
         public bool Asynchrounous { get; set; }
 
@@ -256,13 +256,11 @@ namespace CoreService.Simulation.Steps
         /// <param name="requestTask">The request task to execute asynchronously.</param>
         private void SendRequest(Task<HttpResponseMessage> requestTask)
         {
-            // TODO: test the object is disposed correctly on error and success
-
             requestTask.ContinueWith(t =>
             {
-                t?.Result?.Content?.Dispose();
+                //t?.Result?.Content?.Dispose();
                 // TODO: Log error
-                // t.Exception.Message;
+                string error = t?.Exception?.Message;
 
             }, TaskContinuationOptions.OnlyOnFaulted);
         }
