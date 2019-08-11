@@ -32,7 +32,10 @@ namespace CoreService.Simulation.Core
         private readonly IDictionary<string, IStep> steps;
 
 
-        private readonly SimpleHttpClientFactory simpleClientFactory;
+        /// <summary>
+        /// A simple client factory which does not implement client caching.
+        /// </summary>
+        private readonly IHttpClientFactory simpleClientFactory;
 
 
         /// <summary>

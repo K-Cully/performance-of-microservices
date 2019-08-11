@@ -5,6 +5,7 @@ using CoreService.Simulation.Steps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Polly;
+using Polly.Wrap;
 using ServiceFabric.Mocks;
 using System;
 using System.Collections.Generic;
@@ -411,7 +412,7 @@ namespace CoreService.Test.Simulation.Core
 
 
         [TestMethod]
-        public void ConfigureHttpClients_EmptyPolicies_CallsConfigureForReuseHttpClientOnly()
+        public void ConfigureHttpClients_EmptyPolicies_CallsConfigureForBothReuseCases()
         {
             var expectedConfig = new ClientConfig
             {
@@ -438,33 +439,476 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq steps
             var requestStep1 = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep1.Setup(rs => rs.ReuseHttpClient).Returns(true);
-            requestStep1.Setup(rs => rs.Configure(httpClientFactory.Object));
-            stepFactory.Setup(f => f.Create("Frank"))
-                .Returns<string>(s => requestStep1.Object as RequestStep);
+            requestStep1.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>()));
 
+            var step1 = requestStep1.As<IStep>();
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(s => step1.Object);
+ 
             var requestStep2 = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep2.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep2.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep2.Setup(rs => rs.Configure(httpClientFactory.Object));
+            requestStep2.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
+
+            var step2 = requestStep2.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
-                .Returns<string>(s => requestStep2.Object as RequestStep);
+                .Returns<string>(s => step2.Object);
 
             // Act
-            Registry registry = new Registry(settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+            registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
-            registry.ConfigureHttpClients(httpClientFactory.Object);
- 
-            requestStep1.Verify(rs => rs.Configure(httpClientFactory.Object), Times.Once);
-            requestStep2.Verify(rs => rs.Configure(httpClientFactory.Object), Times.Never);
+            requestStep1.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>()), Times.Once);
+            requestStep2.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null), Times.Once);
         }
 
 
         [TestMethod]
-        public void Fail()
+        public void ConfigureHttpClients_EmptyClient_Throws()
         {
-            Assert.IsTrue(false);
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string>()
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns(string.Empty);
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<ArgumentException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null), Times.Never);
         }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_MissingClient_Throws()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string>()
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("MissingEntry");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_NullClient_Throws()
+        {
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_TwoPolicies_CallsConfigureWithPolicyWrap()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string> { "Amanda", "Ted" }
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => Policy.NoOpAsync());
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+            registry.ConfigureHttpClients(httpClientFactory.Object);
+
+            // Verify
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()), Times.Once);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_OnePolicy_CallsConfigureWithPolicy()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string> { "Amanda" }
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => Policy.NoOpAsync());
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+            registry.ConfigureHttpClients(httpClientFactory.Object);
+
+            // Verify
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Once);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_PoliciesNull_Throws()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = null
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => Policy.NoOpAsync());
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<ArgumentNullException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_PolicyNull_Throws()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string> { null }
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => Policy.NoOpAsync());
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<ArgumentException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_PolicyMissing_Throws()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string> { "MissingValue" }
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => Policy.NoOpAsync());
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+        }
+
+
+        [TestMethod]
+        public void ConfigureHttpClients_PolicyValueNull_Throws()
+        {
+            var expectedConfig = new ClientConfig
+            {
+                Policies = new List<string> { "Amanda" }
+            };
+
+            // Create SF.Mock settings
+            var settings = CreateDefaultSettings();
+
+            // Create Moq factory instances
+            var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(s => expectedConfig);
+
+            // Create Moq steps
+            var step1 = new Mock<IStep>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create("Frank"))
+                .Returns<string>(null);
+
+            var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
+            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ClientName).Returns("Xi");
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+
+            var step2 = requestStep.As<IStep>();
+            stepFactory.Setup(f => f.Create("Mary"))
+                .Returns<string>(s => step2.Object);
+
+            // Act
+            Registry registry = new Registry(
+                settings, stepFactory.Object, processorFactory.Object, policyFactory.Object, clientFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(
+                () => registry.ConfigureHttpClients(httpClientFactory.Object));
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+        }
+
 
         private ConfigurationSettings CreateDefaultSettings()
         {
