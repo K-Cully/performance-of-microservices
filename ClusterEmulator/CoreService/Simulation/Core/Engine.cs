@@ -55,6 +55,7 @@ namespace CoreService.Simulation.Core
                     case ExecutionStatus.Success:
                         continue;
                     case ExecutionStatus.Fail:
+                        // TODO: change this response type to non-standard Status code to prevent false positives
                         errorResult.StatusCode = StatusCodes.Status404NotFound;
                         return errorResult;
                     case ExecutionStatus.Unexpected:

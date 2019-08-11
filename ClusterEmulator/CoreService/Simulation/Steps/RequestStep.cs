@@ -139,9 +139,14 @@ namespace CoreService.Simulation.Steps
             }
             else
             {
-                // TODO: move initialization to factory
                 using (var client = clientFactory.CreateClient(ClientName))
                 {
+                    if (client is null)
+                    {
+                        // TODO: add UT
+                        return ExecutionStatus.Unexpected;
+                    }
+
                     request = GetRequestAction(client);
                     Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                     if (policy is null)
@@ -249,7 +254,7 @@ namespace CoreService.Simulation.Steps
         /// <param name="requestTask">The request task to execute asynchronously.</param>
         private void SendRequest(Task<HttpResponseMessage> requestTask)
         {
-            // TODO: test this acts as expected and object is disposed correctly on error and success
+            // TODO: test the object is disposed correctly on error and success
 
             requestTask.ContinueWith(t =>
             {
@@ -267,8 +272,6 @@ namespace CoreService.Simulation.Steps
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         public void Configure(IHttpClientFactory httpClientFactory)
         {
-            // TODO: add to interface and UT
-
             if (configured)
             {
                 throw new InvalidOperationException("The step is already configured");
@@ -289,7 +292,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         /// <param name="requestPolicy">The policy or wrapped policies to apply to requests.</param>
-        public void Configure(IHttpClientFactory httpClientFactory, Policy requestPolicy)
+        public void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy requestPolicy)
         {
             if (configured)
             {
@@ -312,7 +315,7 @@ namespace CoreService.Simulation.Steps
 
 
         [JsonIgnore]
-        private Policy policy;
+        private IAsyncPolicy policy;
 
 
         [JsonIgnore]

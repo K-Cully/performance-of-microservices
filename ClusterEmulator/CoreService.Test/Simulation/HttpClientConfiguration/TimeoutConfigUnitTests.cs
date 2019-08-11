@@ -1,5 +1,6 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Polly;
 using Polly.Timeout;
 using System;
@@ -10,11 +11,30 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
     public class TimeoutConfigUnitTests
     {
         [TestMethod]
+        public void Deserialization_ValidData_CreatesValidInstance()
+        {
+            TimeoutConfig config = JsonConvert.DeserializeObject<TimeoutConfig>(
+                "{ time : 2.2, cancelDelegates : false }");
+
+            Assert.IsNotNull(config);
+            Assert.AreEqual(2.2d, config.TimeoutInSeconds, 0.0001d);
+            Assert.IsFalse(config.CancelDelegates);
+        }
+
+
+        [TestMethod]
+        public void Deserialization_InvalidData_Throws()
+        {
+            Assert.ThrowsException<JsonSerializationException>(
+                () => JsonConvert.DeserializeObject<TimeoutConfig>("{ }"));
+        }
+
+
+        [TestMethod]
         public void AsPolicy_NegativeTimeoutInSeconds_Throws()
         {
             var retryConfig = new TimeoutConfig
             {
-                Async = false,
                 TimeoutInSeconds = -1.0d,
                 CancelDelegates = true
             };
@@ -29,7 +49,6 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             var retryConfig = new TimeoutConfig
             {
-                Async = true,
                 TimeoutInSeconds = double.NaN,
                 CancelDelegates = false
             };
@@ -44,7 +63,6 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             var retryConfig = new TimeoutConfig
             {
-                Async = true,
                 TimeoutInSeconds = double.MaxValue,
                 CancelDelegates = false
             };
@@ -55,50 +73,15 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
 
 
         [TestMethod]
-        public void AsPolicy_TimeoutInSecondsValid_CancelDelegates_Async_ReturnsPolicy()
-        {
-            var retryConfig = new TimeoutConfig
-            {
-                Async = true,
-                TimeoutInSeconds = 1.0d,
-                CancelDelegates = true
-            };
-
-            Policy policy = retryConfig.AsPolicy();
-
-            Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
-        }
-
-
-        [TestMethod]
         public void AsPolicy_TimeoutInSecondsValid_CancelDelegates_ReturnsPolicy()
         {
             var retryConfig = new TimeoutConfig
             {
-                Async = false,
                 TimeoutInSeconds = 5.0d,
                 CancelDelegates = true
             };
 
-            Policy policy = retryConfig.AsPolicy();
-
-            Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
-        }
-
-
-        [TestMethod]
-        public void AsPolicy_TimeoutInSecondsValid_Async_ReturnsPolicy()
-        {
-            var retryConfig = new TimeoutConfig
-            {
-                Async = true,
-                TimeoutInSeconds = 1000.0d,
-                CancelDelegates = false
-            };
-
-            Policy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
@@ -110,12 +93,11 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             var retryConfig = new TimeoutConfig
             {
-                Async = false,
                 TimeoutInSeconds = 0.001d,
                 CancelDelegates = false
             };
 
-            Policy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy();
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));

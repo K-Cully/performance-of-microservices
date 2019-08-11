@@ -3,7 +3,6 @@ using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Polly;
 using Polly.Registry;
-using Polly.Wrap;
 using System;
 using System.Collections.Generic;
 using System.Fabric.Description;
@@ -23,7 +22,7 @@ namespace CoreService.Simulation.Core
         private readonly IDictionary<string, ClientConfig> clients;
 
 
-        private readonly IDictionary<string, Policy> policies;
+        private readonly IDictionary<string, IAsyncPolicy> policies;
 
 
         private readonly IDictionary<string, IProcessor> processors;
@@ -150,14 +149,14 @@ namespace CoreService.Simulation.Core
         /// Retrieves the policy with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the policy.</param>
-        /// <returns>The <see cref="Policy"/> instance.</returns>
+        /// <returns>The <see cref="IAsyncPolicy"/> instance.</returns>
         /// <exception cref="ArgumentException">
         /// name is null or white space.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// The policy is not registered or the registration is not valid.
         /// </exception>
-        public Policy GetPolicy(string name)
+        public IAsyncPolicy GetPolicy(string name)
         {
             return GetRegisteredValue(name, policies, "Policy");
         }
@@ -223,7 +222,7 @@ namespace CoreService.Simulation.Core
                     var policies = GetClient(requestStep.ClientName).Policies
                         .Select(n => GetPolicy(n))
                         .ToArray();
-                    Policy policy = null;
+                    IAsyncPolicy policy = null;
                     if (policies.Any())
                     {
                         policy = policies.Length == 1 ?

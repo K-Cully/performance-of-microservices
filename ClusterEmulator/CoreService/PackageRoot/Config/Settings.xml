@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="1" Value="{ errorSize : 100, latency : 0, steps : [ 'D', 'A', 'B' ], successSize : 20 }" />
-    <Parameter Name="2" Value="{ errorSize : 15, latency : 0, steps : [ 'C, ], successSize : 0 }" />
+    <Parameter Name="1" Value="{ errorSize : 100, latency : 0, steps : [ 'A', 'B' ], successSize : 20 }" />
+    <Parameter Name="2" Value="{ errorSize : 15, latency : 0, steps : [ 'C' ], successSize : 0 }" />
+    <Parameter Name="3" Value="{ errorSize : 128, latency : 60, steps : [ 'D' ], successSize : 512 }" />
   </Section>
   <Section Name="Steps">
     <Parameter Name="A" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
-    <Parameter Name="C" Value="{ type : 'RequestStep, step : { async : false, client : 'A', method : 'get', path : 'test/', size : 128, reuseSockets : true } }"/>
+    <Parameter Name="C" Value="{ type : 'RequestStep', step : { async : false, client : 'A', method : 'get', path : 'test/', size : 128, reuseSockets : true } }"/>
     <Parameter Name="D" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
   </Section>
   <Section Name="Clients">
     <Parameter Name="A" Value="{ baseAddress : 'https://github.com/', policies : [ 'C', 'A' ], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
-    <Parameter Name="A" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ], async : true } }" />
-    <Parameter Name="B" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300, async : false } }" />
-    <Parameter Name="C" Value="{ type : 'TimeoutConfig', policy : { async : true, cancelDelegates : false, time : 3.1 } }" />
+    <Parameter Name="A" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
+    <Parameter Name="B" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
+    <Parameter Name="C" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 3.1 } }" />
   </Section>
 </Settings>

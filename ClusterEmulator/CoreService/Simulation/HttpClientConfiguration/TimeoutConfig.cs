@@ -13,14 +13,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
     public class TimeoutConfig : IPolicyConfiguration
     {
         /// <summary>
-        /// A value indicating if the policy should allow awaiting or not
-        /// </summary>
-        [JsonProperty("async")]
-        [JsonRequired]
-        public bool Async;
-
-
-        /// <summary>
         /// A value indicating if the policy should timeout with cancellation of delegates or hard timeout.
         /// </summary>
         [JsonProperty("cancelDelegates")]
@@ -41,7 +33,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Generates a Polly <see cref="TimeoutPolicy"/> from the configuration.
         /// </summary>
         /// <returns>A <see cref="TimeoutPolicy"/> instance.</returns>
-        public Policy AsPolicy()
+        public IAsyncPolicy AsPolicy()
         {
             // Restrict to valid TimeSpan
             if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)
@@ -59,14 +51,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
             var wait = TimeSpan.FromSeconds(TimeoutInSeconds);
             var strategy = CancelDelegates ? TimeoutStrategy.Optimistic : TimeoutStrategy.Pessimistic;
 
-            if (Async)
-            {
-                return Policy.TimeoutAsync(wait, strategy);
-            }
-            else
-            {
-                return Policy.Timeout(wait, strategy);
-            }
+            return Policy.TimeoutAsync(wait, strategy);
         }
     }
 }

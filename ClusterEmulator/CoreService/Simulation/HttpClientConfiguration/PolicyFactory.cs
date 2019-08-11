@@ -22,12 +22,12 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Creates a concrete policy object from a setting value.
         /// </summary>
         /// <param name="settingValue">The step setting value.</param>
-        /// <returns>An initialized <see cref="Policy"/> instance.</returns>
+        /// <returns>An initialized <see cref="IAsyncPolicy"/> instance.</returns>
         /// <remarks>
         /// Expected setting form:
         /// { type : <typename>, policy : { <object> } }
         /// </remarks>
-        public Policy Create(string settingValue)
+        public IAsyncPolicy Create(string settingValue)
         {
             // TODO: flesh out properly
             // See docs: https://github.com/App-vNext/Polly/blob/master/README.md#retry

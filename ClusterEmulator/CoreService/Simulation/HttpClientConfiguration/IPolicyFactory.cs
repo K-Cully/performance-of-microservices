@@ -11,11 +11,11 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Creates a concrete policy object from a setting value.
         /// </summary>
         /// <param name="settingValue">The step setting value.</param>
-        /// <returns>An initialized <see cref="Policy"/> instance.</returns>
+        /// <returns>An initialized <see cref="IAsyncPolicy"/> instance.</returns>
         /// <remarks>
         /// Expected setting form:
         /// { type : <typename>, policy : { <object> } }
         /// </remarks>
-        Policy Create(string settingValue);
+        IAsyncPolicy Create(string settingValue);
     }
 }

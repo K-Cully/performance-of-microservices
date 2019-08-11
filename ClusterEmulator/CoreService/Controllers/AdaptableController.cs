@@ -51,7 +51,7 @@ namespace CoreService.Controllers
                 // TODO: log exception
                 return BadRequest(new ErrorResponse(ex.Message));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // TODO: log exception
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);

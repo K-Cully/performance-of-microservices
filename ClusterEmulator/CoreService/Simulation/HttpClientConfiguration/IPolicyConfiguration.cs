@@ -8,9 +8,9 @@ namespace CoreService.Simulation.HttpClientConfiguration
     public interface IPolicyConfiguration
     {
         /// <summary>
-        /// Generates a Polly <see cref="Policy"/> from the configuration.
+        /// Generates a Polly <see cref="IAsyncPolicy"/> from the configuration.
         /// </summary>
-        /// <returns>A <see cref="Policy"/> instance.</returns>
-        Policy AsPolicy();
+        /// <returns>A <see cref="IAsyncPolicy"/> instance.</returns>
+        IAsyncPolicy AsPolicy();
     }
 }

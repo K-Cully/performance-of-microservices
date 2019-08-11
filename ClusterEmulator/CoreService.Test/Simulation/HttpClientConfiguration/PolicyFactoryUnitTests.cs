@@ -25,9 +25,9 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             string setting = "???";
             var factory = new PolicyFactory();
 
-            Policy policy = factory.Create(setting);
+            IAsyncPolicy policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "Policy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy should be null");
         }
 
 
@@ -37,9 +37,9 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             string setting = "{ }";
             var factory = new PolicyFactory();
 
-            Policy policy = factory.Create(setting);
+            IAsyncPolicy policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "Policy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy should be null");
         }
 
 
@@ -71,22 +71,22 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             string setting = "{ type : 'RetryConfig', policy : {  } }";
             var factory = new PolicyFactory();
 
-            Policy policy = factory.Create(setting);
+            IAsyncPolicy policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "Policy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy should be null");
         }
 
 
         [TestMethod]
         public void Create_WithValidSetting_ReturnsPolicy()
         {
-            string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ], async : true } }";
+            string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ] } }";
             var factory = new PolicyFactory();
 
-            Policy policy = factory.Create(setting);
+            IAsyncPolicy policy = factory.Create(setting);
 
-            Assert.IsNotNull(policy, "Policy should not be null");
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "Policy should be a RetryPolicy instance");
+            Assert.IsNotNull(policy, "IAsyncPolicy should not be null");
+            Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "IAsyncPolicy should be a RetryPolicy instance");
         }
     }
 }

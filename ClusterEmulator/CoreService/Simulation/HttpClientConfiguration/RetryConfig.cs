@@ -16,14 +16,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
     public class RetryConfig : IPolicyConfiguration
     {
         /// <summary>
-        /// A value indicating if the policy should allow awaiting or not
-        /// </summary>
-        [JsonProperty("async")]
-        [JsonRequired]
-        public bool Async;
-
-
-        /// <summary>
         /// The number of retries to attempt.
         /// Values less than 1 indicate retry forever.
         /// </summary>
@@ -57,7 +49,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Generates a Polly <see cref="RetryPolicy"/> from the configuration.
         /// </summary>
         /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
-        public Policy AsPolicy()
+        public IAsyncPolicy AsPolicy()
         {
             if (DelaysInSeconds is null)
             {
@@ -78,21 +70,13 @@ namespace CoreService.Simulation.HttpClientConfiguration
             bool immediate = !delays.Any();
             if (immediate)
             {
-                if (Async && forever)
+                if (forever)
                 {
                     return builder.RetryForeverAsync();
                 }
-                else if (forever)
-                {
-                    return builder.RetryForever();
-                }
-                else if (Async)
-                {
-                    return builder.RetryAsync(Retries);
-                }
                 else
                 {
-                    return builder.Retry(Retries);
+                    return builder.RetryAsync(Retries);
                 }
             }
 
@@ -104,21 +88,13 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 throw new InvalidOperationException($"delay values cannot be negative");
             }
 
-            if (Async && forever)
+            if (forever)
             {
                 return builder.WaitAndRetryForeverAsync(c => Delay(c, exponential));
             }
-            else if (forever)
-            {
-                return builder.WaitAndRetryForever(c => Delay(c, exponential));
-            }
-            else if (Async)
-            {
-                return builder.WaitAndRetryAsync(Retries, c => Delay(c, exponential));
-            }
             else
             {
-                return builder.WaitAndRetry(Retries, c => Delay(c, exponential));
+                return builder.WaitAndRetryAsync(Retries, c => Delay(c, exponential));
             }
         }
 
