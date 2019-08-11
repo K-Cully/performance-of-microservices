@@ -89,8 +89,20 @@ namespace CoreService.Test.Simulation.Core
             };
             var factory = new SimpleHttpClientFactory(configs);
 
-            Assert.ThrowsException<UriFormatException>(
-                () => factory.CreateClient("Bob"));
+            bool platformException = false;
+            try
+            {
+                factory.CreateClient("Bob");
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception e) when (e is ArgumentException || e is UriFormatException)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                platformException = true;
+            }
+
+            // When running dotnet test on Windows and Linux, different exceptions are encountered
+            Assert.IsTrue(platformException, "The platform specific exception was encountered");
         }
 
 
