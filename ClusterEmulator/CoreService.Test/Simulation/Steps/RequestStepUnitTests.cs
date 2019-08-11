@@ -22,7 +22,7 @@ namespace CoreService.Test.Simulation.Steps
             RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
                 "{ client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
 
-            Assert.IsTrue(step.Asynchrounous);
+            Assert.IsFalse(step.Asynchrounous);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);

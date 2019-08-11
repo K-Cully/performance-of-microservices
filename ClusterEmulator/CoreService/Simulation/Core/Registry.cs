@@ -123,7 +123,7 @@ namespace CoreService.Simulation.Core
             foreach (var policy in policies)
             {
                 // TODO: handle non-request based policies once needed
-                PolicyRegistry.Add(policy.Key, policy.Value.AsAsyncPolicy<HttpResponseMessage>());
+                PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
             }
 
             simpleClientFactory = new SimpleHttpClientFactory(clients);
