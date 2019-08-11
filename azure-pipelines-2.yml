@@ -11,6 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  netcoreVersion : '2.2.401'
   targetFramework: 'netcoreapp2.2'
 
 steps:
@@ -18,11 +19,11 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '2.2.x'
+    version: $(netcoreVersion)
 
 - task: DotNetCoreInstaller@0
   inputs:
-    version: '2.2.x'
+    version: $(netcoreVersion)
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
