@@ -11,6 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  targetFramework: 'netcoreapp2.2'
 
 steps:
 
@@ -23,21 +24,10 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
   inputs:
     command: 'build'
-    arguments: 'ClusterEmulator --configuration $(buildConfiguration)'
+    arguments: 'ClusterEmulator --framework $(targetFramework) --configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test $(buildConfiguration)'
   inputs:
     command: test
-    arguments: 'ClusterEmulator --configuration $(buildConfiguration) --collect "Code coverage"'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet publish $(buildConfiguration)'
-  inputs:
-    command: publish
-    publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
-
-- task: PublishBuildArtifacts@1
-  displayName: 'publish artifacts'
+    arguments: 'ClusterEmulator --framework $(targetFramework) --configuration $(buildConfiguration) --collect "Code coverage"'
