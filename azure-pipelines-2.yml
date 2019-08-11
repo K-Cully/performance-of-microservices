@@ -11,27 +11,23 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  targetFramework: 'netcoreapp2.2'
+  netcoreVersion : '2.2.x'
 
 steps:
 
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '2.2.x'
-
-- task: DotNetCoreInstaller@0
-  inputs:
-    version: '2.2.x'
+    version: $(netcoreVersion)
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
   inputs:
     command: 'build'
-    arguments: 'ClusterEmulator --framework $(targetFramework) --configuration $(buildConfiguration)'
+    arguments: 'ClusterEmulator --configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test $(buildConfiguration)'
   inputs:
     command: test
-    arguments: 'ClusterEmulator --framework $(targetFramework) --configuration $(buildConfiguration) --collect "Code coverage"'
+    arguments: 'ClusterEmulator --configuration $(buildConfiguration) --collect "Code coverage"'
