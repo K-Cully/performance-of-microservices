@@ -11,6 +11,16 @@ namespace CoreService.Simulation.Core
     public class SimpleHttpClientFactory : IHttpClientFactory
     {
         /// <summary>
+        /// Initializes a new instance of <see cref="SimpleHttpClientFactory"/>.
+        /// </summary>
+        /// <param name="clientConfigs">The client configurations to create clients from.</param>
+        public SimpleHttpClientFactory(IDictionary<string, ClientConfig> clientConfigs)
+        {
+            clients = clientConfigs ?? throw new ArgumentNullException(nameof(clientConfigs));
+        }
+
+
+        /// <summary>
         /// Returns a new <see cref="HttpClient"/> instance.
         /// The caller must ensure that the client is disposed after use.
         /// </summary>
@@ -18,24 +28,40 @@ namespace CoreService.Simulation.Core
         /// <returns>A new <see cref="HttpClient"/> instance.</returns>
         public HttpClient CreateClient(string name)
         {
-            // TODO: add validation to name
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"{nameof(name)} must be initialized", nameof(name));
+            }
+
+            if (!clients.ContainsKey(name))
+            {
+                throw new ArgumentException($"'{name}' is not registered", nameof(name));
+            }
 
             var client = new HttpClient();
-            var config = Clients[name];
-
-            client.BaseAddress = new Uri(config.BaseAddress, UriKind.Absolute);
-            foreach ((var key, var value) in config.RequestHeaders)
+            try
             {
-                client.DefaultRequestHeaders.Add(key, value);
+                var config = clients[name];
+                client.BaseAddress = new Uri(config.BaseAddress, UriKind.Absolute);
+                if (config.RequestHeaders != null)
+                {
+                    foreach ((string key, string value) in config.RequestHeaders)
+                    {
+                        client.DefaultRequestHeaders.Add(key, value);
+                    }
+                }
+            }
+            catch
+            {
+                // Ensure client is disposed if an exception occurrs
+                client.Dispose();
+                throw;
             }
 
             return client;
         }
 
 
-        /// <summary>
-        /// Gets or sets the client configurations.
-        /// </summary>
-        public IDictionary<string, ClientConfig> Clients { get; set; }
+        private readonly IDictionary<string, ClientConfig> clients;
     }
 }

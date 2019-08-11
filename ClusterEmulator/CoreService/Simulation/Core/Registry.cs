@@ -125,10 +125,7 @@ namespace CoreService.Simulation.Core
                 PolicyRegistry.Add(policy.Key, policy.Value);
             }
 
-            simpleClientFactory = new SimpleHttpClientFactory
-            {
-                Clients = clients
-            };
+            simpleClientFactory = new SimpleHttpClientFactory(clients);
         }
 
 
