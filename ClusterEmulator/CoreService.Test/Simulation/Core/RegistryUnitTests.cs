@@ -296,7 +296,7 @@ namespace CoreService.Test.Simulation.Core
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
-            var expectedPolicy = Policy.NoOp();
+             var expectedPolicy = Policy.NoOpAsync();
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);

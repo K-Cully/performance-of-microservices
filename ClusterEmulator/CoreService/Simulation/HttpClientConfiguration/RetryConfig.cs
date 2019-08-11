@@ -63,7 +63,10 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
             // TODO: add a logging function call to all policies
 
-            PolicyBuilder builder = Policy.Handle<HttpRequestException>();
+            // TODO: test condition and/or chage to HandleResult
+
+            var builder = Policy
+                .Handle<HttpRequestException>();
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
 

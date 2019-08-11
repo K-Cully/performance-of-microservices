@@ -305,7 +305,7 @@ namespace CoreService.Simulation.Steps
             }
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            policy = requestPolicy;
+            policy = requestPolicy.AsAsyncPolicy<HttpResponseMessage>();
             configured = true;
         }
 
@@ -315,7 +315,7 @@ namespace CoreService.Simulation.Steps
 
 
         [JsonIgnore]
-        private IAsyncPolicy policy;
+        private IAsyncPolicy<HttpResponseMessage> policy;
 
 
         [JsonIgnore]
