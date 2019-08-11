@@ -109,6 +109,8 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("Http client is not configured");
             }
 
+            // TODO: handle polly exceptions, eg. timeout
+
             // TODO: unify sizes to be in bytes
 
             // TODO: add caller identifier

@@ -3,13 +3,14 @@
   <Section Name="Processors">
     <Parameter Name="1" Value="{ errorSize : 100, latency : 0, steps : [ 'A', 'B' ], successSize : 20 }" />
     <Parameter Name="2" Value="{ errorSize : 15, latency : 0, steps : [ 'C' ], successSize : 0 }" />
-    <Parameter Name="3" Value="{ errorSize : 128, latency : 60, steps : [ 'D' ], successSize : 512 }" />
+    <Parameter Name="3" Value="{ errorSize : 128, latency : 60, steps : [ 'E' ], successSize : 512 }" />
   </Section>
   <Section Name="Steps">
     <Parameter Name="A" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="B" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
     <Parameter Name="C" Value="{ type : 'RequestStep', step : { async : false, client : 'A', method : 'get', path : 'test/', size : 128, reuseSockets : true } }"/>
     <Parameter Name="D" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
+    <Parameter Name="E" Value="{ type : 'RequestStep', step : { async : false, client : 'A', method : 'get', path : 'test/', size : 128, reuseSockets : false } }"/>
   </Section>
   <Section Name="Clients">
     <Parameter Name="A" Value="{ baseAddress : 'https://github.com/', policies : [ 'C', 'A' ], headers : { 'Accept' : 'application/json' } }" />
