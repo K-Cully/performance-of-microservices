@@ -9,7 +9,8 @@ namespace CoreService.Simulation.Core
     /// Creates concrete instances of the specifed type.
     /// </summary>
     /// <typeparam name="TModel">The type to generate from setting values.</typeparam>
-    public class ConfigFactory<TModel> : IConfigFactory<TModel> where TModel : class
+    public class ConfigFactory<TModel> : IConfigFactory<TModel>
+        where TModel : class
     {
         private List<string> errors;
 

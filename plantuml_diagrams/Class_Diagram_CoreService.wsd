@@ -20,27 +20,104 @@ class Engine implements IEngine {
 }
 
 interface IRegistry {
+    + PolicyRegistry : IPolicyRegistry<string>
+    + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
+    + ConfigureHttpClients(httpClientFactory)
+    + GetClient(name) : ClientConfig
+    + GetPolicy(name) : IAsyncPolicy
     + GetProcessor(name) : IProcessor
     + GetStep(name) : IStep
 }
 
 class Registry implements IRegistry {
-    - Settings : ConfigurationSettings
-    - Processors : IDictionary<string, IProcessor>
-    - Steps : IDictionary<string, IStep>
+    - clients : IDictionary<string, ClientConfig>
+    - policies : IDictionary<string, IAsyncPolicy>
+    - processors : IDictionary<string, IProcessor>
+    - steps : IDictionary<string, IStep>
+    - simpleClientFactory : IHttpClientFactory
+    + {static} ClientsSection : string
+    + {static} PoliciesSection : string
+    + {static} ProcessorsSection : string
+    + {static} StepsSection : string
+    - InitializeFromSettings<T>(settings, sectionName, registry, factory);
+    - GetRegisteredValue<T>(name, registry, typeName) : T
+    + Registry(configurationSettings, stepFactory,
+            processorFactory, policyFactory, clientFactory)
+    + ConfigureHttpClients(httpClientFactory)
 }
 
+
+interface IHttpClientFactory {
+    CreateClient(name) : HttpClient
+}
+
+class SimpleHttpClientFactory implements IHttpClientFactory {
+    - clients : IDictionary<string, ClientConfig>
+    + SimpleHttpClientFactory(clientConfigs)
+}
+
+
+interface IAsyncPolicy
+
+interface IPolicyConfiguration {
+    + AsPolicy() : IAsyncPolicy
+}
+
+class TimeoutConfig implements IPolicyConfiguration {
+    + CancelDelegates : boolean
+    + TimeoutInSeconds : double
+}
+
+class RetryConfig implements IPolicyConfiguration {
+    + Retries : integer
+    + DelaysInSeconds : IEnumerable<double>
+    + JitterMilliseconds : integer
+    - Delay(retryCount, exponential) : TimeSpan
+    - ExponentialDelay(retryCount) : TimeSpan
+    - DelayWithJitter(delay) : TimeSpan
+}
+
+interface IPolicyFactory {
+    Create(settingValue) : IAsyncPolicy
+}
+
+class PolicyFactory implements IPolicyFactory {
+    - errors : List<string>
+    - policyNamespace : string
+    - serializerSettings : JsonSerializerSettings
+}
+
+
+interface IConfigFactory<TModel> {
+    Create(string settingValue) : TModel
+}
+
+class ConfigFactory<TModel> implements IConfigFactory {
+    - errors : List<string>
+    - serializerSettings : JsonSerializerSettings
+}
+
+
 interface IProcessor {
-    + ErrorPayload : string
+    + ErrorPayload : ErrorResponse
     + ErrorPayloadSize : integer
     + IngressLatencyMilliseconds : integer
     + Steps : IList<string>
-    + SuccessPayload : string
+    + SuccessPayload : SuccessResponse
     + SuccessPayloadSize : integer
+}
+
+Class SuccessResponse {
+    + Result : string
+}
+
+Class ErrorResponse {
+    + Error : string
 }
 
 class Processor implements IProcessor {
 }
+
 
 enum ExecutionStatus {
     Unexpected : 0
@@ -48,21 +125,94 @@ enum ExecutionStatus {
     Fail : 2
 }
 
+
 interface IStep {
-    + ExecuteAsync() : ExecutionStatus
+    + ExecuteAsync() : Task<ExecutionStatus>
 }
 
-class GenerateLoadStep implements IStep
-class ExternalRequestStep implements IStep
-class ProbabalisticErrorStep implements IStep
+interface IStepFactory {
+    + Create(settingValue) : IStep
+}
+
+class StepFactory implements IStepFactory {
+    - errors : List<string>
+    - stepNamespace : string
+    - serializerSettings : JsonSerializerSettings
+}
+
+interface IRequestStep {
+    + ClientName : string
+    + ReuseHttpClient : boolean
+    + Configure(httpClientFactory)
+    + Configure(httpClientFactory, requestPolicy);
+}
+
+class RequestStep implements IStep, IRequestStep {
+    - configured : boolean
+    - clientFactory : IHttpClientFactory
+    - policy : IAsyncPolicy<HttpResponseMessage>
+    - supportedMethods : IEnumerable<string>
+    + Configured : configured
+    - ExecuteRequestAsync(action, cancellationToken) : Task
+    - GetRequestAction(httpClient) : Func<CancellationToken, Task>
+    - SendRequest(requestTask)
+}
+
+class LoadStep implements IStep {
+    + TimeInSeconds : integer
+    + CpuPercentage : integer
+    + MemoryInBytes : ulong
+    - GenerateLoad(seconds, percentage) : Task
+}
+
+class ErrorStep implements IStep {
+    + Probability : double
+}
+
+class AdaptableRequest {
+    + Payload : IEnumerable<string>
+}
+
+
+class ClientConfig {
+    + BaseAddress : string
+    + Policies : IEnumerable<string>
+    + RequestHeaders : IDictionary<string, string>
+}
+
 
 AdaptableController --|> IEngine : ProcessRequestAsync(name) >
+
 Engine --|> IRegistry : GetProcessor(name) >
-Engine --|> IProcessor : Steps,\nIngressLatencyMilliseconds,\nSuccessPayload,\nErrorPayload >
+Engine o--|> IProcessor
 Engine --|> IRegistry : GetStep(name) >
 Engine o--|> "1..*" IStep : ExecuteAsync()
 
+IConfigFactory <-- Registry : Create(settingValue)\n : Processor <
+IConfigFactory <-- Registry : Create(settingValue)\n : ClientConfig <
+IStepFactory <-- Registry : Create(settingValue) <
+IPolicyFactory <-- Registry : Create(settingValue) <
+IHttpClientFactory <--o Registry
 Registry o--> "1..*" IStep
-Registry o--> "1..*" IProcessor 
+Registry o--> "1..*" IProcessor
+Registry o--> "1..*" ClientConfig
+Registry o--> "1..*" IAsyncPolicy
+Registry o--|> "1..*" IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
+
+Processor o--|> SuccessResponse
+Processor o--|> ErrorResponse
+
+IHttpClientFactory <-- RequestStep : CreateClient(name) <
+RequestStep o--|> "0..1" AdaptableRequest
+
+ConfigFactory --> Processor : Creates
+ConfigFactory --> ClientConfig : Creates
+StepFactory --> RequestStep : Creates
+StepFactory --> LoadStep : Creates
+StepFactory --> ErrorStep : Creates
+
+PolicyFactory --> RetryConfig : Creates
+PolicyFactory --> TimeoutConfig : Creates
+PolicyFactory --> IPolicyConfiguration : AsPolicy()
 
 @enduml

@@ -13,10 +13,6 @@ namespace CoreService.Simulation.Steps
 {
     public class RequestStep : IStep, IRequestStep
     {
-        // TODO: add UTs
-        // TODO: flesh out model
-
-
         /// <summary>
         /// Whether the request should be truely asynchronous (fire and forget) or should await responses.
         /// </summary>
