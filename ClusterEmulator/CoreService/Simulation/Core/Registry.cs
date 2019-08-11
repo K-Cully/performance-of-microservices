@@ -82,7 +82,8 @@ namespace CoreService.Simulation.Core
         /// <param name="policyFactory">A factory to create http client policies from settings.</param>
         /// <param name="clientFactory">A factory to create http client configurations from settings.</param>
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
-            IProcessorFactory processorFactory, IPolicyFactory policyFactory, IClientFactory clientFactory)
+            IConfigFactory<Processor> processorFactory, IPolicyFactory policyFactory,
+            IConfigFactory<ClientConfig> clientFactory)
         {
             if (configurationSettings is null)
             {

@@ -3,40 +3,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Simulation.Processors
+namespace CoreService.Simulation.Core
 {
     /// <summary>
-    /// Creates processor instances.
+    /// Creates concrete instances of the specifed type.
     /// </summary>
-    public class ProcessorFactory : IProcessorFactory
+    /// <typeparam name="TModel">The type to generate from setting values.</typeparam>
+    public class ConfigFactory<TModel> : IConfigFactory<TModel> where TModel : class
     {
         private List<string> errors;
 
 
         /// <summary>
-        /// Creates a concrete step object from a setting value.
+        /// Creates a concrete object from a setting value.
         /// </summary>
-        /// <param name="settingValue">The processor setting value.</param>
-        /// <returns>An initialized <see cref="IProcessor"/> instance.</returns>
+        /// <param name="settingValue">The setting value.</param>
+        /// <returns>An initialized <see cref="TModel"/> instance.</returns>
         /// <remarks>
         /// Expected setting form:
-        /// { <object>
+        /// { <object> }
         /// </remarks>
-        public IProcessor Create(string settingValue)
+        public TModel Create(string settingValue)
         {
             if (string.IsNullOrWhiteSpace(settingValue))
             {
                 throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
             }
 
-            IProcessor processor = JsonConvert.DeserializeObject<Processor>(settingValue, SerializerSettings);
+            TModel value = JsonConvert.DeserializeObject<TModel>(settingValue, SerializerSettings);
             if (errors.Any())
             {
                 // TODO: log errors
                 return null;
             }
 
-            return processor;
+            return value;
         }
 
 

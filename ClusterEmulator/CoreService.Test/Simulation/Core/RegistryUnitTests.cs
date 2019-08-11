@@ -22,7 +22,7 @@ namespace CoreService.Test.Simulation.Core
         public void Constructor_Throws_WhenConfigurationSettingsIsNull()
         {
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(null, new StepFactory(), new ProcessorFactory(), new PolicyFactory(), new ClientFactory()));
+                () => _ = new Registry(null, new StepFactory(), new ConfigFactory<Processor>(), new PolicyFactory(), new ConfigFactory<ClientConfig>()));
         }
 
 
@@ -33,7 +33,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, null, new ProcessorFactory(), new PolicyFactory(), new ClientFactory()));
+                () => _ = new Registry(settings, null, new ConfigFactory<Processor>(), new PolicyFactory(), new ConfigFactory<ClientConfig>()));
         }
 
 
@@ -44,7 +44,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), null, new PolicyFactory(), new ClientFactory()));
+                () => _ = new Registry(settings, new StepFactory(), null, new PolicyFactory(), new ConfigFactory<ClientConfig>()));
         }
 
 
@@ -55,7 +55,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ProcessorFactory(), null, new ClientFactory()));
+                () => _ = new Registry(settings, new StepFactory(), new ConfigFactory<Processor>(), null, new ConfigFactory<ClientConfig>()));
         }
 
 
@@ -66,7 +66,7 @@ namespace CoreService.Test.Simulation.Core
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ProcessorFactory(), new PolicyFactory(), null));
+                () => _ = new Registry(settings, new StepFactory(), new ConfigFactory<Processor>(), new PolicyFactory(), null));
         }
 
 
@@ -79,9 +79,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             // Act
             Assert.ThrowsException<InvalidOperationException>(()
@@ -102,9 +102,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -137,20 +137,20 @@ namespace CoreService.Test.Simulation.Core
         public void GetProcessor_ReturnsCorrectValue_WhenRegistered()
         {
             string processorName = "Bob";
+            Processor expectedProcessor = new Processor();
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
 
             // Create Moq proxy instances
-            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>((s) => mockProcessor.Object);
+                .Returns<string>((s) => expectedProcessor);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -175,9 +175,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -199,20 +199,20 @@ namespace CoreService.Test.Simulation.Core
         public void GetProcessor_Throws_WhenNameIsNotRegistered()
         {
             string processorName = "Xi";
+            Processor expectedProcessor = new Processor();
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
 
             // Create Moq proxy instances
-            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => mockProcessor.Object);
+                .Returns<string>(s => expectedProcessor);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -230,20 +230,20 @@ namespace CoreService.Test.Simulation.Core
         public void GetProcessor_Throws_WhenNameIsNull()
         {
             string processorName = null;
+            Processor expectedProcessor = new Processor();
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
 
             // Create Moq proxy instances
-            Mock<IProcessor> mockProcessor = new Mock<IProcessor>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => mockProcessor.Object);
+                .Returns<string>(s => expectedProcessor);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -268,9 +268,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq proxy instances
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => stepMock.Object);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -300,9 +300,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -332,9 +332,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -361,9 +361,9 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq proxy instances
             Mock<IStepFactory> stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            Mock<IProcessorFactory> processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<Processor>> processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             Mock<IPolicyFactory> policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            Mock<IClientFactory> clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            Mock<IConfigFactory<ClientConfig>> clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -391,9 +391,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq proxy instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -425,9 +425,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -479,9 +479,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -529,9 +529,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -574,9 +574,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -624,9 +624,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -673,9 +673,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -724,9 +724,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -774,9 +774,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -824,9 +824,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -874,9 +874,9 @@ namespace CoreService.Test.Simulation.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IProcessorFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var clientFactory = new Mock<IClientFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);

@@ -43,9 +43,9 @@ namespace CoreService
                                             .AddSingleton<IRegistry>(new Registry(
                                                 serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings,
                                                 new StepFactory(),
-                                                new ProcessorFactory(),
+                                                new ConfigFactory<Processor>(),
                                                 new PolicyFactory(),
-                                                new ClientFactory()))
+                                                new ConfigFactory<ClientConfig>()))
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()

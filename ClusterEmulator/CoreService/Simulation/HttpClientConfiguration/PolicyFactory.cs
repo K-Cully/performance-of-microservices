@@ -29,7 +29,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </remarks>
         public IAsyncPolicy Create(string settingValue)
         {
-            // TODO: flesh out properly
+            // TODO: flesh out remaining important policies
             // See docs: https://github.com/App-vNext/Polly/blob/master/README.md#retry
 
             if (string.IsNullOrWhiteSpace(settingValue))

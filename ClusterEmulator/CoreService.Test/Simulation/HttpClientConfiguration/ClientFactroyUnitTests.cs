@@ -1,4 +1,5 @@
-﻿using CoreService.Simulation.HttpClientConfiguration;
+﻿using CoreService.Simulation.Core;
+using CoreService.Simulation.HttpClientConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var factory = new ClientFactory();
+            var factory = new ConfigFactory<ClientConfig>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -24,7 +25,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             HashSet<string> policies = new HashSet<string>{ "F", "C", "A" };
             string setting = "{ baseAddress : 'https://github.com/', policies : [ 'C', 'A', 'F' ], headers : { 'Accept' : 'application/json' } }";
-            var factory = new ClientFactory();
+            var factory = new ConfigFactory<ClientConfig>();
 
             ClientConfig client = factory.Create(setting);
 
@@ -41,7 +42,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var factory = new ClientFactory();
+            var factory = new ConfigFactory<ClientConfig>();
 
             ClientConfig client = factory.Create(setting);
 
@@ -53,7 +54,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         public void Create_WithEmptyJson_ReturnsNull()
         {
             string setting = "{ }";
-            var factory = new ClientFactory();
+            var factory = new ConfigFactory<ClientConfig>();
 
             ClientConfig client = factory.Create(setting);
 

@@ -1,4 +1,5 @@
-﻿using CoreService.Simulation.Processors;
+﻿using CoreService.Simulation.Core;
+using CoreService.Simulation.Processors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace CoreService.Test.Simulation.Processors
         [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var factory = new ProcessorFactory();
+            var factory = new ConfigFactory<Processor>();
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -23,7 +24,7 @@ namespace CoreService.Test.Simulation.Processors
         {
             HashSet<string> steps = new HashSet<string>{ "A" };
             string setting = "{ errorSize : 100, latency : 42, steps : [ 'A' ], successSize : 20 }";
-            var factory = new ProcessorFactory();
+            var factory = new ConfigFactory<Processor>();
 
             IProcessor processor = factory.Create(setting);
 
@@ -42,7 +43,7 @@ namespace CoreService.Test.Simulation.Processors
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var factory = new ProcessorFactory();
+            var factory = new ConfigFactory<Processor>();
 
             IProcessor processor = factory.Create(setting);
 
@@ -54,7 +55,7 @@ namespace CoreService.Test.Simulation.Processors
         public void Create_WithEmptyJson_ReturnsNull()
         {
             string setting = "{ }";
-            var factory = new ProcessorFactory();
+            var factory = new ConfigFactory<Processor>();
 
             IProcessor processor = factory.Create(setting);
 
