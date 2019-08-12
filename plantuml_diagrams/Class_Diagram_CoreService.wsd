@@ -188,21 +188,23 @@ Engine o--|> IProcessor
 Engine --|> IRegistry : GetStep(name) >
 Engine o--|> "1..*" IStep : ExecuteAsync()
 
-IConfigFactory <-- Registry : Create(settingValue)\n : Processor <
-IConfigFactory <-- Registry : Create(settingValue)\n : ClientConfig <
-IStepFactory <-- Registry : Create(settingValue) <
-IPolicyFactory <-- Registry : Create(settingValue) <
+Registry --> IConfigFactory : Create(value)\n : Processor >
+Registry --> IConfigFactory : Create(value)\n : ClientConfig >
+Registry --> IStepFactory : Create(value) >
+IPolicyFactory <-- Registry : Create(value) <
 IHttpClientFactory <--o Registry
 Registry o--> "1..*" IStep
 Registry o--> "1..*" IProcessor
 Registry o--> "1..*" ClientConfig
-Registry o--> "1..*" IAsyncPolicy
+IAsyncPolicy "1..*" <--o Registry
 Registry o--|> "1..*" IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
 
 Processor o--|> SuccessResponse
 Processor o--|> ErrorResponse
 
-IHttpClientFactory <-- RequestStep : CreateClient(name) <
+ExecutionStatus <-- IStep
+
+RequestStep --> IHttpClientFactory : CreateClient(name) >
 RequestStep o--|> "0..1" AdaptableRequest
 
 ConfigFactory --> Processor : Creates
@@ -210,6 +212,7 @@ ConfigFactory --> ClientConfig : Creates
 StepFactory --> RequestStep : Creates
 StepFactory --> LoadStep : Creates
 StepFactory --> ErrorStep : Creates
+IPolicyFactory --> IAsyncPolicy : Creates
 
 PolicyFactory --> RetryConfig : Creates
 PolicyFactory --> TimeoutConfig : Creates
