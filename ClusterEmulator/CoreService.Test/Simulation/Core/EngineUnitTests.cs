@@ -4,6 +4,7 @@ using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -18,9 +19,20 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_Throws_WhenPassedNull()
+        public void Constructor_Throws_WhenPassedNullRegistry()
         {
-            _ = new Engine(null);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            _ = new Engine(logger.Object, null);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Input")]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Constructor_Throws_WhenPassedNullLogger()
+        {
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            _ = new Engine(null, registry.Object);
         }
 
 
@@ -29,8 +41,9 @@ namespace CoreService.Test.Simulation.Core
         [ExpectedException(typeof(ArgumentException))]
         public async Task ProcessRequestAsync_Throws_WhenPassedNull()
         {
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            Engine engine = new Engine(registryMock.Object);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(null).ConfigureAwait(false);
         }
@@ -41,8 +54,9 @@ namespace CoreService.Test.Simulation.Core
         [ExpectedException(typeof(ArgumentException))]
         public async Task ProcessRequestAsync_Throws_WhenPassedEmpty()
         {
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            Engine engine = new Engine(registryMock.Object);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(string.Empty).ConfigureAwait(false);
         }
@@ -54,9 +68,10 @@ namespace CoreService.Test.Simulation.Core
         public async Task ProcessRequestAsync_Throws_WhenProcessorIsNull()
         {
             string name = "test";
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            registryMock.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
-            Engine engine = new Engine(registryMock.Object);
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(name).ConfigureAwait(false);
         }
@@ -68,15 +83,17 @@ namespace CoreService.Test.Simulation.Core
         public async Task ProcessRequestAsync_Throws_WhenStepIsNull()
         {
             string name = "test";
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
             IProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { null };
 
-            registryMock.Setup(reg => reg.GetProcessor(name))
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(name))
                 .Returns<string>((n) => processor);
-            registryMock.Setup(reg => reg.GetStep(It.IsAny<string>()))
+            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(null);
-            Engine engine = new Engine(registryMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(name).ConfigureAwait(false);
         }
@@ -102,13 +119,14 @@ namespace CoreService.Test.Simulation.Core
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
 
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            registryMock.Setup(reg => reg.GetProcessor(processorName))
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName))
                 .Returns<string>(n => processor);
-            registryMock.Setup(reg => reg.GetStep(It.IsAny<string>()))
+            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(n => stepMock.Object);
 
-            Engine engine = new Engine(registryMock.Object);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 
@@ -146,15 +164,16 @@ namespace CoreService.Test.Simulation.Core
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Unexpected);
 
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            registryMock.Setup(reg => reg.GetProcessor(processorName))
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName))
                 .Returns<string>(n => processor);
-            registryMock.Setup(reg => reg.GetStep(okayStepName))
+            registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
-            registryMock.Setup(reg => reg.GetStep(failStepName))
+            registry.Setup(reg => reg.GetStep(failStepName))
                 .Returns<string>(n => failStepMock.Object);
 
-            Engine engine = new Engine(registryMock.Object);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 
@@ -193,15 +212,16 @@ namespace CoreService.Test.Simulation.Core
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Fail);
 
-            Mock<IRegistry> registryMock = new Mock<IRegistry>(MockBehavior.Strict);
-            registryMock.Setup(reg => reg.GetProcessor(processorName))
+            Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName))
                 .Returns<string>(n => processor);
-            registryMock.Setup(reg => reg.GetStep(okayStepName))
+            registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
-            registryMock.Setup(reg => reg.GetStep(failStepName))
+            registry.Setup(reg => reg.GetStep(failStepName))
                 .Returns<string>(n => failStepMock.Object);
 
-            Engine engine = new Engine(registryMock.Object);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
 

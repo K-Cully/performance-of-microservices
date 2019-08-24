@@ -3,6 +3,7 @@ using CoreService.Model;
 using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -19,9 +20,26 @@ namespace CoreService.Test.Controllers
         [TestMethod]
         [TestCategory("Input")]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_Throws_WhenPassedNull()
+        public void Constructor_Throws_WhenPassedNullLogger()
         {
-            _ = new AdaptableController(null);
+            // Setup
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+
+            // Act
+            _ = new AdaptableController(null, engine.Object);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Input")]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Constructor_Throws_WhenPassedNullEngine()
+        {
+            // Setup
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+
+            // Act
+            _ = new AdaptableController(logger.Object, null);
         }
 
 
@@ -30,8 +48,9 @@ namespace CoreService.Test.Controllers
         public async Task Get_WithNullName_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get(null, "test").ConfigureAwait(false);
@@ -50,8 +69,9 @@ namespace CoreService.Test.Controllers
         public async Task Options_WithNullName_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Options(null, null).ConfigureAwait(false);
@@ -70,8 +90,9 @@ namespace CoreService.Test.Controllers
         public async Task Post_WithNullName_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -91,8 +112,9 @@ namespace CoreService.Test.Controllers
         public async Task Post_WithNullRequest_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
@@ -111,8 +133,9 @@ namespace CoreService.Test.Controllers
         public async Task Post_WithInvalidModel_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
             controller.ModelState.AddModelError("value_2", "value_2 is not valid");
 
@@ -134,8 +157,9 @@ namespace CoreService.Test.Controllers
         public async Task Put_WithNullName_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -155,8 +179,9 @@ namespace CoreService.Test.Controllers
         public async Task Put_WithNullRequest_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Put("test", null, "test").ConfigureAwait(false);
@@ -175,8 +200,9 @@ namespace CoreService.Test.Controllers
         public async Task Put_WithInvalidModel_ReturnsBadRequest()
         {
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
 
             // Act
@@ -198,10 +224,11 @@ namespace CoreService.Test.Controllers
             string name = "Bob";
 
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(name))
                 .ReturnsAsync(okResult);
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get(name, "test").ConfigureAwait(false);
@@ -220,10 +247,11 @@ namespace CoreService.Test.Controllers
             string message = "boom";
 
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException(message));
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
@@ -244,10 +272,11 @@ namespace CoreService.Test.Controllers
             string message = "boom";
 
             // Setup
-            Mock<IEngine> engine = new Mock<IEngine>(MockBehavior.Strict);
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new Exception(message));
-            AdaptableController controller = new AdaptableController(engine.Object);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var controller = new AdaptableController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
