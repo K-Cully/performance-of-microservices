@@ -3,6 +3,7 @@ using System.Fabric;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -18,9 +19,22 @@ namespace CoreService
     /// </summary>
     internal sealed class CoreService : StatelessService
     {
+        /// <summary>
+        /// Gets the ASP.Net Core Logger instance to use for the service.
+        /// </summary>
+        public ILogger Logger { get; private set; }
+
+
+        /// <summary>
+        /// Creates a new instance of <see cref="CoreService"/>
+        /// </summary>
+        /// <param name="context">The stateless service context to initialize the service with.</param>
         public CoreService(StatelessServiceContext context)
             : base(context)
-        { }
+        {
+            Logger = new LoggerFactory().CreateLogger<CoreService>();
+        }
+
 
         /// <summary>
         /// Optional override to create listeners (like tcp, http) for this service instance.
@@ -33,8 +47,11 @@ namespace CoreService
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        // TODO: update logging
+                        // TODO: remove old logging
                         // ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
+
+                        // TODO: utilize structured log data
+                        Logger.LogInformation($"Starting Kestrel on {url}");
 
                         return new WebHostBuilder()
                                     .UseKestrel()
