@@ -23,14 +23,16 @@ namespace CoreService
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",
                     context => new CoreService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(CoreService).Name);
+                // TODO: Update EventSource logging
+                // ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(CoreService).Name);
 
                 // Prevents this host process from terminating so services keeps running. 
                 Thread.Sleep(Timeout.Infinite);
             }
             catch (Exception e)
             {
-                ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
+                // TODO: Update EventSource logging
+                // ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
                 throw;
             }
         }

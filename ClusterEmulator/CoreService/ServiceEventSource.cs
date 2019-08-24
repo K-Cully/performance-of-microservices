@@ -9,7 +9,12 @@ using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace CoreService
 {
-    [EventSource(Name = "MyCompany-ClusterEmulator-CoreService")]
+    // TODO: onboard EventSource with ILogger through "Microsoft-Extensions-Logging"
+    // See https://github.com/aspnet/Extensions/blob/9bc79b2f25a3724376d7af19617c33749a30ea3a/src/Logging/Logging.EventSource/src/LoggingEventSource.cs
+
+    // TODO: remove this custom EventSource if possible
+
+    [EventSource(Name = "PerformanceOfMicroServices-ClusterEmulator-CoreService")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();
