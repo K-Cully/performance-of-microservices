@@ -67,8 +67,6 @@ namespace CoreService
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",
                     context => new CoreService(context, Log.Logger)).GetAwaiter().GetResult();
 
-                // TODO: Update EventSource logging?
-                // ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(CoreService).Name);
                 Log.Information($"Service registered - {Process.GetCurrentProcess().Id}, {typeof(CoreService).Name}");
 
                 // Prevents this host process from terminating so services keeps running. 
@@ -76,8 +74,6 @@ namespace CoreService
             }
             catch (Exception e)
             {
-                // TODO: Update EventSource logging
-                // ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
                 Log.Fatal(e, "Failed to initialize service");
                 throw;
             }

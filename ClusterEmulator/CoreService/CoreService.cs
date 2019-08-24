@@ -62,13 +62,8 @@ namespace CoreService
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        // TODO: remove old logging
-                        // ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
-
-                        // TODO: utilize structured log data (logging is not created here yet)
+                        // TODO: utilize structured log data
                         SharedLogger.Information($"Starting Kestrel on {url}");
-
-                        // TODO: register logger
 
                         return new WebHostBuilder()
                                     .UseKestrel()
