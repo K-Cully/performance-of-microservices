@@ -2,6 +2,7 @@
 using CoreService.Simulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -13,14 +14,17 @@ namespace CoreService.Simulation.Core
     public class Engine : IEngine
     {
         private readonly IRegistry registry;
+        private readonly ILogger<Engine> log;
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="Engine"/>.
         /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationRegistry">The simulation registry to load content from.</param>
-        public Engine(IRegistry simulationRegistry)
+        public Engine(ILogger<Engine> logger, IRegistry simulationRegistry)
         {
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
             registry = simulationRegistry ?? throw new ArgumentNullException(nameof(simulationRegistry));
         }
 
@@ -53,13 +57,16 @@ namespace CoreService.Simulation.Core
                 switch (status)
                 {
                     case ExecutionStatus.Success:
+                        log.LogDebug("{Step} completed with success in {Processor}", stepName, name);
                         continue;
                     case ExecutionStatus.Fail:
                         // TODO: change this response type to non-standard Status code to prevent false positives
+                        log.LogDebug("{Step} completed with simulated error in {Processor}", stepName, name);
                         errorResult.StatusCode = StatusCodes.Status404NotFound;
                         return errorResult;
                     case ExecutionStatus.Unexpected:
                     default:
+                        log.LogError("{Step} experienced an unexpected error in {Processor}", stepName, name);
                         errorResult.StatusCode = StatusCodes.Status500InternalServerError;
                         return errorResult;
                 }

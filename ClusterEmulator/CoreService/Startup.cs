@@ -20,17 +20,15 @@ namespace CoreService
 {
     public class Startup
     {
+        private IRegistry Registry { get; }
+        private IConfiguration Configuration { get; }
+
+
         public Startup(IConfiguration configuration, IRegistry registry)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Registry = registry ?? throw new ArgumentNullException(nameof(registry));
         }
-
-
-        private IRegistry Registry { get; }
-
-
-        public IConfiguration Configuration { get; }
 
 
         // This method gets called by the runtime. Use this method to add services to the container.

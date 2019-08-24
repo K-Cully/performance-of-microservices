@@ -22,8 +22,6 @@ namespace CoreService
     internal sealed class CoreService : StatelessService
     {
         private ILogger SharedLogger { get; }
-
-
         private ILogger Logger { get; }
 
 

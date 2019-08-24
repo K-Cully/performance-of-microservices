@@ -12,11 +12,7 @@ namespace CoreService
     internal static class Program
     {
         private const string Development = "Development";
-
-
         private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
-
-
         private const string LogTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
 
 

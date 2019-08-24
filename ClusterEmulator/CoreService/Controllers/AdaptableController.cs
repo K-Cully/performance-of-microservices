@@ -3,6 +3,7 @@ using CoreService.Model;
 using CoreService.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +18,18 @@ namespace CoreService.Controllers
     public class AdaptableController : ControllerBase
     {
         private readonly IEngine engine;
+        private readonly ILogger<AdaptableController> log;
 
 
         /// <summary>
         /// Creates a new instance of <see cref="AdaptableController"/>.
         /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
-        public AdaptableController(IEngine simulationEngine)
+        public AdaptableController(ILogger<AdaptableController> logger, IEngine simulationEngine)
         {
-            engine = simulationEngine ??
-                throw new ArgumentNullException(nameof(simulationEngine), "Simulation engine must be initialized");
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
+            engine = simulationEngine ?? throw new ArgumentNullException(nameof(simulationEngine));
         }
 
 
@@ -39,7 +42,7 @@ namespace CoreService.Controllers
 
             if (!string.IsNullOrWhiteSpace(caller))
             {
-                // TODO log caller, if present
+                log.LogDebug("{Caller} requested {Processor}", caller, name);
             }
 
             try
@@ -48,12 +51,12 @@ namespace CoreService.Controllers
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
-                // TODO: log exception
+                log.LogError(ex, "Request for {Processor} could not be processed", name);
                 return BadRequest(new ErrorResponse(ex.Message));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                log.LogError(ex, "An unexpected error occurred in {Processor}", name);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -128,6 +131,7 @@ namespace CoreService.Controllers
 
             if (request is null)
             {
+                log.LogError("A malformed request was received for {Processor}", name);
                 return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
             }
 
@@ -156,6 +160,7 @@ namespace CoreService.Controllers
 
             if (request is null)
             {
+                log.LogError("A malformed request was received for {Processor}", name);
                 return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
             }
 
