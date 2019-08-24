@@ -1,6 +1,7 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
 using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Registry;
 using System;
@@ -16,19 +17,11 @@ namespace CoreService.Simulation.Core
     /// </summary>
     public class Registry : IRegistry
     {
-        // TODO: add logigng throughtout
-
-
         private readonly IDictionary<string, ClientConfig> clients;
-
-
         private readonly IDictionary<string, IAsyncPolicy> policies;
-
-
         private readonly IDictionary<string, IProcessor> processors;
-
-
         private readonly IDictionary<string, IStep> steps;
+        private readonly ILogger<Registry> log;
 
 
         /// <summary>
@@ -81,9 +74,10 @@ namespace CoreService.Simulation.Core
         /// <param name="processorFactory">A factory to create processors from settings.</param>
         /// <param name="policyFactory">A factory to create http client policies from settings.</param>
         /// <param name="clientFactory">A factory to create http client configurations from settings.</param>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
             IConfigFactory<Processor> processorFactory, IPolicyFactory policyFactory,
-            IConfigFactory<ClientConfig> clientFactory)
+            IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger)
         {
             if (configurationSettings is null)
             {
@@ -123,6 +117,7 @@ namespace CoreService.Simulation.Core
             foreach (var policy in policies)
             {
                 // TODO: handle non-request based policies once needed
+                log.LogDebug("{Policy} added from {Setting}", policy.Value.GetType().Name, policy.Key);
                 PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
             }
 
@@ -209,12 +204,14 @@ namespace CoreService.Simulation.Core
                 throw new ArgumentNullException(nameof(httpClientFactory));
             }
 
+            log.LogDebug("Configuring Http clients for registered steps");
             var requestSteps = steps.Values
                 .Where(s => s is IRequestStep)
                 .Select(s => s as IRequestStep);
 
             foreach (var requestStep in requestSteps)
             {
+                log.LogDebug("Configuring {Client}, Reuse:{Reuse}", requestStep.ClientName, requestStep.ReuseHttpClient);
                 if (requestStep.ReuseHttpClient)
                 {
                     requestStep.Configure(httpClientFactory);
@@ -227,6 +224,7 @@ namespace CoreService.Simulation.Core
                     IAsyncPolicy policy = null;
                     if (policies.Any())
                     {
+                        log.LogDebug("Adding {PolicyCount} policies to {Client}", policies.Length, requestStep.ClientName);
                         policy = policies.Length == 1 ?
                             policies.First() : Policy.WrapAsync(policies);
                     }
@@ -234,6 +232,8 @@ namespace CoreService.Simulation.Core
                     requestStep.Configure(simpleClientFactory, policy);
                 }
             }
+
+            log.LogInformation("Configured Http clients for registered steps");
         }
 
 
@@ -244,33 +244,39 @@ namespace CoreService.Simulation.Core
 
             if (settings.Sections.TryGetValue(sectionName, out ConfigurationSection section))
             {
+                log.LogInformation("Adding settings from {ConfigSection}", sectionName);
                 foreach (var property in section.Parameters)
                 {
+                    log.LogInformation("Adding {SettingName} from {ConfigSection}", property.Name, sectionName);
                     registry.Add(property.Name, factory(property.Value));
                 }
             }
             else
             {
+                log.LogError("{ConfigSection} was not found in the configuration file", sectionName);
                 throw new InvalidOperationException($"Section '{sectionName}' was not found in the configuration file");
             }
         }
 
 
-        private T GetRegisteredValue<T>(string name, IDictionary<string, T> registry, string typeName)
+        private T GetRegisteredValue<T>(string name, IDictionary<string, T> registry, string registryName)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException($"{typeName} name cannot be null or whitespace", nameof(name));
+                log.LogError("{RegistryName} is not valid", name);
+                throw new ArgumentException($"{registryName} name cannot be null or whitespace", nameof(name));
             }
 
             if (!registry.TryGetValue(name, out T value))
             {
-                throw new InvalidOperationException($"{typeName} '{name}' is not registered");
+                log.LogError("{RegistryValue} was not found in {RegistryName}", name, registryName);
+                throw new InvalidOperationException($"{registryName} '{name}' is not registered");
             }
 
             if (value == null)
             {
-                throw new InvalidOperationException($"Registration for {typeName} '{name}' is null");
+                log.LogError("{RegistryValue} has a null value in {RegistryName}", name, registryName);
+                throw new InvalidOperationException($"Registration for {registryName} '{name}' is null");
             }
 
             return value;

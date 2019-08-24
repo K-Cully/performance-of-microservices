@@ -61,6 +61,11 @@ namespace CoreService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpClientFactory clientFactory, IRegistry registry)
         {
+            _ = app ?? throw new ArgumentNullException(nameof(app));
+            _ = env ?? throw new ArgumentNullException(nameof(env));
+            _ = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _ = registry ?? throw new ArgumentNullException(nameof(registry));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
