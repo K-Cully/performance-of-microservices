@@ -1,32 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using CoreService.Simulation.Core;
 using CoreService.Simulation.HttpClientConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Extensions.Http;
-using Polly.Registry;
 
 namespace CoreService
 {
     public class Startup
     {
         private IRegistry Registry { get; }
-        private IConfiguration Configuration { get; }
 
 
-        public Startup(IConfiguration configuration, IRegistry registry)
+        public Startup(IRegistry registry)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Registry = registry ?? throw new ArgumentNullException(nameof(registry));
         }
 
@@ -69,7 +59,7 @@ namespace CoreService
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpClientFactory clientFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpClientFactory clientFactory, IRegistry registry)
         {
             if (env.IsDevelopment())
             {
@@ -85,8 +75,9 @@ namespace CoreService
 
             // app.UseSerilogRequestLogging()
 
+            // Injecting registry here to ensure it is added from the second, more locally scoped, instance container.
+            registry.ConfigureHttpClients(clientFactory);
             app.UseMvc();
-            Registry.ConfigureHttpClients(clientFactory);
         }
     }
 }
