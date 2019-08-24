@@ -21,7 +21,7 @@ namespace CoreService.Test.Simulation.Core
         [ExpectedException(typeof(ArgumentNullException))]
         public void Constructor_Throws_WhenPassedNullRegistry()
         {
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             _ = new Engine(logger.Object, null);
         }
 
@@ -41,7 +41,7 @@ namespace CoreService.Test.Simulation.Core
         [ExpectedException(typeof(ArgumentException))]
         public async Task ProcessRequestAsync_Throws_WhenPassedNull()
         {
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(logger.Object, registry.Object);
 
@@ -54,7 +54,7 @@ namespace CoreService.Test.Simulation.Core
         [ExpectedException(typeof(ArgumentException))]
         public async Task ProcessRequestAsync_Throws_WhenPassedEmpty()
         {
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             Engine engine = new Engine(logger.Object, registry.Object);
 
@@ -70,7 +70,7 @@ namespace CoreService.Test.Simulation.Core
             string name = "test";
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(name).ConfigureAwait(false);
@@ -92,7 +92,7 @@ namespace CoreService.Test.Simulation.Core
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(null);
 
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
             await engine.ProcessRequestAsync(name).ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace CoreService.Test.Simulation.Core
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(n => stepMock.Object);
 
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
@@ -172,7 +172,7 @@ namespace CoreService.Test.Simulation.Core
             registry.Setup(reg => reg.GetStep(failStepName))
                 .Returns<string>(n => failStepMock.Object);
 
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
@@ -220,7 +220,7 @@ namespace CoreService.Test.Simulation.Core
             registry.Setup(reg => reg.GetStep(failStepName))
                 .Returns<string>(n => failStepMock.Object);
 
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
             IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
