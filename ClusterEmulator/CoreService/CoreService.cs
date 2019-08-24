@@ -19,10 +19,7 @@ namespace CoreService
     /// </summary>
     internal sealed class CoreService : StatelessService
     {
-        /// <summary>
-        /// Gets the ASP.Net Core Logger instance to use for the service.
-        /// </summary>
-        public ILogger Logger { get; private set; }
+        private ILogger Logger { get; }
 
 
         /// <summary>
@@ -50,8 +47,10 @@ namespace CoreService
                         // TODO: remove old logging
                         // ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
 
-                        // TODO: utilize structured log data
-                        Logger.LogInformation($"Starting Kestrel on {url}");
+                        // TODO: utilize structured log data (logging is not created here yet)
+                        // Logger.LogInformation($"Starting Kestrel on {url}");
+
+                        // TODO: register logger
 
                         return new WebHostBuilder()
                                     .UseKestrel()
@@ -67,11 +66,25 @@ namespace CoreService
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
+                                    .ConfigureLogging(logging => ConfigureLogging(logging))
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
                     }))
             };
+        }
+
+
+        private void ConfigureLogging(ILoggingBuilder builder)
+        {
+            // TODO: remove once correct sinks are added
+
+            // clear default logging providers
+            // builder.ClearProviders();
+
+            // add built-in providers manually, as needed
+            builder.AddDebug();
+            builder.AddEventSourceLogger();
         }
     }
 }
