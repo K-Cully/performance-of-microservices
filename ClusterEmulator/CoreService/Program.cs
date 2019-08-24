@@ -1,15 +1,39 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Serilog;
 using Serilog.Events;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CoreService
 {
     internal static class Program
     {
+        private const string Development = "Development";
+
+
+        private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
+
+
+        private const string LogTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+
+
+        /// <summary>
+        /// App settings for use in log configuration
+        /// </summary>
+        private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production"}.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+
+        private static bool DevelopmentEnvironment => Configuration.GetValue(ASPNETCORE_ENVIRONMENT, string.Empty) == Development;
+
+
         /// <summary>
         /// This is the entry point of the service host process.
         /// </summary>
@@ -23,19 +47,21 @@ namespace CoreService
                 // an instance of the class is created in this host process.
 
 
-                // TODO: create other sinks
-                // TODO: can this being static cause issues?
+                // TODO: Investigate - can Log.Logger being static cause issues due to shared process?
 
-                // TODO: restrit debug logging to dev environment
-                // Create SeriLog debug logger
-                //Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
-
-                Log.Logger = new LoggerConfiguration()
-                                .MinimumLevel.Debug()
-                                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                                .Enrich.FromLogContext()
-                                .WriteTo.Debug()
-                                .CreateLogger();
+                if (DevelopmentEnvironment)
+                {
+                    // Create Serilog debug logger
+                    Log.Logger = new LoggerConfiguration()
+                                    .ReadFrom.Configuration(Configuration)
+                                    .Enrich.FromLogContext()
+                                    .WriteTo.Debug(outputTemplate: LogTemplate)
+                                    .CreateLogger();
+                }
+                else
+                {
+                    // TODO: create other sinks
+                }
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",
