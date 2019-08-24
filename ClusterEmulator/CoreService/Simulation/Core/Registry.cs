@@ -81,33 +81,30 @@ namespace CoreService.Simulation.Core
         {
             if (configurationSettings is null)
             {
-                throw new ArgumentNullException(nameof(configurationSettings),
-                    $"{nameof(configurationSettings)} cannot be null");
+                throw new ArgumentNullException(nameof(configurationSettings));
             }
 
             if (stepFactory is null)
             {
-                throw new ArgumentNullException(nameof(stepFactory),
-                    $"{nameof(stepFactory)} cannot be null");
+                throw new ArgumentNullException(nameof(stepFactory));
             }
 
             if (processorFactory is null)
             {
-                throw new ArgumentNullException(nameof(processorFactory),
-                    $"{nameof(processorFactory)} cannot be null");
+                throw new ArgumentNullException(nameof(processorFactory));
             }
 
             if (policyFactory is null)
             {
-                throw new ArgumentNullException(nameof(policyFactory),
-                    $"{nameof(policyFactory)} cannot be null");
+                throw new ArgumentNullException(nameof(policyFactory));
             }
 
             if (clientFactory is null)
             {
-                throw new ArgumentNullException(nameof(clientFactory),
-                    $"{nameof(clientFactory)} cannot be null");
+                throw new ArgumentNullException(nameof(clientFactory));
             }
+
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
 
             InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
             InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
@@ -117,7 +114,7 @@ namespace CoreService.Simulation.Core
             foreach (var policy in policies)
             {
                 // TODO: handle non-request based policies once needed
-                log.LogDebug("{Policy} added from {Setting}", policy.Value.GetType().Name, policy.Key);
+                log.LogDebug("{Policy} added from {Setting}", policy.Value?.GetType()?.Name, policy.Key);
                 PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
             }
 
