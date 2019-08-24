@@ -78,6 +78,15 @@ namespace CoreService
                 app.UseDeveloperExceptionPage();
             }
 
+            // TODO: decide on use of this based on AppInsights integration complexity
+
+            // Write streamlined Serilog completion events, instead of the more verbose ones from the framework.
+            // To use the default framework request logging instead, remove this line and set the "Microsoft"
+            // level in appsettings.json to "Information".
+            // To use Serilog request logging, set "Microsoft" and "System" levels to "Warning" and uncomment here.
+
+            // app.UseSerilogRequestLogging()
+
             app.UseMvc();
             Registry.ConfigureHttpClients(clientFactory);
         }
