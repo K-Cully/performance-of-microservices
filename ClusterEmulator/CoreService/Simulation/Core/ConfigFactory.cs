@@ -43,6 +43,8 @@ namespace CoreService.Simulation.Core
                 throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
             }
 
+            log.LogInformation("Creating {ConfigType} from {SettingValue}", typeof(TModel).Name, settingValue);
+
             TModel value = JsonConvert.DeserializeObject<TModel>(settingValue, SerializerSettings);
             if (errors.Any())
             {

@@ -13,6 +13,8 @@ namespace CoreService.Simulation.Steps
     public class StepFactory : IStepFactory
     {
         private readonly ILogger<StepFactory> log;
+        private readonly ILoggerFactory logFactory;
+
         private readonly string stepNamespace = typeof(StepFactory).Namespace;
         private List<string> errors;
 
@@ -21,9 +23,11 @@ namespace CoreService.Simulation.Steps
         /// Initializes a new instance of <see cref="StepFactory"/>
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public StepFactory(ILogger<StepFactory> logger)
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
+        public StepFactory(ILogger<StepFactory> logger, ILoggerFactory loggerFactory)
         {
             log = logger ?? throw new ArgumentNullException(nameof(logger));
+            logFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
 
@@ -42,6 +46,8 @@ namespace CoreService.Simulation.Steps
             {
                 throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
             }
+
+            log.LogInformation("Creating {ConfigType} from {SettingValue}", nameof(IStep), settingValue);
 
             // Deserialize JSON to dynamic object
             dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);

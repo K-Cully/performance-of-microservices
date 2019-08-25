@@ -47,6 +47,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");
             }
 
+            log.LogInformation("Creating {ConfigType} from {SettingValue}", nameof(IAsyncPolicy), settingValue);
+
             // Deserialize JSON to dynamic object
             dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);
             if (errors.Any())
