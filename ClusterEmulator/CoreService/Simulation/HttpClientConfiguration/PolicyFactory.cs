@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Polly;
 using System;
@@ -12,10 +13,19 @@ namespace CoreService.Simulation.HttpClientConfiguration
     /// </summary>
     public class PolicyFactory : IPolicyFactory
     {
+        private readonly ILogger<PolicyFactory> log;
         private readonly string policyNamespace = typeof(PolicyFactory).Namespace;
-
-
         private List<string> errors;
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="PolicyFactory"/>
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public PolicyFactory(ILogger<PolicyFactory> logger)
+        {
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
 
         /// <summary>
@@ -41,27 +51,38 @@ namespace CoreService.Simulation.HttpClientConfiguration
             dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);
             if (errors.Any())
             {
-                // TODO: log errors
+                foreach (string error in errors)
+                {
+                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
+                        settingValue, error);
+                }
+
                 return null;
             }
 
             if (json?.type?.Value is null)
             {
-                // TODO: log error
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, "Type not found");
                 return null;
             }
 
             // Extract the step type
-            Type type = Type.GetType($"{policyNamespace}.{json.type.Value}");
+            string typeName = $"{policyNamespace}.{json.type.Value}";
+            Type type = Type.GetType(typeName);
             if (type is null)
             {
-                throw new InvalidOperationException($"{policyNamespace}.{json.type.Value} did not resolve to a Type");
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, $"{typeName} is not recognised");
+                throw new InvalidOperationException($"{typeName} did not resolve to a Type");
             }
 
             // Convert the step JSON object to the identified concrete type
             JObject policyJson = json.policy;
             if (policyJson is null)
             {
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, "No policy found");
                 throw new InvalidOperationException($"No policy found in setting '{settingValue}'");
             }
 
@@ -69,7 +90,12 @@ namespace CoreService.Simulation.HttpClientConfiguration
             var config = policyJson.ToObject(type, serializer) as IPolicyConfiguration;
             if (errors.Any())
             {
-                // TODO: log errors
+                foreach (string error in errors)
+                {
+                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
+                        settingValue, error);
+                }
+
                 return null;
             }
 

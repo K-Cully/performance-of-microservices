@@ -57,11 +57,11 @@ namespace CoreService.Simulation.Core
                 switch (status)
                 {
                     case ExecutionStatus.Success:
-                        log.LogDebug("{Step} completed with success in {Processor}", stepName, name);
+                        log.LogInformation("{Step} completed with success in {Processor}", stepName, name);
                         continue;
                     case ExecutionStatus.Fail:
                         // TODO: change this response type to non-standard Status code to prevent false positives
-                        log.LogDebug("{Step} completed with simulated error in {Processor}", stepName, name);
+                        log.LogInformation("{Step} completed with simulated error in {Processor}", stepName, name);
                         errorResult.StatusCode = StatusCodes.Status404NotFound;
                         return errorResult;
                     case ExecutionStatus.Unexpected:
