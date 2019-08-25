@@ -37,6 +37,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// <returns>A <see cref="TimeoutPolicy"/> instance.</returns>
         public IAsyncPolicy AsPolicy(ILogger logger)
         {
+            _ = logger ?? throw new ArgumentNullException(nameof(logger));
+
             // Restrict to valid TimeSpan
             if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)
             {

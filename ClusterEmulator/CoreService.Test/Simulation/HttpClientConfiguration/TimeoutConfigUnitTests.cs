@@ -1,5 +1,7 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Timeout;
@@ -31,57 +33,75 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
 
 
         [TestMethod]
+        public void AsPolicy_LoggerNull_Throws()
+        {
+            var config = new TimeoutConfig
+            {
+                TimeoutInSeconds = 1.0d,
+                CancelDelegates = true
+            };
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => config.AsPolicy(null));
+        }
+
+
+        [TestMethod]
         public void AsPolicy_NegativeTimeoutInSeconds_Throws()
         {
-            var retryConfig = new TimeoutConfig
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var config = new TimeoutConfig
             {
                 TimeoutInSeconds = -1.0d,
                 CancelDelegates = true
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => config.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_NaNTimeoutInSeconds_Throws()
         {
-            var retryConfig = new TimeoutConfig
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var config = new TimeoutConfig
             {
                 TimeoutInSeconds = double.NaN,
                 CancelDelegates = false
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => config.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_TimeoutInSecondsMaxValue_Throws()
         {
-            var retryConfig = new TimeoutConfig
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var config = new TimeoutConfig
             {
                 TimeoutInSeconds = double.MaxValue,
                 CancelDelegates = false
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => config.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_TimeoutInSecondsValid_CancelDelegates_ReturnsPolicy()
         {
-            var retryConfig = new TimeoutConfig
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var config = new TimeoutConfig
             {
                 TimeoutInSeconds = 5.0d,
                 CancelDelegates = true
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
@@ -91,13 +111,14 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_TimeoutInSecondsValid_ReturnsPolicy()
         {
-            var retryConfig = new TimeoutConfig
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var config = new TimeoutConfig
             {
                 TimeoutInSeconds = 0.001d,
                 CancelDelegates = false
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
