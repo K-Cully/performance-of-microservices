@@ -61,10 +61,10 @@ namespace CoreService
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        // TODO: utilize structured log data
                         SharedLogger.Information($"Starting Kestrel on {url}");
 
-                        // TODO: add logger to registry
+                        // TODO: Investigate injection of LoggerFactory in other factories to allow creation of scoped ILogger instances
+                        // See https://github.com/aspnet/Extensions/issues/615
 
                         return new WebHostBuilder()
                                     .UseKestrel()
@@ -89,11 +89,3 @@ namespace CoreService
         }
     }
 }
-
-// TODO: remove
-//.AddSingleton<IRegistry>(new Registry(
-//    serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings,
-//    new StepFactory(),
-//    new ConfigFactory<Processor>(),
-//    new PolicyFactory(),
-//    new ConfigFactory<ClientConfig>()))
