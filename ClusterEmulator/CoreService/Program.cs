@@ -13,7 +13,7 @@ namespace CoreService
     {
         private const string Development = "Development";
         private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
-        private const string LogTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+        private const string LogTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
 
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace CoreService
                     Log.Logger = new LoggerConfiguration()
                                     .ReadFrom.Configuration(Configuration)
                                     .Enrich.FromLogContext()
-                                    .WriteTo.Debug(outputTemplate: LogTemplate)
+                                    .WriteTo.Trace(outputTemplate: LogTemplate)
                                     .CreateLogger();
                 }
                 else
