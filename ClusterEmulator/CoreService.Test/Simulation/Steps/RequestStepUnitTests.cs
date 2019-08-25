@@ -50,7 +50,6 @@ namespace CoreService.Test.Simulation.Steps
             var step = new RequestStep()
             { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpClient = true };
-            step.Configure(factory.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
