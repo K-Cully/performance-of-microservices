@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Timeout;
@@ -32,8 +33,9 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// <summary>
         /// Generates a Polly <see cref="TimeoutPolicy"/> from the configuration.
         /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <returns>A <see cref="TimeoutPolicy"/> instance.</returns>
-        public IAsyncPolicy AsPolicy()
+        public IAsyncPolicy AsPolicy(ILogger logger)
         {
             // Restrict to valid TimeSpan
             if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)

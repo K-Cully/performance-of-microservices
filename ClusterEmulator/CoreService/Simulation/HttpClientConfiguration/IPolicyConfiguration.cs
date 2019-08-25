@@ -1,4 +1,5 @@
-﻿using Polly;
+﻿using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
@@ -10,7 +11,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// <summary>
         /// Generates a Polly <see cref="IAsyncPolicy"/> from the configuration.
         /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <returns>A <see cref="IAsyncPolicy"/> instance.</returns>
-        IAsyncPolicy AsPolicy();
+        IAsyncPolicy AsPolicy(ILogger logger);
     }
 }

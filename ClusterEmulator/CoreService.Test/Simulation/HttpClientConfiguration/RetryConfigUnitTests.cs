@@ -1,5 +1,7 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
@@ -35,8 +37,24 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
 
 
         [TestMethod]
+        public void AsPolicy_LoggerNull_Throws()
+        {
+            var retryConfig = new RetryConfig
+            {
+                DelaysInSeconds = new List<double>(),
+                JitterMilliseconds = 10,
+                Retries = 3
+            };
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => retryConfig.AsPolicy(null));
+        }
+
+
+        [TestMethod]
         public void AsPolicy_DelaysInSecondsNull_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = null,
@@ -45,13 +63,14 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => retryConfig.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_NegativeJitter_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double>(),
@@ -60,13 +79,14 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => retryConfig.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_DelaysEmpty_RetriesNegative_ReturnsForeverRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double>(),
@@ -74,7 +94,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = -1
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -84,6 +104,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_DelaysEmpty_RetriesZero_ReturnsForeverRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double>(),
@@ -91,7 +112,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 0
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -101,6 +122,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_DelaysEmpty_RetriesPositive_ReturnsRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double>(),
@@ -108,7 +130,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -118,6 +140,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_NegativeDelay_OtherThanMinusOne_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { -0.1d },
@@ -126,13 +149,14 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => retryConfig.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_TwoNegativeDelays_WithMinusOneFirst_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { -1.0d, -0.1d },
@@ -141,13 +165,14 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy());
+                () => retryConfig.AsPolicy(logger.Object));
         }
 
 
         [TestMethod]
         public void AsPolicy_MinusOneDelay_ReturnsExponentialRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { -1.0d },
@@ -155,7 +180,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -165,6 +190,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_MinusOneDelay_ZeroRetries_ReturnsExponentialForeverRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { -1.0d },
@@ -172,7 +198,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 0
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -182,6 +208,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_MinusOneDelay_NegativeRetries_ReturnsExponentialForeverRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { -1.0d },
@@ -189,7 +216,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = -100
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -199,6 +226,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_RetriesEqualToDelays_ReturnsRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { 1.0d },
@@ -206,7 +234,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -216,6 +244,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_RetriesShorterThanDelays_ReturnsRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { 1.0d, 2.0d },
@@ -223,7 +252,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));
@@ -233,6 +262,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_RetriesLongerThanDelays_ReturnsRetryPolicy()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var retryConfig = new RetryConfig
             {
                 DelaysInSeconds = new List<double> { 2.0d },
@@ -240,7 +270,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 Retries = 5
             };
 
-            IAsyncPolicy policy = retryConfig.AsPolicy();
+            IAsyncPolicy policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(RetryPolicy));

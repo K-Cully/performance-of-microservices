@@ -99,7 +99,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 return null;
             }
 
-            return config.AsPolicy();
+            return config.AsPolicy(log);
         }
 
 
