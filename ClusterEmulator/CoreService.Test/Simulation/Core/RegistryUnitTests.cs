@@ -237,6 +237,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -272,6 +274,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -307,6 +311,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -342,6 +348,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -377,6 +385,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -413,6 +423,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -449,6 +461,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(s => expectedConfig);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -518,6 +532,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
@@ -901,6 +917,8 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
 
             // Act
             var registry = new Registry(
