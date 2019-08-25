@@ -1,9 +1,9 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Steps
@@ -29,10 +29,23 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public async Task ExecuteAsync_LoggerNotInitialized_Throws()
+        {
+            var step = new ErrorStep()
+            { Probability = 2.0d };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
         public async Task ExecuteAsync_InvalidProbability_Throws()
         {
             var step = new ErrorStep()
             { Probability = 2.0d };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -44,6 +57,8 @@ namespace CoreService.Test.Simulation.Steps
         {
             var step = new ErrorStep()
             { Probability = 1.0d };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 
@@ -56,10 +71,22 @@ namespace CoreService.Test.Simulation.Steps
         {
             var step = new ErrorStep()
             { Probability = 0.0d };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 
             Assert.AreEqual(ExecutionStatus.Success, status);
+        }
+
+
+        [TestMethod]
+        public void InitializeLogger_NullLogger_ThrowsException()
+        {
+            var step = new ErrorStep();
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.InitializeLogger(null));
         }
     }
 }

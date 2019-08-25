@@ -1,4 +1,5 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Contrib.HttpClient;
@@ -40,10 +41,30 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public async Task ExecuteAsync_LoggerNotInitialized_Throws()
+        {
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            factory.Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns<HttpClient>(null);
+
+            var step = new RequestStep()
+            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            step.Configure(factory.Object);
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
         public async Task ExecuteAsync_MissingClientName_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = string.Empty, Method = "GET", Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = string.Empty, Method = "GET", Path = "test/",
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -54,7 +75,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_MissingPath_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = string.Empty, PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = string.Empty,
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -65,7 +89,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_FilePath_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "file://test.txt", PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "file://test.txt",
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -76,7 +103,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_AbsoluteUrl_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "http://test.html", PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "http://test.html",
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -87,7 +117,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_MissingMethod_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = string.Empty, Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = string.Empty, Path = "test/",
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -98,7 +131,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_UnsupportedMethod_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "BREAK", Path = "test/", PayloadSize = 15, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "BREAK", Path = "test/",
+                PayloadSize = 15, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -109,7 +145,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_InvalidPayloadSize_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = -1, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = -1, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -120,7 +159,10 @@ namespace CoreService.Test.Simulation.Steps
         public async Task ExecuteAsync_NotConfigured_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -135,7 +177,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns<HttpClient>(null);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory.Object);
 
             Assert.AreEqual(ExecutionStatus.Unexpected, await step.ExecuteAsync());
@@ -160,7 +205,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory);
 
             var result = await step.ExecuteAsync();
@@ -186,7 +234,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "HEAD", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "HEAD", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory);
 
             var result = await step.ExecuteAsync();
@@ -212,7 +263,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "DELETE", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = false, ClientName = "testClient", Method = "DELETE", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory);
 
             await Assert.ThrowsExceptionAsync<Exception>(
@@ -237,7 +291,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
@@ -262,7 +319,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "TRACE", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = false, ClientName = "testClient", Method = "TRACE", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
@@ -290,7 +350,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -321,7 +384,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "POST", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "POST", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -352,7 +418,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -383,7 +452,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policies);
 
             await Assert.ThrowsExceptionAsync<Exception>(
@@ -412,7 +484,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "PUT", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = false, ClientName = "testClient", Method = "PUT", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policy);
             var result = await step.ExecuteAsync();
 
@@ -441,7 +516,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, policies);
             var result = await step.ExecuteAsync();
 
@@ -469,7 +547,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, null);
             var result = await step.ExecuteAsync();
 
@@ -498,7 +579,10 @@ namespace CoreService.Test.Simulation.Steps
                 .Returns(() => client);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
             step.Configure(factory, null);
 
             var result = await step.ExecuteAsync();
@@ -511,11 +595,33 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public void Configure_Factory_LoggerNotInitialized_Throws()
+        {
+            Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var step = new RequestStep()
+            {
+                Asynchrounous = true,
+                ClientName = "testClient",
+                Method = "GET",
+                Path = "test/",
+                PayloadSize = 16,
+                ReuseHttpClient = true
+            };
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => step.Configure(factory.Object));
+        }
+
+
+        [TestMethod]
         public void Configure_Factory_ReuseHttpClientFalse_Throws()
         {
             Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => step.Configure(factory.Object));
@@ -526,7 +632,10 @@ namespace CoreService.Test.Simulation.Steps
         public void Configure_Factory_NullFactory_Throws()
         {
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => step.Configure(null));
@@ -538,7 +647,10 @@ namespace CoreService.Test.Simulation.Steps
         {
             Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             step.Configure(factory.Object);
 
@@ -551,7 +663,10 @@ namespace CoreService.Test.Simulation.Steps
         {
             Mock<IHttpClientFactory> factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             step.Configure(factory.Object);
 
@@ -562,13 +677,37 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public void Configure_Local_LoggerNotInitialized_Throws()
+        {
+            var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            var step = new RequestStep()
+            {
+                Asynchrounous = true,
+                ClientName = "testClient",
+                Method = "GET",
+                Path = "test/",
+                PayloadSize = 16,
+                ReuseHttpClient = false
+            };
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => step.Configure(factory.Object, policies));
+        }
+
+
+        [TestMethod]
         public void Configure_Local_ReuseHttpClientTrue_Throws()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = true };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = true };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => step.Configure(factory.Object, policies));
@@ -581,7 +720,10 @@ namespace CoreService.Test.Simulation.Steps
             var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => step.Configure(null, policies));
@@ -594,7 +736,10 @@ namespace CoreService.Test.Simulation.Steps
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             step.Configure(factory.Object, null);
             Assert.IsTrue(step.Configured);
@@ -608,7 +753,10 @@ namespace CoreService.Test.Simulation.Steps
             var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             step.Configure(factory.Object, policies);
             Assert.IsTrue(step.Configured);
@@ -622,10 +770,23 @@ namespace CoreService.Test.Simulation.Steps
             var policy = Policy.NoOpAsync();
 
             var step = new RequestStep()
-            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/", PayloadSize = 16, ReuseHttpClient = false };
+            { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
+                PayloadSize = 16, ReuseHttpClient = false };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             step.Configure(factory.Object, policy);
             Assert.IsTrue(step.Configured);
+        }
+
+
+        [TestMethod]
+        public void InitializeLogger_NullLogger_ThrowsException()
+        {
+            var step = new RequestStep();
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.InitializeLogger(null));
         }
     }
 }

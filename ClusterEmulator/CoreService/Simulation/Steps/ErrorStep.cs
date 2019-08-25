@@ -35,6 +35,11 @@ namespace CoreService.Simulation.Steps
         /// <returns><see cref="ExecutionStatus.Success"/> or <see cref="ExecutionStatus.Fail"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
+            if (Logger is null)
+            {
+                throw new InvalidOperationException("Logger is not initialized");
+            }
+
             if (Probability < 0.0d || Probability > 1.0d)
             {
                 Logger.LogCritical("{Property} value is not valid", "probability");

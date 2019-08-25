@@ -54,6 +54,11 @@ namespace CoreService.Simulation.Steps
         /// <returns><see cref="ExecutionStatus.Success"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
+            if (Logger is null)
+            {
+                throw new InvalidOperationException("Logger is not initialized");
+            }
+
             if (TimeInSeconds < 0)
             {
                 Logger.LogCritical("{Property} is negative", "time");

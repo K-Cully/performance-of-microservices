@@ -1,5 +1,7 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -30,10 +32,23 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public async Task ExecuteAsync_LoggerNotInitialized_Throws()
+        {
+            var step = new LoadStep()
+            { MemoryInBytes = 2, TimeInSeconds = 15, CpuPercentage = 2 };
+
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
         public async Task ExecuteAsync_InvalidPercent_Throws()
         {
             var step = new LoadStep()
             { MemoryInBytes = 2, TimeInSeconds = 15, CpuPercentage = -100 };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -45,6 +60,8 @@ namespace CoreService.Test.Simulation.Steps
         {
             var step = new LoadStep()
             { MemoryInBytes = 5, TimeInSeconds = -15, CpuPercentage = 5 };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -57,6 +74,8 @@ namespace CoreService.Test.Simulation.Steps
             var start = DateTime.UtcNow;
             var step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 1, CpuPercentage = 10 };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
@@ -72,6 +91,8 @@ namespace CoreService.Test.Simulation.Steps
             var start = DateTime.UtcNow;
             var step = new LoadStep()
             { MemoryInBytes = 1, TimeInSeconds = 1, CpuPercentage = 1 };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
@@ -86,9 +107,21 @@ namespace CoreService.Test.Simulation.Steps
         {
             var step = new LoadStep()
             { MemoryInBytes = ulong.MaxValue, TimeInSeconds = 15, CpuPercentage = 50 };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
 
             await Assert.ThrowsExceptionAsync<OutOfMemoryException>(
                 () => step.ExecuteAsync());
+        }
+
+
+        [TestMethod]
+        public void InitializeLogger_NullLogger_ThrowsException()
+        {
+            var step = new LoadStep();
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => step.InitializeLogger(null));
         }
     }
 }

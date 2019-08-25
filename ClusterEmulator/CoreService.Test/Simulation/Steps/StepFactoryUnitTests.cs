@@ -115,6 +115,11 @@ namespace CoreService.Test.Simulation.Steps
             string setting = "{ type : 'LoadStep', step : { bytes : 2, time : 10, percent : 20 } }";
             var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+
+            // Mock string implementation, called by extenstion method that takes Type
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
+
             var factory = new StepFactory(logger.Object, loggerFactory.Object);
 
             IStep step = factory.Create(setting);

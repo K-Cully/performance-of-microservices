@@ -80,6 +80,11 @@ namespace CoreService.Simulation.Steps
         /// <remarks>Will need to be updated to use streaming if support for responses >50MB is ever required.</remarks>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
+            if (Logger is null)
+            {
+                throw new InvalidOperationException("Logger is not initialized");
+            }
+
             if (string.IsNullOrWhiteSpace(ClientName))
             {
                 Logger.LogCritical("{Property} value is not set", "client");
@@ -296,6 +301,11 @@ namespace CoreService.Simulation.Steps
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         public void Configure(IHttpClientFactory httpClientFactory)
         {
+            if (Logger is null)
+            {
+                throw new InvalidOperationException("Logger is not initialized");
+            }
+
             if (configured)
             {
                 Logger.LogCritical("The client factory has already been configured");
@@ -321,6 +331,11 @@ namespace CoreService.Simulation.Steps
         /// <param name="requestPolicy">The policy or wrapped policies to apply to requests.</param>
         public void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy requestPolicy)
         {
+            if (Logger is null)
+            {
+                throw new InvalidOperationException("Logger is not initialized");
+            }
+
             if (configured)
             {
                 Logger.LogCritical("The client factory has already been configured");
