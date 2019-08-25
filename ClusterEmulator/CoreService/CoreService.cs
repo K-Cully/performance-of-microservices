@@ -63,9 +63,6 @@ namespace CoreService
                     {
                         SharedLogger.Information($"Starting Kestrel on {url}");
 
-                        // TODO: Investigate injection of LoggerFactory in other factories to allow creation of scoped ILogger instances
-                        // See https://github.com/aspnet/Extensions/issues/615
-
                         return new WebHostBuilder()
                                     .UseKestrel()
                                     .ConfigureServices(

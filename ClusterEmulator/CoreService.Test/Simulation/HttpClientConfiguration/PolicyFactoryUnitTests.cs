@@ -14,8 +14,20 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void Constructor_WithNullLogger_ThrowsException()
         {
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+
             Assert.ThrowsException<ArgumentNullException>(
-                () => new PolicyFactory(null), "Constructor should throw.");
+                () => new PolicyFactory(null, loggerFactory.Object), "Constructor should throw.");
+        }
+
+
+        [TestMethod]
+        public void Constructor_WithNullLoggerFactory_ThrowsException()
+        {
+            var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new PolicyFactory(logger.Object, null), "Constructor should throw.");
         }
 
 
@@ -23,7 +35,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         public void Create_WithNullName_ThrowsException()
         {
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -35,7 +48,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "???";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             IAsyncPolicy policy = factory.Create(setting);
 
@@ -48,7 +62,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "{ }";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             IAsyncPolicy policy = factory.Create(setting);
 
@@ -61,7 +76,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "{ type : 'JunkConfiguration', policy : {  } }";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -73,7 +89,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "{ type : 'RetryConfig' }";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -85,7 +102,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "{ type : 'RetryConfig', policy : {  } }";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             IAsyncPolicy policy = factory.Create(setting);
 
@@ -98,7 +116,13 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             string setting = "{ type : 'RetryConfig', policy : { retries : 1, delays : [ 2 ] } }";
             var logger = new Mock<ILogger<PolicyFactory>>(MockBehavior.Loose);
-            var factory = new PolicyFactory(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+
+            // Mock string implementation, called by extenstion method that takes Type
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
+
+            var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
             IAsyncPolicy policy = factory.Create(setting);
 

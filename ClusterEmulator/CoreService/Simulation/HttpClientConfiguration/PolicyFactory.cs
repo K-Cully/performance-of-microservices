@@ -14,6 +14,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
     public class PolicyFactory : IPolicyFactory
     {
         private readonly ILogger<PolicyFactory> log;
+        private readonly ILoggerFactory logFactory;
         private readonly string policyNamespace = typeof(PolicyFactory).Namespace;
         private List<string> errors;
 
@@ -22,9 +23,11 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Initializes a new instance of <see cref="PolicyFactory"/>
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public PolicyFactory(ILogger<PolicyFactory> logger)
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
+        public PolicyFactory(ILogger<PolicyFactory> logger, ILoggerFactory loggerFactory)
         {
             log = logger ?? throw new ArgumentNullException(nameof(logger));
+            logFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
 
@@ -101,7 +104,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 return null;
             }
 
-            return config.AsPolicy(log);
+            return config.AsPolicy(logFactory.CreateLogger(type));
         }
 
 

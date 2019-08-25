@@ -14,7 +14,6 @@ namespace CoreService.Simulation.Steps
     {
         private readonly ILogger<StepFactory> log;
         private readonly ILoggerFactory logFactory;
-
         private readonly string stepNamespace = typeof(StepFactory).Namespace;
         private List<string> errors;
 
