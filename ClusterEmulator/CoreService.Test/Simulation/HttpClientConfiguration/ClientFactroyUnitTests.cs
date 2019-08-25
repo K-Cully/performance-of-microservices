@@ -1,6 +1,8 @@
 ﻿using CoreService.Simulation.Core;
 using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +13,18 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
     public class ClientFactroyUnitTests
     {
         [TestMethod]
+        public void Constructor_WithNullLogger_ThrowsException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new ConfigFactory<ClientConfig>(null), "Constructor should throw.");
+        }
+
+
+        [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var factory = new ConfigFactory<ClientConfig>();
+            var logger = new Mock<ILogger<ConfigFactory<ClientConfig>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<ClientConfig>(logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -25,7 +36,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         {
             HashSet<string> policies = new HashSet<string>{ "F", "C", "A" };
             string setting = "{ baseAddress : 'https://github.com/', policies : [ 'C', 'A', 'F' ], headers : { 'Accept' : 'application/json' } }";
-            var factory = new ConfigFactory<ClientConfig>();
+            var logger = new Mock<ILogger<ConfigFactory<ClientConfig>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<ClientConfig>(logger.Object);
 
             ClientConfig client = factory.Create(setting);
 
@@ -42,7 +54,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var factory = new ConfigFactory<ClientConfig>();
+            var logger = new Mock<ILogger<ConfigFactory<ClientConfig>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<ClientConfig>(logger.Object);
 
             ClientConfig client = factory.Create(setting);
 
@@ -54,7 +67,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         public void Create_WithEmptyJson_ReturnsNull()
         {
             string setting = "{ }";
-            var factory = new ConfigFactory<ClientConfig>();
+            var logger = new Mock<ILogger<ConfigFactory<ClientConfig>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<ClientConfig>(logger.Object);
 
             ClientConfig client = factory.Create(setting);
 

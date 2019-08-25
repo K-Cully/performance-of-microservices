@@ -1,6 +1,8 @@
 ﻿using CoreService.Simulation.Core;
 using CoreService.Simulation.Processors;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -10,9 +12,18 @@ namespace CoreService.Test.Simulation.Processors
     public class ProcessorFactroyUnitTests
     {
         [TestMethod]
+        public void Constructor_WithNullLogger_ThrowsException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new ConfigFactory<Processor>(null), "Constructor should throw.");
+        }
+
+
+        [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var factory = new ConfigFactory<Processor>();
+            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<Processor>(logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -24,7 +35,8 @@ namespace CoreService.Test.Simulation.Processors
         {
             HashSet<string> steps = new HashSet<string>{ "A" };
             string setting = "{ errorSize : 100, latency : 42, steps : [ 'A' ], successSize : 20 }";
-            var factory = new ConfigFactory<Processor>();
+            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<Processor>(logger.Object);
 
             IProcessor processor = factory.Create(setting);
 
@@ -43,7 +55,8 @@ namespace CoreService.Test.Simulation.Processors
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var factory = new ConfigFactory<Processor>();
+            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<Processor>(logger.Object);
 
             IProcessor processor = factory.Create(setting);
 
@@ -55,7 +68,8 @@ namespace CoreService.Test.Simulation.Processors
         public void Create_WithEmptyJson_ReturnsNull()
         {
             string setting = "{ }";
-            var factory = new ConfigFactory<Processor>();
+            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<Processor>(logger.Object);
 
             IProcessor processor = factory.Create(setting);
 

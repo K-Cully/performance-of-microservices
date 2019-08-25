@@ -23,10 +23,14 @@ namespace CoreService.Test.Simulation.Core
         public void Constructor_Throws_WhenConfigurationSettingsIsNull()
         {
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(null, new StepFactory(), new ConfigFactory<Processor>(),
-                                new PolicyFactory(), new ConfigFactory<ClientConfig>(), logger.Object));
+                () => _ = new Registry(null, stepFactory.Object, processorFactory.Object,
+                                policyFactory.Object, clientFactory.Object, logger.Object));
         }
 
 
@@ -34,12 +38,16 @@ namespace CoreService.Test.Simulation.Core
         public void Constructor_Throws_WhenStepFactoryIsNull()
         {
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, null, new ConfigFactory<Processor>(), new PolicyFactory(),
-                                new ConfigFactory<ClientConfig>(), logger.Object));
+                () => _ = new Registry(settings, null, processorFactory.Object,
+                                policyFactory.Object, clientFactory.Object, logger.Object));
         }
 
 
@@ -48,11 +56,15 @@ namespace CoreService.Test.Simulation.Core
         {
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), null, new PolicyFactory(),
-                                new ConfigFactory<ClientConfig>(), logger.Object));
+                () => _ = new Registry(settings, stepFactory.Object, null,
+                                policyFactory.Object, clientFactory.Object, logger.Object));
         }
 
 
@@ -61,11 +73,15 @@ namespace CoreService.Test.Simulation.Core
         {
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ConfigFactory<Processor>(), null,
-                                new ConfigFactory<ClientConfig>(), logger.Object));
+                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                                null, clientFactory.Object, logger.Object));
         }
 
 
@@ -74,11 +90,15 @@ namespace CoreService.Test.Simulation.Core
         {
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ConfigFactory<Processor>(),
-                                new PolicyFactory(), null, logger.Object));
+                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                                policyFactory.Object, null, logger.Object));
         }
 
 
@@ -87,10 +107,14 @@ namespace CoreService.Test.Simulation.Core
         {
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, new StepFactory(), new ConfigFactory<Processor>(),
-                                new PolicyFactory(), new ConfigFactory<ClientConfig>(), null));
+                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                                policyFactory.Object, clientFactory.Object, null));
         }
 
 

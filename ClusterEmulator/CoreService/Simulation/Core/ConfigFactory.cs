@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,18 @@ namespace CoreService.Simulation.Core
     public class ConfigFactory<TModel> : IConfigFactory<TModel>
         where TModel : class
     {
+        private readonly ILogger<ConfigFactory<TModel>> log;
         private List<string> errors;
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="ConfigFactory{TModel}"/>
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public ConfigFactory(ILogger<ConfigFactory<TModel>> logger)
+        {
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
 
         /// <summary>
@@ -34,7 +46,11 @@ namespace CoreService.Simulation.Core
             TModel value = JsonConvert.DeserializeObject<TModel>(settingValue, SerializerSettings);
             if (errors.Any())
             {
-                // TODO: log errors
+                foreach(string error in errors)
+                {
+                    log.LogError("Deserializing {SettingValue} encountered {JsonError}", settingValue, error);
+                }
+
                 return null;
             }
 
