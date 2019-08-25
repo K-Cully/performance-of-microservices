@@ -1,5 +1,7 @@
 ﻿using CoreService.Simulation.Steps;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -9,9 +11,17 @@ namespace CoreService.Test.Simulation.Steps
     public class StepFactoryUnitTests
     {
         [TestMethod]
+        public void Constructor_WithNullLogger_ThrowsException()
+        {
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new StepFactory(null), "Constructor should throw.");
+        }
+
+        [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -22,7 +32,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             IStep step = factory.Create(setting);
 
@@ -34,7 +45,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithErronousSetting_ReturnsNull()
         {
             string setting = "{ }";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             IStep step = factory.Create(setting);
 
@@ -46,7 +58,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithUnknownType_ThrowsException()
         {
             string setting = "{ type : 'FrontStep', step : { time : 10, percent : 20 } }";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -57,7 +70,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithInvalidStep_ReturnsNull()
         {
             string setting = "{ type : 'LoadStep', step : {  } }";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             IStep step = factory.Create(setting);
 
@@ -69,7 +83,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithMissingStep_Throws()
         {
             string setting = "{ type : 'LoadStep' }";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -80,7 +95,8 @@ namespace CoreService.Test.Simulation.Steps
         public void Create_WithValidSetting_ReturnsStep()
         {
             string setting = "{ type : 'LoadStep', step : { bytes : 2, time : 10, percent : 20 } }";
-            var factory = new StepFactory();
+            var logger = new Mock<ILogger<StepFactory>>(MockBehavior.Loose);
+            var factory = new StepFactory(logger.Object);
 
             IStep step = factory.Create(setting);
 

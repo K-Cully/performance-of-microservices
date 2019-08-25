@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,19 @@ namespace CoreService.Simulation.Steps
     /// </summary>
     public class StepFactory : IStepFactory
     {
+        private readonly ILogger<StepFactory> log;
         private readonly string stepNamespace = typeof(StepFactory).Namespace;
-
-
         private List<string> errors;
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="StepFactory"/>
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public StepFactory(ILogger<StepFactory> logger)
+        {
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
 
         /// <summary>
@@ -37,27 +47,38 @@ namespace CoreService.Simulation.Steps
             dynamic json = JsonConvert.DeserializeObject(settingValue, SerializerSettings);
             if (errors.Any())
             {
-                // TODO: log errors
+                foreach (string error in errors)
+                {
+                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
+                        settingValue, error);
+                }
+
                 return null;
             }
 
             if (json?.type?.Value is null)
             {
-                // TODO: log error
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, "Type not found");
                 return null;
             }
 
             // Extract the step type
-            Type type = Type.GetType($"{stepNamespace}.{json.type.Value}");
+            string typeName = $"{stepNamespace}.{json.type.Value}";
+            Type type = Type.GetType(typeName);
             if (type is null)
             {
-                throw new InvalidOperationException($"{stepNamespace}.{json.type.Value} did not resolve to a Type");
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, $"{typeName} is not recognised");
+                throw new InvalidOperationException($"{typeName} did not resolve to a Type");
             }
 
             // Convert the step JSON object to the identified concrete type
             JObject stepJson = json.step;
             if (stepJson is null)
             {
+                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
+                    settingValue, "No step found");
                 throw new InvalidOperationException($"No step found in setting '{settingValue}'");
             }
 
@@ -65,7 +86,12 @@ namespace CoreService.Simulation.Steps
             IStep step = stepJson.ToObject(type, serializer) as IStep;
             if (errors.Any())
             {
-                // TODO: log errors
+                foreach (string error in errors)
+                {
+                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
+                        settingValue, error);
+                }
+
                 return null;
             }
 
