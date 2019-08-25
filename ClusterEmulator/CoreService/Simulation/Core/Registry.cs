@@ -118,7 +118,7 @@ namespace CoreService.Simulation.Core
                 PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
             }
 
-            simpleClientFactory = new SimpleHttpClientFactory(clients);
+            simpleClientFactory = new SimpleHttpClientFactory(clients, logger);
         }
 
 

@@ -76,6 +76,7 @@ namespace CoreService.Simulation.Steps
         /// Executes the action defined by the step.
         /// </summary>
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
+        /// <remarks>Will need to be updated to use streaming if support for responses >50MB is ever required.</remarks>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
             // TODO: Add logging throughout
@@ -105,13 +106,11 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("Http client is not configured");
             }
 
-            // TODO: handle polly exceptions, eg. timeout
+            // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
 
             // TODO: unify sizes to be in bytes
 
             // TODO: add caller identifier
-
-            // Note: Will need to be updated to use streaming if support for responses >50MB is ever required.
 
             Func<CancellationToken, Task<HttpResponseMessage>> request;
             if (ReuseHttpClient)

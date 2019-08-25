@@ -1,4 +1,5 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -10,13 +11,19 @@ namespace CoreService.Simulation.Core
     /// </summary>
     public class SimpleHttpClientFactory : IHttpClientFactory
     {
+        private readonly IDictionary<string, ClientConfig> clients;
+        private readonly ILogger log;
+
+
         /// <summary>
         /// Initializes a new instance of <see cref="SimpleHttpClientFactory"/>.
         /// </summary>
         /// <param name="clientConfigs">The client configurations to create clients from.</param>
-        public SimpleHttpClientFactory(IDictionary<string, ClientConfig> clientConfigs)
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public SimpleHttpClientFactory(IDictionary<string, ClientConfig> clientConfigs, ILogger logger)
         {
             clients = clientConfigs ?? throw new ArgumentNullException(nameof(clientConfigs));
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -35,12 +42,14 @@ namespace CoreService.Simulation.Core
 
             if (!clients.ContainsKey(name))
             {
+                log.LogWarning("{Client} is not registered", name);
                 throw new ArgumentException($"'{name}' is not registered", nameof(name));
             }
 
             var client = new HttpClient();
             try
             {
+                log.LogDebug("Creating {Client}", name);
                 var config = clients[name];
                 client.BaseAddress = new Uri(config.BaseAddress, UriKind.Absolute);
                 if (config.RequestHeaders != null)
@@ -51,17 +60,16 @@ namespace CoreService.Simulation.Core
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 // Ensure client is disposed if an exception occurrs
+                log.LogError(e, "Error creating {Client}, disposing client and rethrowing", name);
                 client.Dispose();
                 throw;
             }
 
+            log.LogInformation("{Client} created successfully");
             return client;
         }
-
-
-        private readonly IDictionary<string, ClientConfig> clients;
     }
 }

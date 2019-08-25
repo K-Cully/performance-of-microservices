@@ -1,6 +1,8 @@
 ﻿using CoreService.Simulation.Core;
 using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +16,18 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         public void Constructor_NullClientConfigs_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new SimpleHttpClientFactory(null));
+                () => _ = new SimpleHttpClientFactory(null, logger.Object));
+        }
+
+
+        [TestMethod]
+        public void Constructor_NullLogger_Throws()
+        {
+            var configs = new Dictionary<string, ClientConfig>();
+            Assert.ThrowsException<ArgumentNullException>(
+                () => _ = new SimpleHttpClientFactory(configs, null));
         }
 
 
@@ -23,8 +35,9 @@ namespace CoreService.Test.Simulation.Core
         public void Constructor_EmptyClientConfigs_Succeeds()
         {
             var configs = new Dictionary<string, ClientConfig>();
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
 
-            var factory = new SimpleHttpClientFactory(configs);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             Assert.IsNotNull(factory);
         }
@@ -33,8 +46,9 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         public void CreateClient_EmptyName_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var configs = new Dictionary<string, ClientConfig>();
-            var factory = new SimpleHttpClientFactory(configs);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.CreateClient(string.Empty));
@@ -44,8 +58,9 @@ namespace CoreService.Test.Simulation.Core
         [TestMethod]
         public void CreateClient_NameNotRegistered_Throws()
         {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
             var configs = new Dictionary<string, ClientConfig>();
-            var factory = new SimpleHttpClientFactory(configs);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.CreateClient("Missing"));
@@ -59,7 +74,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig() }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => factory.CreateClient("Bob"));
@@ -73,7 +89,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = string.Empty, Policies = null, RequestHeaders = null } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             Assert.ThrowsException<UriFormatException>(
                 () => factory.CreateClient("Bob"));
@@ -87,7 +104,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = "/test/", Policies = null, RequestHeaders = null } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             bool platformException = false;
             try
@@ -113,7 +131,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = "http://test.com/", Policies = null, RequestHeaders = null } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             HttpClient client = factory.CreateClient("Bob");
 
@@ -133,7 +152,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = "http://test.com/", Policies = null, RequestHeaders = headers } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             HttpClient client = factory.CreateClient("Bob");
 
@@ -157,7 +177,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = "http://test.com/", Policies = null, RequestHeaders = headers } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             HttpClient client = factory.CreateClient("Bob");
 
@@ -182,7 +203,8 @@ namespace CoreService.Test.Simulation.Core
             {
                 { "Bob", new ClientConfig { BaseAddress = "http://test.com/", Policies = null, RequestHeaders = headers } }
             };
-            var factory = new SimpleHttpClientFactory(configs);
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var factory = new SimpleHttpClientFactory(configs, logger.Object);
 
             HttpClient client = factory.CreateClient("Bob");
 
