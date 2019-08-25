@@ -14,6 +14,7 @@ namespace CoreService.Simulation.Core
         where TModel : class
     {
         private readonly ILogger<ConfigFactory<TModel>> log;
+        private readonly ILoggerFactory logFactory;
         private List<string> errors;
 
 
@@ -21,9 +22,11 @@ namespace CoreService.Simulation.Core
         /// Initializes a new instance of <see cref="ConfigFactory{TModel}"/>
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public ConfigFactory(ILogger<ConfigFactory<TModel>> logger)
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
+        public ConfigFactory(ILogger<ConfigFactory<TModel>> logger, ILoggerFactory loggerFactory)
         {
             log = logger ?? throw new ArgumentNullException(nameof(logger));
+            logFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
 
@@ -55,6 +58,8 @@ namespace CoreService.Simulation.Core
 
                 return null;
             }
+
+            // TODO: Add logger to created config objects
 
             return value;
         }

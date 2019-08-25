@@ -14,8 +14,20 @@ namespace CoreService.Test.Simulation.Processors
         [TestMethod]
         public void Constructor_WithNullLogger_ThrowsException()
         {
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+
             Assert.ThrowsException<ArgumentNullException>(
-                () => new ConfigFactory<Processor>(null), "Constructor should throw.");
+                () => new ConfigFactory<Processor>(null, loggerFactory.Object), "Constructor should throw.");
+        }
+
+
+        [TestMethod]
+        public void Constructor_WithNullLoggerFactory_ThrowsException()
+        {
+            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new ConfigFactory<Processor>(logger.Object, null), "Constructor should throw.");
         }
 
 
@@ -23,7 +35,8 @@ namespace CoreService.Test.Simulation.Processors
         public void Create_WithNullName_ThrowsException()
         {
             var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new ConfigFactory<Processor>(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -36,7 +49,8 @@ namespace CoreService.Test.Simulation.Processors
             HashSet<string> steps = new HashSet<string>{ "A" };
             string setting = "{ errorSize : 100, latency : 42, steps : [ 'A' ], successSize : 20 }";
             var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new ConfigFactory<Processor>(logger.Object, loggerFactory.Object);
 
             IProcessor processor = factory.Create(setting);
 
@@ -56,7 +70,8 @@ namespace CoreService.Test.Simulation.Processors
         {
             string setting = "???";
             var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new ConfigFactory<Processor>(logger.Object, loggerFactory.Object);
 
             IProcessor processor = factory.Create(setting);
 
@@ -69,7 +84,8 @@ namespace CoreService.Test.Simulation.Processors
         {
             string setting = "{ }";
             var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            var factory = new ConfigFactory<Processor>(logger.Object, loggerFactory.Object);
 
             IProcessor processor = factory.Create(setting);
 
