@@ -68,7 +68,7 @@ namespace CoreService.Simulation.Core
                 throw;
             }
 
-            log.LogInformation("{Client} created successfully");
+            log.LogInformation("{Client} created successfully", name);
             return client;
         }
     }

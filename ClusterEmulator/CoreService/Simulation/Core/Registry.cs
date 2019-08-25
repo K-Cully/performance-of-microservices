@@ -75,36 +75,19 @@ namespace CoreService.Simulation.Core
         /// <param name="policyFactory">A factory to create http client policies from settings.</param>
         /// <param name="clientFactory">A factory to create http client configurations from settings.</param>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
         public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
             IConfigFactory<Processor> processorFactory, IPolicyFactory policyFactory,
-            IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger)
+            IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
+            ILoggerFactory loggerFactory)
         {
-            if (configurationSettings is null)
-            {
-                throw new ArgumentNullException(nameof(configurationSettings));
-            }
-
-            if (stepFactory is null)
-            {
-                throw new ArgumentNullException(nameof(stepFactory));
-            }
-
-            if (processorFactory is null)
-            {
-                throw new ArgumentNullException(nameof(processorFactory));
-            }
-
-            if (policyFactory is null)
-            {
-                throw new ArgumentNullException(nameof(policyFactory));
-            }
-
-            if (clientFactory is null)
-            {
-                throw new ArgumentNullException(nameof(clientFactory));
-            }
-
+            _ = configurationSettings ?? throw new ArgumentNullException(nameof(configurationSettings));
+            _ = stepFactory ?? throw new ArgumentNullException(nameof(stepFactory));
+            _ = processorFactory ?? throw new ArgumentNullException(nameof(processorFactory));
+            _ = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
+            _ = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             log = logger ?? throw new ArgumentNullException(nameof(logger));
+            _ = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
             InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
             InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
@@ -118,7 +101,7 @@ namespace CoreService.Simulation.Core
                 PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
             }
 
-            simpleClientFactory = new SimpleHttpClientFactory(clients, logger);
+            simpleClientFactory = new SimpleHttpClientFactory(clients, loggerFactory.CreateLogger<SimpleHttpClientFactory>());
         }
 
 

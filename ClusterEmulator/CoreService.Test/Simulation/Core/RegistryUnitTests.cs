@@ -27,10 +27,11 @@ namespace CoreService.Test.Simulation.Core
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(null, stepFactory.Object, processorFactory.Object,
-                                policyFactory.Object, clientFactory.Object, logger.Object));
+                () => _ = new Registry(null, stepFactory.Object, processorFactory.Object, policyFactory.Object,
+                                clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
 
@@ -41,13 +42,14 @@ namespace CoreService.Test.Simulation.Core
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             var configurations = new ConfigurationSectionCollection();
             var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, null, processorFactory.Object,
-                                policyFactory.Object, clientFactory.Object, logger.Object));
+                () => _ = new Registry(settings, null, processorFactory.Object, policyFactory.Object,
+                                clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
 
@@ -61,10 +63,11 @@ namespace CoreService.Test.Simulation.Core
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, null,
-                                policyFactory.Object, clientFactory.Object, logger.Object));
+                () => _ = new Registry(settings, stepFactory.Object, null, policyFactory.Object,
+                                clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
 
@@ -78,10 +81,11 @@ namespace CoreService.Test.Simulation.Core
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
-                                null, clientFactory.Object, logger.Object));
+                                null, clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
 
@@ -95,10 +99,11 @@ namespace CoreService.Test.Simulation.Core
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
-                                policyFactory.Object, null, logger.Object));
+                                policyFactory.Object, null, logger.Object, loggerFactory.Object));
         }
 
 
@@ -111,10 +116,28 @@ namespace CoreService.Test.Simulation.Core
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
-                                policyFactory.Object, clientFactory.Object, null));
+                                policyFactory.Object, clientFactory.Object, null, loggerFactory.Object));
+        }
+
+
+        [TestMethod]
+        public void Constructor_Throws_WhenLoggerFActoryIsNull()
+        {
+            var configurations = new ConfigurationSectionCollection();
+            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                                policyFactory.Object, clientFactory.Object, logger.Object, null));
         }
 
 
@@ -131,11 +154,12 @@ namespace CoreService.Test.Simulation.Core
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             Assert.ThrowsException<InvalidOperationException>(()
                 => new Registry(settings, stepFactory.Object, processorFactory.Object,
-                    policyFactory.Object, clientFactory.Object, logger.Object));
+                    policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object));
 
             // Verify
             stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Never);
@@ -164,11 +188,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             var policyRegistry = registry.PolicyRegistry;
             var clients = new List<KeyValuePair<string, ClientConfig>>(registry.Clients);
 
@@ -209,11 +234,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IProcessor processor = registry.GetProcessor(processorName);
 
             // Verify
@@ -243,11 +269,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
@@ -277,11 +304,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
@@ -311,11 +339,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentException>(() => registry.GetProcessor(processorName));
@@ -345,11 +374,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IStep step = registry.GetStep(stepName);
 
             // Verify
@@ -380,11 +410,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IAsyncPolicy policy = registry.GetPolicy(policyName);
 
             // Verify
@@ -415,11 +446,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             ClientConfig config = registry.GetClient(clientName);
 
             // Verify
@@ -447,11 +479,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentNullException>(
@@ -480,11 +513,12 @@ namespace CoreService.Test.Simulation.Core
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             registry.ConfigureHttpClients(httpClientFactory.Object);
@@ -535,11 +569,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
@@ -587,11 +622,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentException>(
@@ -639,11 +675,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
@@ -686,11 +723,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
@@ -738,11 +776,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
@@ -790,11 +829,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
@@ -842,11 +882,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentNullException>(
@@ -894,11 +935,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<ArgumentException>(
@@ -946,11 +988,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
@@ -998,11 +1041,12 @@ namespace CoreService.Test.Simulation.Core
             stepFactory.Setup(f => f.Create("Mary"))
                 .Returns<string>(s => step2.Object);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             // Act
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
-                policyFactory.Object, clientFactory.Object, logger.Object);
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
