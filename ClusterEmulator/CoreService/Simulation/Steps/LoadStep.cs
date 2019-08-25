@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CoreService.Simulation.Steps
@@ -14,6 +14,14 @@ namespace CoreService.Simulation.Steps
     [Serializable]
     public class LoadStep : IStep
     {
+        [JsonIgnore]
+        private ILogger log;
+
+
+        [JsonIgnore]
+        private ILogger Logger { get => log; set => log = log ?? value; }
+
+
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
@@ -48,11 +56,13 @@ namespace CoreService.Simulation.Steps
         {
             if (TimeInSeconds < 0)
             {
+                Logger.LogCritical("{Property} is negative", "time");
                 throw new InvalidOperationException("time cannot be negative");
             }
 
             if (CpuPercentage < 1 || CpuPercentage > 100)
             {
+                Logger.LogCritical("{Property} value is not in the accepted range", "percent");
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
             }
 
@@ -62,14 +72,18 @@ namespace CoreService.Simulation.Steps
             if (MemoryInBytes > 0)
             {
                 ulong remaining = MemoryInBytes;
+                Logger.LogDebug("Allocating {MemoryAllocation} bytes of total memory", remaining);
 
                 while (remaining > int.MaxValue)
                 {
+                    Logger.LogDebug("Allocating chunk {MemoryAllocation} bytes of memory", int.MaxValue);
                     block.Add(new List<byte>(new byte[int.MaxValue]));
+                    remaining -= int.MaxValue;
                 }
 
                 if (remaining > 0)
                 {
+                    Logger.LogDebug("Allocating chunk {MemoryAllocation} bytes of memory", (int)remaining);
                     block.Add(new List<byte>(new byte[(int)remaining]));
                 }
             }
@@ -77,11 +91,24 @@ namespace CoreService.Simulation.Steps
             List<Task> coreTasks = new List<Task>();
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
+                Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
+                    CpuPercentage, i, TimeInSeconds);
                 coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
+            log.LogInformation("Completed load generation step");
             return ExecutionStatus.Success;
+        }
+
+
+        /// <summary>
+        /// Initializes a logger for the step instance.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public void InitializeLogger(ILogger logger)
+        {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 

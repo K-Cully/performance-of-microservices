@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -11,6 +12,14 @@ namespace CoreService.Simulation.Steps
     [Serializable]
     public class ErrorStep : IStep
     {
+        [JsonIgnore]
+        private ILogger log;
+
+
+        [JsonIgnore]
+        private ILogger Logger { get => log; set => log = log ?? value; }
+
+
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
@@ -28,11 +37,25 @@ namespace CoreService.Simulation.Steps
         {
             if (Probability < 0.0d || Probability > 1.0d)
             {
+                Logger.LogCritical("{Property} value is not valid", "probability");
                 throw new InvalidOperationException("probability must be in the range 0 to 1");
             }
 
-            Random random = new Random();
-            return await Task.FromResult(random.NextDouble() > Probability ? ExecutionStatus.Success : ExecutionStatus.Fail);
+            double value = new Random().NextDouble();
+            ExecutionStatus status = value > Probability ? ExecutionStatus.Success : ExecutionStatus.Fail;
+
+            Logger.LogDebug("{RandomValue} resulted in {ExecutionStatus} for {Probability}", value, status, Probability);
+            return await Task.FromResult(status);
+        }
+
+
+        /// <summary>
+        /// Initializes a logger for the step instance.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public void InitializeLogger(ILogger logger)
+        {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
     }
 }

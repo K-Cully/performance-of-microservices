@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CoreService.Simulation.Steps
 {
@@ -12,5 +13,12 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         Task<ExecutionStatus> ExecuteAsync();
+
+
+        /// <summary>
+        /// Initializes a logger for the step instance.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        void InitializeLogger(ILogger logger);
     }
 }

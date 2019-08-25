@@ -89,6 +89,7 @@ namespace CoreService.Simulation.Steps
             }
 
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
+
             IStep step = stepJson.ToObject(type, serializer) as IStep;
             if (errors.Any())
             {
@@ -101,6 +102,7 @@ namespace CoreService.Simulation.Steps
                 return null;
             }
 
+            step.InitializeLogger(logFactory.CreateLogger(type));
             return step;
         }
 

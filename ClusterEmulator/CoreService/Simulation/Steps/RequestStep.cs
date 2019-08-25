@@ -1,4 +1,5 @@
 ﻿using CoreService.Model;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using System;
@@ -79,30 +80,33 @@ namespace CoreService.Simulation.Steps
         /// <remarks>Will need to be updated to use streaming if support for responses >50MB is ever required.</remarks>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
-            // TODO: Add logging throughout
-
             if (string.IsNullOrWhiteSpace(ClientName))
             {
+                Logger.LogCritical("{Property} value is not set", "client");
                 throw new InvalidOperationException("client must be set");
             }
 
             if (string.IsNullOrWhiteSpace(Path) || !Uri.TryCreate(Path, UriKind.Relative, out _))
             {
+                Logger.LogCritical("{Property} is not a relative URI", "path");
                 throw new InvalidOperationException("path must be a relative URI");
             }
 
             if (string.IsNullOrWhiteSpace(Method) || !supportedMethods.Contains(Method, StringComparer.OrdinalIgnoreCase))
             {
-                throw new InvalidOperationException("url must be a valid http protocol");
+                Logger.LogCritical("{Property} is not a valid http protocol", "method");
+                throw new InvalidOperationException("method must be a valid http protocol");
             }
 
             if (PayloadSize < 0)
             {
+                Logger.LogCritical("{Property} is negative", "size");
                 throw new InvalidOperationException("size cannot be negative");
             }
 
             if (!configured)
             {
+                Logger.LogCritical("The http client factory is not configured");
                 throw new InvalidOperationException("Http client is not configured");
             }
 
@@ -118,6 +122,7 @@ namespace CoreService.Simulation.Steps
                 HttpClient client = clientFactory.CreateClient(ClientName);
                 if (client is null)
                 {
+                    Logger.LogCritical("HttpClient {ClientName} is null", ClientName);
                     return ExecutionStatus.Unexpected;
                 }
 
@@ -128,8 +133,10 @@ namespace CoreService.Simulation.Steps
                 }
                 else
                 {
-                    using (HttpResponseMessage response = await ExecuteRequestAsync(request, CancellationToken.None))
+                    using (HttpResponseMessage response =
+                        await ExecuteRequestAsync(request, CancellationToken.None))
                     {
+                        Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
                         return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
                     }
                 }
@@ -140,7 +147,7 @@ namespace CoreService.Simulation.Steps
                 {
                     if (client is null)
                     {
-                        // TODO: add UT
+                        Logger.LogCritical("HttpClient {ClientName} is null", ClientName);
                         return ExecutionStatus.Unexpected;
                     }
 
@@ -165,6 +172,7 @@ namespace CoreService.Simulation.Steps
                         using (HttpResponseMessage response =
                             await ExecuteRequestAsync(combinedAction, CancellationToken.None))
                         {
+                            Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
                             return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
                         }
                     }
@@ -180,15 +188,18 @@ namespace CoreService.Simulation.Steps
             // TODO: refactor to remove duplication
 
             var method = new HttpMethod(Method);
+            Logger.LogDebug("Retrieving action for {HttpMethod}", Method);
 
             if (method == HttpMethod.Delete)
             {
                 return token => client.DeleteAsync(Path, token);
             }
+
             if (method == HttpMethod.Get)
             {
                 return token => client.GetAsync(Path, token);
             }
+
             if (method == HttpMethod.Head)
             {
                 return token =>
@@ -197,6 +208,7 @@ namespace CoreService.Simulation.Steps
                         return client.SendAsync(request, token);
                 };
             }
+
             if (method == HttpMethod.Options)
             {
                 return token =>
@@ -205,6 +217,7 @@ namespace CoreService.Simulation.Steps
                         return client.SendAsync(request, token);
                 };
             }
+
             if (method == HttpMethod.Post)
             {
                 // TODO: add payload
@@ -212,6 +225,7 @@ namespace CoreService.Simulation.Steps
                 var request = new AdaptableRequest();
                 return token => client.PostAsJsonAsync(Path, request, token);
             }
+
             if (method == HttpMethod.Put)
             {
                 // TODO: add payload
@@ -219,6 +233,7 @@ namespace CoreService.Simulation.Steps
                 var request = new AdaptableRequest();
                 return token => client.PutAsJsonAsync(Path, request, token);
             }
+
             if (method == HttpMethod.Trace)
             {
                 return token =>
@@ -228,7 +243,18 @@ namespace CoreService.Simulation.Steps
                 };
             }
 
+            Logger.LogCritical("{HttpMethod} is not supported", Method);
             throw new InvalidOperationException($"{Method} is not supported");
+        }
+
+
+        /// <summary>
+        /// Initializes a logger for the step instance.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
+        public void InitializeLogger(ILogger logger)
+        {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -251,12 +277,15 @@ namespace CoreService.Simulation.Steps
         /// <param name="requestTask">The request task to execute asynchronously.</param>
         private void SendRequest(Task<HttpResponseMessage> requestTask)
         {
-            requestTask.ContinueWith(t =>
+            requestTask.ContinueWith(task =>
             {
-                //t?.Result?.Content?.Dispose();
-                // TODO: Log error
-                string error = t?.Exception?.Message;
-
+                Logger.LogError("Asynchronous request faulted");
+                task.Exception.Handle(ex =>
+                {
+                    // Log and set all exceptions as handled to avoid rethrowing
+                    Logger.LogError(ex, "Exception returned from asynchronous request");
+                    return true;
+                });
             }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
@@ -269,16 +298,19 @@ namespace CoreService.Simulation.Steps
         {
             if (configured)
             {
+                Logger.LogCritical("The client factory has already been configured");
                 throw new InvalidOperationException("The step is already configured");
             }
 
             if (!ReuseHttpClient)
             {
-                throw new InvalidOperationException("This step cannot use http client factory");
+                Logger.LogCritical("The step should resolve it's client from a custom IHttpClientFactory");
+                throw new InvalidOperationException("This step cannot use the default http client factory");
             }
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             configured = true;
+            Logger.LogInformation("Client factory configured successfully");
         }
 
 
@@ -291,18 +323,29 @@ namespace CoreService.Simulation.Steps
         {
             if (configured)
             {
+                Logger.LogCritical("The client factory has already been configured");
                 throw new InvalidOperationException("The step is already configured");
             }
 
             if (ReuseHttpClient)
             {
-                throw new InvalidOperationException("This step must use http client factory");
+                Logger.LogCritical("The step should resolve it's client from the default IHttpClientFactory");
+                throw new InvalidOperationException("This step must use the default http client factory");
             }
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             policy = requestPolicy?.AsAsyncPolicy<HttpResponseMessage>();
             configured = true;
+            Logger.LogInformation("Client factory and policies configured successfully");
         }
+
+
+        [JsonIgnore]
+        private ILogger log;
+
+
+        [JsonIgnore]
+        private ILogger Logger { get => log; set => log = log ?? value; }
 
 
         [JsonIgnore]
