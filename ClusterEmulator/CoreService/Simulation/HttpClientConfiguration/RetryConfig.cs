@@ -63,7 +63,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
             if (JitterMilliseconds < 0)
             {
-                logger.LogCritical("{PolicyConfig} : {Property} is neagative", nameof(RetryConfig), "jitter");
+                logger.LogCritical("{PolicyConfig} : {Property} is negative", nameof(RetryConfig), "jitter");
                 throw new InvalidOperationException("jitter cannot be negative");
             }
 
@@ -79,13 +79,13 @@ namespace CoreService.Simulation.HttpClientConfiguration
             {
                 if (forever)
                 {
-                    return builder.RetryForeverAsync(ex => 
+                    return builder.RetryForeverAsync(onRetry: ex => 
                         logger.LogError(ex, "{RetryPolicy} encountered an error", "RetryForeverAsync"));
                 }
                 else
                 {
-                    return builder.RetryAsync(Retries, (ex, c) =>
-                        logger.LogError(ex, "{RetryPolicy} encountered an error on attempt {RetryCount}", "RetryAsync", c));
+                    return builder.RetryAsync(Retries, onRetry: (ex, count) =>
+                        logger.LogError(ex, "{RetryPolicy} encountered an error on attempt {RetryCount}", "RetryAsync", count));
                 }
             }
 
@@ -100,19 +100,19 @@ namespace CoreService.Simulation.HttpClientConfiguration
             if (forever)
             {
                 return builder.WaitAndRetryForeverAsync(
-                    c => Delay(c, exponential),
-                    (ex, ts) => logger.LogError(ex, 
+                    sleepDurationProvider: count => Delay(count, exponential),
+                    onRetry: (ex, timespan) => logger.LogError(ex, 
                                     "{RetryPolicy} encountered an error after {RetryTime} seconds",
-                                    "WaitAndRetryForeverAsync", ts.TotalSeconds));
+                                    "WaitAndRetryForeverAsync", timespan.TotalSeconds));
             }
             else
             {
                 return builder.WaitAndRetryAsync(
                     Retries,
-                    c => Delay(c, exponential),
-                    (ex, ts, c, ctx) => logger.LogError(ex,
+                    sleepDurationProvider: count => Delay(count, exponential),
+                    onRetry: (ex, timespan, count, context) => logger.LogError(ex,
                                             "{RetryPolicy} encountered an error on attempt {RetryCount} after {RetryTime} seconds",
-                                            "WaitAndRetryAsync", c, ts.TotalSeconds));
+                                            "WaitAndRetryAsync", count, timespan.TotalSeconds));
             }
         }
 

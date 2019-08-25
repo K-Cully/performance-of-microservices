@@ -39,23 +39,30 @@ namespace CoreService.Simulation.HttpClientConfiguration
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Restrict to valid TimeSpan
-            if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)
-            {
-                throw new InvalidOperationException("time must be in the range 0 - 922337203685");
-            }
-
             if (double.IsNaN(TimeoutInSeconds))
             {
+                logger.LogCritical("{PolicyConfig} : {Property} is not a valid number", nameof(TimeoutConfig), "time");
                 throw new InvalidOperationException("time cannot be NaN");
             }
 
-            // TODO: add a logging function call to all policies
+            // Restrict to valid TimeSpan
+            if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)
+            {
+                logger.LogCritical("{PolicyConfig} : {Property} is outside the valid range", nameof(TimeoutConfig), "time");
+                throw new InvalidOperationException("time must be in the range 0 - 922337203685");
+            }
 
             var wait = TimeSpan.FromSeconds(TimeoutInSeconds);
             var strategy = CancelDelegates ? TimeoutStrategy.Optimistic : TimeoutStrategy.Pessimistic;
 
-            return Policy.TimeoutAsync(wait, strategy);
+            return Policy.TimeoutAsync(wait, strategy,
+                onTimeoutAsync: (context, timespan, task) =>
+                {
+                    // Log the error and return the task, which should be faulted at this point
+                    logger.LogWarning("{PolicyKey} at {OperationKey}: execution timed out after {TimeoutTime} seconds",
+                          context.PolicyKey, context.OperationKey, timespan.TotalSeconds);
+                    return task;
+                });
         }
     }
 }
