@@ -1,7 +1,8 @@
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Serilog;
-using Serilog.Events;
+using Serilog.Core;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -42,26 +43,43 @@ namespace CoreService
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
+                Logger log;
 
-                // TODO: Investigate - can Log.Logger being static cause issues due to shared process?
-
+                // TODO: move configuration entirely out to config file
+                // TODO: remove
                 if (DevelopmentEnvironment)
                 {
-                    // Create Serilog debug logger
-                    Log.Logger = new LoggerConfiguration()
-                                    .ReadFrom.Configuration(Configuration)
-                                    .Enrich.FromLogContext()
-                                    .WriteTo.Trace(outputTemplate: LogTemplate)
-                                    .CreateLogger();
+                    // TODO: remove from DevelopmentEnvironment
+                    var telemetry = new TelemetryConfiguration("");
+
+                    log = new LoggerConfiguration()
+                            .ReadFrom.Configuration(Configuration)
+                            .Enrich.FromLogContext()
+                            .WriteTo.ApplicationInsights(telemetry, TelemetryConverter.Events)
+                            .CreateLogger();
+
+                    // Create Serilog trace logger with default trace listener (debug)
+                    //log = new LoggerConfiguration()
+                    //        .ReadFrom.Configuration(Configuration)
+                    //        .Enrich.FromLogContext()
+                    //        .WriteTo.Trace(outputTemplate: LogTemplate)
+                    //        .CreateLogger();
                 }
                 else
                 {
-                    // TODO: create other sinks
+                    // TODO: Load app insights instrumentation key from settings
+                    var telemetry = new TelemetryConfiguration("");
+
+                    log = new LoggerConfiguration()
+                            .ReadFrom.Configuration(Configuration)
+                            .Enrich.FromLogContext()
+                            .WriteTo.ApplicationInsights(telemetry, TelemetryConverter.Traces)
+                            .CreateLogger();
                 }
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",
-                    context => new CoreService(context, Log.Logger)).GetAwaiter().GetResult();
+                    context => new CoreService(context, log)).GetAwaiter().GetResult();
 
                 Log.Information($"Service registered - {Process.GetCurrentProcess().Id}, {typeof(CoreService).Name}");
 

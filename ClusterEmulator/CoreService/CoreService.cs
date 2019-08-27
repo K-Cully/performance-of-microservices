@@ -22,7 +22,6 @@ namespace CoreService
     /// </summary>
     internal sealed class CoreService : StatelessService
     {
-        private ILogger SharedLogger { get; }
         private ILogger Log { get; }
 
 
@@ -34,7 +33,7 @@ namespace CoreService
         public CoreService(StatelessServiceContext context, ILogger logger)
             : base(context)
         {
-            SharedLogger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Create log enrichers with service execution context
             PropertyEnricher[] properties = new PropertyEnricher[]
@@ -61,7 +60,7 @@ namespace CoreService
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        SharedLogger.Information($"Starting Kestrel on {url}");
+                        Log.Information("Starting Kestrel on {Endpoint}", url);
 
                         return new WebHostBuilder()
                                     .UseKestrel()
@@ -77,7 +76,7 @@ namespace CoreService
                                             .AddScoped<IEngine, Engine>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
-                                    .UseSerilog(Log, dispose: true) // TODO: confirm the instance is copied and requires disposal
+                                    .UseSerilog(Log, dispose: true)
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
