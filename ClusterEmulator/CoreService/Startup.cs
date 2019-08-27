@@ -72,13 +72,6 @@ namespace CoreService
                 app.UseDeveloperExceptionPage();
             }
 
-            // Write streamlined Serilog completion events, instead of the more verbose ones from the framework.
-            // To use the default framework request logging instead, remove this line and set the "Microsoft"
-            // level in appsettings.json to "Information".
-            // To use Serilog request logging, set "Microsoft" and "System" levels to "Warning" and uncomment here.
-
-            app.UseSerilogRequestLogging();
-
             // Injecting registry here to ensure it is added from the second, more locally scoped, instance container.
             registry.ConfigureHttpClients(clientFactory);
             app.UseMvc();
