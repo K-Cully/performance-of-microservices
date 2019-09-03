@@ -1,3 +1,4 @@
+using CoreService.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -38,44 +39,12 @@ namespace CoreService
         {
             try
             {
-                // The ServiceManifest.XML file defines one or more service type names.
-                // Registering a service maps a service type name to a .NET type.
-                // When Service Fabric creates an instance of this service type,
-                // an instance of the class is created in this host process.
-
-                Logger log;
-
-                // TODO: move configuration entirely out to config file
-                // TODO: remove
-                if (DevelopmentEnvironment)
-                {
-                    // TODO: remove from DevelopmentEnvironment
-                    var telemetry = new TelemetryConfiguration("");
-
-                    log = new LoggerConfiguration()
+                var telemetry = new TelemetryConfiguration("");
+                Logger log = new LoggerConfiguration()
                             .ReadFrom.Configuration(Configuration)
                             .Enrich.FromLogContext()
-                            .WriteTo.ApplicationInsights(telemetry, TelemetryConverter.Events)
+                            .WriteTo.ApplicationInsights(telemetry, new OperationTelemetryConverter())
                             .CreateLogger();
-
-                    // Create Serilog trace logger with default trace listener (debug)
-                    //log = new LoggerConfiguration()
-                    //        .ReadFrom.Configuration(Configuration)
-                    //        .Enrich.FromLogContext()
-                    //        .WriteTo.Trace(outputTemplate: LogTemplate)
-                    //        .CreateLogger();
-                }
-                else
-                {
-                    // TODO: Load app insights instrumentation key from settings
-                    var telemetry = new TelemetryConfiguration("");
-
-                    log = new LoggerConfiguration()
-                            .ReadFrom.Configuration(Configuration)
-                            .Enrich.FromLogContext()
-                            .WriteTo.ApplicationInsights(telemetry, TelemetryConverter.Traces)
-                            .CreateLogger();
-                }
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",
