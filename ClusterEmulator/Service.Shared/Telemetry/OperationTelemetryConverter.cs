@@ -11,10 +11,6 @@ namespace ClusterEmulator.Service.Shared.Telemetry
     /// </summary>
     public class OperationTelemetryConverter : TraceTelemetryConverter
     {
-        private const string OperationId = "Operation Id";
-        private const string ParentId = "Parent Id";
-
-
         /// <summary>
         /// Converts the oeration id dat from the log event into telemetry usable by Application Insights
         /// </summary>
@@ -27,10 +23,10 @@ namespace ClusterEmulator.Service.Shared.Telemetry
 
             foreach (var telemetry in base.Convert(logEvent, formatProvider))
             {
-                if (TryGetScalarProperty(logEvent, OperationId, out var operationId))
+                if (TryGetScalarProperty(logEvent, PropertyNames.OperationId, out var operationId))
                     telemetry.Context.Operation.Id = operationId.ToString();
 
-                if (TryGetScalarProperty(logEvent, ParentId, out var parentId))
+                if (TryGetScalarProperty(logEvent, PropertyNames.ParentId, out var parentId))
                     telemetry.Context.Operation.ParentId = parentId.ToString();
 
                 yield return telemetry;
