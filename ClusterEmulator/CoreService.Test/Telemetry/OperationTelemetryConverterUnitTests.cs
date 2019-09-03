@@ -27,29 +27,13 @@ namespace CoreService.Test.Telemetry
 
 
         [TestMethod]
-        public void Convert_WithNullFormatProvider_ThrowsException()
+        public void Convert_WithoutOpertionIds_ExecutesCorrectly()
         {
             var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
             var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty>());
             var converter = new OperationTelemetryConverter();
 
             var deferredConversion = converter.Convert(logEvent, null);
-
-            Assert.IsNotNull(deferredConversion);
-            Assert.ThrowsException<ArgumentNullException>(
-                () => deferredConversion.ToList());
-        }
-
-
-        [TestMethod]
-        public void Convert_WithoutOpertionIds_ExecutesCorrectly()
-        {
-            var formatProvider = new Mock<IFormatProvider>(MockBehavior.Strict);
-            var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
-            var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty>());
-            var converter = new OperationTelemetryConverter();
-
-            var deferredConversion = converter.Convert(logEvent, formatProvider.Object);
 
             Assert.IsNotNull(deferredConversion);
             var telemetry = deferredConversion.ToList();

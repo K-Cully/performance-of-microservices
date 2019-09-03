@@ -21,10 +21,9 @@ namespace CoreService.Telemetry
         /// <param name="logEvent">The log event to process</param>
         /// <param name="formatProvider">The format provider</param>
         /// <returns>The converted telemetry entries</returns>
-        public override IEnumerable<ITelemetry> Convert(LogEvent logEvent, IFormatProvider formatProvider)
+        public override IEnumerable<ITelemetry> Convert(LogEvent logEvent, IFormatProvider formatProvider = null)
         {
             _ = logEvent ?? throw new ArgumentNullException(nameof(logEvent));
-            _ = formatProvider ?? throw new ArgumentNullException(nameof(formatProvider));
 
             foreach (var telemetry in base.Convert(logEvent, formatProvider))
             {
