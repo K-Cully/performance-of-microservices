@@ -14,6 +14,8 @@ using Serilog.Core.Enrichers;
 using System;
 using Serilog;
 using System.Fabric.Description;
+using Serilog.Core;
+using CoreService.Telemetry;
 
 namespace CoreService
 {
@@ -36,12 +38,13 @@ namespace CoreService
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Create log enrichers with service execution context
-            PropertyEnricher[] properties = new PropertyEnricher[]
+            ILogEventEnricher[] properties = new ILogEventEnricher[]
             {
                 new PropertyEnricher("ServiceTypeName", context.ServiceTypeName),
                 new PropertyEnricher("ServiceName", context.ServiceName),
                 new PropertyEnricher("PartitionId", context.PartitionId),
                 new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId),
+                new OperationIdEnricher()
             };
 
             // Add service context to logger
