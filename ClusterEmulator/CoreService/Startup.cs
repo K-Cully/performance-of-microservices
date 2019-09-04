@@ -45,7 +45,8 @@ namespace CoreService
                         }
                     }
 
-                    // TODO: add user agent c.DefaultRequestHeaders.Add(Headers.)
+                    // TODO: resolve a more apt value
+                    c.DefaultRequestHeaders.Add("User-Agent", "CoreService");
                 });
 
                 // Add Polly policies to http client builder.
