@@ -14,6 +14,10 @@ namespace CoreService.Simulation.Steps
 {
     public class RequestStep : IStep, IRequestStep
     {
+        [JsonIgnore]
+        private const int ChunkChars = 64;
+
+
         /// <summary>
         /// Whether the request should be truely asynchronous (fire and forget) or should await responses.
         /// </summary>
@@ -47,7 +51,7 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// The request payload size.
+        /// The request payload size in bytes.
         /// </summary>
         [JsonProperty("size")]
         [JsonRequired]
@@ -96,6 +100,8 @@ namespace CoreService.Simulation.Steps
                 Logger.LogCritical("{Property} is not a relative URI", "path");
                 throw new InvalidOperationException("path must be a relative URI");
             }
+
+            // TODO: add caller identifier to Path
 
             if (string.IsNullOrWhiteSpace(Method) || !supportedMethods.Contains(Method, StringComparer.OrdinalIgnoreCase))
             {
@@ -190,10 +196,19 @@ namespace CoreService.Simulation.Steps
 
         private Func<CancellationToken, Task<HttpResponseMessage>> GetRequestAction(HttpClient client)
         {
-            // TODO: refactor to remove duplication
-
             var method = new HttpMethod(Method);
             Logger.LogDebug("Retrieving action for {HttpMethod}", Method);
+
+            if (method == HttpMethod.Head
+                || method == HttpMethod.Options
+                || method == HttpMethod.Trace)
+            {
+                return token =>
+                {
+                    using (var httpRequest = new HttpRequestMessage(method, Path))
+                        return client.SendAsync(httpRequest, token);
+                };
+            }
 
             if (method == HttpMethod.Delete)
             {
@@ -205,47 +220,15 @@ namespace CoreService.Simulation.Steps
                 return token => client.GetAsync(Path, token);
             }
 
-            if (method == HttpMethod.Head)
-            {
-                return token =>
-                {
-                    using (var request = new HttpRequestMessage(HttpMethod.Head, Path))
-                        return client.SendAsync(request, token);
-                };
-            }
-
-            if (method == HttpMethod.Options)
-            {
-                return token =>
-                {
-                    using (var request = new HttpRequestMessage(HttpMethod.Options, Path))
-                        return client.SendAsync(request, token);
-                };
-            }
-
+            var adaptableRequest = GenerateRequest();
             if (method == HttpMethod.Post)
             {
-                // TODO: add payload
-                // TODO: add caller identifier to request
-                var request = new AdaptableRequest();
-                return token => client.PostAsJsonAsync(Path, request, token);
+                return token => client.PostAsJsonAsync(Path, adaptableRequest, token);
             }
 
             if (method == HttpMethod.Put)
             {
-                // TODO: add payload
-                // TODO: add caller identifier to request
-                var request = new AdaptableRequest();
-                return token => client.PutAsJsonAsync(Path, request, token);
-            }
-
-            if (method == HttpMethod.Trace)
-            {
-                return token =>
-                {
-                    using (var request = new HttpRequestMessage(HttpMethod.Trace, Path))
-                        return client.SendAsync(request, token);
-                };
+                return token => client.PutAsJsonAsync(Path, adaptableRequest, token);
             }
 
             Logger.LogCritical("{HttpMethod} is not supported", Method);
@@ -260,6 +243,30 @@ namespace CoreService.Simulation.Steps
         public void InitializeLogger(ILogger logger)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+
+        private AdaptableRequest GenerateRequest()
+        {
+            var payload = new List<string>();
+
+            if (PayloadSize > 0)
+            {
+                // Convert from byte count to char count
+                var charCount = (PayloadSize / 2) + (PayloadSize % 2);
+
+                while (charCount > 0)
+                {
+                    int chars = charCount < ChunkChars ? charCount : ChunkChars;
+                    payload.Add(new string(new char[chars]));
+                    charCount -= chars;
+                }
+            }
+
+            return new AdaptableRequest()
+            {
+                Payload = payload
+            };
         }
 
 

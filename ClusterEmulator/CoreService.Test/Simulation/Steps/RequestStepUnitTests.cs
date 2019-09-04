@@ -1,4 +1,5 @@
-﻿using CoreService.Simulation.Steps;
+﻿using CoreService.Model;
+using CoreService.Simulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Polly;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -365,14 +367,15 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_Asynchronous_ResponseOk_ReturnsSuccess()
+        public async Task ExecuteAsync_Asynchronous_PostSmall_ResponseOk_ReturnsSuccess()
         {
             Uri baseUri = new Uri("http://test.com/");
             var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             var client = handler.CreateClient();
             client.BaseAddress = baseUri;
+            string url = $"{baseUri}test/";
 
-            handler.SetupRequest(HttpMethod.Post, $"{baseUri}test/")
+            handler.SetupRequest(HttpMethod.Post, url)
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
@@ -391,7 +394,66 @@ namespace CoreService.Test.Simulation.Steps
 
             var result = await step.ExecuteAsync();
 
+            // Verify success
             Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Verify call had correct content
+            handler.VerifyRequest(HttpMethod.Post, url, async r =>
+            {
+                var content = await r.Content.ReadAsAsync<AdaptableRequest>();
+                var payload = content.Payload.ToList();
+                return payload.Count == 1 && payload[0].Length == 8;
+            });
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
+        public async Task ExecuteAsync_Asynchronous_PostLargePayload_ResponseOk_ReturnsSuccess()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            string url = $"{baseUri}test/";
+
+            handler.SetupRequest(HttpMethod.Post, url)
+                .ReturnsResponse(HttpStatusCode.OK);
+
+            var factory = handler.CreateClientFactory();
+            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            {
+                Asynchrounous = true,
+                ClientName = "testClient",
+                Method = "POST",
+                Path = "test/",
+                PayloadSize = 4097,
+                ReuseHttpClient = false
+            };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
+            step.Configure(factory, policies);
+
+            var result = await step.ExecuteAsync();
+
+            // Verify success
+            Assert.AreEqual(ExecutionStatus.Success, result);
+
+            // Verify call had correct content
+            handler.VerifyRequest(HttpMethod.Post, url, async r =>
+            {
+                var content = await r.Content.ReadAsAsync<AdaptableRequest>();
+                var payload = content.Payload.ToList();
+                return payload.Count == 33 && payload[32].Length == 1;
+            });
 
             // Will already be disposed but non-breaking call suppresses warning
             client.Dispose();

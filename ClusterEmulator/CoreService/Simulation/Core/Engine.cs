@@ -62,7 +62,7 @@ namespace CoreService.Simulation.Core
                     case ExecutionStatus.Fail:
                         // TODO: change this response type to non-standard Status code to prevent false positives
                         log.LogInformation("{Step} completed with simulated error in {Processor}", stepName, name);
-                        errorResult.StatusCode = StatusCodes.Status404NotFound;
+                        errorResult.StatusCode =  StatusCodes.Status418ImATeapot;
                         return errorResult;
                     case ExecutionStatus.Unexpected:
                     default:
