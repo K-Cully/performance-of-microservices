@@ -192,7 +192,7 @@ namespace CoreService.Test.Simulation.Core
 
         [TestMethod]
         [TestCategory("Functional")]
-        public async Task ProcessRequestAsync_ReturnsNotFoundError_WhenStepsFail()
+        public async Task ProcessRequestAsync_ReturnsImATeapotError_WhenStepsFail()
         {
             string processorName = "processor";
             string okayStepName = "step";
@@ -229,7 +229,7 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
             ObjectResult objectResult = result as ObjectResult;
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
-            Assert.AreEqual(StatusCodes.Status404NotFound, objectResult.StatusCode.Value,
+            Assert.AreEqual(StatusCodes.Status418ImATeapot, objectResult.StatusCode.Value,
                 "Status code should be InternalServerError");
             Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
             ErrorResponse value = objectResult.Value as ErrorResponse;

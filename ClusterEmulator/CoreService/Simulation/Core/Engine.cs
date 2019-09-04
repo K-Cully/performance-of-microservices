@@ -35,7 +35,7 @@ namespace CoreService.Simulation.Core
         /// <param name="name">The name of the processor configuration.</param>
         /// <returns>
         /// An <see cref="OkObjectResult"/> if all steps successful.
-        /// An <see cref="ObjectResult"/> with Status404NotFound when configured to simulate an error.
+        /// An <see cref="ObjectResult"/> with Status418ImATeapot when configured to simulate an error.
         /// An <see cref="ObjectResult"/> with Status500InternalServerError if an unexpected error occurs.
         /// </returns>
         public async Task<IActionResult> ProcessRequestAsync(string name)
@@ -60,7 +60,6 @@ namespace CoreService.Simulation.Core
                         log.LogInformation("{Step} completed with success in {Processor}", stepName, name);
                         continue;
                     case ExecutionStatus.Fail:
-                        // TODO: change this response type to non-standard Status code to prevent false positives
                         log.LogInformation("{Step} completed with simulated error in {Processor}", stepName, name);
                         errorResult.StatusCode =  StatusCodes.Status418ImATeapot;
                         return errorResult;
