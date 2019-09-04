@@ -15,7 +15,6 @@ namespace CoreService
     {
         private const string Development = "Development";
         private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
-        private const string LogTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
 
 
         /// <summary>
@@ -27,9 +26,6 @@ namespace CoreService
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production"}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
-
-
-        private static bool DevelopmentEnvironment => Configuration.GetValue(ASPNETCORE_ENVIRONMENT, string.Empty) == Development;
 
 
         /// <summary>
