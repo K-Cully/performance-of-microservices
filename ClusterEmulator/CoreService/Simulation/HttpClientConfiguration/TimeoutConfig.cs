@@ -10,7 +10,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
     /// <summary>
     /// Configurable components of a timeout policy.
     /// </summary>
-    [Serializable]
     public class TimeoutConfig : IPolicyConfiguration
     {
         /// <summary>

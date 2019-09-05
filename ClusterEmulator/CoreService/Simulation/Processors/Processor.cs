@@ -17,11 +17,11 @@ namespace CoreService.Simulation.Processors
         /// Gets the error payload data.
         /// </summary>
         [JsonIgnore]
-        public ErrorResponse ErrorPayload => new ErrorResponse(new string(new char[ErrorPayloadSize])); // TODO: clean up
+        public ErrorResponse ErrorPayload => new ErrorResponse(new string(new char[ErrorPayloadSize / 2])); 
 
 
         /// <summary>
-        /// The size of the error payload.
+        /// The size of the error payload in bytes.
         /// </summary>
         [JsonProperty("errorSize")]
         [JsonRequired]
@@ -47,7 +47,7 @@ namespace CoreService.Simulation.Processors
 
 
         /// <summary>
-        /// The size of the success payload.
+        /// The size of the success payload in bytes.
         /// </summary>
         [JsonProperty("successSize")]
         [JsonRequired]
@@ -59,6 +59,6 @@ namespace CoreService.Simulation.Processors
         /// Gets the success payload data.
         /// </summary>
         [JsonIgnore]
-        public SuccessResponse SuccessPayload => new SuccessResponse(new string(new char[SuccessPayloadSize])); // TODO: clean up
+        public SuccessResponse SuccessPayload => new SuccessResponse(new string(new char[SuccessPayloadSize / 2]));
     }
 }

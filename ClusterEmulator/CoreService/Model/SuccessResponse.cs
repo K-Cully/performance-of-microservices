@@ -3,7 +3,6 @@ using System;
 
 namespace CoreService.Model
 {
-    [Serializable]
     public class SuccessResponse
     {
         /// <summary>

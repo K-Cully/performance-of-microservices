@@ -7,7 +7,6 @@ namespace CoreService.Model
     /// <summary>
     /// An adaptable request object containing a list of values
     /// </summary>
-    [Serializable]
     public class AdaptableRequest
     {
         /// <summary>
