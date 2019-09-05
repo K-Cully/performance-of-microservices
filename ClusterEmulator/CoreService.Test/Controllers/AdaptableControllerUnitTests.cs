@@ -14,7 +14,7 @@ namespace CoreService.Test.Controllers
     [TestClass]
     public class AdaptableControllerUnitTests
     {
-        private readonly OkObjectResult okResult = new OkObjectResult(new SuccessResponse("success"));
+        private readonly OkObjectResult okResult = new OkObjectResult(new SuccessResponse(100));
 
 
         [TestMethod]

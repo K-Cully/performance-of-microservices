@@ -123,8 +123,6 @@ namespace CoreService.Simulation.Steps
 
             // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
 
-            // TODO: unify sizes to be in bytes
-
             // TODO: add caller identifier
 
             Func<CancellationToken, Task<HttpResponseMessage>> request;
@@ -254,11 +252,10 @@ namespace CoreService.Simulation.Steps
             {
                 // Convert from byte count to char count
                 var charCount = (PayloadSize / 2) + (PayloadSize % 2);
-
                 while (charCount > 0)
                 {
                     int chars = charCount < ChunkChars ? charCount : ChunkChars;
-                    payload.Add(new string(new char[chars]));
+                    payload.Add(new string('r', chars));
                     charCount -= chars;
                 }
             }

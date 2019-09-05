@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Core
@@ -105,7 +106,7 @@ namespace CoreService.Test.Simulation.Core
         {
             string processorName = "processor";
             string stepName = "step";
-            int payloadSize = 42;
+            int payloadSize = 200;
             int latency = 300;
 
             DateTime start = DateTime.Now;
@@ -136,9 +137,12 @@ namespace CoreService.Test.Simulation.Core
             OkObjectResult objectResult = result as OkObjectResult;
             Assert.IsInstanceOfType(objectResult.Value, typeof(SuccessResponse), "Result value should be a SuccessResponse");
             SuccessResponse value = objectResult.Value as SuccessResponse;
-            Assert.IsFalse(string.IsNullOrEmpty(value.Result), "Result should be initialized with a valid string");
-            Assert.AreEqual(value.Result.Length, payloadSize, "Result should be of the correct length");
 
+            var resultList = processor.SuccessPayload.Result as List<string>;
+            Assert.IsNotNull(resultList);
+            Assert.AreEqual(2, resultList.Count, "Success result should be the correct length");
+            Assert.AreEqual(64, resultList[0].Length, "Success payload should be the correct size");
+            Assert.AreEqual(36, resultList[1].Length, "Success payload should be the correct size");
         }
 
 
@@ -186,7 +190,7 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
             ErrorResponse value = objectResult.Value as ErrorResponse;
             Assert.IsFalse(string.IsNullOrEmpty(value.Error), "Error should be initialized with a valid string");
-            Assert.AreEqual(value.Error.Length, errorPayloadSize, "Error should be of the correct length");
+            Assert.AreEqual(errorPayloadSize / 2, value.Error.Length, "Error should be of the correct length");
         }
 
 
@@ -234,7 +238,7 @@ namespace CoreService.Test.Simulation.Core
             Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
             ErrorResponse value = objectResult.Value as ErrorResponse;
             Assert.IsFalse(string.IsNullOrEmpty(value.Error), "Error should be initialized with a valid string");
-            Assert.AreEqual(value.Error.Length, errorPayloadSize, "Erorr should be of the correct length");
+            Assert.AreEqual(errorPayloadSize / 2, value.Error.Length, "Erorr should be of the correct length");
         }
 
 

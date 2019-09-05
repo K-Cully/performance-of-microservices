@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreService.Test.Simulation.Processors
 {
@@ -46,8 +47,11 @@ namespace CoreService.Test.Simulation.Processors
             Assert.AreEqual(steps.Count, processor.Steps.Count, "Steps should have the correct number of entries");
             Assert.IsTrue(steps.SetEquals(processor.Steps), "Steps should be set correctly");
             Assert.AreEqual(20, processor.SuccessPayloadSize, "Success size should be set correctly");
-            Assert.AreEqual(100, processor.ErrorPayload.Error.Length, "Error payload should be the correct size");
-            Assert.AreEqual(20, processor.SuccessPayload.Result.Length, "Success payload should be the correct size");
+            Assert.AreEqual(50, processor.ErrorPayload.Error.Length, "Error payload should be the correct size");
+            var resultList = processor.SuccessPayload.Result as List<string>;
+            Assert.IsNotNull(resultList);
+            Assert.AreEqual(1, resultList.Count, "Success result should be the correct length");
+            Assert.AreEqual(10, resultList[0].Length, "Success payload should be the correct size");
         }
 
 
