@@ -123,8 +123,6 @@ namespace CoreService.Simulation.Steps
 
             // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
 
-            // TODO: add caller identifier
-
             Func<CancellationToken, Task<HttpResponseMessage>> request;
             if (ReuseHttpClient)
             {
