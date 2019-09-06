@@ -50,7 +50,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
-        public IAsyncPolicy AsPolicy(ILogger logger)
+        public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -68,7 +68,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
             // TODO: Add HandleResult with retriable status codes
             var builder = Policy
-                .Handle<HttpRequestException>();
+                .HandleResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode);
+                //.Handle<HttpRequestException>();
 
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
@@ -78,13 +79,14 @@ namespace CoreService.Simulation.HttpClientConfiguration
             {
                 if (forever)
                 {
-                    return builder.RetryForeverAsync(onRetry: ex => 
-                        logger.LogError(ex, "{RetryPolicy} encountered an error", "RetryForeverAsync"));
+                    return builder.RetryForeverAsync(onRetry: result =>
+                       logger.LogError("{RetryPolicy} failed with {StatusCode}", "RetryForeverAsync", result?.Result?.StatusCode));
                 }
                 else
                 {
-                    return builder.RetryAsync(Retries, onRetry: (ex, count) =>
-                        logger.LogError(ex, "{RetryPolicy} encountered an error on attempt {RetryCount}", "RetryAsync", count));
+                    return builder.RetryAsync(Retries, onRetry: (result, count) =>
+                        logger.LogError("{RetryPolicy} failed with {StatusCode} on attempt {RetryCount}", "RetryAsync",
+                            result?.Result?.StatusCode, count));
                 }
             }
 
@@ -100,18 +102,18 @@ namespace CoreService.Simulation.HttpClientConfiguration
             {
                 return builder.WaitAndRetryForeverAsync(
                     sleepDurationProvider: count => Delay(count, exponential),
-                    onRetry: (ex, timespan) => logger.LogError(ex, 
-                                    "{RetryPolicy} encountered an error after {RetryTime} seconds",
-                                    "WaitAndRetryForeverAsync", timespan.TotalSeconds));
+                    onRetry: (result, timespan) => logger.LogError(
+                                    "{RetryPolicy} failed with {StatusCode} after {RetryTime} seconds",
+                                    "WaitAndRetryForeverAsync", result?.Result?.StatusCode, timespan.TotalSeconds));
             }
             else
             {
                 return builder.WaitAndRetryAsync(
                     Retries,
                     sleepDurationProvider: count => Delay(count, exponential),
-                    onRetry: (ex, timespan, count, context) => logger.LogError(ex,
-                                            "{RetryPolicy} encountered an error on attempt {RetryCount} after {RetryTime} seconds",
-                                            "WaitAndRetryAsync", count, timespan.TotalSeconds));
+                    onRetry: (result, timespan, count, context) => logger.LogError(
+                                            "{RetryPolicy} failed with {StatusCode} on attempt {RetryCount} after {RetryTime} seconds",
+                                            "WaitAndRetryAsync", result?.Result?.StatusCode, count, timespan.TotalSeconds));
             }
         }
 

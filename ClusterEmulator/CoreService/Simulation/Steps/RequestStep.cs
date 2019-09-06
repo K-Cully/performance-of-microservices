@@ -331,7 +331,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         /// <param name="requestPolicy">The policy or wrapped policies to apply to requests.</param>
-        public void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy requestPolicy)
+        public void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy<HttpResponseMessage> requestPolicy)
         {
             if (Logger is null)
             {
@@ -351,7 +351,7 @@ namespace CoreService.Simulation.Steps
             }
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            policy = requestPolicy?.AsAsyncPolicy<HttpResponseMessage>();
+            policy = requestPolicy;
             configured = true;
             Logger.LogInformation("Client factory and policies configured successfully");
         }

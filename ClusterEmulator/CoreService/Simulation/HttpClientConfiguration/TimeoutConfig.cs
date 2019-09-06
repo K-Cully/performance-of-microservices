@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
@@ -34,7 +35,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <returns>A <see cref="TimeoutPolicy"/> instance.</returns>
-        public IAsyncPolicy AsPolicy(ILogger logger)
+        public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -54,7 +55,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
             var wait = TimeSpan.FromSeconds(TimeoutInSeconds);
             var strategy = CancelDelegates ? TimeoutStrategy.Optimistic : TimeoutStrategy.Pessimistic;
 
-            return Policy.TimeoutAsync(wait, strategy,
+            return Policy.TimeoutAsync<HttpResponseMessage>(wait, strategy,
                 onTimeoutAsync: (context, timespan, task) =>
                 {
                     // Log the error and return the task, which should be faulted at this point

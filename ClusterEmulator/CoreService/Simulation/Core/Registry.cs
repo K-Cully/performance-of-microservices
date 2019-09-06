@@ -18,7 +18,7 @@ namespace CoreService.Simulation.Core
     public class Registry : IRegistry
     {
         private readonly IDictionary<string, ClientConfig> clients;
-        private readonly IDictionary<string, IAsyncPolicy> policies;
+        private readonly IDictionary<string, IAsyncPolicy<HttpResponseMessage>> policies;
         private readonly IDictionary<string, IProcessor> processors;
         private readonly IDictionary<string, IStep> steps;
         private readonly ILogger<Registry> log;
@@ -98,7 +98,7 @@ namespace CoreService.Simulation.Core
             {
                 // TODO: handle non-request based policies once needed
                 log.LogDebug("{Policy} added from {Setting}", policy.Value?.GetType()?.Name, policy.Key);
-                PolicyRegistry.Add(policy.Key, policy.Value?.AsAsyncPolicy<HttpResponseMessage>());
+                PolicyRegistry.Add(policy.Key, policy.Value);
             }
 
             simpleClientFactory = new SimpleHttpClientFactory(clients, loggerFactory.CreateLogger<SimpleHttpClientFactory>());
@@ -133,7 +133,7 @@ namespace CoreService.Simulation.Core
         /// <exception cref="InvalidOperationException">
         /// The policy is not registered or the registration is not valid.
         /// </exception>
-        public IAsyncPolicy GetPolicy(string name)
+        public IAsyncPolicy<HttpResponseMessage> GetPolicy(string name)
         {
             return GetRegisteredValue(name, policies, "Policy");
         }
@@ -201,7 +201,7 @@ namespace CoreService.Simulation.Core
                     var policies = GetClient(requestStep.ClientName).Policies
                         .Select(n => GetPolicy(n))
                         .ToArray();
-                    IAsyncPolicy policy = null;
+                    IAsyncPolicy<HttpResponseMessage> policy = null;
                     if (policies.Any())
                     {
                         log.LogDebug("Adding {PolicyCount} policies to {Client}", policies.Length, requestStep.ClientName);

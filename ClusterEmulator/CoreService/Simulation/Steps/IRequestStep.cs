@@ -35,6 +35,6 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
         /// <param name="requestPolicy">The policy or wrapped policies to apply to requests.</param>
-        void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy requestPolicy);
+        void Configure(IHttpClientFactory httpClientFactory, IAsyncPolicy<HttpResponseMessage> requestPolicy);
     }
 }

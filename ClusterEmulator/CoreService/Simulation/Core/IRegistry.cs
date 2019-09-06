@@ -45,7 +45,7 @@ namespace CoreService.Simulation.Core
         /// </summary>
         /// <param name="name">The name of the policy.</param>
         /// <returns>The <see cref="IAsyncPolicy"/> instance.</returns>
-        IAsyncPolicy GetPolicy(string name);
+        IAsyncPolicy<HttpResponseMessage> GetPolicy(string name);
 
 
         /// <summary>

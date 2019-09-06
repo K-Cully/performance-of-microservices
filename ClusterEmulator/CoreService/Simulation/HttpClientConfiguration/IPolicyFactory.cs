@@ -1,4 +1,5 @@
 ﻿using Polly;
+using System.Net.Http;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
@@ -16,6 +17,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// Expected setting form:
         /// { type : <typename>, policy : { <object> } }
         /// </remarks>
-        IAsyncPolicy Create(string settingValue);
+        IAsyncPolicy<HttpResponseMessage> Create(string settingValue);
     }
 }
