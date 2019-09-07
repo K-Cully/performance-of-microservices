@@ -171,7 +171,7 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_ReuseClient_ClientNull_ReturnsUnexpected()
+        public async Task ExecuteAsync_ReuseClient_ClientNull_Throws()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             factory.Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -184,7 +184,8 @@ namespace CoreService.Test.Simulation.Steps
             step.InitializeLogger(logger.Object);
             step.Configure(factory.Object);
 
-            Assert.AreEqual(ExecutionStatus.Fail, await step.ExecuteAsync());
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                () => step.ExecuteAsync());
         }
 
 
@@ -327,7 +328,7 @@ namespace CoreService.Test.Simulation.Steps
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.SimulatedFail, result);
+            Assert.AreEqual(ExecutionStatus.Fail, result);
             client.Dispose();
         }
 
@@ -585,7 +586,7 @@ namespace CoreService.Test.Simulation.Steps
             step.Configure(factory, policies);
             var result = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.SimulatedFail, result);
+            Assert.AreEqual(ExecutionStatus.Fail, result);
 
             // Will already be disposed but non-breaking call suppresses warning
             client.Dispose();
