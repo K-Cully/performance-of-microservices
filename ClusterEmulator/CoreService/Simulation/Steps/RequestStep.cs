@@ -181,7 +181,7 @@ namespace CoreService.Simulation.Steps
                     }
 
                     Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
-                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
+                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Unexpected;
                 }
             }
 

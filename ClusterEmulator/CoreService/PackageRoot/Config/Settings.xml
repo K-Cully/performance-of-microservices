@@ -13,7 +13,7 @@
     <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { client : 'GitHub', method : 'get', path : 'test/', size : 128, reuseSockets : false, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
-    <Parameter Name="GitHub" Value="{ baseAddress : 'https://github.com/', policies : [ 'TimeoutA', 'RetryA' ], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="GitHub" Value="{ baseAddress : 'https://github.com/', policies : [ 'RetryA', 'TimeoutA' ], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
     <Parameter Name="RetryA" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
