@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,7 +125,7 @@ namespace CoreService.Simulation.Steps
             // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
 
             Func<CancellationToken, Task<HttpResponseMessage>> request;
-            if (ReuseHttpClient)
+            if (ReuseHttpClient) // Use in-build http client factory to manage client lifetime
             {
                 HttpClient client = clientFactory.CreateClient(ClientName);
                 if (client is null)
@@ -134,21 +135,9 @@ namespace CoreService.Simulation.Steps
                 }
 
                 request = GetRequestAction(client);
-                if (Asynchrounous)
-                {
-                    SendRequest(ExecuteRequestAsync(request, CancellationToken.None));
-                }
-                else
-                {
-                    using (HttpResponseMessage response =
-                        await ExecuteRequestAsync(request, CancellationToken.None))
-                    {
-                        Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
-                        return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
-                    }
-                }
+                return await HandleRequestAsync(request);
             }
-            else
+            else // Directly manage client lifetime, using custom factory for creation
             {
                 using (var client = clientFactory.CreateClient(ClientName))
                 {
@@ -166,23 +155,33 @@ namespace CoreService.Simulation.Steps
                     }
                     else
                     {
-                        combinedAction = token => policy.ExecuteAsync(
-                            ct => request(ct), token);
+                        combinedAction = token => policy.ExecuteAsync(ct => request(ct), token);
                     }
 
-                    if (Asynchrounous)
+                    return await HandleRequestAsync(combinedAction);
+                }
+            }
+        }
+
+
+        private async Task<ExecutionStatus> HandleRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> request)
+        {
+            if (Asynchrounous)
+            {
+                SendRequest(ExecuteRequestAsync(request, CancellationToken.None));
+            }
+            else
+            {
+                using (HttpResponseMessage response =
+                    await ExecuteRequestAsync(request, CancellationToken.None))
+                {
+                    if (response == null)
                     {
-                        SendRequest(ExecuteRequestAsync(combinedAction, CancellationToken.None));
+                        return ExecutionStatus.Unexpected;
                     }
-                    else
-                    {
-                        using (HttpResponseMessage response =
-                            await ExecuteRequestAsync(combinedAction, CancellationToken.None))
-                        {
-                            Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
-                            return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
-                        }
-                    }
+
+                    Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
+                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
                 }
             }
 
@@ -274,7 +273,16 @@ namespace CoreService.Simulation.Steps
         private async Task<HttpResponseMessage> ExecuteRequestAsync(
             Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
         {
-            return await action(token).ConfigureAwait(false);
+            try
+            {
+                return await action(token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException ex)
+            {
+                Logger.LogError(ex, "Request Cancelled");
+            }
+
+            return null;
         }
 
 

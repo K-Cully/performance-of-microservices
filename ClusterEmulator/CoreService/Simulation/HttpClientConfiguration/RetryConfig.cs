@@ -69,7 +69,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
             // TODO: Add HandleResult with retriable status codes
             var builder = Policy
                 .HandleResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode);
-                //.Handle<HttpRequestException>();
 
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
