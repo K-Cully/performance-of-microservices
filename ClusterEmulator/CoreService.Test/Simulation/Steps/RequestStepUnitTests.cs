@@ -593,6 +593,44 @@ namespace CoreService.Test.Simulation.Steps
 
 
         [TestMethod]
+        public async Task ExecuteAsync_TaskCancelled_ReturnsUnexpected()
+        {
+            Uri baseUri = new Uri("http://test.com/");
+            var handler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            var client = handler.CreateClient();
+            client.BaseAddress = baseUri;
+            handler.SetupRequest(HttpMethod.Put, $"{baseUri}test/")
+                .Throws<TaskCanceledException>();
+
+            var factory = handler.CreateClientFactory();
+            var policy = Policy.NoOpAsync<HttpResponseMessage>();
+
+            Mock.Get(factory)
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(() => client);
+
+            var step = new RequestStep()
+            {
+                Asynchrounous = false,
+                ClientName = "testClient",
+                Method = "PUT",
+                Path = "test/",
+                PayloadSize = 16,
+                ReuseHttpClient = false
+            };
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            step.InitializeLogger(logger.Object);
+            step.Configure(factory, policy);
+            var result = await step.ExecuteAsync();
+
+            Assert.AreEqual(ExecutionStatus.Unexpected, result);
+
+            // Will already be disposed but non-breaking call suppresses warning
+            client.Dispose();
+        }
+
+
+        [TestMethod]
         public async Task ExecuteAsync_PoliciesNull_ResponseOk_ReturnsSuccess()
         {
             Uri baseUri = new Uri("http://test.com/");
