@@ -96,7 +96,6 @@ namespace CoreService.Simulation.Core
 
             foreach (var policy in policies)
             {
-                // TODO: handle non-request based policies once needed
                 log.LogDebug("{Policy} added from {Setting}", policy.Value?.GetType()?.Name, policy.Key);
                 PolicyRegistry.Add(policy.Key, policy.Value);
             }

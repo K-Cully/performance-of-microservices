@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 
 namespace CoreService
 {
@@ -45,8 +44,7 @@ namespace CoreService
                         }
                     }
 
-                    // TODO: resolve a more apt value
-                    c.DefaultRequestHeaders.Add("User-Agent", "CoreService");
+                    c.DefaultRequestHeaders.Add("User-Agent", $"ClusterEmulator.CoreService/1.0 (Client:{name})");
                 });
 
                 // Add Polly policies to http client builder.
