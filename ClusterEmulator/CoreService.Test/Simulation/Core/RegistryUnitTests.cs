@@ -406,7 +406,7 @@ namespace CoreService.Test.Simulation.Core
 
             // Create SF.Mock settings
             var settings = CreateDefaultSettings();
-             var expectedPolicy = Policy.NoOpAsync();
+             var expectedPolicy = Policy.NoOpAsync<HttpResponseMessage>();
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -430,7 +430,7 @@ namespace CoreService.Test.Simulation.Core
             var registry = new Registry(
                 settings, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
-            IAsyncPolicy policy = registry.GetPolicy(policyName);
+            IAsyncPolicy<HttpResponseMessage> policy = registry.GetPolicy(policyName);
 
             // Verify
             Assert.IsNotNull(policy, "GetPolicy should return the registered value");
@@ -788,7 +788,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => Policy.NoOpAsync());
+                .Returns<string>(s => Policy.NoOpAsync<HttpResponseMessage>());
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
 
@@ -800,7 +800,7 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<IAsyncPolicy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -817,7 +817,7 @@ namespace CoreService.Test.Simulation.Core
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()), Times.Once);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<IAsyncPolicy<HttpResponseMessage>>()), Times.Once);
         }
 
 
@@ -842,7 +842,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => Policy.NoOpAsync());
+                .Returns<string>(s => Policy.NoOpAsync<HttpResponseMessage>());
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
 
@@ -854,8 +854,8 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<IAsyncPolicy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -872,8 +872,8 @@ namespace CoreService.Test.Simulation.Core
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
             // Verify
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Once);
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap>()), Times.Never);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()), Times.Once);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<IAsyncPolicy<HttpResponseMessage>>()), Times.Never);
         }
 
 
@@ -898,7 +898,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => Policy.NoOpAsync());
+                .Returns<string>(s => Policy.NoOpAsync<HttpResponseMessage>());
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
 
@@ -910,7 +910,7 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -928,7 +928,7 @@ namespace CoreService.Test.Simulation.Core
             // Verify
             Assert.ThrowsException<ArgumentNullException>(
                 () => registry.ConfigureHttpClients(httpClientFactory.Object));
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()), Times.Never);
         }
 
 
@@ -953,7 +953,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => Policy.NoOpAsync());
+                .Returns<string>(s => Policy.NoOpAsync<HttpResponseMessage>());
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
 
@@ -965,7 +965,7 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -983,7 +983,7 @@ namespace CoreService.Test.Simulation.Core
             // Verify
             Assert.ThrowsException<ArgumentException>(
                 () => registry.ConfigureHttpClients(httpClientFactory.Object));
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()), Times.Never);
         }
 
 
@@ -1008,7 +1008,7 @@ namespace CoreService.Test.Simulation.Core
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
             policyFactory.Setup(f => f.Create(It.IsAny<string>()))
-                .Returns<string>(s => Policy.NoOpAsync());
+                .Returns<string>(s => Policy.NoOpAsync<HttpResponseMessage>());
             clientFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => expectedConfig);
 
@@ -1020,7 +1020,7 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -1038,7 +1038,7 @@ namespace CoreService.Test.Simulation.Core
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
                 () => registry.ConfigureHttpClients(httpClientFactory.Object));
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()), Times.Never);
         }
 
 
@@ -1075,7 +1075,7 @@ namespace CoreService.Test.Simulation.Core
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
-            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()));
+            requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
             var step2 = requestStep.As<IStep>();
             stepFactory.Setup(f => f.Create("Mary"))
@@ -1093,7 +1093,7 @@ namespace CoreService.Test.Simulation.Core
             // Verify
             Assert.ThrowsException<InvalidOperationException>(
                 () => registry.ConfigureHttpClients(httpClientFactory.Object));
-            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy>()), Times.Never);
+            requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()), Times.Never);
         }
 
 

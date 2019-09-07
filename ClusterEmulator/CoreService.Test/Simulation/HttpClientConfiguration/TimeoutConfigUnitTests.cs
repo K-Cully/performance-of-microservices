@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Timeout;
 using System;
+using System.Net.Http;
 
 namespace CoreService.Test.Simulation.HttpClientConfiguration
 {
@@ -101,7 +102,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 CancelDelegates = true
             };
 
-            IAsyncPolicy policy = config.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
@@ -118,7 +119,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 CancelDelegates = false
             };
 
-            IAsyncPolicy policy = config.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));

@@ -344,7 +344,8 @@ namespace CoreService.Test.Simulation.Steps
                 .Throws(new Exception("test exception"));
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(
+                Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -379,7 +380,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -423,7 +424,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -472,7 +473,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.BadRequest);
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -506,7 +507,7 @@ namespace CoreService.Test.Simulation.Steps
                 .Throws(new Exception("test exception"));
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -538,7 +539,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.OK);
 
             var factory = handler.CreateClientFactory();
-            var policy = Policy.NoOpAsync();
+            var policy = Policy.NoOpAsync<HttpResponseMessage>();
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -570,7 +571,7 @@ namespace CoreService.Test.Simulation.Steps
                 .ReturnsResponse(HttpStatusCode.BadRequest);
 
             var factory = handler.CreateClientFactory();
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             Mock.Get(factory)
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
@@ -741,7 +742,7 @@ namespace CoreService.Test.Simulation.Steps
         public void Configure_Local_LoggerNotInitialized_Throws()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             var step = new RequestStep()
             {
@@ -762,7 +763,7 @@ namespace CoreService.Test.Simulation.Steps
         public void Configure_Local_ReuseHttpClientTrue_Throws()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
@@ -778,7 +779,7 @@ namespace CoreService.Test.Simulation.Steps
         [TestMethod]
         public void Configure_Local_FactoryNull_Throws()
         {
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
@@ -811,7 +812,7 @@ namespace CoreService.Test.Simulation.Steps
         public void Configure_Local_AllValuesProvided_SetsConfigured()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            var policies = Policy.WrapAsync(Policy.NoOpAsync(), Policy.NoOpAsync());
+            var policies = Policy.WrapAsync(Policy.NoOpAsync<HttpResponseMessage>(), Policy.NoOpAsync<HttpResponseMessage>());
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
@@ -828,7 +829,7 @@ namespace CoreService.Test.Simulation.Steps
         public void Configure_Local_SingularPolicy_SetsConfigured()
         {
             var factory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
-            var policy = Policy.NoOpAsync();
+            var policy = Policy.NoOpAsync<HttpResponseMessage>();
 
             var step = new RequestStep()
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",

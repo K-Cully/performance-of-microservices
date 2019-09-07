@@ -196,7 +196,7 @@ IHttpClientFactory <--o Registry
 Registry o--> "1..*" IStep
 Registry o--> "1..*" IProcessor
 Registry o--> "1..*" ClientConfig
-IAsyncPolicy "1..*" <--o Registry
+IAsyncPolicy<HttpResponseMessage> "1..*" <--o Registry
 Registry o--|> "1..*" IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
 
 Processor o--|> SuccessResponse
@@ -212,7 +212,7 @@ ConfigFactory --> ClientConfig : Creates
 StepFactory --> RequestStep : Creates
 StepFactory --> LoadStep : Creates
 StepFactory --> ErrorStep : Creates
-IPolicyFactory --> IAsyncPolicy : Creates
+IPolicyFactory --> IAsyncPolicy<HttpResponseMessage> : Creates
 
 PolicyFactory --> RetryConfig : Creates
 PolicyFactory --> TimeoutConfig : Creates

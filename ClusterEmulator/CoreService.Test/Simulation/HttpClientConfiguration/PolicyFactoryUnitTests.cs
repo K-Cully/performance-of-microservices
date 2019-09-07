@@ -5,6 +5,7 @@ using Moq;
 using Polly;
 using Polly.Retry;
 using System;
+using System.Net.Http;
 
 namespace CoreService.Test.Simulation.HttpClientConfiguration
 {
@@ -51,9 +52,9 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
-            IAsyncPolicy policy = factory.Create(setting);
+            IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "IAsyncPolicy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy<HttpResponseMessage> should be null");
         }
 
 
@@ -65,9 +66,9 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
-            IAsyncPolicy policy = factory.Create(setting);
+            IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "IAsyncPolicy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy<HttpResponseMessage> should be null");
         }
 
 
@@ -105,9 +106,9 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
-            IAsyncPolicy policy = factory.Create(setting);
+            IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
-            Assert.IsNull(policy, "IAsyncPolicy should be null");
+            Assert.IsNull(policy, "IAsyncPolicy<HttpResponseMessage> should be null");
         }
 
 
@@ -124,10 +125,10 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
 
             var factory = new PolicyFactory(logger.Object, loggerFactory.Object);
 
-            IAsyncPolicy policy = factory.Create(setting);
+            IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
-            Assert.IsNotNull(policy, "IAsyncPolicy should not be null");
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "IAsyncPolicy should be a RetryPolicy instance");
+            Assert.IsNotNull(policy, "IAsyncPolicy<HttpResponseMessage> should not be null");
+            Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "IAsyncPolicy<HttpResponseMessage> should be a RetryPolicy instance");
         }
     }
 }
