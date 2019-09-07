@@ -138,7 +138,8 @@ namespace CoreService.Test.Simulation.Core
 
             Assert.IsNotNull(client);
             Assert.AreEqual("http://test.com/", client.BaseAddress.ToString());
-            Assert.AreEqual(0, client.DefaultRequestHeaders.Count());
+            Assert.AreEqual(1, client.DefaultRequestHeaders.Count());
+            Assert.IsTrue(client.DefaultRequestHeaders.Contains("User-Agent"));
 
             client.Dispose();
         }
@@ -159,7 +160,8 @@ namespace CoreService.Test.Simulation.Core
 
             Assert.IsNotNull(client);
             Assert.AreEqual("http://test.com/", client.BaseAddress.ToString());
-            Assert.AreEqual(0, client.DefaultRequestHeaders.Count());
+            Assert.AreEqual(1, client.DefaultRequestHeaders.Count());
+            Assert.IsTrue(client.DefaultRequestHeaders.Contains("User-Agent"));
 
             client.Dispose();
         }
@@ -184,7 +186,7 @@ namespace CoreService.Test.Simulation.Core
 
             Assert.IsNotNull(client);
             Assert.AreEqual("http://test.com/", client.BaseAddress.ToString());
-            Assert.AreEqual(1, client.DefaultRequestHeaders.Count());
+            Assert.AreEqual(2, client.DefaultRequestHeaders.Count());
 
             client.Dispose();
         }
@@ -210,7 +212,7 @@ namespace CoreService.Test.Simulation.Core
 
             Assert.IsNotNull(client);
             Assert.AreEqual("http://test.com/", client.BaseAddress.ToString());
-            Assert.AreEqual(2, client.DefaultRequestHeaders.Count());
+            Assert.AreEqual(3, client.DefaultRequestHeaders.Count());
 
             client.Dispose();
         }
