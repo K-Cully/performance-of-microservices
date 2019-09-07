@@ -128,7 +128,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
             Assert.IsNotNull(policy, "IAsyncPolicy<HttpResponseMessage> should not be null");
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy), "IAsyncPolicy<HttpResponseMessage> should be a RetryPolicy instance");
+            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>), "IAsyncPolicy<HttpResponseMessage> should be a RetryPolicy instance");
         }
     }
 }

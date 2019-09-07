@@ -105,7 +105,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
+            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy<HttpResponseMessage>));
         }
 
 
@@ -122,7 +122,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy));
+            Assert.IsInstanceOfType(policy, typeof(TimeoutPolicy<HttpResponseMessage>));
         }
     }
 }
