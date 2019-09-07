@@ -32,7 +32,7 @@ namespace CoreService.Simulation.Steps
         /// <summary>
         /// Executes the action defined by the step.
         /// </summary>
-        /// <returns><see cref="ExecutionStatus.Success"/> or <see cref="ExecutionStatus.Fail"/></returns>
+        /// <returns><see cref="ExecutionStatus.Success"/> or <see cref="ExecutionStatus.SimulatedFail"/></returns>
         public async Task<ExecutionStatus> ExecuteAsync()
         {
             if (Logger is null)
@@ -47,7 +47,7 @@ namespace CoreService.Simulation.Steps
             }
 
             double value = new Random().NextDouble();
-            ExecutionStatus status = value > Probability ? ExecutionStatus.Success : ExecutionStatus.Fail;
+            ExecutionStatus status = value > Probability ? ExecutionStatus.Success : ExecutionStatus.SimulatedFail;
 
             Logger.LogDebug("{RandomValue} resulted in {ExecutionStatus} for {Probability}", value, status, Probability);
             return await Task.FromResult(status);

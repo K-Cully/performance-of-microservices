@@ -59,11 +59,11 @@ namespace CoreService.Simulation.Core
                     case ExecutionStatus.Success:
                         log.LogInformation("{Step} completed with success in {Processor}", stepName, name);
                         continue;
-                    case ExecutionStatus.Fail:
+                    case ExecutionStatus.SimulatedFail:
                         log.LogInformation("{Step} completed with simulated error in {Processor}", stepName, name);
                         errorResult.StatusCode =  StatusCodes.Status418ImATeapot;
                         return errorResult;
-                    case ExecutionStatus.Unexpected:
+                    case ExecutionStatus.Fail:
                     default:
                         log.LogError("{Step} experienced an unexpected error in {Processor}", stepName, name);
                         errorResult.StatusCode = StatusCodes.Status500InternalServerError;

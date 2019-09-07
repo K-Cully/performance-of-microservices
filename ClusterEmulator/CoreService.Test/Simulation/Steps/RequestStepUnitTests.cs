@@ -184,7 +184,7 @@ namespace CoreService.Test.Simulation.Steps
             step.InitializeLogger(logger.Object);
             step.Configure(factory.Object);
 
-            Assert.AreEqual(ExecutionStatus.Unexpected, await step.ExecuteAsync());
+            Assert.AreEqual(ExecutionStatus.Fail, await step.ExecuteAsync());
         }
 
 
@@ -327,7 +327,7 @@ namespace CoreService.Test.Simulation.Steps
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.Fail, result);
+            Assert.AreEqual(ExecutionStatus.SimulatedFail, result);
             client.Dispose();
         }
 
@@ -585,7 +585,7 @@ namespace CoreService.Test.Simulation.Steps
             step.Configure(factory, policies);
             var result = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.Fail, result);
+            Assert.AreEqual(ExecutionStatus.SimulatedFail, result);
 
             // Will already be disposed but non-breaking call suppresses warning
             client.Dispose();
@@ -623,7 +623,7 @@ namespace CoreService.Test.Simulation.Steps
             step.Configure(factory, policy);
             var result = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.Unexpected, result);
+            Assert.AreEqual(ExecutionStatus.Fail, result);
 
             // Will already be disposed but non-breaking call suppresses warning
             client.Dispose();

@@ -62,7 +62,7 @@ namespace CoreService.Test.Simulation.Steps
 
             ExecutionStatus status = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.Fail, status);
+            Assert.AreEqual(ExecutionStatus.SimulatedFail, status);
         }
 
 

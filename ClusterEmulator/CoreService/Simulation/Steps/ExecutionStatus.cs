@@ -6,20 +6,20 @@
     public enum ExecutionStatus
     {
         /// <summary>
-        /// An unexpected system error has occurred.
+        /// An unexpected error has occurred.
         /// </summary>
-        Unexpected = 0,
+        Fail = 0,
+
+
+        /// <summary>
+        /// Step execution completed and the caller should return an error.
+        /// </summary>
+        SimulatedFail = 2,
 
 
         /// <summary>
         /// Step execution completed and further steps should proceed.
         /// </summary>
         Success = 1,
-
-
-        /// <summary>
-        /// Step execution completed and the caller should return an error.
-        /// </summary>
-        Fail = 2,
     }
 }

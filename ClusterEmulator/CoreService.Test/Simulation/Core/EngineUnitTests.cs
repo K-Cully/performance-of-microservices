@@ -166,7 +166,7 @@ namespace CoreService.Test.Simulation.Core
                 .ReturnsAsync(ExecutionStatus.Success);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
-                .ReturnsAsync(ExecutionStatus.Unexpected);
+                .ReturnsAsync(ExecutionStatus.Fail);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -214,7 +214,7 @@ namespace CoreService.Test.Simulation.Core
                 .ReturnsAsync(ExecutionStatus.Success);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
-                .ReturnsAsync(ExecutionStatus.Fail);
+                .ReturnsAsync(ExecutionStatus.SimulatedFail);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))

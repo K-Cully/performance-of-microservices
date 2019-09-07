@@ -127,26 +127,17 @@ namespace CoreService.Simulation.Steps
             Func<CancellationToken, Task<HttpResponseMessage>> request;
             if (ReuseHttpClient) // Use in-build http client factory to manage client lifetime
             {
-                HttpClient client = clientFactory.CreateClient(ClientName);
-                if (client is null)
-                {
-                    Logger.LogCritical("HttpClient {ClientName} is null", ClientName);
-                    return ExecutionStatus.Unexpected;
-                }
+                HttpClient client = clientFactory.CreateClient(ClientName) ?? 
+                    throw new InvalidOperationException($"Client '{ClientName}' is null");
 
                 request = GetRequestAction(client);
                 return await HandleRequestAsync(request);
             }
             else // Directly manage client lifetime, using custom factory for creation
             {
-                using (var client = clientFactory.CreateClient(ClientName))
+                using (var client = clientFactory.CreateClient(ClientName) ??
+                    throw new InvalidOperationException($"Client '{ClientName}' is null"))
                 {
-                    if (client is null)
-                    {
-                        Logger.LogCritical("HttpClient {ClientName} is null", ClientName);
-                        return ExecutionStatus.Unexpected;
-                    }
-
                     request = GetRequestAction(client);
                     Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                     if (policy is null)
@@ -177,11 +168,11 @@ namespace CoreService.Simulation.Steps
                 {
                     if (response == null)
                     {
-                        return ExecutionStatus.Unexpected;
+                        return ExecutionStatus.Fail;
                     }
 
                     Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
-                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Unexpected;
+                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
                 }
             }
 
