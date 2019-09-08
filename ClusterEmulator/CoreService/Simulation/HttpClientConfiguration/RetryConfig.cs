@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
+using Polly.Timeout;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
@@ -67,7 +68,9 @@ namespace CoreService.Simulation.HttpClientConfiguration
             }
 
             var builder = Policy
-                .HandleResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode);
+                .Handle<HttpRequestException>()
+                .Or<TimeoutRejectedException>()
+                .OrResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode);
 
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;

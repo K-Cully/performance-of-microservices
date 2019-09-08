@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
@@ -62,7 +63,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
                     logger.LogWarning("{PolicyKey} at {OperationKey}: execution timed out after {TimeoutTime} seconds",
                           context.PolicyKey, context.OperationKey, timespan.TotalSeconds);
 
-                    return task;
+                    // Handle attempted co-operative cancellation where it is not supported by the delegate
+                    return task ?? (CancelDelegates ? Task.CompletedTask : null);
                 });
         }
     }

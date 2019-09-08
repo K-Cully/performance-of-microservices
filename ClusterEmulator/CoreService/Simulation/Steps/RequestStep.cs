@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
+using Polly.Timeout;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -188,6 +189,10 @@ namespace CoreService.Simulation.Steps
             try
             {
                 return await action(token).ConfigureAwait(false);
+            }
+            catch (TimeoutRejectedException ex)
+            {
+                log.LogError(ex, "The operation timed out");
             }
             catch (Exception ex)
                 when (ex is OperationCanceledException
