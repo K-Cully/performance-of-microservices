@@ -121,8 +121,6 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("Http client is not configured");
             }
 
-            // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
-
             using (var client = clientFactory.CreateClient(ClientName) ??
                     throw new InvalidOperationException($"Client '{ClientName}' is null"))
             {
