@@ -26,7 +26,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </summary>
         [JsonProperty("time")]
         [JsonRequired]
-        [Range(0.01d, 922337203685.0d, ErrorMessage = "time must be in the range 0 - 922337203685")]
+        [Range(0.0d, 922337203685.0d, ErrorMessage = "time must be in the range 0 - 922337203685")]
         public double TimeoutInSeconds;
 
 
@@ -46,7 +46,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
             }
 
             // Restrict to valid TimeSpan
-            if (TimeoutInSeconds < 0.010d || TimeoutInSeconds > 922337203685.0d)
+            if (TimeoutInSeconds < 0.0d || TimeoutInSeconds > 922337203685.0d)
             {
                 logger.LogCritical("{PolicyConfig} : {Property} is outside the valid range", nameof(TimeoutConfig), "time");
                 throw new InvalidOperationException("time must be in the range 0 - 922337203685");

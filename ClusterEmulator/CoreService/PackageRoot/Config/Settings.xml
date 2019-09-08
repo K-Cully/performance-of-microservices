@@ -19,7 +19,7 @@
   <Section Name="Policies">
     <Parameter Name="RetryA" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
     <Parameter Name="RetryB" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
-    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 0.01 } }" />
-    <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.01 } }" />
+    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 0.001 } }" />
+    <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.001 } }" />
   </Section>
 </Settings>
