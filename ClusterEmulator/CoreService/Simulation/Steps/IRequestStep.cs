@@ -15,12 +15,12 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// Whether the request should reuse HttpClient instances or not.
+        /// Whether the request should reuse HttpMessageHandler instances or not.
         /// </summary>
         /// <remarks>
-        /// Reusing Http clients prevents creation of new connections on new sockets for every request.
+        /// Reusing Http Message Handlers prevents creation of new connections on new sockets for every request.
         /// </remarks>
-        bool ReuseHttpClient { get; set; }
+        bool ReuseHttpMessageHandler { get; set; }
 
 
         /// <summary>

@@ -142,7 +142,7 @@ class StepFactory implements IStepFactory {
 
 interface IRequestStep {
     + ClientName : string
-    + ReuseHttpClient : boolean
+    + ReuseHttpMessageHandler : boolean
     + Configure(httpClientFactory)
     + Configure(httpClientFactory, requestPolicy);
 }

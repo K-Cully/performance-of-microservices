@@ -190,8 +190,8 @@ namespace CoreService.Simulation.Core
 
             foreach (var requestStep in requestSteps)
             {
-                log.LogDebug("Configuring {Client}, Reuse:{Reuse}", requestStep.ClientName, requestStep.ReuseHttpClient);
-                if (requestStep.ReuseHttpClient)
+                log.LogDebug("Configuring {Client}, Reuse:{Reuse}", requestStep.ClientName, requestStep.ReuseHttpMessageHandler);
+                if (requestStep.ReuseHttpMessageHandler)
                 {
                     requestStep.Configure(httpClientFactory);
                 }

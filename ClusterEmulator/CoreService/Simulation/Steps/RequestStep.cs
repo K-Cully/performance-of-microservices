@@ -61,14 +61,14 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// Whether the request should reuse HttpClient instances or not.
+        /// Whether the request should reuse HttpMessageHandler instances or not.
         /// </summary>
         /// <remarks>
-        /// Reusing Http clients prevents creation of new connections on new sockets for every request.
+        /// Reusing Http Message Handlers prevents creation of new connections on new sockets for every request.
         /// </remarks>
         [JsonProperty("reuseSockets")]
         [JsonRequired]
-        public bool ReuseHttpClient { get; set; }
+        public bool ReuseHttpMessageHandler { get; set; }
 
 
         /// <summary>
@@ -102,8 +102,6 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("path must be a relative URI");
             }
 
-            // TODO: add caller identifier to Path
-
             if (string.IsNullOrWhiteSpace(Method) || !supportedMethods.Contains(Method, StringComparer.OrdinalIgnoreCase))
             {
                 Logger.LogCritical("{Property} is not a valid http protocol", "method");
@@ -124,49 +122,49 @@ namespace CoreService.Simulation.Steps
 
             // TODO: handle polly policy exceptions, eg. TimeoutRejectedException
 
-            Func<CancellationToken, Task<HttpResponseMessage>> request;
-            if (ReuseHttpClient) // Use in-build http client factory to manage client lifetime
-            {
-                HttpClient client = clientFactory.CreateClient(ClientName) ?? 
-                    throw new InvalidOperationException($"Client '{ClientName}' is null");
-
-                request = GetRequestAction(client);
-                return await HandleRequestAsync(request);
-            }
-            else // Directly manage client lifetime, using custom factory for creation
-            {
-                using (var client = clientFactory.CreateClient(ClientName) ??
+            using (var client = clientFactory.CreateClient(ClientName) ??
                     throw new InvalidOperationException($"Client '{ClientName}' is null"))
+            {
+                Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client);
+                if (ReuseHttpMessageHandler) // Policies are already part of the request pipeline
                 {
-                    request = GetRequestAction(client);
-                    Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
-                    if (policy is null)
-                    {
-                        combinedAction = token => request(token);
-                    }
-                    else
-                    {
-                        combinedAction = token => policy.ExecuteAsync(ct => request(ct), token);
-                    }
-
-                    return await HandleRequestAsync(combinedAction);
+                    return await HandleRequestAsync(request).ConfigureAwait(false);
                 }
+
+                // Policies need to be registered in the request pipeline
+                Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
+                if (policy is null)
+                {
+                    combinedAction = token => request(token);
+                }
+                else
+                {
+                    combinedAction = token => policy.ExecuteAsync(ct => request(ct), token);
+                }
+
+                return await HandleRequestAsync(combinedAction).ConfigureAwait(false);
             }
         }
 
 
+        /// <summary>
+        /// Handles request execution for asynchronous and non-asynchronous workloads
+        /// </summary>
+        /// <param name="request">The request to execute</param>
+        /// <returns>The execution status</returns>
         private async Task<ExecutionStatus> HandleRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> request)
         {
             if (Asynchrounous)
             {
                 SendRequest(ExecuteRequestAsync(request, CancellationToken.None));
+                return ExecutionStatus.Success;
             }
             else
             {
                 using (HttpResponseMessage response =
                     await ExecuteRequestAsync(request, CancellationToken.None))
                 {
-                    if (response == null)
+                    if (response is null)
                     {
                         return ExecutionStatus.Fail;
                     }
@@ -175,8 +173,30 @@ namespace CoreService.Simulation.Steps
                     return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
                 }
             }
+        }
 
-            return ExecutionStatus.Success;
+
+        /// <summary>
+        /// Executes the request following the async-await pattern, freeing the current thread back to the thread pool.
+        /// </summary>
+        /// <param name="action">The request action.</param>
+        /// <param name="token">The local cacellation token.</param>
+        /// <returns>The response message from the request.</returns>
+        private async Task<HttpResponseMessage> ExecuteRequestAsync(
+            Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
+        {
+            try
+            {
+                return await action(token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+                when (ex is OperationCanceledException
+                || ex.InnerException is OperationCanceledException)
+            {
+                log.LogError(ex, "The operation was cancelled");
+            }
+
+            return null;
         }
 
 
@@ -232,6 +252,10 @@ namespace CoreService.Simulation.Steps
         }
 
 
+        /// <summary>
+        /// Generates a payload for requests which send a body.
+        /// </summary>
+        /// <returns>A <see cref="AdaptableRequest"/> instance of the configured size.</returns>
         private AdaptableRequest GenerateRequest()
         {
             var payload = new List<string>();
@@ -252,28 +276,6 @@ namespace CoreService.Simulation.Steps
             {
                 Payload = payload
             };
-        }
-
-
-        /// <summary>
-        /// Executes the request following the async-await pattern, freeing the current thread back to the thread pool.
-        /// </summary>
-        /// <param name="action">The request action.</param>
-        /// <param name="token">The local cacellation token.</param>
-        /// <returns>The response message from the request.</returns>
-        private async Task<HttpResponseMessage> ExecuteRequestAsync(
-            Func<CancellationToken, Task<HttpResponseMessage>> action, CancellationToken token)
-        {
-            try
-            {
-                return await action(token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException ex)
-            {
-                Logger.LogError(ex, "Request Cancelled");
-            }
-
-            return null;
         }
 
 
@@ -313,7 +315,7 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("The step is already configured");
             }
 
-            if (!ReuseHttpClient)
+            if (!ReuseHttpMessageHandler)
             {
                 Logger.LogCritical("The step should resolve it's client from a custom IHttpClientFactory");
                 throw new InvalidOperationException("This step cannot use the default http client factory");
@@ -343,7 +345,7 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("The step is already configured");
             }
 
-            if (ReuseHttpClient)
+            if (ReuseHttpMessageHandler)
             {
                 Logger.LogCritical("The step should resolve it's client from the default IHttpClientFactory");
                 throw new InvalidOperationException("This step must use the default http client factory");

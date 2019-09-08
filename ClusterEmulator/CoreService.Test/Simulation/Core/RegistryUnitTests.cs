@@ -574,7 +574,7 @@ namespace CoreService.Test.Simulation.Core
 
             // Create Moq steps
             var requestStep1 = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep1.Setup(rs => rs.ReuseHttpClient).Returns(true);
+            requestStep1.Setup(rs => rs.ReuseHttpMessageHandler).Returns(true);
             requestStep1.Setup(rs => rs.ClientName).Returns("WhoKnows?");
             requestStep1.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>()));
 
@@ -583,7 +583,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(s => step1.Object);
  
             var requestStep2 = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep2.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep2.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep2.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep2.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
 
@@ -638,7 +638,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns(string.Empty);
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
 
@@ -693,7 +693,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("MissingEntry");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
 
@@ -743,7 +743,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), null));
 
@@ -798,7 +798,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap<HttpResponseMessage>>()));
 
@@ -852,7 +852,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<PolicyWrap<HttpResponseMessage>>()));
@@ -908,7 +908,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
@@ -963,7 +963,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
@@ -1018,7 +1018,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 
@@ -1073,7 +1073,7 @@ namespace CoreService.Test.Simulation.Core
                 .Returns<string>(null);
 
             var requestStep = new Mock<IRequestStep>(MockBehavior.Strict);
-            requestStep.Setup(rs => rs.ReuseHttpClient).Returns(false);
+            requestStep.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep.Setup(rs => rs.ClientName).Returns("Xi");
             requestStep.Setup(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<Policy<HttpResponseMessage>>()));
 

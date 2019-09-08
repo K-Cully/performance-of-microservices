@@ -52,7 +52,7 @@ namespace CoreService.Simulation.Core
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
-                ExecutionStatus status = await step.ExecuteAsync();
+                ExecutionStatus status = await step.ExecuteAsync().ConfigureAwait(false);
 
                 switch (status)
                 {

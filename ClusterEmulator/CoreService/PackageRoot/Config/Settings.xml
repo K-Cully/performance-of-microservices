@@ -8,16 +8,18 @@
   <Section Name="Steps">
     <Parameter Name="LoadA" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="LoadB" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
-    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { client : 'GitHub', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { client : 'GitHubA', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
-    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { client : 'GitHub', method : 'get', path : 'test/', size : 128, reuseSockets : false, trueAsync : false } }"/>
+    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { client : 'GitHubB', method : 'get', path : 'test/', size : 128, reuseSockets : false, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
-    <Parameter Name="GitHub" Value="{ baseAddress : 'https://github.com/', policies : [ 'RetryA', 'TimeoutA' ], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="GitHubA" Value="{ baseAddress : 'https://github.com/', policies : [ 'RetryA', 'TimeoutA' ], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="GitHubB" Value="{ baseAddress : 'https://github.com/', policies : [ 'RetryA', 'TimeoutA' ], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
     <Parameter Name="RetryA" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
     <Parameter Name="RetryB" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
-    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 3.1 } }" />
+    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 0.01 } }" />
+    <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.01 } }" />
   </Section>
 </Settings>
