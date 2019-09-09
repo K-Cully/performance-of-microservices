@@ -67,10 +67,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 throw new InvalidOperationException("jitter cannot be negative");
             }
 
-            var builder = Policy
-                .Handle<HttpRequestException>()
-                .Or<TimeoutRejectedException>()
-                .OrResult<HttpResponseMessage>(message => !message.IsSuccessStatusCode);
+            var builder = PolicyExtensions.HandleHttpRequests();
 
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
