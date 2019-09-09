@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
-using Polly.Timeout;
+using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
@@ -67,7 +67,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 throw new InvalidOperationException("jitter cannot be negative");
             }
 
-            var builder = PolicyExtensions.HandleHttpRequests();
+            var builder = Policy.HandleHttpRequests();
 
             List<double> delays = DelaysInSeconds.ToList();
             bool forever = Retries < 1;
