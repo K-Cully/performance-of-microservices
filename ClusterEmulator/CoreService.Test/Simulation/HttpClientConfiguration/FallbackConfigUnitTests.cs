@@ -100,8 +100,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             var config = new FallbackConfig
             {
                 Status = 418,
-                Content = string.Empty,
-                Reason = string.Empty
+                Content = "test",
+                Reason = "test"
             };
 
             IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
