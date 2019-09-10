@@ -78,13 +78,14 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 if (forever)
                 {
                     return builder.RetryForeverAsync(onRetry: result =>
-                       logger.LogError("{RetryPolicy} failed with {StatusCode}", "RetryForeverAsync", result?.Result?.StatusCode));
+                        logger.LogError(result.Exception, "{RetryPolicy} failed with {StatusCode}",
+                            "RetryForeverAsync", result.Result?.StatusCode));
                 }
                 else
                 {
                     return builder.RetryAsync(Retries, onRetry: (result, count) =>
-                        logger.LogError("{RetryPolicy} failed with {StatusCode} on attempt {RetryCount}", "RetryAsync",
-                            result?.Result?.StatusCode, count));
+                        logger.LogError(result.Exception, "{RetryPolicy} failed with {StatusCode} on attempt {RetryCount}", "RetryAsync",
+                            result.Result?.StatusCode, count));
                 }
             }
 
@@ -100,18 +101,18 @@ namespace CoreService.Simulation.HttpClientConfiguration
             {
                 return builder.WaitAndRetryForeverAsync(
                     sleepDurationProvider: count => Delay(count, exponential),
-                    onRetry: (result, timespan) => logger.LogError(
+                    onRetry: (result, timespan) => logger.LogError(result.Exception,
                                     "{RetryPolicy} failed with {StatusCode} after {RetryTime} seconds",
-                                    "WaitAndRetryForeverAsync", result?.Result?.StatusCode, timespan.TotalSeconds));
+                                    "WaitAndRetryForeverAsync", result.Result?.StatusCode, timespan.TotalSeconds));
             }
             else
             {
                 return builder.WaitAndRetryAsync(
                     Retries,
                     sleepDurationProvider: count => Delay(count, exponential),
-                    onRetry: (result, timespan, count, context) => logger.LogError(
+                    onRetry: (result, timespan, count, context) => logger.LogError(result.Exception,
                                             "{RetryPolicy} failed with {StatusCode} on attempt {RetryCount} after {RetryTime} seconds",
-                                            "WaitAndRetryAsync", result?.Result?.StatusCode, count, timespan.TotalSeconds));
+                                            "WaitAndRetryAsync", result.Result?.StatusCode, count, timespan.TotalSeconds));
             }
         }
 

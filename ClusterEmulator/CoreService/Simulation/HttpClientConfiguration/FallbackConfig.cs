@@ -68,8 +68,8 @@ namespace CoreService.Simulation.HttpClientConfiguration
             return Policy.HandleHttpRequests()
                 .FallbackAsync(message, onFallbackAsync: async (result, context) =>
                 {
-                    logger.LogWarning("{PolicyKey} at {OperationKey}: fallback value substituted, due to: {Exception}.",
-                          context.PolicyKey, context.OperationKey, result.Exception);
+                    logger.LogWarning(result.Exception, "{PolicyKey} at {OperationKey}: fallback value substituted",
+                          context.PolicyKey, context.OperationKey);
                     await Task.CompletedTask;
                 });
         }
