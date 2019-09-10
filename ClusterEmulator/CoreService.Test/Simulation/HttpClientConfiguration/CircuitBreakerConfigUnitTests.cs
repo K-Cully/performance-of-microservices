@@ -21,7 +21,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
 
             Assert.IsNotNull(config);
             Assert.AreEqual(12.5d, config.BreakDuration, 0.0001d);
-            Assert.AreEqual("15", config.FaultTolerance);
+            Assert.AreEqual(15, config.FaultTolerance);
         }
 
 

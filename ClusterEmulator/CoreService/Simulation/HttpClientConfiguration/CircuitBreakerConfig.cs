@@ -15,6 +15,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// The break duration in seconds
         /// </summary>
         [JsonProperty("duration")]
+        [JsonRequired]
         [Range(0.02d, double.MaxValue, ErrorMessage = "duration must be greater than 20ms")]
         public double BreakDuration { get; set; }
 
@@ -23,6 +24,7 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// The number of exceptions to allow before breaking
         /// </summary>
         [JsonProperty("tolerance")]
+        [JsonRequired]
         [Range(1, int.MaxValue, ErrorMessage = "tolerance must be greater than 0")]
         public int FaultTolerance { get; set; }
 
