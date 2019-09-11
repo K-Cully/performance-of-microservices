@@ -22,5 +22,7 @@
     <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 3.0 } }" />
     <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.001 } }" />
     <Parameter Name="FallbackA" Value="{ type : 'FallbackConfig', policy : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
+    <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 10.0, tolerance : 3 } }" />
+    <Parameter Name="AdvancedCircuitA" Value="{ type : 'AdvancedCircuitBreakerConfig', policy : { breakDuration : 5.0, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
   </Section>
 </Settings>
