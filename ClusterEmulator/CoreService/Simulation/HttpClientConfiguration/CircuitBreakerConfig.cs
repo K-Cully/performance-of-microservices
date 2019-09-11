@@ -9,6 +9,9 @@ using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
+    /// <summary>
+    /// Configurable components of a circuit breaker policy.
+    /// </summary>
     public class CircuitBreakerConfig : IPolicyConfiguration
     {
         /// <summary>
