@@ -24,5 +24,7 @@
     <Parameter Name="FallbackA" Value="{ type : 'FallbackConfig', policy : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
     <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 10.0, tolerance : 3 } }" />
     <Parameter Name="AdvancedCircuitA" Value="{ type : 'AdvancedCircuitBreakerConfig', policy : { breakDuration : 5.0, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
+    <Parameter Name="BulkheadA" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 10, queueLength : 5 } }" />
+    <Parameter Name="BulkheadB" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 20 } }" />
   </Section>
 </Settings>
