@@ -32,10 +32,10 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
 
         /// <summary>
-        /// Generates a Polly <see cref="TimeoutPolicy"/> from the configuration.
+        /// Generates a Polly <see cref="TimeoutPolicy{HttpResponseMessage}"/> from the configuration.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        /// <returns>A <see cref="TimeoutPolicy"/> instance.</returns>
+        /// <returns>A <see cref="TimeoutPolicy{HttpResponseMessage}"/> instance.</returns>
         public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));

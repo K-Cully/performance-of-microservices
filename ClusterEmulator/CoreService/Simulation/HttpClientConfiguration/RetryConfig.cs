@@ -47,10 +47,10 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
 
         /// <summary>
-        /// Generates a Polly <see cref="RetryPolicy"/> from the configuration.
+        /// Generates a Polly <see cref="RetryPolicy{HttpResponseMessage}"/> from the configuration.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        /// <returns>A <see cref="RetryPolicy"/> instance.</returns>
+        /// <returns>A <see cref="RetryPolicy{HttpResponseMessage}"/> instance.</returns>
         public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));

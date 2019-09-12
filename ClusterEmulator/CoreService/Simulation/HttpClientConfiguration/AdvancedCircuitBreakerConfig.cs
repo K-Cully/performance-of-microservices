@@ -51,10 +51,10 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
 
         /// <summary>
-        /// Generates a Polly <see cref="CircuitBreakerPolicy"/> from the configuration.
+        /// Generates a Polly <see cref="CircuitBreakerPolicy{HttpResponseMessage}"/> from the configuration.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        /// <returns>A <see cref="CircuitBreakerPolicy"/> instance.</returns>
+        /// <returns>A <see cref="CircuitBreakerPolicy{HttpResponseMessage}"/> instance.</returns>
         public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -87,19 +87,19 @@ namespace CoreService.Simulation.HttpClientConfiguration
             // TODO: refactor Circuit Breaker delegates to shared location
 
             // Create delegates
-            void onBreak(DelegateResult<HttpResponseMessage> result, TimeSpan timespan, Context context)
+            void OnBreak(DelegateResult<HttpResponseMessage> result, TimeSpan timespan, Context context)
             {
                 logger.LogError(result.Exception, "{PolicyKey} at {OperationKey}: {CircuitState} triggered for {CircuitDelay} seconds due to {StatusCode}",
                     context.PolicyKey, context.OperationKey, CircuitState.Open, timespan.TotalSeconds, result.Result?.StatusCode);
             }
 
-            void onReset(Context context)
+            void OnReset(Context context)
             {
                 logger.LogInformation("{PolicyKey} at {OperationKey}: {CircuitState} triggered",
                     context.PolicyKey, context.OperationKey, CircuitState.Closed);
             }
 
-            void onHalfOpen() => logger.LogDebug("{CircuitState} triggered", CircuitState.HalfOpen);
+            void OnHalfOpen() => logger.LogDebug("{CircuitState} triggered", CircuitState.HalfOpen);
 
             // Create policy
             var breaker = Policy
@@ -109,9 +109,9 @@ namespace CoreService.Simulation.HttpClientConfiguration
                     samplingDuration: TimeSpan.FromSeconds(SamplingDuration), 
                     minimumThroughput: MinimumThroughput,
                     durationOfBreak: TimeSpan.FromSeconds(BreakDuration),
-                    onBreak: onBreak,
-                    onReset: onReset,
-                    onHalfOpen: onHalfOpen);
+                    onBreak: OnBreak,
+                    onReset: OnReset,
+                    onHalfOpen: OnHalfOpen);
 
             return breaker;
         }
