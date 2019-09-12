@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Bulkhead;
-//using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
 
 namespace CoreService.Simulation.HttpClientConfiguration
 {
