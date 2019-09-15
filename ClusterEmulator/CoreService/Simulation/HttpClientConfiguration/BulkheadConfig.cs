@@ -10,7 +10,7 @@ using Polly.Bulkhead;
 namespace CoreService.Simulation.HttpClientConfiguration
 {
     /// <summary>
-    /// Configurable components of a circuit breaker policy.
+    /// Configurable components of a bulkhead policy.
     /// </summary>
     public class BulkheadConfig : IPolicyConfiguration
     {
