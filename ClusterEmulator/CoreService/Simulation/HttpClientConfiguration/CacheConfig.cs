@@ -185,6 +185,11 @@ namespace CoreService.Simulation.HttpClientConfiguration
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Specific implementation handled as documented")]
         public TimeSpan AsTimeSpan()
         {
+            if (Days < 0 || Hours < 0 || Minutes < 0 || Seconds < 0)
+            {
+                return TimeSpan.Zero;
+            }
+
             try
             {
                 return new TimeSpan(Days, Hours, Minutes, Seconds);
