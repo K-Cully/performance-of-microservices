@@ -134,7 +134,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(CircuitBreakerPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncCircuitBreakerPolicy<HttpResponseMessage>));
         }
     }
 }

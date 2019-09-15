@@ -98,7 +98,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -116,7 +116,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -134,7 +134,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -184,7 +184,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -202,7 +202,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -220,7 +220,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -238,7 +238,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -256,7 +256,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
 
 
@@ -274,7 +274,7 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
             IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
 
             Assert.IsNotNull(policy);
-            Assert.IsInstanceOfType(policy, typeof(RetryPolicy<HttpResponseMessage>));
+            Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
         }
     }
 }
