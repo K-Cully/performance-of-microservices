@@ -43,6 +43,40 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
 
         /// <summary>
+        /// Initializes a new instance of <see cref="CacheConfig"/> with the default
+        /// in-memory cache provider.
+        /// </summary>
+        public CacheConfig()
+        {
+            IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
+            cacheProvider = new MemoryCacheProvider(memoryCache).AsyncFor<HttpResponseMessage>();
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="CacheConfig"/> with the specified provider.
+        /// </summary>
+        /// <param name="provider">The cache provider.</param>
+        public CacheConfig(IAsyncCacheProvider<HttpResponseMessage> provider)
+        {
+            cacheProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+        }
+
+        [JsonIgnore]
+        private readonly IAsyncCacheProvider<HttpResponseMessage> cacheProvider;
+
+        [JsonIgnore]
+        private ITtlStrategy strategy;
+
+
+        /// <summary>
+        /// Allows TTL strategy to be cached or computed on cache entry creation
+        /// </summary>
+        [JsonIgnore]
+        private ITtlStrategy Strategy => strategy ?? CreateStrategy();
+
+
+        /// <summary>
         /// Generates a Polly <see cref="CachePolicy{HttpResponseMessage}"/> from the configuration.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
@@ -84,14 +118,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
             void OnCachePutError(Context context, string key, Exception exception) =>
                 logger.LogError(exception, "{PolicyKey} at {OperationKey}: Error inserting {Key} into cache",
                     context.PolicyKey, context.OperationKey, key);
-
-
-            // TODO: allow injection of cache
-            // TODO: allow mocking
-            // Create cache provider
-            IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
-            IAsyncCacheProvider<HttpResponseMessage> cacheProvider =
-                new MemoryCacheProvider(memoryCache).AsyncFor<HttpResponseMessage>();
 
             if (!Absolute)
             {
@@ -139,17 +165,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
             return new RelativeTtl(cacheTime);
         }
-
-
-        [JsonIgnore]
-        private ITtlStrategy strategy;
-
-
-        /// <summary>
-        /// Allows TTL strategy to be cached or computed on cache entry creation
-        /// </summary>
-        [JsonIgnore]
-        private ITtlStrategy Strategy => strategy ?? CreateStrategy();
     }
 
 
