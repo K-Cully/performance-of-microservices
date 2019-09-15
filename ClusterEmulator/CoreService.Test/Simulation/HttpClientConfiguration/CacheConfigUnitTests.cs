@@ -1,8 +1,13 @@
 ﻿using CoreService.Simulation.HttpClientConfiguration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Caching;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace CoreService.Test.Simulation.HttpClientConfiguration
@@ -91,7 +96,8 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
         [TestMethod]
         public void AsPolicy_LoggerNull_Throws()
         {
-            var config = new CacheConfig
+            var provider = new Mock<IAsyncCacheProvider<HttpResponseMessage>>(MockBehavior.Strict);
+            var config = new CacheConfig(provider.Object)
             {
                 Time = new CacheTime { Days = 0, Hours = 0, Minutes = 5, Seconds = 0 },
                 Absolute = false,
@@ -102,6 +108,78 @@ namespace CoreService.Test.Simulation.HttpClientConfiguration
                 () => config.AsPolicy(null));
         }
 
-        // TODO: success cases
+
+        [TestMethod]
+        public void AsPolicy_TimeNull_Throws()
+        {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var provider = new Mock<IAsyncCacheProvider<HttpResponseMessage>>(MockBehavior.Strict);
+            var config = new CacheConfig(provider.Object)
+            {
+                Time = null,
+                Absolute = false,
+                Sliding = false
+            };
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => config.AsPolicy(logger.Object));
+        }
+
+
+        [TestMethod]
+        public void AsPolicy_Relative_ReturnsPolicy()
+        {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var provider = new Mock<IAsyncCacheProvider<HttpResponseMessage>>(MockBehavior.Strict);
+            var config = new CacheConfig(provider.Object)
+            {
+                Time = new CacheTime { Days = 0, Hours = 0, Minutes = 5, Seconds = 0 },
+                Absolute = false,
+                Sliding = false
+            };
+
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+
+            Assert.IsNotNull(policy);
+            Assert.IsInstanceOfType(policy, typeof(AsyncCachePolicy<HttpResponseMessage>));
+        }
+
+
+        [TestMethod]
+        public void AsPolicy_Sliding_ReturnsPolicy()
+        {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var provider = new Mock<IAsyncCacheProvider<HttpResponseMessage>>(MockBehavior.Strict);
+            var config = new CacheConfig(provider.Object)
+            {
+                Time = new CacheTime { Days = 0, Hours = 1, Minutes = 5, Seconds = 0 },
+                Absolute = false,
+                Sliding = true
+            };
+
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+
+            Assert.IsNotNull(policy);
+            Assert.IsInstanceOfType(policy, typeof(AsyncCachePolicy<HttpResponseMessage>));
+        }
+
+
+        [TestMethod]
+        public void AsPolicy_Absolute_ReturnsPolicy()
+        {
+            var logger = new Mock<ILogger>(MockBehavior.Loose);
+            var provider = new Mock<IAsyncCacheProvider<HttpResponseMessage>>(MockBehavior.Strict);
+            var config = new CacheConfig(provider.Object)
+            {
+                Time = new CacheTime { Days = 2, Hours = 0, Minutes = 5, Seconds = 0 },
+                Absolute = true,
+                Sliding = false
+            };
+
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+
+            Assert.IsNotNull(policy);
+            Assert.IsInstanceOfType(policy, typeof(AsyncCachePolicy<HttpResponseMessage>));
+        }
     }
 }
