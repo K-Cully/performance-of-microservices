@@ -134,11 +134,14 @@ namespace CoreService.Simulation.Steps
                 Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                 if (policy is null)
                 {
+                    // TODO: figure out how to set context in this pipeline (https://nodogmablog.bryanhogan.net/2018/11/caching-in-polly-6-and-the-httpclientfactory/)
                     combinedAction = token => request(token);
                 }
                 else
                 {
-                    combinedAction = token => policy.ExecuteAsync(ct => request(ct), token);
+                    // TODO: set context correctly
+                    combinedAction = token => policy.ExecuteAsync(
+                        (context, cancelationToken) => request(cancelationToken), new Context("Foo"), token);
                 }
 
                 return await HandleRequestAsync(combinedAction).ConfigureAwait(false);

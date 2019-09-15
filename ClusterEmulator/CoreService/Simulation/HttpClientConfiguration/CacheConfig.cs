@@ -100,15 +100,15 @@ namespace CoreService.Simulation.HttpClientConfiguration
 
             // Create delegates
             void OnCacheGet(Context context, string key) =>
-                logger.LogTrace("{PolicyKey} at {OperationKey}: Retrieving {Key} from cache",
+                logger.LogInformation("{PolicyKey} at {OperationKey}: Retrieving {Key} from cache",
                     context.PolicyKey, context.OperationKey, key);
 
             void OnCacheMiss(Context context, string key) =>
-                logger.LogTrace("{PolicyKey} at {OperationKey}: {Key} was not present in cache",
+                logger.LogInformation("{PolicyKey} at {OperationKey}: {Key} was not present in cache",
                     context.PolicyKey, context.OperationKey, key);
 
             void OnCachePut(Context context, string key) => 
-                logger.LogTrace("{PolicyKey} at {OperationKey}: Inserting {Key} into cache",
+                logger.LogInformation("{PolicyKey} at {OperationKey}: Inserting {Key} into cache",
                     context.PolicyKey, context.OperationKey, key);
 
             void OnCacheGetError(Context context, string key, Exception exception) =>
