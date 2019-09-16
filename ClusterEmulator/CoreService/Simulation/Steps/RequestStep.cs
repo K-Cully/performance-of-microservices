@@ -9,6 +9,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -103,7 +105,7 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException("path must be a relative URI");
             }
 
-            if (string.IsNullOrWhiteSpace(Method) || !supportedMethods.Contains(Method, StringComparer.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(Method) || !supportedMethodNames.Contains(Method, StringComparer.OrdinalIgnoreCase))
             {
                 Logger.LogCritical("{Property} is not a valid http protocol", "method");
                 throw new InvalidOperationException("method must be a valid http protocol");
@@ -134,14 +136,12 @@ namespace CoreService.Simulation.Steps
                 Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
                 if (policy is null)
                 {
-                    // TODO: figure out how to set context in this pipeline (https://nodogmablog.bryanhogan.net/2018/11/caching-in-polly-6-and-the-httpclientfactory/)
                     combinedAction = token => request(token);
                 }
                 else
                 {
-                    // TODO: set context correctly
                     combinedAction = token => policy.ExecuteAsync(
-                        (context, cancelationToken) => request(cancelationToken), new Context("Foo"), token);
+                        (context, cancelationToken) => request(cancelationToken), Context, token);
                 }
 
                 return await HandleRequestAsync(combinedAction).ConfigureAwait(false);
@@ -206,45 +206,40 @@ namespace CoreService.Simulation.Steps
         }
 
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0067:Dispose objects before losing scope", Justification = "Object does not need to be explicitly disposed")]
         private Func<CancellationToken, Task<HttpResponseMessage>> GetRequestAction(HttpClient client)
         {
             var method = new HttpMethod(Method);
+            if (!supportedMethods.Contains(method))
+            {
+                Logger.LogCritical("{HttpMethod} is not supported", Method);
+                throw new InvalidOperationException($"{Method} is not supported");
+            }
+
             Logger.LogDebug("Retrieving action for {HttpMethod}", Method);
 
-            if (method == HttpMethod.Head
-                || method == HttpMethod.Options
-                || method == HttpMethod.Trace)
+            HttpContent content = null;
+            if (method == HttpMethod.Put 
+                || method == HttpMethod.Post)
             {
-                return token =>
+                var adaptableRequest = GenerateRequest();
+                content = new ObjectContent<AdaptableRequest>(adaptableRequest, new JsonMediaTypeFormatter(), mediaType: (MediaTypeHeaderValue)null);
+            }
+
+            return token =>
+            {
+                using (var request = new HttpRequestMessage(method, Path))
                 {
-                    using (var httpRequest = new HttpRequestMessage(method, Path))
-                        return client.SendAsync(httpRequest, token);
-                };
-            }
+                    if (ReuseHttpMessageHandler)
+                    {
+                        // Only set the context in the request when policies are registered with HttpClientFactory
+                        request.SetPolicyExecutionContext(Context);
+                    }
 
-            if (method == HttpMethod.Delete)
-            {
-                return token => client.DeleteAsync(Path, token);
-            }
-
-            if (method == HttpMethod.Get)
-            {
-                return token => client.GetAsync(Path, token);
-            }
-
-            var adaptableRequest = GenerateRequest();
-            if (method == HttpMethod.Post)
-            {
-                return token => client.PostAsJsonAsync(Path, adaptableRequest, token);
-            }
-
-            if (method == HttpMethod.Put)
-            {
-                return token => client.PutAsJsonAsync(Path, adaptableRequest, token);
-            }
-
-            Logger.LogCritical("{HttpMethod} is not supported", Method);
-            throw new InvalidOperationException($"{Method} is not supported");
+                    request.Content = content;
+                    return client.SendAsync(request, token);
+                }
+            };
         }
 
 
@@ -372,6 +367,11 @@ namespace CoreService.Simulation.Steps
         private ILogger Logger { get => log; set => log = log ?? value; }
 
 
+        // TODO: set id
+        [JsonIgnore]
+        private Context Context => new Context($"{nameof(RequestStep)}-{Method}");
+
+
         [JsonIgnore]
         private bool configured = false;
 
@@ -388,15 +388,21 @@ namespace CoreService.Simulation.Steps
         /// Enumerable of supported Http methods in uppercase
         /// </summary>
         [JsonIgnore]
-        private readonly IEnumerable<string> supportedMethods = new List<HttpMethod>()
-        {
-            HttpMethod.Delete,
-            HttpMethod.Get,
-            HttpMethod.Head,
-            HttpMethod.Options,
-            HttpMethod.Post,
-            HttpMethod.Put,
-            HttpMethod.Trace,
-        }.Select(m => m.Method.ToUpperInvariant());
+        private static readonly ISet<string> supportedMethodNames =
+            new HashSet<string>(supportedMethods.Select(m => m.Method.ToUpperInvariant()));
+
+
+        [JsonIgnore]
+        private static readonly ISet<HttpMethod> supportedMethods =
+            new HashSet<HttpMethod>(new List<HttpMethod>()
+            {
+                HttpMethod.Delete,
+                HttpMethod.Get,
+                HttpMethod.Head,
+                HttpMethod.Options,
+                HttpMethod.Post,
+                HttpMethod.Put,
+                HttpMethod.Trace
+            });
     }
 }
