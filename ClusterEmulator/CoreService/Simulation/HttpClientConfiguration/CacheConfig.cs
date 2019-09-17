@@ -122,10 +122,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 strategy = CreateStrategy();
             }
 
-            // Only cache successful responses
-            Ttl CacheOKResponse(Context context, HttpResponseMessage result) =>
-                result.StatusCode == HttpStatusCode.OK ? Strategy.GetTtl(context, result) : new Ttl(TimeSpan.Zero);
-
             // Create policy with default cache key strategy
             var cache = Policy
                 .CacheAsync(cacheProvider,
@@ -137,6 +133,18 @@ namespace CoreService.Simulation.HttpClientConfiguration
                     onCachePutError: OnCachePutError);
 
             return cache;
+        }
+
+
+        private Ttl CacheOKResponse(Context context, HttpResponseMessage result)
+        {
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                result.Headers.TryAddWithoutValidation("policyCached", "true");
+                return Strategy.GetTtl(context, result);
+            }
+
+            return new Ttl(TimeSpan.Zero);
         }
 
 

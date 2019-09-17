@@ -132,26 +132,36 @@ namespace CoreService.Simulation.Steps
             using (var client = clientFactory.CreateClient(ClientName) ??
                     throw new InvalidOperationException($"Client '{ClientName}' is null"))
             {
-                Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client);
-                if (ReuseHttpMessageHandler) // Policies are already part of the request pipeline
+                ExecutionStatus status = ExecutionStatus.Fail;
+                try
                 {
-                    return await HandleRequestAsync(request).ConfigureAwait(false);
+                    Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client);
+                    if (ReuseHttpMessageHandler) // Policies are already part of the request pipeline
+                    {
+                        status = await HandleRequestAsync(request).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // Policies need to be registered in the request pipeline
+                        Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
+                        if (policy is null)
+                        {
+                            combinedAction = token => request(token);
+                        }
+                        else
+                        {
+                            combinedAction = token => policy.ExecuteAsync(
+                                (context, cancelationToken) => request(cancelationToken), Context, token);
+                        }
+
+                        status = await HandleRequestAsync(combinedAction).ConfigureAwait(false);
+                    }
+                }
+                finally
+                {
+                    DisposePending();
                 }
 
-                // Policies need to be registered in the request pipeline
-                Func<CancellationToken, Task<HttpResponseMessage>> combinedAction;
-                if (policy is null)
-                {
-                    combinedAction = token => request(token);
-                }
-                else
-                {
-                    combinedAction = token => policy.ExecuteAsync(
-                        (context, cancelationToken) => request(cancelationToken), Context, token);
-                }
-
-                ExecutionStatus status = await HandleRequestAsync(combinedAction).ConfigureAwait(false);
-                DisposePending();
                 return status;
             }
         }
@@ -186,10 +196,15 @@ namespace CoreService.Simulation.Steps
             else
             {
                 HttpResponseMessage response = await ExecuteRequestAsync(request, CancellationToken.None);
-                pendingDisposals.Add(response);
                 if (response is null)
                 {
                     return ExecutionStatus.Fail;
+                }
+
+                if (!ReuseHttpMessageHandler || !response.Headers.Contains("policyCached"))
+                {
+                    // Only dispose message if it is not cached in the http factory pipeline
+                    pendingDisposals.Add(response);
                 }
 
                 Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
