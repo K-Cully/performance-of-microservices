@@ -43,9 +43,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </remarks>
         public IAsyncPolicy<HttpResponseMessage> Create(string settingValue)
         {
-            // TODO: flesh out remaining important policies
-            // See docs: https://github.com/App-vNext/Polly/blob/master/README.md#retry
-
             if (string.IsNullOrWhiteSpace(settingValue))
             {
                 throw new ArgumentException($"{nameof(settingValue)} cannot be null or whitespace");

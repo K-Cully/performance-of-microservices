@@ -407,7 +407,7 @@ namespace CoreService.Simulation.Steps
         /// </summary>
         /// <remarks>Allows policies (e.g. Cache) to access http communication objects.</remarks>
         [JsonIgnore]
-        private IList<IDisposable> pendingDisposals = new List<IDisposable>();
+        private readonly IList<IDisposable> pendingDisposals = new List<IDisposable>();
 
 
         /// <summary>

@@ -87,9 +87,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
         /// </remarks>
         public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
         {
-
-            // TODO: update Request step to set cache key
-
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
             if (Time is null || TimeSpan.Equals(Time.AsTimeSpan(), TimeSpan.Zero))
