@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
@@ -385,16 +384,24 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
-        /// Enumerable of supported Http methods in uppercase
+        /// Set of supported Http methods in uppercase
         /// </summary>
         [JsonIgnore]
-        private static readonly ISet<string> supportedMethodNames =
-            new HashSet<string>(supportedMethods.Select(m => m.Method.ToUpperInvariant()));
+        private readonly ISet<string> supportedMethodNames =
+            new HashSet<string>(httpMethods.Select(m => m.Method.ToUpperInvariant()));
+
+
+        /// <summary>
+        /// Set of supported Http methods
+        /// </summary>
+        [JsonIgnore]
+        private readonly ISet<HttpMethod> supportedMethods =
+            new HashSet<HttpMethod>(httpMethods);
 
 
         [JsonIgnore]
-        private static readonly ISet<HttpMethod> supportedMethods =
-            new HashSet<HttpMethod>(new List<HttpMethod>()
+        private static readonly IEnumerable<HttpMethod> httpMethods =
+            new List<HttpMethod>()
             {
                 HttpMethod.Delete,
                 HttpMethod.Get,
@@ -403,6 +410,6 @@ namespace CoreService.Simulation.Steps
                 HttpMethod.Post,
                 HttpMethod.Put,
                 HttpMethod.Trace
-            });
+            };
     }
 }
