@@ -38,6 +38,13 @@ namespace CoreService.Simulation.Steps
 
 
         /// <summary>
+        /// The optional id to use for cache key isolation
+        /// </summary>
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+
+        /// <summary>
         /// The http protocol.
         /// </summary>
         [JsonProperty("method")]
@@ -366,9 +373,8 @@ namespace CoreService.Simulation.Steps
         private ILogger Logger { get => log; set => log = log ?? value; }
 
 
-        // TODO: set id
         [JsonIgnore]
-        private Context Context => new Context($"{nameof(RequestStep)}-{Method}");
+        private Context Context => new Context($"{nameof(RequestStep)}-{Id ?? "NULL"}-{Method}");
 
 
         [JsonIgnore]

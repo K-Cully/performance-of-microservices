@@ -20,12 +20,29 @@ namespace CoreService.Test.Simulation.Steps
     public class RequestStepUnitTests
     {
         [TestMethod]
-        public void Deserialization_ValidData_CreatesValidInstance()
+        public void Deserialization_AllData_CreatesValidInstance()
+        {
+            RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
+                "{ id : 'teddy', client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
+
+            Assert.IsFalse(step.Asynchrounous);
+            Assert.AreEqual("teddy", step.Id);
+            Assert.AreEqual("testClient", step.ClientName);
+            Assert.AreEqual("get", step.Method);
+            Assert.AreEqual("test/", step.Path);
+            Assert.AreEqual(128, step.PayloadSize);
+            Assert.AreEqual(true, step.ReuseHttpMessageHandler);
+        }
+
+
+        [TestMethod]
+        public void Deserialization_RequiredData_CreatesValidInstance()
         {
             RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
                 "{ client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
 
             Assert.IsFalse(step.Asynchrounous);
+            Assert.IsNull(step.Id);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);
