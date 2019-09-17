@@ -150,8 +150,24 @@ namespace CoreService.Simulation.Steps
                         (context, cancelationToken) => request(cancelationToken), Context, token);
                 }
 
-                return await HandleRequestAsync(combinedAction).ConfigureAwait(false);
+                ExecutionStatus status = await HandleRequestAsync(combinedAction).ConfigureAwait(false);
+                DisposePending();
+                return status;
             }
+        }
+
+
+        /// <summary>
+        /// Disposes of any disposable objects created during http client creation or response
+        /// </summary>
+        private void DisposePending()
+        {
+            foreach (IDisposable disposable in pendingDisposals)
+            {
+                disposable.Dispose();
+            }
+
+            pendingDisposals.Clear();
         }
 
 
@@ -169,17 +185,15 @@ namespace CoreService.Simulation.Steps
             }
             else
             {
-                using (HttpResponseMessage response =
-                    await ExecuteRequestAsync(request, CancellationToken.None))
+                HttpResponseMessage response = await ExecuteRequestAsync(request, CancellationToken.None);
+                pendingDisposals.Add(response);
+                if (response is null)
                 {
-                    if (response is null)
-                    {
-                        return ExecutionStatus.Fail;
-                    }
-
-                    Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
-                    return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
+                    return ExecutionStatus.Fail;
                 }
+
+                Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
+                return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
             }
         }
 
@@ -234,17 +248,16 @@ namespace CoreService.Simulation.Steps
 
             return token =>
             {
-                using (var request = new HttpRequestMessage(method, Path))
+                var request = new HttpRequestMessage(method, Path);
+                pendingDisposals.Add(request);
+                if (ReuseHttpMessageHandler)
                 {
-                    if (ReuseHttpMessageHandler)
-                    {
-                        // Only set the context in the request when policies are registered with HttpClientFactory
-                        request.SetPolicyExecutionContext(Context);
-                    }
-
-                    request.Content = content;
-                    return client.SendAsync(request, token);
+                    // Only set the context in the request when policies are registered with HttpClientFactory
+                    request.SetPolicyExecutionContext(Context);
                 }
+
+                request.Content = content;
+                return client.SendAsync(request, token);
             };
         }
 
@@ -387,6 +400,14 @@ namespace CoreService.Simulation.Steps
 
         [JsonIgnore]
         private IHttpClientFactory clientFactory;
+
+
+        /// <summary>
+        /// A list of objects that need to be disposed once all request operations have completed
+        /// </summary>
+        /// <remarks>Allows policies (e.g. Cache) to access http communication objects.</remarks>
+        [JsonIgnore]
+        private IList<IDisposable> pendingDisposals = new List<IDisposable>();
 
 
         /// <summary>
