@@ -83,9 +83,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
                 throw new InvalidOperationException("throughput cannot be negative");
             }
 
-            // TODO: resolve logger from context for all delegate logging
-            // TODO: refactor Circuit Breaker delegates to shared location
-
             // Create delegates
             void OnBreak(DelegateResult<HttpResponseMessage> result, TimeSpan timespan, Context context)
             {

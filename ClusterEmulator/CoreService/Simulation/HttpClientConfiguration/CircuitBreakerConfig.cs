@@ -79,9 +79,6 @@ namespace CoreService.Simulation.HttpClientConfiguration
                     onHalfOpen: OnHalfOpen
                 );
 
-            // TODO: add handling of BrokenCircuitException and IsolatedCircuitException? in callers
-            // BrokenCircuitException contains the actual exception as it's inner exception
-
             return breaker;
         }
     }

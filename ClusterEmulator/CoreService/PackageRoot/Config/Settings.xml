@@ -8,13 +8,13 @@
   <Section Name="Steps">
     <Parameter Name="LoadA" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="LoadB" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
-    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { id : 'RSGA', client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { id : 'RSGoog', client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
-    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { id : 'NSGB', client : 'GoogleB', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
+    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { id : 'NSGit', client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
     <Parameter Name="GoogleA" Value="{ baseAddress : 'https://google.com', policies : [ 'CacheA', 'RetryA', 'TimeoutA' ], headers : { 'Accept' : '*/*' } }" />
-    <Parameter Name="GoogleB" Value="{ baseAddress : 'https://google.com', policies : [ 'FallbackA', 'CacheA', 'RetryA' ], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="GithubA" Value="{ baseAddress : 'https://github.com', policies : [ 'CircuitA' ], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
     <Parameter Name="RetryA" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
@@ -22,7 +22,7 @@
     <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 3.0 } }" />
     <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.001 } }" />
     <Parameter Name="FallbackA" Value="{ type : 'FallbackConfig', policy : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
-    <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 10.0, tolerance : 3 } }" />
+    <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 30.0, tolerance : 3 } }" />
     <Parameter Name="AdvancedCircuitA" Value="{ type : 'AdvancedCircuitBreakerConfig', policy : { breakDuration : 5.0, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
     <Parameter Name="BulkheadA" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 10, queueLength : 5 } }" />
     <Parameter Name="BulkheadB" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 20 } }" />

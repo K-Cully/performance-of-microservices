@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
+using Polly.CircuitBreaker;
 using Polly.Timeout;
 using System;
 using System.Collections.Generic;
@@ -207,7 +208,7 @@ namespace CoreService.Simulation.Steps
                     pendingDisposals.Add(response);
                 }
 
-                Logger.LogInformation("Retrieved response {StatusCode}", response.StatusCode);
+                Logger.LogInformation("{Id}: Retrieved response {StatusCode}", Id, response.StatusCode);
                 return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
             }
         }
@@ -228,13 +229,17 @@ namespace CoreService.Simulation.Steps
             }
             catch (TimeoutRejectedException ex)
             {
-                log.LogError(ex, "The operation timed out");
+                log.LogWarning(ex, "{Id}: The operation timed out", Id);
+            }
+            catch (BrokenCircuitException ex)
+            {
+                log.LogWarning(ex, "{Id}: Circuit is broken", Id);
             }
             catch (Exception ex)
                 when (ex is OperationCanceledException
                 || ex.InnerException is OperationCanceledException)
             {
-                log.LogError(ex, "The operation was cancelled");
+                log.LogWarning(ex, "{Id}: The operation was cancelled", Id);
             }
 
             return null;
@@ -251,7 +256,7 @@ namespace CoreService.Simulation.Steps
                 throw new InvalidOperationException($"{Method} is not supported");
             }
 
-            Logger.LogDebug("Retrieving action for {HttpMethod}", Method);
+            Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", Id, Method);
 
             HttpContent content = null;
             if (method == HttpMethod.Put 
@@ -322,11 +327,11 @@ namespace CoreService.Simulation.Steps
         {
             requestTask.ContinueWith(task =>
             {
-                Logger.LogError("Asynchronous request faulted");
+                Logger.LogError("{Id}: Asynchronous request faulted", Id);
                 task.Exception.Handle(ex =>
                 {
                     // Log and set all exceptions as handled to avoid rethrowing
-                    Logger.LogError(ex, "Exception returned from asynchronous request");
+                    Logger.LogError(ex, "{Id}: Exception returned from asynchronous request", Id);
                     return true;
                 });
             }, TaskContinuationOptions.OnlyOnFaulted);
@@ -358,7 +363,7 @@ namespace CoreService.Simulation.Steps
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             configured = true;
-            Logger.LogInformation("Client factory configured successfully");
+            Logger.LogInformation("{Id}: Client factory configured successfully", Id);
         }
 
 
@@ -389,7 +394,7 @@ namespace CoreService.Simulation.Steps
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             policy = requestPolicy;
             configured = true;
-            Logger.LogInformation("Client factory and policies configured successfully");
+            Logger.LogInformation("{Id}: Client factory and policies configured successfully", Id);
         }
 
 
