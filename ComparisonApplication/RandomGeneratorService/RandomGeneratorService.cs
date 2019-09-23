@@ -11,6 +11,7 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
+using RandomGeneratorService.Core;
 
 namespace RandomGeneratorService
 {
@@ -40,7 +41,8 @@ namespace RandomGeneratorService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext))
+                                            .AddSingleton<StatelessServiceContext>(serviceContext)
+                                            .AddSingleton<IPrimeGenerator, PrimeGenerator>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
