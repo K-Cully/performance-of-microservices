@@ -26,7 +26,7 @@ namespace NameLookupService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int id)
         {
-            string result = await m_store.GetName(id).ConfigureAwait(false);
+            string result = await m_store.GetNameAsync(id).ConfigureAwait(false);
             if (string.IsNullOrEmpty(result))
             {
                 return NoContent();
@@ -43,7 +43,7 @@ namespace NameLookupService.Controllers
             var tasks = new List<Task<string>>();
             foreach (int id in ids)
             {
-                tasks.Add(m_store.GetName(id));
+                tasks.Add(m_store.GetNameAsync(id));
             }
 
             // TODO: deal with missing entries
