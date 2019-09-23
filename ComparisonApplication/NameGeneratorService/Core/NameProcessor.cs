@@ -44,7 +44,6 @@ namespace NameGeneratorService.Core
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        // TODO: send correct requests
                         randomTasks.Add(client.GetAsync($"/api/random/{maximumId}"));
                     }
 
@@ -60,7 +59,6 @@ namespace NameGeneratorService.Core
 
                 using (HttpClient client = m_clientFactory.CreateClient(Settings.NameLookupApiClientName))
                 {
-                    // TODO: send correct requests
                     using (HttpResponseMessage response = 
                         await client.PostAsJsonAsync("/api/lookup", ids).ConfigureAwait(false))
                     {
@@ -70,9 +68,9 @@ namespace NameGeneratorService.Core
                             return new List<string>();
                         }
 
-                        // TODO: deal with missing values
-
                         return await response.Content.ReadAsAsync<IEnumerable<string>>().ConfigureAwait(false);
+
+                        // TODO: deal with missing values?
                     }
                 }
             }

@@ -46,7 +46,6 @@ namespace NameLookupService.Controllers
                 tasks.Add(m_store.GetNameAsync(id));
             }
 
-            // TODO: deal with missing entries
             return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
