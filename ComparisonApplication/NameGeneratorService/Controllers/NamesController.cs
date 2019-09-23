@@ -27,9 +27,9 @@ namespace NameGeneratorService.Controllers
 
         // GET api/names
         [HttpGet]
-        public ActionResult<string> Get()
+        public ActionResult<IEnumerable<string>> Get()
         {
-            return m_nameProcessor.GenerateNames(1).FirstOrDefault();
+            return m_nameProcessor.GenerateNames(1).ToList();
         }
 
 
