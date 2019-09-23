@@ -6,7 +6,7 @@ namespace RandomGeneratorService.Core
     /// Generates primes
     /// </summary>
     /// <remarks>Note currently thread safe but suffecient for random seed generation puroses</remarks>
-    public class PrimeGenerator : IPrimeGenerator
+    public class PrimeGenerator : ISeedGenerator
     {
         private static uint LastPrime = 2;
 

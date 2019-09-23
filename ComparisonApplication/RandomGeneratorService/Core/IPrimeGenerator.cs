@@ -1,6 +1,6 @@
 ﻿namespace RandomGeneratorService.Core
 {
-    public interface IPrimeGenerator
+    public interface ISeedGenerator
     {
         uint Generate();
     }

@@ -42,7 +42,8 @@ namespace RandomGeneratorService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
-                                            .AddSingleton<IPrimeGenerator, PrimeGenerator>())
+                                            .AddSingleton<ISeedGenerator, PrimeGenerator>()
+                                            .AddScoped<IRandomProcessor, RandomProcessor>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
