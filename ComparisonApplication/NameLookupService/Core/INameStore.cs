@@ -4,6 +4,6 @@ namespace NameLookupService.Core
 {
     public interface INameStore
     {
-        Task<string> GetName(int id);
+        Task<string> GetNameAsync(int id);
     }
 }
