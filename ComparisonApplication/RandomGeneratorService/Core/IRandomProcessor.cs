@@ -4,6 +4,6 @@ namespace RandomGeneratorService.Core
 {
     public interface IRandomProcessor
     {
-        Task<int> GetRandomNumber();
+        Task<int> GetRandomNumber(int max);
     }
 }

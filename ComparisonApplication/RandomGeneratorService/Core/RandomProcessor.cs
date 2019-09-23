@@ -24,12 +24,13 @@ namespace RandomGeneratorService.Core
         /// <summary>
         /// Retrieves a random number using generated seed values
         /// </summary>
+        /// <param name="max">The maximum number to return</param>
         /// <returns>A positive random integer</returns>
-        public async Task<int> GetRandomNumber()
+        public async Task<int> GetRandomNumber(int max)
         {
             uint seed = await Task.FromResult(m_seedGenerator.Generate())
                 .ConfigureAwait(false);
-            return new Random((int)seed).Next();
+            return new Random((int)seed).Next(max);
         }
     }
 }
