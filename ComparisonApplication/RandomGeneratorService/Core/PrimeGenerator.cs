@@ -8,7 +8,10 @@ namespace RandomGeneratorService.Core
     /// <remarks>Note currently thread safe but suffecient for random seed generation puroses</remarks>
     public class PrimeGenerator : ISeedGenerator
     {
-        private static uint LastPrime = 2;
+        private const uint FirstPrime = 2;
+
+
+        private static uint LastPrime = FirstPrime;
 
 
         private readonly TimeSpan m_allowedTime = TimeSpan.FromSeconds(1.0d);
@@ -25,7 +28,7 @@ namespace RandomGeneratorService.Core
             uint currentValue = LastPrime;
             uint currentPrime = LastPrime;
 
-            while (m_allowedTime < DateTime.Now - start)
+            while (m_allowedTime > DateTime.Now - start)
             {
                 currentValue++;
                 if (IsPrime(currentValue))
@@ -36,7 +39,7 @@ namespace RandomGeneratorService.Core
 
             if (currentPrime == last)
             {
-                currentPrime = 0;
+                currentPrime = FirstPrime;
             }
 
             LastPrime = currentPrime;

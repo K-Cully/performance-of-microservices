@@ -29,8 +29,6 @@ namespace RandomGeneratorService.Controllers
         [HttpGet("{max}")]
         public async Task<ActionResult<int>> GetAsync(int max)
         {
-            // TODO: restrict range of max
-
             return await m_processor.GetRandomNumber(max).ConfigureAwait(false);
         }
     }

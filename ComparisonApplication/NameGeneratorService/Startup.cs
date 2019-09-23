@@ -22,9 +22,11 @@ namespace NameGeneratorService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            // TODO: set uris for other services
-            services.AddHttpClient(Settings.RandomApiClientName, c => c.BaseAddress = new Uri(""));
-            services.AddHttpClient(Settings.NameLookupApiClientName, c => c.BaseAddress = new Uri(""));
+            // Add http clients to the default factory
+            services.AddHttpClient(Settings.RandomApiClientName,
+                c => c.BaseAddress = new Uri(Settings.RandomServiceBaseUrl));
+            services.AddHttpClient(Settings.NameLookupApiClientName,
+                c => c.BaseAddress = new Uri(Settings.LookupServiceBaseUrl));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

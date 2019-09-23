@@ -12,6 +12,9 @@ namespace NameGeneratorService.Core
     /// </summary>
     public class NameProcessor : INameProcessor
     {
+        private const int maximumId = 2000;
+
+
         private readonly IHttpClientFactory m_clientFactory;
 
 
@@ -35,29 +38,31 @@ namespace NameGeneratorService.Core
             var randomTasks = new List<Task<HttpResponseMessage>>();
             try
             {
+                IEnumerable<int> ids;
+
                 using (HttpClient client = m_clientFactory.CreateClient(Settings.RandomApiClientName))
                 {
                     for (int i = 0; i < count; i++)
                     {
                         // TODO: send correct requests
-                        randomTasks.Add(client.GetAsync("/"));
+                        randomTasks.Add(client.GetAsync($"/api/random/{maximumId}"));
                     }
-                }
 
-                await Task.WhenAll(randomTasks).ConfigureAwait(false);
-                if (randomTasks.Any(t => t.Result.StatusCode != HttpStatusCode.OK))
-                {
-                    // TODO: log
-                    return new List<string>();
-                }
+                    await Task.WhenAll(randomTasks).ConfigureAwait(false);
+                    if (randomTasks.Any(t => t.Result.StatusCode != HttpStatusCode.OK))
+                    {
+                        // TODO: log
+                        return new List<string>();
+                    }
 
-                // TODO: deal with response model correctly
-                var ids = randomTasks.Select(t => t.Result.Content.ReadAsAsync<int>().Result);
+                    ids = randomTasks.Select(t => t.Result.Content.ReadAsAsync<int>().Result);
+                }
 
                 using (HttpClient client = m_clientFactory.CreateClient(Settings.NameLookupApiClientName))
                 {
                     // TODO: send correct requests
-                    using (HttpResponseMessage response = await client.PostAsJsonAsync("/", ids).ConfigureAwait(false))
+                    using (HttpResponseMessage response = 
+                        await client.PostAsJsonAsync("/api/lookup", ids).ConfigureAwait(false))
                     {
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
@@ -65,8 +70,9 @@ namespace NameGeneratorService.Core
                             return new List<string>();
                         }
 
+                        // TODO: deal with missing values
+
                         return await response.Content.ReadAsAsync<IEnumerable<string>>().ConfigureAwait(false);
-                        // TODO: deal with response model correctly
                     }
                 }
             }
@@ -74,7 +80,7 @@ namespace NameGeneratorService.Core
             {
                 foreach (var task in randomTasks)
                 {
-                    task.Result.Dispose();
+                    task?.Result?.Dispose();
                 }
             }
         }
