@@ -30,7 +30,7 @@ namespace NameGeneratorService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
-            return (await m_nameProcessor.GenerateNamesAsync(1)).ToList();
+            return (await m_nameProcessor.GenerateNamesAsync(1).ConfigureAwait(false)).ToList();
         }
 
 
@@ -38,7 +38,7 @@ namespace NameGeneratorService.Controllers
         [HttpGet("{count}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int count)
         {
-            return (await m_nameProcessor.GenerateNamesAsync(count)).ToList();
+            return (await m_nameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
         }
     }
 }
