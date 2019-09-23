@@ -9,7 +9,7 @@ namespace NameLookupService.Controllers
     [ApiController]
     public class LookupController : ControllerBase
     {
-        private INameStore m_store;
+        private readonly INameStore m_store;
 
 
         /// <summary>
