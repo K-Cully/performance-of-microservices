@@ -13,7 +13,7 @@ namespace NameLookupService.Core
 
         private const int Entries = 2000;
 
-        private const float HitRate = 0.3f;
+        private const float HitRate = 0.95f;
 
 
         /// <summary>

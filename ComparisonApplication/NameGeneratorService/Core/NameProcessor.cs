@@ -12,7 +12,7 @@ namespace NameGeneratorService.Core
     /// </summary>
     public class NameProcessor : INameProcessor
     {
-        private const int maximumId = 2000;
+        private const int maximumId = 2200;
 
 
         private readonly IHttpClientFactory m_clientFactory;

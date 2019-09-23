@@ -33,13 +33,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NameGeneratorService\NameGeneratorService.csproj">
-      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/names/3</ServiceLaunchUrl>
     </ProjectReference>
     <ProjectReference Include="..\NameLookupService\NameLookupService.csproj">
-      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/lookup/10</ServiceLaunchUrl>
     </ProjectReference>
     <ProjectReference Include="..\RandomGeneratorService\RandomGeneratorService.csproj">
-      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/random/2200</ServiceLaunchUrl>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
