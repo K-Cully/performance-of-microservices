@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ComparisonApplication", "ComparisonApplication\ComparisonApplication.sfproj", "{032625D3-1CD3-47A2-A163-59067BB2D4E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameGeneratorService", "NameGeneratorService\NameGeneratorService.csproj", "{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NameGeneratorService", "NameGeneratorService\NameGeneratorService.csproj", "{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomGeneratorService", "RandomGeneratorService\RandomGeneratorService.csproj", "{C2355E4A-8AF0-4F9A-9523-75E971A878B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomGeneratorService", "RandomGeneratorService\RandomGeneratorService.csproj", "{C2355E4A-8AF0-4F9A-9523-75E971A878B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameLookupService", "NameLookupService\NameLookupService.csproj", "{0B95A479-19EC-44C3-97FB-01DD1999B025}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|x64.ActiveCfg = Release|Any CPU
 		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|x64.Build.0 = Release|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B95A479-19EC-44C3-97FB-01DD1999B025}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -35,6 +35,9 @@
     <ProjectReference Include="..\NameGeneratorService\NameGeneratorService.csproj">
       <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
     </ProjectReference>
+    <ProjectReference Include="..\NameLookupService\NameLookupService.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
+    </ProjectReference>
     <ProjectReference Include="..\RandomGeneratorService\RandomGeneratorService.csproj">
       <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/values</ServiceLaunchUrl>
     </ProjectReference>
