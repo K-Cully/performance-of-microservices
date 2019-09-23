@@ -7,6 +7,8 @@ Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ComparisonApplication", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameGeneratorService", "NameGeneratorService\NameGeneratorService.csproj", "{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomGeneratorService", "RandomGeneratorService\RandomGeneratorService.csproj", "{C2355E4A-8AF0-4F9A-9523-75E971A878B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}.Release|x64.ActiveCfg = Release|Any CPU
 		{5134A508-5C9D-4E35-BAEF-53C5F72C7DDB}.Release|x64.Build.0 = Release|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Debug|x64.Build.0 = Debug|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|x64.ActiveCfg = Release|Any CPU
+		{C2355E4A-8AF0-4F9A-9523-75E971A878B2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
