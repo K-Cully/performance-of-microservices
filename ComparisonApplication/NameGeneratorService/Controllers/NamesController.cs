@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NameGeneratorService.Core;
 
@@ -27,17 +28,17 @@ namespace NameGeneratorService.Controllers
 
         // GET api/names
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
-            return m_nameProcessor.GenerateNames(1).ToList();
+            return (await m_nameProcessor.GenerateNamesAsync(1)).ToList();
         }
 
 
         // GET api/names/5
         [HttpGet("{count}")]
-        public ActionResult<IEnumerable<string>> Get(int count)
+        public async Task<ActionResult<IEnumerable<string>>> GetAsync(int count)
         {
-            return m_nameProcessor.GenerateNames(count).ToList();
+            return (await m_nameProcessor.GenerateNamesAsync(count)).ToList();
         }
     }
 }

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using NameGeneratorService.Core;
 
 namespace NameGeneratorService
 {
@@ -25,6 +21,10 @@ namespace NameGeneratorService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // TODO: set uris for other services
+            services.AddHttpClient(Settings.RandomApiClientName, c => c.BaseAddress = new Uri(""));
+            services.AddHttpClient(Settings.NameLookupApiClientName, c => c.BaseAddress = new Uri(""));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

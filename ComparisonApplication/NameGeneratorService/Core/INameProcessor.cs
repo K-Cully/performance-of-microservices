@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NameGeneratorService.Core
 {
     public interface INameProcessor
     {
-        IEnumerable<string> GenerateNames(int count);
+        Task<IEnumerable<string>> GenerateNamesAsync(int count);
     }
 }
