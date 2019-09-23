@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NameLookupService.Core;
 
 namespace NameLookupService.Controllers
 {
@@ -10,12 +9,30 @@ namespace NameLookupService.Controllers
     [ApiController]
     public class LookupController : ControllerBase
     {
+        private INameStore m_store;
+
+
+        /// <summary>
+        /// Creates a new <see cref="LookupController"/>
+        /// </summary>
+        /// <param name="store">The name store to query</param>
+        public LookupController(INameStore store)
+        {
+            m_store = store;
+        }
+
+
         // GET api/lookup/5
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int id)
         {
-            // TODO: implement
-            return new List<string>();
+            string result = await m_store.GetName(id).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(result))
+            {
+                return NoContent();
+            }
+
+            return new List<string> { result };
         }
 
 
@@ -23,8 +40,14 @@ namespace NameLookupService.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<string>>> PostAsync([FromBody] IEnumerable<int> ids)
         {
-            // TODO: implement
-            return new List<string>();
+            var tasks = new List<Task<string>>();
+            foreach (int id in ids)
+            {
+                tasks.Add(m_store.GetName(id));
+            }
+
+            // TODO: deal with missing entries
+            return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
 }
