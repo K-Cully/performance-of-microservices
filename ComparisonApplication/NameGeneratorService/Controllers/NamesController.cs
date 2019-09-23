@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace NameGeneratorService.Controllers
         /// <param name="processor">The name processor</param>
         public NamesController(INameProcessor processor)
         {
-            m_nameProcessor = processor;
+            m_nameProcessor = processor ?? throw new ArgumentNullException(nameof(processor));
         }
 
 

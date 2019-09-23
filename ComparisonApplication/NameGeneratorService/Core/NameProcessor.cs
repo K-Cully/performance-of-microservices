@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,7 +21,7 @@ namespace NameGeneratorService.Core
         /// <param name="clientFactory">The <see cref="IHttpClientFactory"/> instance to resolve clients from</param>
         public NameProcessor(IHttpClientFactory clientFactory)
         {
-            m_clientFactory = clientFactory;
+            m_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
         }
 
 
