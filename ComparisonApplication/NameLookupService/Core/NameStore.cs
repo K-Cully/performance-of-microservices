@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,12 +16,17 @@ namespace NameLookupService.Core
 
         private const float HitRate = 0.95f;
 
+        private ILogger Logger { get; }
+
 
         /// <summary>
         /// Initializes a new <see cref="NameStore"/>
         /// </summary>
-        public NameStore()
+        /// <param name="logger">The application trace logger</param>
+        public NameStore(ILogger<NameStore> logger)
         {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             var alphabet = new Span<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray());
             Random random = new Random();
             int id = 0;
@@ -38,6 +44,9 @@ namespace NameLookupService.Core
                 m_names.Add(id, new string(slice));
                 id++;
             }
+
+            Logger.LogInformation("Store initialized with {EntryCount} entries and {Density} hit rate",
+                Entries, HitRate);
         }
 
 
@@ -50,7 +59,7 @@ namespace NameLookupService.Core
         {
             if (!m_names.TryGetValue(id, out string value))
             {
-                // TODO: log
+                Logger.LogError("Could not find id {NameId} in store", id);
             }
 
             return await Task.FromResult(value).ConfigureAwait(false);

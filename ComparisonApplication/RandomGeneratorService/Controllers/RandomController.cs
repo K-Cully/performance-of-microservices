@@ -14,6 +14,11 @@ namespace RandomGeneratorService.Controllers
     [ApiController]
     public class RandomController : ControllerBase
     {
+        private IRandomProcessor Processor { get; }
+
+        private ILogger Logger { get; }
+
+
         /// <summary>
         /// Initializes a new instance of <see cref="RandomController"/>
         /// </summary>
@@ -24,10 +29,6 @@ namespace RandomGeneratorService.Controllers
             Processor = processor ?? throw new ArgumentNullException(nameof(processor));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
-        private IRandomProcessor Processor { get; }
-
-        private ILogger Logger { get; }
 
 
         // GET api/random

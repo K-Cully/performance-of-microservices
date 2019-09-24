@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NameLookupService.Core;
 
 namespace NameLookupService.Controllers
@@ -9,16 +12,20 @@ namespace NameLookupService.Controllers
     [ApiController]
     public class LookupController : ControllerBase
     {
-        private readonly INameStore m_store;
+        private INameStore Store { get; }
+
+        private ILogger Logger { get; }
 
 
         /// <summary>
         /// Creates a new <see cref="LookupController"/>
         /// </summary>
         /// <param name="store">The name store to query</param>
-        public LookupController(INameStore store)
+        /// <param name="logger">The application trace logger</param>
+        public LookupController(INameStore store, ILogger<LookupController> logger)
         {
-            m_store = store;
+            Store = store ?? throw new ArgumentNullException(nameof(store));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -26,9 +33,10 @@ namespace NameLookupService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int id)
         {
-            string result = await m_store.GetNameAsync(id).ConfigureAwait(false);
+            string result = await Store.GetNameAsync(id).ConfigureAwait(false);
             if (string.IsNullOrEmpty(result))
             {
+                Logger.LogWarning("ID:{NameId} was not found in the name store", id);
                 return NoContent();
             }
 
@@ -43,10 +51,17 @@ namespace NameLookupService.Controllers
             var tasks = new List<Task<string>>();
             foreach (int id in ids)
             {
-                tasks.Add(m_store.GetNameAsync(id));
+                tasks.Add(Store.GetNameAsync(id));
             }
 
-            return await Task.WhenAll(tasks).ConfigureAwait(false);
+            List<string> names = (await Task.WhenAll(tasks).ConfigureAwait(false)).ToList();
+            IEnumerable<string> blankNames = names.Where(n => string.IsNullOrWhiteSpace(n));
+            if (blankNames.Any())
+            {
+                Logger.LogWarning("Some IDs were not found in the name store. {NameIdList}", ids);
+            }
+
+            return names;
         }
     }
 }
