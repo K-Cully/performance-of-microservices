@@ -6,5 +6,8 @@ namespace NameGeneratorService.Core
     public interface INameProcessor
     {
         Task<IEnumerable<string>> GenerateNamesAsync(int count);
+
+
+        Task<string> GenerateNameAsync();
     }
 }

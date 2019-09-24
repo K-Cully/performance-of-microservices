@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NameGeneratorService.Core;
 
 namespace NameGeneratorService.Controllers
@@ -14,16 +15,20 @@ namespace NameGeneratorService.Controllers
     [ApiController]
     public class NamesController : ControllerBase
     {
-        private readonly INameProcessor m_nameProcessor;
+        private INameProcessor NameProcessor { get; }
+
+        private ILogger Logger { get; }
 
 
         /// <summary>
         /// Creates a new instance of <see cref="NamesController"/>
         /// </summary>
         /// <param name="processor">The name processor</param>
-        public NamesController(INameProcessor processor)
+        /// <param name="logger">The application trace logger</param>
+        public NamesController(INameProcessor processor, ILogger<NamesController> logger)
         {
-            m_nameProcessor = processor ?? throw new ArgumentNullException(nameof(processor));
+            NameProcessor = processor ?? throw new ArgumentNullException(nameof(processor));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -31,7 +36,14 @@ namespace NameGeneratorService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
-            return (await m_nameProcessor.GenerateNamesAsync(1).ConfigureAwait(false)).ToList();
+            string name = await NameProcessor.GenerateNameAsync().ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Logger.LogError("{Operation} failed to generate a valid name",
+                    nameof(NameProcessor.GenerateNameAsync));
+            }
+
+            return new List<string> { name };
         }
 
 
@@ -39,7 +51,19 @@ namespace NameGeneratorService.Controllers
         [HttpGet("{count}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int count)
         {
-            return (await m_nameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
+            List<string> names = (await NameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
+            if (names is null)
+            {
+                // TODO: error and log
+            }
+
+            if (names.Any(name => string.IsNullOrWhiteSpace(name)))
+            {
+                Logger.LogError("{Operation} failed to generate all {NameCount} valid names",
+                    nameof(NameProcessor.GenerateNameAsync), count);
+            }
+
+            return names.ToList();
         }
     }
 }
