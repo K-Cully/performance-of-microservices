@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace RandomGeneratorService.Core
@@ -8,16 +9,20 @@ namespace RandomGeneratorService.Core
     /// </summary>
     public class RandomProcessor : IRandomProcessor
     {
-        readonly ISeedGenerator m_seedGenerator;
+        private ISeedGenerator SeedGenerator { get; }
+
+        private ILogger Logger { get; }
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="RandomProcessor"/>
         /// </summary>
         /// <param name="seedGenerator">The seed generator to use</param>
-        public RandomProcessor(ISeedGenerator seedGenerator)
+        /// <param name="logger">The application trace logger</param>
+        public RandomProcessor(ISeedGenerator seedGenerator, ILogger<RandomProcessor> logger)
         {
-            m_seedGenerator = seedGenerator ?? throw new ArgumentNullException(nameof(seedGenerator));
+            SeedGenerator = seedGenerator ?? throw new ArgumentNullException(nameof(seedGenerator));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -28,9 +33,15 @@ namespace RandomGeneratorService.Core
         /// <returns>A positive random integer</returns>
         public async Task<int> GetRandomNumber(int max)
         {
-            uint seed = await Task.FromResult(m_seedGenerator.Generate())
+            uint seed = await Task.FromResult(SeedGenerator.Generate())
                 .ConfigureAwait(false);
-            return new Random((int)seed).Next(max);
+            Logger.LogInformation("Seed generated: {Seed}", seed);
+
+            int random = new Random((int)seed).Next(max);
+            Logger.LogDebug("Random value {RandomValue} generated with maximum value {RandomMax}",
+                random, max);
+
+            return random;
         }
     }
 }

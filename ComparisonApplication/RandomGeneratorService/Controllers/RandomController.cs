@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RandomGeneratorService.Core;
 
 namespace RandomGeneratorService.Controllers
@@ -12,24 +14,35 @@ namespace RandomGeneratorService.Controllers
     [ApiController]
     public class RandomController : ControllerBase
     {
-        private IRandomProcessor m_processor;
-
-
         /// <summary>
         /// Initializes a new instance of <see cref="RandomController"/>
         /// </summary>
         /// <param name="processor">The processor to deal with requests</param>
-        public RandomController(IRandomProcessor processor)
+        /// <param name="logger">The application trace logger</param>
+        public RandomController(IRandomProcessor processor, ILogger<RandomController> logger)
         {
-            m_processor = processor ?? throw new ArgumentNullException(nameof(processor));
+            Processor = processor ?? throw new ArgumentNullException(nameof(processor));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        private IRandomProcessor Processor { get; }
+
+        private ILogger Logger { get; }
 
 
         // GET api/random
         [HttpGet("{max}")]
         public async Task<ActionResult<int>> GetAsync(int max)
         {
-            return await m_processor.GetRandomNumber(max).ConfigureAwait(false);
+            int number = await Processor.GetRandomNumber(max).ConfigureAwait(false);
+            if (number < 0)
+            {
+                Logger.LogError("{Action} returned an invalid value: {Value}",
+                    nameof(Processor.GetRandomNumber), number);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+            return number; 
         }
     }
 }

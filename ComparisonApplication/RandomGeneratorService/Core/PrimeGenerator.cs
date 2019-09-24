@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace RandomGeneratorService.Core
 {
@@ -10,11 +11,21 @@ namespace RandomGeneratorService.Core
     {
         private const uint FirstPrime = 2;
 
-
         private static uint LastPrime = FirstPrime;
 
-
         private readonly TimeSpan m_allowedTime = TimeSpan.FromSeconds(1.0d);
+
+        private ILogger Logger { get;  }
+
+
+        /// <summary>
+        /// Initializes a <see cref="PrimeGenerator"/>
+        /// </summary>
+        /// <param name="logger">The application trace logger</param>
+        public PrimeGenerator(ILogger<PrimeGenerator> logger)
+        {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
 
         /// <summary>
@@ -39,11 +50,13 @@ namespace RandomGeneratorService.Core
 
             if (currentPrime == last)
             {
+                Logger.LogInformation("Could not generate a new prime, resetting to default.");
                 currentPrime = FirstPrime;
             }
 
             LastPrime = currentPrime;
-            return currentValue;
+            Logger.LogDebug("Setting {NewPrime} as current value.", currentPrime);
+            return currentPrime;
         }
 
 
