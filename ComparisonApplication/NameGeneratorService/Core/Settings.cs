@@ -1,4 +1,11 @@
-﻿namespace NameGeneratorService.Core
+﻿using Microsoft.ServiceFabric.Services.Client;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Fabric;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace NameGeneratorService.Core
 {
     /// <summary>
     /// Provides access to common application settings
@@ -17,18 +24,54 @@
         public const string NameLookupApiClientName = "nameLookupApi";
 
 
-        // TODO: set these correctly
+        /// <summary>
+        /// The base path of the random number generation service
+        /// </summary>
+        public static string RandomServiceBaseUrl
+        {
+            get
+            {
+                if (randomServiceUrl is null)
+                {
+                    randomServiceUrl = GetUrl("ComparisonApplication", "RandomGeneratorService");
+                }
 
+                return randomServiceUrl;
+            }
+        }
 
         /// <summary>
         /// The base path of the random number generation service
         /// </summary>
-        public const string RandomServiceBaseUrl = "http://localhost:8835";
+        public static string LookupServiceBaseUrl
+        {
+            get
+            {
+                if (lookupServiceUrl is null)
+                {
+                    lookupServiceUrl = GetUrl("ComparisonApplication", "NameLookupService");
+                }
+
+                return lookupServiceUrl;
+            }
+        }
+
+        private static ServicePartitionResolver Resolver { get; } = ServicePartitionResolver.GetDefault();
+
+        private static string randomServiceUrl;
+
+        private static string lookupServiceUrl;
 
 
-        /// <summary>
-        /// The base path of the random number generation service
-        /// </summary>
-        public const string LookupServiceBaseUrl = "http://localhost:8365";
+        private static string GetUrl(string applicationName, string serviceName)
+        {
+            Task<ResolvedServicePartition> task =
+                Resolver.ResolveAsync(new Uri($"fabric:/{applicationName}/{serviceName}"), new ServicePartitionKey(), CancellationToken.None);
+            ResolvedServicePartition partition = task.Result;
+
+            // Partition stores the endpoint address in a strange JSON format so this extracts it
+            JToken address = JToken.Parse(partition.GetEndpoint().Address);
+            return address.First.First.First.First.Value<string>();
+        }
     }
 }
