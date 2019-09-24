@@ -12,6 +12,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
 using NameGeneratorService.Core;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace NameGeneratorService
 {
@@ -41,6 +42,7 @@ namespace NameGeneratorService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
+                                            .AddApplicationInsightsTelemetry()
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
                                             .AddScoped<INameProcessor, NameProcessor>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())

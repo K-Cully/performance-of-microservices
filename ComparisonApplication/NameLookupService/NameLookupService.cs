@@ -41,6 +41,7 @@ namespace NameLookupService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
+                                            .AddApplicationInsightsTelemetry()
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
                                             .AddSingleton<INameStore, NameStore>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())

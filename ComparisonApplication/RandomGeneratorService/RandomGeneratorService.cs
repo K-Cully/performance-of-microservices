@@ -41,6 +41,7 @@ namespace RandomGeneratorService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
+                                            .AddApplicationInsightsTelemetry()
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
                                             .AddSingleton<ISeedGenerator, PrimeGenerator>()
                                             .AddScoped<IRandomProcessor, RandomProcessor>())
