@@ -9,12 +9,19 @@ using System.Fabric;
 
 namespace ClusterEmulator.Service.Shared.Extensions
 {
+    /// <summary>
+    /// Contains extensions for registering components with a service collection.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Registers components that are required by the simulation engine.
+        /// </summary>
+        /// <param name="serviceCollection">The DI service collection.</param>
+        /// <param name="serviceContext">The Fabric service context.</param>
+        /// <returns>The <see cref="IServiceCollection"/> with all simulation engine components registered.</returns>
         public static IServiceCollection AddSimulationEngine(this IServiceCollection serviceCollection, ServiceContext serviceContext)
         {
-            // TODO: add UTs
-
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             _ = serviceContext?.CodePackageActivationContext ?? throw new ArgumentNullException(nameof(serviceContext));
 
