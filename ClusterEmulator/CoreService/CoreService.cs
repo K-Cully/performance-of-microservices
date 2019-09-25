@@ -2,6 +2,7 @@ using ClusterEmulator.Service.Simulation.Core;
 using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using ClusterEmulator.Service.Simulation.Processors;
 using ClusterEmulator.Service.Simulation.Steps;
+using CoreService.Configuration;
 using CoreService.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,8 +69,9 @@ namespace CoreService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext)
-                                            .AddSingleton<ConfigurationSettings>(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
+                                            .AddSingleton(serviceContext)
+                                            .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
+                                            .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
                                             .AddSingleton<IPolicyFactory, PolicyFactory>()
                                             .AddSingleton<IStepFactory, StepFactory>()
                                             .AddSingleton<IConfigFactory<Processor>, ConfigFactory<Processor>>()

@@ -69,21 +69,21 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <summary>
         /// Initializes a new instance of <see cref="Registry"/>.
         /// </summary>
-        /// <param name="configurationSettings">Service configuration settings from the service context.</param>
+        /// <param name="settings">Configuration settings for registry initialization.</param>
         /// <param name="stepFactory">A factory to create steps from settings.</param>
         /// <param name="processorFactory">A factory to create processors from settings.</param>
         /// <param name="policyFactory">A factory to create http client policies from settings.</param>
         /// <param name="clientFactory">A factory to create http client configurations from settings.</param>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
-        public Registry(ConfigurationSettings configurationSettings, IStepFactory stepFactory,
+        public Registry(IRegistrySettings settings, IStepFactory stepFactory,
             IConfigFactory<Processor> processorFactory, IPolicyFactory policyFactory,
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
         {
             // TODO: Remove direct dependency on Service Fabric Configuration Settings and Service Fabric NuGet
 
-            _ = configurationSettings ?? throw new ArgumentNullException(nameof(configurationSettings));
+            _ = settings ?? throw new ArgumentNullException(nameof(settings));
             _ = stepFactory ?? throw new ArgumentNullException(nameof(stepFactory));
             _ = processorFactory ?? throw new ArgumentNullException(nameof(processorFactory));
             _ = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
@@ -91,10 +91,10 @@ namespace ClusterEmulator.Service.Simulation.Core
             log = logger ?? throw new ArgumentNullException(nameof(logger));
             _ = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
-            InitializeFromSettings(configurationSettings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
-            InitializeFromSettings(configurationSettings, StepsSection, out steps, (s) => stepFactory.Create(s));
-            InitializeFromSettings(configurationSettings, PoliciesSection, out policies, (s) => policyFactory.Create(s));
-            InitializeFromSettings(configurationSettings, ClientsSection, out clients, (s) => clientFactory.Create(s));
+            InitializeFromSettings(settings, ProcessorsSection, out processors, (s) => processorFactory.Create(s));
+            InitializeFromSettings(settings, StepsSection, out steps, (s) => stepFactory.Create(s));
+            InitializeFromSettings(settings, PoliciesSection, out policies, (s) => policyFactory.Create(s));
+            InitializeFromSettings(settings, ClientsSection, out clients, (s) => clientFactory.Create(s));
 
             foreach (var policy in policies)
             {
@@ -218,18 +218,18 @@ namespace ClusterEmulator.Service.Simulation.Core
         }
 
 
-        private void InitializeFromSettings<T>(ConfigurationSettings settings, string sectionName,
+        private void InitializeFromSettings<T>(IRegistrySettings settings, string sectionName,
             out IDictionary<string, T> registry, Func<string, T> factory)
         {
             registry = new Dictionary<string, T>();
 
-            if (settings.Sections.TryGetValue(sectionName, out ConfigurationSection section))
+            if (settings.TryGetSection(sectionName, out IEnumerable<KeyValuePair<string, string>> section))
             {
                 log.LogInformation("Adding settings from {ConfigSection}", sectionName);
-                foreach (var property in section.Parameters)
+                foreach (var setting in section)
                 {
-                    log.LogInformation("Adding {SettingName} from {ConfigSection}", property.Name, sectionName);
-                    registry.Add(property.Name, factory(property.Value));
+                    log.LogInformation("Adding {SettingName} from {ConfigSection}", setting.Key, sectionName);
+                    registry.Add(setting.Key, factory(setting.Value));
                 }
             }
             else
