@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreService.Controllers
+namespace ClusterEmulator.Service.Shared
 {
     [Route("api/[controller]")]
     [ApiController]

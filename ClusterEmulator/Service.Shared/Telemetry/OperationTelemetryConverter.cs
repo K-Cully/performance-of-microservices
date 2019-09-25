@@ -4,7 +4,7 @@ using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConve
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Telemetry
+namespace ClusterEmulator.Service.Shared.Telemetry
 {
     /// <summary>
     /// Converts trace logs containing operation ids to Application Insights telemetry with correct operation id tracking
