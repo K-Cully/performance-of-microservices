@@ -1,7 +1,7 @@
 using ClusterEmulator.Service.Models;
-using CoreService.Simulation.Core;
-using CoreService.Simulation.Processors;
-using CoreService.Simulation.Steps;
+using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoreService.Test.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Test.Core
 {
     [TestClass]
     public class EngineUnitTests

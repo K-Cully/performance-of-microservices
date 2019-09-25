@@ -1,5 +1,5 @@
-﻿using CoreService.Simulation.Core;
-using CoreService.Simulation.Processors;
+﻿using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.Processors;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Test.Simulation.Processors
+namespace ClusterEmulator.Service.Simulation.Test.Processors
 {
     [TestClass]
     public class ProcessorFactroyUnitTests

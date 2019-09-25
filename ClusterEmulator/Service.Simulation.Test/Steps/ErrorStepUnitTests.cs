@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.Steps;
+﻿using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
-namespace CoreService.Test.Simulation.Steps
+namespace ClusterEmulator.Service.Simulation.Test.Steps
 {
     [TestClass]
     public class ErrorStepUnitTests

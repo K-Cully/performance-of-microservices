@@ -1,7 +1,7 @@
-﻿using CoreService.Simulation.Core;
-using CoreService.Simulation.HttpClientConfiguration;
-using CoreService.Simulation.Processors;
-using CoreService.Simulation.Steps;
+﻿using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -14,7 +14,7 @@ using System.Fabric.Description;
 using System.Net.Http;
 using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
 
-namespace CoreService.Test.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Test.Core
 {
     [TestClass]
     public class RegistryUnitTests
