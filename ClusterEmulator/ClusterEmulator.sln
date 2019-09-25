@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreService.Test", "CoreSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterEmulator.Service.Models", "Service.Models\ClusterEmulator.Service.Models.csproj", "{85049E10-A5EE-4C54-8255-5353DB1507D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterEmulatoru.Service.Simulation", "Service.Simulation\ClusterEmulatoru.Service.Simulation.csproj", "{BF133C86-BE95-42A2-B467-6B193EBEB606}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterEmulator.Service.Simulation", "Service.Simulation\ClusterEmulator.Service.Simulation.csproj", "{BF133C86-BE95-42A2-B467-6B193EBEB606}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

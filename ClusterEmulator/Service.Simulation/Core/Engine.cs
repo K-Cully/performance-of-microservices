@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace CoreService.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// Loads and executes emulated and simulated request components.

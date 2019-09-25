@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace CoreService.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// A simple factory for creating clients from client configurations.

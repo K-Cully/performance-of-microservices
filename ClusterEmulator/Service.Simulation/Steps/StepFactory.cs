@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Simulation.Steps
+namespace ClusterEmulator.Service.Simulation.Steps
 {
     /// <summary>
     /// Creates step instances.

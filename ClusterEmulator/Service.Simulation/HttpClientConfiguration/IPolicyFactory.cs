@@ -1,7 +1,7 @@
 ﻿using Polly;
 using System.Net.Http;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Creates policy instances.

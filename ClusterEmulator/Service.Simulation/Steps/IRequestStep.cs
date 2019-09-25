@@ -1,7 +1,7 @@
 ﻿using Polly;
 using System.Net.Http;
 
-namespace CoreService.Simulation.Steps
+namespace ClusterEmulator.Service.Simulation.Steps
 {
     /// <summary>
     /// Interface for request steps requiring http factory configuration.

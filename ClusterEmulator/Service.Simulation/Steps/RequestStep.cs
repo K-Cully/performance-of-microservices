@@ -14,7 +14,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreService.Simulation.Steps
+namespace ClusterEmulator.Service.Simulation.Steps
 {
     public class RequestStep : IStep, IRequestStep
     {

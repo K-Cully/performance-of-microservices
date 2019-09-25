@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace CoreService.Simulation.Steps
+namespace ClusterEmulator.Service.Simulation.Steps
 {
     /// <summary>
     /// Interface for all execution steps.

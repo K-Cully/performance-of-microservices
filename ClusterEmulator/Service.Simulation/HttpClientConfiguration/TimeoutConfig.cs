@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Timeout;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a timeout policy.

@@ -1,4 +1,4 @@
-﻿namespace CoreService.Simulation.Steps
+﻿namespace ClusterEmulator.Service.Simulation.Steps
 {
     /// <summary>
     /// Indicates the outcome of an execution step.

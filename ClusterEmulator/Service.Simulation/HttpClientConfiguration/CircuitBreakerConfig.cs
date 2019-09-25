@@ -7,7 +7,7 @@ using Polly;
 using Polly.CircuitBreaker;
 using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a circuit breaker policy.

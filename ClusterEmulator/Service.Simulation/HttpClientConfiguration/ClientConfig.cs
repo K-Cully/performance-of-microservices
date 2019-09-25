@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Defines configuration for a HttpClient instance.

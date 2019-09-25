@@ -10,7 +10,7 @@ using System.Fabric.Description;
 using System.Linq;
 using System.Net.Http;
 
-namespace CoreService.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// Handles registration and retrieval of simulation configuration settings for a service.

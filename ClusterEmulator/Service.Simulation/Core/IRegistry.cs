@@ -6,7 +6,7 @@ using Polly.Registry;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace CoreService.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// Interface for handling retrieval of simulation configuration for a service.

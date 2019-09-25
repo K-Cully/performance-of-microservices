@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CoreService.Simulation.Processors
+namespace ClusterEmulator.Service.Simulation.Processors
 {
     /// <summary>
     /// Defines request processing configuration.

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// Creates concrete instances of the specifed type.

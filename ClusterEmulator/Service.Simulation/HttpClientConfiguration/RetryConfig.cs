@@ -9,7 +9,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a retry policy.

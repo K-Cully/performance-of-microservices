@@ -2,7 +2,7 @@
 using Polly;
 using System.Net.Http;
 
-namespace CoreService.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a Polly policy.

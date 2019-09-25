@@ -1,7 +1,7 @@
 ﻿using ClusterEmulator.Service.Models;
 using System.Collections.Generic;
 
-namespace CoreService.Simulation.Processors
+namespace ClusterEmulator.Service.Simulation.Processors
 {
     /// <summary>
     /// An interface to define request processing configuration.

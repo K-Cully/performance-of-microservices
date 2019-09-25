@@ -1,4 +1,4 @@
-﻿namespace CoreService.Simulation.Core
+﻿namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
     /// Creates concrete instances of the specifed type.
