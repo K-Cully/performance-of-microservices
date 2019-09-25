@@ -81,6 +81,8 @@ namespace ClusterEmulator.Service.Simulation.Core
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
         {
+            // TODO: Remove direct dependency on Service Fabric Configuration Settings and Service Fabric NuGet
+
             _ = configurationSettings ?? throw new ArgumentNullException(nameof(configurationSettings));
             _ = stepFactory ?? throw new ArgumentNullException(nameof(stepFactory));
             _ = processorFactory ?? throw new ArgumentNullException(nameof(processorFactory));
