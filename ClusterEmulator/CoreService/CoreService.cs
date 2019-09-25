@@ -1,21 +1,21 @@
-using System.Collections.Generic;
-using System.Fabric;
-using System.IO;
+using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
+using CoreService.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using CoreService.Simulation.Steps;
-using CoreService.Simulation.Core;
-using CoreService.Simulation.Processors;
-using CoreService.Simulation.HttpClientConfiguration;
+using Serilog;
+using Serilog.Core;
 using Serilog.Core.Enrichers;
 using System;
-using Serilog;
+using System.Collections.Generic;
+using System.Fabric;
 using System.Fabric.Description;
-using Serilog.Core;
-using CoreService.Telemetry;
+using System.IO;
 
 namespace CoreService
 {

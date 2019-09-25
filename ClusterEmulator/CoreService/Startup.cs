@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using CoreService.Simulation.Core;
-using CoreService.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
 
 namespace CoreService
 {
