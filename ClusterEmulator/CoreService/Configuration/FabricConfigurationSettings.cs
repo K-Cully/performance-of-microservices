@@ -30,7 +30,7 @@ namespace CoreService.Configuration
         public bool TryGetSection(string name, out IEnumerable<KeyValuePair<string, string>> section)
         {
             section = null;
-            if (settings.Sections is null)
+            if (name is null || settings.Sections is null)
             {
                 return false;
             }

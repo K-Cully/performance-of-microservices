@@ -7,12 +7,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Polly;
 using Polly.Wrap;
-using ServiceFabric.Mocks;
 using System;
 using System.Collections.Generic;
-using System.Fabric.Description;
 using System.Net.Http;
-using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
 
 namespace ClusterEmulator.Service.Simulation.Test.Core
 {
@@ -43,12 +40,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, null, processorFactory.Object, policyFactory.Object,
+                () => _ = new Registry(settings.Object, null, processorFactory.Object, policyFactory.Object,
                                 clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
@@ -56,9 +51,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenProcessorFactoryIsNull()
         {
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
-
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
@@ -66,7 +59,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, null, policyFactory.Object,
+                () => _ = new Registry(settings.Object, stepFactory.Object, null, policyFactory.Object,
                                 clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
@@ -74,9 +67,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenPolicyFactoryIsNull()
         {
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
-
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
@@ -84,7 +75,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                () => _ = new Registry(settings.Object, stepFactory.Object, processorFactory.Object,
                                 null, clientFactory.Object, logger.Object, loggerFactory.Object));
         }
 
@@ -92,9 +83,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenClientFactoryIsNull()
         {
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
-
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
@@ -102,7 +91,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                () => _ = new Registry(settings.Object, stepFactory.Object, processorFactory.Object,
                                 policyFactory.Object, null, logger.Object, loggerFactory.Object));
         }
 
@@ -110,8 +99,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenLoggerIsNull()
         {
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
@@ -119,7 +107,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                () => _ = new Registry(settings.Object, stepFactory.Object, processorFactory.Object,
                                 policyFactory.Object, clientFactory.Object, null, loggerFactory.Object));
         }
 
@@ -127,8 +115,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenLoggerFActoryIsNull()
         {
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
@@ -136,7 +123,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = new Registry(settings, stepFactory.Object, processorFactory.Object,
+                () => _ = new Registry(settings.Object, stepFactory.Object, processorFactory.Object,
                                 policyFactory.Object, clientFactory.Object, logger.Object, null));
         }
 
@@ -144,11 +131,13 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_Throws_WhenSettingsSectionsAreMissing()
         {
-            // Create SF.Mock settings
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
-
             // Create Moq proxy instances
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            // Add processors
+            IEnumerable<KeyValuePair<string, string>> outValues = null;
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outValues))
+                .Returns(false);
+
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
@@ -158,7 +147,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             Assert.ThrowsException<InvalidOperationException>(()
-                => new Registry(settings, stepFactory.Object, processorFactory.Object,
+                => new Registry(settings.Object, stepFactory.Object, processorFactory.Object,
                     policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object));
 
             // Verify
@@ -171,8 +160,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void Constructor_CallsFactoriesCorrectly_WhenSettingsArePresent()
         {
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("name", null)
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -194,21 +189,21 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             var policyRegistry = registry.PolicyRegistry;
             var clients = new List<KeyValuePair<string, ClientConfig>>(registry.Clients);
 
             // Verify
-            stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(2));
+            stepFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             processorFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
-            policyFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(3));
+            policyFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             clientFactory.Verify(f => f.Create(It.IsAny<string>()), Times.Exactly(1));
             Assert.IsNotNull(policyRegistry);
-            Assert.AreEqual(3, policyRegistry.Count);
+            Assert.AreEqual(1, policyRegistry.Count);
             Assert.IsNotNull(clients);
             Assert.AreEqual(1, clients.Count);
-            Assert.AreEqual("Xi", clients[0].Key);
+            Assert.AreEqual("name", clients[0].Key);
             Assert.AreEqual(null, clients[0].Value);
         }
 
@@ -219,8 +214,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             string processorName = "Bob";
             Processor expectedProcessor = new Processor();
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(processorName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -242,7 +243,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IProcessor processor = registry.GetProcessor(processorName);
 
@@ -256,8 +257,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             string processorName = "Bob";
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(processorName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -279,7 +286,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -293,8 +300,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             string processorName = "Xi";
             Processor expectedProcessor = new Processor();
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -316,7 +324,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -330,8 +338,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             string processorName = null;
             Processor expectedProcessor = new Processor();
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -353,7 +362,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -366,8 +375,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             string stepName = "Mary";
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(stepName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
@@ -390,7 +405,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IStep step = registry.GetStep(stepName);
 
@@ -403,10 +418,16 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void GetPolicy_ReturnsCorrectValue_WhenRegistered()
         {
             string policyName = "Max";
+            var expectedPolicy = Policy.NoOpAsync<HttpResponseMessage>();
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
-             var expectedPolicy = Policy.NoOpAsync<HttpResponseMessage>();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(policyName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -428,7 +449,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             IAsyncPolicy<HttpResponseMessage> policy = registry.GetPolicy(policyName);
 
@@ -441,10 +462,16 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void GetClient_ReturnsCorrectValue_WhenRegistered()
         {
             string clientName = "Xi";
-
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
             var expectedConfig = new ClientConfig();
+
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(clientName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -466,7 +493,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             ClientConfig config = registry.GetClient(clientName);
 
@@ -478,8 +505,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void ConfigureHttpClients_NullFactory_Throws()
         {
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("name", "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -501,7 +534,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -513,8 +546,14 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void ConfigureHttpClients_NoRequestSteps_DoesNothing()
         {
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("name", "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
 
             // Create Moq proxy instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -537,7 +576,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
                 .Returns(new Mock<ILogger>().Object);
@@ -555,9 +594,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string>()
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
-            
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
+
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
@@ -581,7 +621,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var step1 = requestStep1.As<IStep>();
             stepFactory.Setup(f => f.Create("Frank"))
                 .Returns<string>(s => step1.Object);
- 
+
             var requestStep2 = new Mock<IRequestStep>(MockBehavior.Strict);
             requestStep2.Setup(rs => rs.ReuseHttpMessageHandler).Returns(false);
             requestStep2.Setup(rs => rs.ClientName).Returns("Xi");
@@ -597,7 +637,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
@@ -615,8 +655,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string>()
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -652,7 +693,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -670,8 +711,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string>()
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -707,7 +749,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -720,8 +762,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         [TestMethod]
         public void ConfigureHttpClients_NullClient_Throws()
         {
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -757,7 +800,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -775,8 +818,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string> { "Amanda", "Ted" }
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -812,7 +856,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
@@ -829,8 +873,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string> { "Amanda" }
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -867,7 +912,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
             registry.ConfigureHttpClients(httpClientFactory.Object);
 
@@ -885,8 +930,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = null
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -922,7 +968,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -940,8 +986,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string> { null }
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -977,7 +1024,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -995,8 +1042,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string> { "MissingValue" }
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -1032,7 +1080,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -1050,8 +1098,9 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 Policies = new List<string> { "Amanda" }
             };
 
-            // Create SF.Mock settings
-            var settings = CreateDefaultSettings();
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            settings.SetupSettingDefaults();
 
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -1087,7 +1136,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Act
             var registry = new Registry(
-                settings, stepFactory.Object, processorFactory.Object,
+                settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
@@ -1095,54 +1144,46 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 () => registry.ConfigureHttpClients(httpClientFactory.Object));
             requestStep.Verify(rs => rs.Configure(It.IsAny<IHttpClientFactory>(), It.IsAny<AsyncPolicy<HttpResponseMessage>>()), Times.Never);
         }
+    }
 
-
-        private ConfigurationSettings CreateDefaultSettings()
+    internal static class MyMock
+    {
+        internal static void SetupSettingDefaults(this Mock<IRegistrySettings> mock)
         {
-            // Create configuration structures
-            var configurations = new ConfigurationSectionCollection();
-            var settings = MockConfigurationPackage.CreateConfigurationSettings(configurations);
+            // Add processors
+            IEnumerable<KeyValuePair<string, string>> processors = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Bob", "Bob")
+            };
+            mock.Setup(s => s.TryGetSection(Registry.ProcessorsSection, out processors))
+                .Returns(true);
 
-            // Add sections
-            var processorSection = MockConfigurationPackage.CreateConfigurationSection(Registry.ProcessorsSection);
-            var stepSection = MockConfigurationPackage.CreateConfigurationSection(Registry.StepsSection);
-            var policiesSection = MockConfigurationPackage.CreateConfigurationSection(Registry.PoliciesSection);
-            var clientsSection = MockConfigurationPackage.CreateConfigurationSection(Registry.ClientsSection);
-            configurations.Add(processorSection);
-            configurations.Add(stepSection);
-            configurations.Add(policiesSection);
-            configurations.Add(clientsSection);
+            // Add steps
+            IEnumerable<KeyValuePair<string, string>> steps = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Frank", "Frank"),
+                new KeyValuePair<string, string>("Mary", "Mary")
+            };
+            mock.Setup(s => s.TryGetSection(Registry.StepsSection, out steps))
+                .Returns(true);
 
-            // Add processors parameters
-            ConfigurationProperty processor = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Bob", "Bob");
-            processorSection.Parameters.Add(processor);
+            // Add policies
+            IEnumerable<KeyValuePair<string, string>> policies = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Amanda", "Amanda"),
+                new KeyValuePair<string, string>("Max", "Max"),
+                new KeyValuePair<string, string>("Ted", "Ted")
+            };
+            mock.Setup(s => s.TryGetSection(Registry.PoliciesSection, out policies))
+                .Returns(true);
 
-            // Add step parameters
-            ConfigurationProperty step1 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Frank", "Frank");
-            ConfigurationProperty step2 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Mary", "Mary");
-            stepSection.Parameters.Add(step1);
-            stepSection.Parameters.Add(step2);
-
-            // Add policy parameters
-            ConfigurationProperty policy1 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Amanda", "Amanda");
-            ConfigurationProperty policy2 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Max", "Max");
-            ConfigurationProperty policy3 = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Ted", "Ted");
-            policiesSection.Parameters.Add(policy1);
-            policiesSection.Parameters.Add(policy2);
-            policiesSection.Parameters.Add(policy3);
-
-            // Add clients parameters
-            ConfigurationProperty client = MockConfigurationPackage
-                .CreateConfigurationSectionParameters("Xi", "Xi");
-            clientsSection.Parameters.Add(client);
-
-            return settings;
+            // Add clients
+            IEnumerable<KeyValuePair<string, string>> clients = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Xi", "Xi")
+            };
+            mock.Setup(s => s.TryGetSection(Registry.ClientsSection, out clients))
+                .Returns(true);
         }
     }
 }
