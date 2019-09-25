@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.CircuitBreaker;
-using Policy = CoreService.Simulation.HttpClientConfiguration.PolicyExtensions;
+using Policy = ClusterEmulator.Service.Simulation.HttpClientConfiguration.PolicyExtensions;
 
 namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 {
