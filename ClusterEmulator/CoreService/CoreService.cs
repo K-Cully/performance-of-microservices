@@ -1,9 +1,8 @@
+using ClusterEmulator.Service.Shared.Configuration;
 using ClusterEmulator.Service.Simulation.Core;
 using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using ClusterEmulator.Service.Simulation.Processors;
 using ClusterEmulator.Service.Simulation.Steps;
-using CoreService.Configuration;
-using CoreService.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
@@ -15,7 +14,6 @@ using Serilog.Core.Enrichers;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Fabric.Description;
 using System.IO;
 
 namespace CoreService

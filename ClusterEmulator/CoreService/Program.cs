@@ -1,4 +1,4 @@
-using CoreService.Telemetry;
+using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.Services.Runtime;
