@@ -1,4 +1,4 @@
-﻿using CoreService.Model;
+﻿using ClusterEmulator.Service.Models;
 using CoreService.Simulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,11 +7,9 @@ using Moq.Contrib.HttpClient;
 using Newtonsoft.Json;
 using Polly;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Steps
