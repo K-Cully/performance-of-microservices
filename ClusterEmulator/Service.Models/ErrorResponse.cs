@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace CoreService.Model
+namespace Service.Models
 {
     public class ErrorResponse
     {

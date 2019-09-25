@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
-namespace CoreService.Model
+namespace Service.Models
 {
     /// <summary>
     /// An adaptable request object containing a list of values
