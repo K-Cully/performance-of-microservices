@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoreService.Model
+namespace Service.Models
 {
     public class SuccessResponse
     {
