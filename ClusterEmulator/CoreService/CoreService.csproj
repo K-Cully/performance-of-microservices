@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Service.Models\ClusterEmulator.Service.Models.csproj" />
+    <ProjectReference Include="..\Service.Shared\ClusterEmulator.Service.Shared.csproj" />
     <ProjectReference Include="..\Service.Simulation\ClusterEmulator.Service.Simulation.csproj" />
   </ItemGroup>
 
