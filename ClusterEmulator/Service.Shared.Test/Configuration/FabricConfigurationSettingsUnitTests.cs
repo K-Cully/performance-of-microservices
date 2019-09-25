@@ -8,7 +8,7 @@ using System.Fabric.Description;
 using System.Linq;
 using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
 
-namespace CoreService.Test.Controllers
+namespace ClusterEmulator.Service.Shared.Test.Configuration
 {
     [TestClass]
     public class FabricConfigurationSettingsUnitTests

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Test.Telemetry
+namespace ClusterEmulator.Service.Shared.Test.Telemetry
 {
     [TestClass]
     public class OperationTelemetryConverterUnitTests
