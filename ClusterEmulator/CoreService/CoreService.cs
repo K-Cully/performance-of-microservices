@@ -1,21 +1,22 @@
-using System.Collections.Generic;
-using System.Fabric;
-using System.IO;
+using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
+using CoreService.Configuration;
+using CoreService.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using CoreService.Simulation.Steps;
-using CoreService.Simulation.Core;
-using CoreService.Simulation.Processors;
-using CoreService.Simulation.HttpClientConfiguration;
+using Serilog;
+using Serilog.Core;
 using Serilog.Core.Enrichers;
 using System;
-using Serilog;
+using System.Collections.Generic;
+using System.Fabric;
 using System.Fabric.Description;
-using Serilog.Core;
-using CoreService.Telemetry;
+using System.IO;
 
 namespace CoreService
 {
@@ -43,8 +44,7 @@ namespace CoreService
                 new PropertyEnricher("ServiceTypeName", context.ServiceTypeName),
                 new PropertyEnricher("ServiceName", context.ServiceName),
                 new PropertyEnricher("PartitionId", context.PartitionId),
-                new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId),
-                new OperationIdEnricher()
+                new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId)
             };
 
             // Add service context to logger
@@ -69,8 +69,9 @@ namespace CoreService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext)
-                                            .AddSingleton<ConfigurationSettings>(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
+                                            .AddSingleton(serviceContext)
+                                            .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
+                                            .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
                                             .AddSingleton<IPolicyFactory, PolicyFactory>()
                                             .AddSingleton<IStepFactory, StepFactory>()
                                             .AddSingleton<IConfigFactory<Processor>, ConfigFactory<Processor>>()

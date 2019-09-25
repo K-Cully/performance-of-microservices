@@ -1,6 +1,6 @@
 ﻿
-using CoreService.Model;
-using CoreService.Simulation.Core;
+using ClusterEmulator.Service.Models;
+using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,6 +33,7 @@ namespace CoreService.Controllers
         }
 
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Preventing general exceptions being returned to the user")]
         private async Task<IActionResult> ProcessRequestAsync(string name, string caller)
         {
             if (string.IsNullOrWhiteSpace(name))

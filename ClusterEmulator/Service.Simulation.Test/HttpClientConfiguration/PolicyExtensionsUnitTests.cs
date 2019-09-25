@@ -1,0 +1,20 @@
+﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polly;
+using System.Net.Http;
+
+namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
+{
+    [TestClass]
+    public class PolicyExtensionsUnitTests
+    {
+        [TestMethod]
+        public void HandleHttpRequests_ReturnsPolicyBuilder()
+        {
+            var builder = PolicyExtensions.HandleHttpRequests();
+
+            Assert.IsNotNull(builder);
+            Assert.IsInstanceOfType(builder, typeof(PolicyBuilder<HttpResponseMessage>));
+        }
+    }
+}

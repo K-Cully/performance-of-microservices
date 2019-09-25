@@ -27,4 +27,9 @@
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Service.Models\ClusterEmulator.Service.Models.csproj" />
+    <ProjectReference Include="..\Service.Simulation\ClusterEmulator.Service.Simulation.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -13,7 +13,6 @@ namespace CoreService
 {
     internal static class Program
     {
-        private const string Development = "Development";
         private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
 
 
