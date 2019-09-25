@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Service.Models
+namespace ClusterEmulator.Service.Models
 {
     public class SuccessResponse
     {
