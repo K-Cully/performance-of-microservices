@@ -1,8 +1,4 @@
-using ClusterEmulator.Service.Shared.Configuration;
-using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
-using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
+using ClusterEmulator.Service.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
@@ -68,14 +64,7 @@ namespace CoreService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton(serviceContext)
-                                            .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
-                                            .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
-                                            .AddSingleton<IPolicyFactory, PolicyFactory>()
-                                            .AddSingleton<IStepFactory, StepFactory>()
-                                            .AddSingleton<IConfigFactory<Processor>, ConfigFactory<Processor>>()
-                                            .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
-                                            .AddSingleton<IRegistry, Registry>()
-                                            .AddScoped<IEngine, Engine>())
+                                            .AddSimulationEngine(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseSerilog(Log, dispose: true)
