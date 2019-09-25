@@ -1,6 +1,6 @@
-﻿using CoreService.Simulation.Processors;
-using CoreService.Simulation.Steps;
-using CoreService.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using Polly;
 using Polly.Registry;
 using System.Collections.Generic;

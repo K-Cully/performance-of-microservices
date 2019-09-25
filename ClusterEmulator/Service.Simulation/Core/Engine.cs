@@ -1,5 +1,5 @@
-﻿using CoreService.Simulation.Processors;
-using CoreService.Simulation.Steps;
+﻿using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

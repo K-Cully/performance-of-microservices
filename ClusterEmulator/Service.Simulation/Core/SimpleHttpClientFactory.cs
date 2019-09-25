@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

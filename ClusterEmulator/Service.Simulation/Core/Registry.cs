@@ -1,6 +1,6 @@
-﻿using CoreService.Simulation.HttpClientConfiguration;
-using CoreService.Simulation.Processors;
-using CoreService.Simulation.Steps;
+﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using ClusterEmulator.Service.Simulation.Processors;
+using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Registry;
