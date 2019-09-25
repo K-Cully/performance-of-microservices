@@ -26,7 +26,7 @@ namespace CoreService.Test.Controllers
             var engine = new Mock<IEngine>(MockBehavior.Strict);
 
             // Act
-            _ = new AdaptableController(null, engine.Object);
+            _ = new DummyController(null, engine.Object);
         }
 
 
@@ -36,10 +36,10 @@ namespace CoreService.Test.Controllers
         public void Constructor_Throws_WhenPassedNullEngine()
         {
             // Setup
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Strict);
 
             // Act
-            _ = new AdaptableController(logger.Object, null);
+            _ = new DummyController(logger.Object, null);
         }
 
 
@@ -49,8 +49,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get(null, "test").ConfigureAwait(false);
@@ -70,8 +70,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Options(null, null).ConfigureAwait(false);
@@ -91,8 +91,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -113,8 +113,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
@@ -134,8 +134,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
             controller.ModelState.AddModelError("value_2", "value_2 is not valid");
 
@@ -158,8 +158,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -180,8 +180,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Put("test", null, "test").ConfigureAwait(false);
@@ -201,8 +201,8 @@ namespace CoreService.Test.Controllers
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
 
             // Act
@@ -227,8 +227,8 @@ namespace CoreService.Test.Controllers
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(name))
                 .ReturnsAsync(okResult);
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get(name, "test").ConfigureAwait(false);
@@ -250,9 +250,9 @@ namespace CoreService.Test.Controllers
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException(message));
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
 
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
@@ -276,8 +276,8 @@ namespace CoreService.Test.Controllers
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new Exception(message));
-            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new AdaptableController(logger.Object, engine.Object);
+            var logger = new Mock<ILogger<DummyController>>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
@@ -287,6 +287,15 @@ namespace CoreService.Test.Controllers
             var statusCode = result as StatusCodeResult;
             Assert.AreEqual(StatusCodes.Status500InternalServerError, statusCode.StatusCode,
                 "Status code should be 500");
+        }
+
+
+        private class DummyController : AdaptableController
+        {
+            public DummyController(ILogger<DummyController> logger, IEngine simulationEngine)
+                : base(logger, simulationEngine)
+            {
+            }
         }
     }
 }
