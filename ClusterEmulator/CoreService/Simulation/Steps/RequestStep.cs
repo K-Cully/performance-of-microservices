@@ -1,4 +1,4 @@
-﻿using CoreService.Model;
+﻿using ClusterEmulator.Service.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;

@@ -1,4 +1,4 @@
-using CoreService.Model;
+using ClusterEmulator.Service.Models;
 using CoreService.Simulation.Core;
 using CoreService.Simulation.Processors;
 using CoreService.Simulation.Steps;
@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreService.Test.Simulation.Core

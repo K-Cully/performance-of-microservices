@@ -1,5 +1,5 @@
 ﻿
-using CoreService.Model;
+using ClusterEmulator.Service.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

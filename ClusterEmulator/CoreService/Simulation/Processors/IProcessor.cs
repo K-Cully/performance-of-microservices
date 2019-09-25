@@ -1,4 +1,4 @@
-﻿using CoreService.Model;
+﻿using ClusterEmulator.Service.Models;
 using System.Collections.Generic;
 
 namespace CoreService.Simulation.Processors
