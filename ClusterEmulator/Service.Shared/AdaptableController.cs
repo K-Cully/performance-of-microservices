@@ -1,5 +1,4 @@
-﻿
-using ClusterEmulator.Service.Models;
+﻿using ClusterEmulator.Service.Models;
 using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreService.Controllers
+namespace ClusterEmulator.Service.Shared
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    /// <summary>
+    /// An abstract controller that can be inherited to provide the configured API for a configurable service.
+    /// </summary>
     [Produces("application/json")]
     [Consumes("application/json")]
-    public class AdaptableController : ControllerBase
+    public abstract class AdaptableController : ControllerBase
     {
         private readonly IEngine engine;
         private readonly ILogger<AdaptableController> log;
@@ -26,7 +26,7 @@ namespace CoreService.Controllers
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
-        public AdaptableController(ILogger<AdaptableController> logger, IEngine simulationEngine)
+        protected AdaptableController(ILogger<AdaptableController> logger, IEngine simulationEngine)
         {
             log = logger ?? throw new ArgumentNullException(nameof(logger));
             engine = simulationEngine ?? throw new ArgumentNullException(nameof(simulationEngine));

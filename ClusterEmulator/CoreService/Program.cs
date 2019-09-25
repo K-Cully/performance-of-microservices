@@ -1,4 +1,4 @@
-using CoreService.Telemetry;
+using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -36,10 +36,10 @@ namespace CoreService
             {
                 var telemetry = new TelemetryConfiguration("");
                 Logger log = new LoggerConfiguration()
-                            .ReadFrom.Configuration(Configuration)
-                            .Enrich.FromLogContext()
-                            .WriteTo.ApplicationInsights(telemetry, new OperationTelemetryConverter())
-                            .CreateLogger();
+                                .ReadFrom.Configuration(Configuration)
+                                .Enrich.FromLogContext()
+                                .WriteTo.ApplicationInsights(telemetry, new OperationTelemetryConverter())
+                                .CreateLogger();
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync("CoreServiceType",

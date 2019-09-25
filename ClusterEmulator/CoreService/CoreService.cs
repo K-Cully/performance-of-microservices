@@ -1,9 +1,4 @@
-using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
-using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
-using CoreService.Configuration;
-using CoreService.Telemetry;
+using ClusterEmulator.Service.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
@@ -15,7 +10,6 @@ using Serilog.Core.Enrichers;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Fabric.Description;
 using System.IO;
 
 namespace CoreService
@@ -70,14 +64,7 @@ namespace CoreService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton(serviceContext)
-                                            .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
-                                            .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
-                                            .AddSingleton<IPolicyFactory, PolicyFactory>()
-                                            .AddSingleton<IStepFactory, StepFactory>()
-                                            .AddSingleton<IConfigFactory<Processor>, ConfigFactory<Processor>>()
-                                            .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
-                                            .AddSingleton<IRegistry, Registry>()
-                                            .AddScoped<IEngine, Engine>())
+                                            .AddSimulationEngine(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseSerilog(Log, dispose: true)

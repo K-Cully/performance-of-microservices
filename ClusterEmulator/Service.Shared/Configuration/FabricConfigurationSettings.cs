@@ -4,7 +4,7 @@ using System.Fabric.Description;
 using System.Linq;
 using ClusterEmulator.Service.Simulation.Core;
 
-namespace CoreService.Configuration
+namespace ClusterEmulator.Service.Shared.Configuration
 {
     public class FabricConfigurationSettings : IRegistrySettings
     {

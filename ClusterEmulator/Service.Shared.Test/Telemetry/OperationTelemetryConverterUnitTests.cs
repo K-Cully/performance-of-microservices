@@ -1,4 +1,4 @@
-﻿using CoreService.Telemetry;
+﻿using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoreService.Test.Telemetry
+namespace ClusterEmulator.Service.Shared.Test.Telemetry
 {
     [TestClass]
     public class OperationTelemetryConverterUnitTests
