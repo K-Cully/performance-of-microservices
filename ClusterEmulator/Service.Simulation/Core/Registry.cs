@@ -6,7 +6,6 @@ using Polly;
 using Polly.Registry;
 using System;
 using System.Collections.Generic;
-using System.Fabric.Description;
 using System.Linq;
 using System.Net.Http;
 
@@ -81,8 +80,6 @@ namespace ClusterEmulator.Service.Simulation.Core
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
         {
-            // TODO: Remove direct dependency on Service Fabric Configuration Settings and Service Fabric NuGet
-
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
             _ = stepFactory ?? throw new ArgumentNullException(nameof(stepFactory));
             _ = processorFactory ?? throw new ArgumentNullException(nameof(processorFactory));
