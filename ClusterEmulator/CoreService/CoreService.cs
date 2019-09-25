@@ -43,8 +43,7 @@ namespace CoreService
                 new PropertyEnricher("ServiceTypeName", context.ServiceTypeName),
                 new PropertyEnricher("ServiceName", context.ServiceName),
                 new PropertyEnricher("PartitionId", context.PartitionId),
-                new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId),
-                new OperationIdEnricher()
+                new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId)
             };
 
             // Add service context to logger
