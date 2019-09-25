@@ -1,5 +1,5 @@
-﻿using CoreService.Simulation.Core;
-using CoreService.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace CoreService.Test.Simulation.Core
+namespace ClusterEmulator.Service.Simulation.Test.Core
 {
     [TestClass]
     public class SimpleHttpClientFactoryUnitTests

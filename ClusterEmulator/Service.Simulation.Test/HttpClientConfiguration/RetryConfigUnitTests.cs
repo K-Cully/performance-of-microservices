@@ -1,4 +1,4 @@
-﻿using CoreService.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace CoreService.Test.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
 {
     [TestClass]
     public class RetryConfigUnitTests
