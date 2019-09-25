@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CoreService\CoreService.csproj" />
+    <ProjectReference Include="..\Service.Simulation\ClusterEmulator.Service.Simulation.csproj" />
   </ItemGroup>
 
 </Project>
