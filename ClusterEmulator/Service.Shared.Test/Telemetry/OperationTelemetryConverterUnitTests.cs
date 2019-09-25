@@ -1,4 +1,4 @@
-﻿using CoreService.Telemetry;
+﻿using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;

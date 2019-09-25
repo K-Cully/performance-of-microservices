@@ -1,5 +1,5 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using CoreService.Configuration;
+﻿using ClusterEmulator.Service.Shared.Configuration;
+using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceFabric.Mocks;
 using System;
