@@ -9,8 +9,8 @@
     <!-- TODO: Complete -->
   </Section>
   <Section Name="Steps">
-    <Parameter Name="GETNameLookup" Value="{ type : 'RequestStep', step : { id : 'GN', client : 'Names', method : 'get', path : '/GetName', size : 32, reuseSockets : true, trueAsync : false } }"/>
-    <Parameter Name="POSTNameLookup" Value="{ type : 'RequestStep', step : { id : 'PN', client : 'Names', method : 'post', path : '/GetNames', size : 320, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="GETNameLookup" Value="{ type : 'RequestStep', step : { id : 'GN', client : 'NameLookup', method : 'get', path : '/GetName', size : 32, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="POSTNameLookup" Value="{ type : 'RequestStep', step : { id : 'PN', client : 'NameLookup', method : 'post', path : '/GetNames', size : 320, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="GETRandomId" Value="{ type : 'RequestStep', step : { id : 'GR', client : 'Random', method : 'get', path : '/GetRandom', size : 32, reuseSockets : true, trueAsync : false } }"/>
 
     <!--TODO: Allow this to run multiple in parallel-->
@@ -19,7 +19,7 @@
   </Section>
   <Section Name="Clients">
     <Parameter Name="Random" Value="{ baseAddress : 'http://localhost:8670/api/random', policies : [], headers : { 'Accept' : 'application/json' } }" />
-    <Parameter Name="Names" Value="{ baseAddress : 'http://localhost:8458/api/names', policies : [], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="NameLookup" Value="{ baseAddress : 'http://localhost:8991/api/lookup', policies : [], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
   </Section>
