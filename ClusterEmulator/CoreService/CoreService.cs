@@ -1,12 +1,11 @@
 using ClusterEmulator.Service.Shared.Extensions;
+using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Serilog;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
@@ -32,17 +31,8 @@ namespace CoreService
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Create log enrichers with service execution context
-            ILogEventEnricher[] properties = new ILogEventEnricher[]
-            {
-                new PropertyEnricher("ServiceTypeName", context.ServiceTypeName),
-                new PropertyEnricher("ServiceName", context.ServiceName),
-                new PropertyEnricher("PartitionId", context.PartitionId),
-                new PropertyEnricher("InstanceId", context.ReplicaOrInstanceId)
-            };
-
             // Add service context to logger
-            Log = logger.ForContext(properties);
+            Log = logger.ForContext(new StatelessServiceEnricher(context));
         }
 
 
