@@ -20,6 +20,8 @@ namespace ClusterEmulator.Service.Shared.Telemetry
 
         private LogEventProperty instanceId;
 
+        private LogEventProperty nodeName;
+
 
         /// <summary>
         /// Creates an instance of <see cref="StatelessServiceEnricher"/>
@@ -45,11 +47,13 @@ namespace ClusterEmulator.Service.Shared.Telemetry
             serviceName = serviceName ?? propertyFactory.CreateProperty("ServiceName", Context.ServiceName);
             partitionId = partitionId ?? propertyFactory.CreateProperty("PartitionId", Context.PartitionId);
             instanceId = instanceId ?? propertyFactory.CreateProperty("InstanceId", Context.InstanceId);
+            nodeName = nodeName ?? propertyFactory.CreateProperty("NodeName", Context.NodeContext?.NodeName);
 
             logEvent.AddPropertyIfAbsent(serviceTypeName);
             logEvent.AddPropertyIfAbsent(serviceName);
             logEvent.AddPropertyIfAbsent(partitionId);
             logEvent.AddPropertyIfAbsent(instanceId);
+            logEvent.AddPropertyIfAbsent(nodeName);
         }
     }
 }
