@@ -41,8 +41,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// The optional id to use for cache key isolation
         /// </summary>
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("cacheKey")]
+        public string CacheId { get; set; }
 
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                     pendingDisposals.Add(response);
                 }
 
-                Logger.LogInformation("{Id}: Retrieved response {StatusCode}", Id, response.StatusCode);
+                Logger.LogInformation("{Id}: Retrieved response {StatusCode}", CacheId, response.StatusCode);
                 return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
             }
         }
@@ -229,17 +229,17 @@ namespace ClusterEmulator.Service.Simulation.Steps
             }
             catch (TimeoutRejectedException ex)
             {
-                Logger.LogWarning(ex, "{Id}: The operation timed out", Id);
+                Logger.LogWarning(ex, "{Id}: The operation timed out", CacheId);
             }
             catch (BrokenCircuitException ex)
             {
-                Logger.LogWarning(ex, "{Id}: Circuit is broken", Id);
+                Logger.LogWarning(ex, "{Id}: Circuit is broken", CacheId);
             }
             catch (Exception ex)
                 when (ex is OperationCanceledException
                 || ex.InnerException is OperationCanceledException)
             {
-                Logger.LogWarning(ex, "{Id}: The operation was cancelled", Id);
+                Logger.LogWarning(ex, "{Id}: The operation was cancelled", CacheId);
             }
 
             return null;
@@ -256,7 +256,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException($"{Method} is not supported");
             }
 
-            Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", Id, Method);
+            Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", CacheId, Method);
 
             HttpContent content = null;
             if (method == HttpMethod.Put 
@@ -317,11 +317,11 @@ namespace ClusterEmulator.Service.Simulation.Steps
         {
             requestTask.ContinueWith(task =>
             {
-                Logger.LogError("{Id}: Asynchronous request faulted", Id);
+                Logger.LogError("{Id}: Asynchronous request faulted", CacheId);
                 task.Exception.Handle(ex =>
                 {
                     // Log and set all exceptions as handled to avoid rethrowing
-                    Logger.LogError(ex, "{Id}: Exception returned from asynchronous request", Id);
+                    Logger.LogError(ex, "{Id}: Exception returned from asynchronous request", CacheId);
                     return true;
                 });
             }, TaskContinuationOptions.OnlyOnFaulted);
@@ -353,7 +353,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             configured = true;
-            Logger.LogInformation("{Id}: Client factory configured successfully", Id);
+            Logger.LogInformation("{Id}: Client factory configured successfully", CacheId);
         }
 
 
@@ -384,12 +384,12 @@ namespace ClusterEmulator.Service.Simulation.Steps
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             policy = requestPolicy;
             configured = true;
-            Logger.LogInformation("{Id}: Client factory and policies configured successfully", Id);
+            Logger.LogInformation("{Id}: Client factory and policies configured successfully", CacheId);
         }
 
 
         [JsonIgnore]
-        private Context Context => new Context($"{nameof(RequestStep)}-{Id ?? "NULL"}-{Method}");
+        private Context Context => new Context($"{nameof(RequestStep)}-{CacheId ?? "NULL"}-{Method}");
 
 
         [JsonIgnore]
