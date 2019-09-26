@@ -18,6 +18,12 @@ namespace ClusterEmulator.Service.Simulation.Extensions
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = registry ?? throw new ArgumentNullException(nameof(registry));
 
+            if (registry.PolicyRegistry is null || registry.Clients is null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(registry.PolicyRegistry)} and {nameof(registry.Clients)} must be initialized.");
+            }
+
             // Register initialised policy registry
             services.AddPolicyRegistry(registry.PolicyRegistry);
 

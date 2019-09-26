@@ -64,7 +64,6 @@ namespace ClusterEmulator.Service.Shared.Test.Extensions
 
             // Act
             IServiceCollection collection = services.AddSimulationEngine(serviceContext);
-            ServiceProvider provider = services.BuildServiceProvider();
 
             // Verify
             Assert.IsNotNull(collection);
