@@ -43,8 +43,6 @@ namespace CoreService
                             c.DefaultRequestHeaders.Add(key, value);
                         }
                     }
-
-                    c.DefaultRequestHeaders.Add("User-Agent", $"ClusterEmulator.CoreService/1.0 (Client:{name})");
                 });
 
                 // Add Polly policies to http client builder.

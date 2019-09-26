@@ -59,8 +59,6 @@ namespace ClusterEmulator.Service.Simulation.Core
                         client.DefaultRequestHeaders.Add(key, value);
                     }
                 }
-
-                client.DefaultRequestHeaders.Add("User-Agent", $"ClusterEmulator.CoreService/1.0 (Client:{name})");
             }
             catch (Exception e)
             {
