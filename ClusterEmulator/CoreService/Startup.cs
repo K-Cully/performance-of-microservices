@@ -1,11 +1,10 @@
 ﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+using ClusterEmulator.Service.Simulation.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
 namespace CoreService
@@ -25,34 +24,7 @@ namespace CoreService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            // Register initialised policy registry
-            services.AddPolicyRegistry(Registry.PolicyRegistry);
-
-            // Enumerate all registered clients
-            var clients = new List<KeyValuePair<string, ClientConfig>>(Registry.Clients);
-            foreach ((string name, var config) in clients)
-            {
-                IHttpClientBuilder builder = services.AddHttpClient(name, c =>
-                {
-                    c.BaseAddress = new Uri(config.BaseAddress);
-                    if (config.RequestHeaders != null)
-                    {
-                        foreach ((string key, string value) in config.RequestHeaders)
-                        {
-                            c.DefaultRequestHeaders.Add(key, value);
-                        }
-                    }
-                });
-
-                // Add Polly policies to http client builder.
-                // Note that any policies added through the http client factory initialization
-                // must be of type IAsyncPolicy<HttpResponseMessage> or Polly will throw errors.
-                foreach(string policy in config.Policies)
-                {
-                    builder = builder.AddPolicyHandlerFromRegistry(policy);
-                }
-            }
+            services.AddSimulationEngineClients(Registry);
         }
 
 
