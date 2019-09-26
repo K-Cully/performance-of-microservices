@@ -113,15 +113,5 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             await Assert.ThrowsExceptionAsync<OutOfMemoryException>(
                 () => step.ExecuteAsync());
         }
-
-
-        [TestMethod]
-        public void InitializeLogger_NullLogger_ThrowsException()
-        {
-            var step = new LoadStep();
-
-            Assert.ThrowsException<ArgumentNullException>(
-                () => step.InitializeLogger(null));
-        }
     }
 }

@@ -3,6 +3,9 @@ using Newtonsoft.Json.Converters;
 
 namespace ClusterEmulator.Service.Simulation.Steps
 {
+    /// <summary>
+    /// An enumeration of group clause conditions.
+    /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum GroupClause
     {

@@ -894,15 +894,5 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             step.Configure(factory.Object, policy);
             Assert.IsTrue(step.Configured);
         }
-
-
-        [TestMethod]
-        public void InitializeLogger_NullLogger_ThrowsException()
-        {
-            var step = new RequestStep();
-
-            Assert.ThrowsException<ArgumentNullException>(
-                () => step.InitializeLogger(null));
-        }
     }
 }
