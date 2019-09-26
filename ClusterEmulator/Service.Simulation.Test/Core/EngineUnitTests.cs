@@ -118,6 +118,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -163,9 +167,17 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
-            stepMock.Setup(step => step.ExecuteAsync())
+            failStepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Fail);
+            failStepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            failStepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -211,9 +223,17 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
-            stepMock.Setup(step => step.ExecuteAsync())
+            failStepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.SimulatedFail);
+            failStepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            failStepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))

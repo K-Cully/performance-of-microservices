@@ -53,12 +53,12 @@ namespace ClusterEmulator.Service.Simulation.Core
             ObjectResult errorResult = new ObjectResult(processor.ErrorPayload);
             foreach (string stepName in processor.Steps)
             {
-                SimulationStep step = registry.GetStep(stepName) as SimulationStep;
+                IStep step = registry.GetStep(stepName);
                 ExecutionStatus status = ExecutionStatus.Fail;
 
-                status = step.ParallelCount.HasValue && step.ParallelCount > 1
-                    ? await ExcuteStepInParallel(name, stepName, step).ConfigureAwait(false)
-                    : await step.ExecuteAsync().ConfigureAwait(false);
+                status = step.ParallelCount == null || step.ParallelCount < 2
+                    ? await step.ExecuteAsync().ConfigureAwait(false)
+                    : await ExcuteStepInParallel(name, stepName, step).ConfigureAwait(false);
 
                 switch (status)
                 {
@@ -81,7 +81,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         }
 
 
-        private async Task<ExecutionStatus> ExcuteStepInParallel(string name, string stepName, SimulationStep step)
+        private async Task<ExecutionStatus> ExcuteStepInParallel(string name, string stepName, IStep step)
         {
             log.LogDebug("Executing {Step} {ParallelCount} times in parallel",
                 stepName, step.ParallelCount);
