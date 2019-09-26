@@ -76,8 +76,15 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
 
             // Verify
             propertyFactory.Verify(
-                pf => pf.CreateProperty(It.IsAny<string>(), It.IsAny<object>(), false),
-                Times.Exactly(5));
+                pf => pf.CreateProperty("ServiceTypeName", It.IsAny<string>(), false), Times.Once);
+            propertyFactory.Verify(
+                pf => pf.CreateProperty("ServiceName", It.IsAny<Uri>(), false), Times.Once);
+            propertyFactory.Verify(
+                pf => pf.CreateProperty("PartitionId", It.IsAny<Guid>(), false), Times.Once);
+            propertyFactory.Verify(
+                pf => pf.CreateProperty("InstanceId", It.IsAny<long>(), false), Times.Once);
+            propertyFactory.Verify(
+                pf => pf.CreateProperty("NodeName", It.IsAny<string>(), false), Times.Once);
         }
     }
 }
