@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using ClusterEmulator.Service.Shared.Extensions;
+using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ServiceFabric.Data;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Fabric;
+using System.IO;
 
 namespace NameLookupService
 {
@@ -19,9 +18,23 @@ namespace NameLookupService
     /// </summary>
     internal sealed class NameLookupService : StatelessService
     {
-        public NameLookupService(StatelessServiceContext context)
+        private ILogger Log { get; }
+
+
+        /// <summary>
+        /// Creates a new instance of <see cref="NameLookupService"/>
+        /// </summary>
+        /// <param name="context">The stateless service context to initialize the service with.</param>
+        /// <param name="logger">The <see cref="ILogger"/> instance to register with the ASP.Net Core logging pipeline</param>
+        public NameLookupService(StatelessServiceContext context, ILogger logger)
             : base(context)
-        { }
+        {
+            _ = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            // Add service context to logger
+            Log = logger.ForContext(new StatelessServiceEnricher(context));
+        }
+
 
         /// <summary>
         /// Optional override to create listeners (like tcp, http) for this service instance.
@@ -34,13 +47,17 @@ namespace NameLookupService
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
+                        Log.Information("Starting Kestrel on {Endpoint}", url);
+
                         return new WebHostBuilder()
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext))
+                                            .AddSingleton(serviceContext)
+                                            .AddSimulationEngine(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
+                                    .UseSerilog(Log, dispose: true)
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
