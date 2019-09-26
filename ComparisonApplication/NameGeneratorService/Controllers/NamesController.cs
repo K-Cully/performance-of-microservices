@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NameGeneratorService.Core;
@@ -37,6 +38,13 @@ namespace NameGeneratorService.Controllers
         public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
             string name = await NameProcessor.GenerateNameAsync().ConfigureAwait(false);
+            if (name is null)
+            {
+                Logger.LogError("{Operation} failed. An unexpected error occurred",
+                    nameof(NameProcessor.GenerateNameAsync));
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
             if (string.IsNullOrWhiteSpace(name))
             {
                 Logger.LogError("{Operation} failed to generate a valid name",
@@ -54,9 +62,9 @@ namespace NameGeneratorService.Controllers
             List<string> names = (await NameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
             if (names is null)
             {
-                Logger.LogError("{Operation} failed to generate any valid names",
+                Logger.LogError("{Operation} failed. An unexpected error occurred",
                     nameof(NameProcessor.GenerateNamesAsync));
-                return new List<string>();
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
             if (names.Any(name => string.IsNullOrWhiteSpace(name)))
