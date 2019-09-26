@@ -54,6 +54,7 @@ namespace NameGeneratorService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton(serviceContext)
+                                            .AddHttpClient()
                                             .AddSimulationEngine(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
