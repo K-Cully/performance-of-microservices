@@ -21,10 +21,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public void Deserialization_AllData_CreatesValidInstance()
         {
             RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
-                "{ id : 'teddy', client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
+                "{ cacheKey : 'teddy', client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
 
             Assert.IsFalse(step.Asynchrounous);
-            Assert.AreEqual("teddy", step.Id);
+            Assert.AreEqual("teddy", step.CacheId);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);
@@ -40,7 +40,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
                 "{ client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
 
             Assert.IsFalse(step.Asynchrounous);
-            Assert.IsNull(step.Id);
+            Assert.IsNull(step.CacheId);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);
@@ -893,16 +893,6 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
             step.Configure(factory.Object, policy);
             Assert.IsTrue(step.Configured);
-        }
-
-
-        [TestMethod]
-        public void InitializeLogger_NullLogger_ThrowsException()
-        {
-            var step = new RequestStep();
-
-            Assert.ThrowsException<ArgumentNullException>(
-                () => step.InitializeLogger(null));
         }
     }
 }

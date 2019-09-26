@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ClusterEmulator.Service.Simulation.Steps
 {
-    public class RequestStep : IStep, IRequestStep
+    public class RequestStep : SimulationStep, IRequestStep
     {
         [JsonIgnore]
         private const int ChunkChars = 64;
@@ -41,8 +41,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// The optional id to use for cache key isolation
         /// </summary>
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("cacheKey")]
+        public string CacheId { get; set; }
 
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         /// <remarks>Will need to be updated to use streaming if support for responses >50MB is ever required.</remarks>
-        public async Task<ExecutionStatus> ExecuteAsync()
+        public async override Task<ExecutionStatus> ExecuteAsync()
         {
             if (Logger is null)
             {
@@ -208,7 +208,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                     pendingDisposals.Add(response);
                 }
 
-                Logger.LogInformation("{Id}: Retrieved response {StatusCode}", Id, response.StatusCode);
+                Logger.LogInformation("{Id}: Retrieved response {StatusCode}", CacheId, response.StatusCode);
                 return response.IsSuccessStatusCode ? ExecutionStatus.Success : ExecutionStatus.Fail;
             }
         }
@@ -229,17 +229,17 @@ namespace ClusterEmulator.Service.Simulation.Steps
             }
             catch (TimeoutRejectedException ex)
             {
-                log.LogWarning(ex, "{Id}: The operation timed out", Id);
+                Logger.LogWarning(ex, "{Id}: The operation timed out", CacheId);
             }
             catch (BrokenCircuitException ex)
             {
-                log.LogWarning(ex, "{Id}: Circuit is broken", Id);
+                Logger.LogWarning(ex, "{Id}: Circuit is broken", CacheId);
             }
             catch (Exception ex)
                 when (ex is OperationCanceledException
                 || ex.InnerException is OperationCanceledException)
             {
-                log.LogWarning(ex, "{Id}: The operation was cancelled", Id);
+                Logger.LogWarning(ex, "{Id}: The operation was cancelled", CacheId);
             }
 
             return null;
@@ -256,7 +256,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException($"{Method} is not supported");
             }
 
-            Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", Id, Method);
+            Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", CacheId, Method);
 
             HttpContent content = null;
             if (method == HttpMethod.Put 
@@ -279,16 +279,6 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 request.Content = content;
                 return client.SendAsync(request, token);
             };
-        }
-
-
-        /// <summary>
-        /// Initializes a logger for the step instance.
-        /// </summary>
-        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public void InitializeLogger(ILogger logger)
-        {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -327,11 +317,11 @@ namespace ClusterEmulator.Service.Simulation.Steps
         {
             requestTask.ContinueWith(task =>
             {
-                Logger.LogError("{Id}: Asynchronous request faulted", Id);
+                Logger.LogError("{Id}: Asynchronous request faulted", CacheId);
                 task.Exception.Handle(ex =>
                 {
                     // Log and set all exceptions as handled to avoid rethrowing
-                    Logger.LogError(ex, "{Id}: Exception returned from asynchronous request", Id);
+                    Logger.LogError(ex, "{Id}: Exception returned from asynchronous request", CacheId);
                     return true;
                 });
             }, TaskContinuationOptions.OnlyOnFaulted);
@@ -363,7 +353,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             configured = true;
-            Logger.LogInformation("{Id}: Client factory configured successfully", Id);
+            Logger.LogInformation("{Id}: Client factory configured successfully", CacheId);
         }
 
 
@@ -394,20 +384,12 @@ namespace ClusterEmulator.Service.Simulation.Steps
             clientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             policy = requestPolicy;
             configured = true;
-            Logger.LogInformation("{Id}: Client factory and policies configured successfully", Id);
+            Logger.LogInformation("{Id}: Client factory and policies configured successfully", CacheId);
         }
 
 
         [JsonIgnore]
-        private ILogger log;
-
-
-        [JsonIgnore]
-        private ILogger Logger { get => log; set => log = log ?? value; }
-
-
-        [JsonIgnore]
-        private Context Context => new Context($"{nameof(RequestStep)}-{Id ?? "NULL"}-{Method}");
+        private Context Context => new Context($"{nameof(RequestStep)}-{CacheId ?? "NULL"}-{Method}");
 
 
         [JsonIgnore]

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ClusterEmulator.Service.Simulation.Core
@@ -52,7 +54,11 @@ namespace ClusterEmulator.Service.Simulation.Core
             foreach (string stepName in processor.Steps)
             {
                 IStep step = registry.GetStep(stepName);
-                ExecutionStatus status = await step.ExecuteAsync().ConfigureAwait(false);
+                ExecutionStatus status = ExecutionStatus.Fail;
+
+                status = step.ParallelCount == null || step.ParallelCount < 2
+                    ? await step.ExecuteAsync().ConfigureAwait(false)
+                    : await ExcuteStepInParallel(name, stepName, step).ConfigureAwait(false);
 
                 switch (status)
                 {
@@ -72,6 +78,46 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
 
             return new OkObjectResult(processor.SuccessPayload);
+        }
+
+
+        private async Task<ExecutionStatus> ExcuteStepInParallel(string name, string stepName, IStep step)
+        {
+            log.LogDebug("Executing {Step} {ParallelCount} times in parallel",
+                stepName, step.ParallelCount);
+
+            List<Task<ExecutionStatus>> tasks = new List<Task<ExecutionStatus>>();
+            for (int count = 0; count < step.ParallelCount; count++)
+            {
+                tasks.Add(step.ExecuteAsync());
+            }
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            ExecutionStatus status = ExecutionStatus.Fail;
+            switch (step.FailOnParallelFailures)
+            {
+                case GroupClause.All:
+                    log.LogInformation("{Step} failure set to {GroupClause} in {Processor}, returning any success or first failure",
+                        stepName, GroupClause.All, name);
+                    status = tasks.FirstOrDefault(t => t.Result == ExecutionStatus.Success)?.Result ??
+                        tasks.First(t => t.Result != ExecutionStatus.Success).Result;
+                    break;
+                case GroupClause.None:
+                    log.LogInformation("{Step} failure set to {GroupClause} in {Processor}, returning success",
+                        stepName, GroupClause.None, name);
+                    status = ExecutionStatus.Success;
+                    break;
+                case GroupClause.Undefined:
+                case GroupClause.Any:
+                default:
+                    log.LogInformation("{Step} failure set to {GroupClause} in {Processor}, returning first failure or success",
+                        stepName, GroupClause.Any, name);
+                    status = tasks.FirstOrDefault(t => t.Result != ExecutionStatus.Success)?.Result ?? ExecutionStatus.Success;
+                    break;
+            }
+
+            return status;
         }
     }
 }

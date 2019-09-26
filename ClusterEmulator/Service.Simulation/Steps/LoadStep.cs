@@ -12,16 +12,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
     /// A step that simulates CPU bound operations and memory allocation.
     /// </summary>
     [Serializable]
-    public class LoadStep : IStep
+    public class LoadStep : SimulationStep
     {
-        [JsonIgnore]
-        private ILogger log;
-
-
-        [JsonIgnore]
-        private ILogger Logger { get => log; set => log = log ?? value; }
-
-
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
@@ -52,7 +44,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// Executes the action defined by the step.
         /// </summary>
         /// <returns><see cref="ExecutionStatus.Success"/></returns>
-        public async Task<ExecutionStatus> ExecuteAsync()
+        public async override Task<ExecutionStatus> ExecuteAsync()
         {
             if (Logger is null)
             {
@@ -100,18 +92,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
             }
 
             await Task.WhenAll(coreTasks).ConfigureAwait(false);
-            log.LogInformation("Completed load generation step");
+            Logger.LogInformation("Completed load generation step");
             return ExecutionStatus.Success;
-        }
-
-
-        /// <summary>
-        /// Initializes a logger for the step instance.
-        /// </summary>
-        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public void InitializeLogger(ILogger logger)
-        {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 

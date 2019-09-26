@@ -118,6 +118,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -163,9 +167,17 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
-            stepMock.Setup(step => step.ExecuteAsync())
+            failStepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Fail);
+            failStepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            failStepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -211,9 +223,17 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             stepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
             Mock<IStep> failStepMock = new Mock<IStep>(MockBehavior.Strict);
-            stepMock.Setup(step => step.ExecuteAsync())
+            failStepMock.Setup(step => step.ExecuteAsync())
                 .ReturnsAsync(ExecutionStatus.SimulatedFail);
+            failStepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            failStepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
             registry.Setup(reg => reg.GetProcessor(processorName))
@@ -233,11 +253,186 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             ObjectResult objectResult = result as ObjectResult;
             Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
             Assert.AreEqual(StatusCodes.Status418ImATeapot, objectResult.StatusCode.Value,
-                "Status code should be InternalServerError");
+                "Status code should be Status418ImATeapot");
             Assert.IsInstanceOfType(objectResult.Value, typeof(ErrorResponse), "Result value should be an ErrorResponse");
             ErrorResponse value = objectResult.Value as ErrorResponse;
             Assert.IsFalse(string.IsNullOrEmpty(value.Error), "Error should be initialized with a valid string");
             Assert.AreEqual(errorPayloadSize / 2, value.Error.Length, "Erorr should be of the correct length");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessRequestAsync_ParallelAllSteps_OneSuccessful_ReturnsSuccessful()
+        {
+            // Arrange
+            string processorName = "processor";
+            string stepName = "step";
+            int payloadSize = 42;
+            int errorPayloadSize = 7;
+
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { stepName };
+            processor.SuccessPayloadSize = payloadSize;
+            processor.ErrorPayloadSize = errorPayloadSize;
+
+            GroupClause clause = GroupClause.All;
+            uint parallelCount = 3;
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.SetupSequence(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.SimulatedFail)
+                .ReturnsAsync(ExecutionStatus.Success)
+                .ReturnsAsync(ExecutionStatus.Fail);
+            stepMock.Setup(step => step.FailOnParallelFailures).Returns(clause);
+            stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
+
+            Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
+
+            // Verify
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be OkObjectResult");
+            OkObjectResult objectResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(objectResult.Value, typeof(SuccessResponse), "Result value should be a SuccessResponse");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessRequestAsync_ParallelAllSteps_AllFailures_ReturnsFirstFailure()
+        {
+            // Arrange
+            string processorName = "processor";
+            string stepName = "step";
+            int payloadSize = 42;
+            int errorPayloadSize = 7;
+
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { stepName };
+            processor.SuccessPayloadSize = payloadSize;
+            processor.ErrorPayloadSize = errorPayloadSize;
+
+            GroupClause clause = GroupClause.All;
+            uint parallelCount = 2;
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.SetupSequence(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.SimulatedFail)
+                .ReturnsAsync(ExecutionStatus.Fail);
+            stepMock.Setup(step => step.FailOnParallelFailures).Returns(clause);
+            stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
+
+            Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
+
+            // Verify
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
+            Assert.AreEqual(StatusCodes.Status418ImATeapot, objectResult.StatusCode.Value,
+                "Status code should be Status418ImATeapot");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessRequestAsync_ParallelNoneSteps_AllFailures_ReturnsSuccess()
+        {
+            // Arrange
+            string processorName = "processor";
+            string stepName = "step";
+            int payloadSize = 42;
+            int errorPayloadSize = 7;
+
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { stepName };
+            processor.SuccessPayloadSize = payloadSize;
+            processor.ErrorPayloadSize = errorPayloadSize;
+
+            GroupClause clause = GroupClause.None;
+            uint parallelCount = 3;
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.SetupSequence(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.SimulatedFail)
+                .ReturnsAsync(ExecutionStatus.Fail)
+                .ReturnsAsync(ExecutionStatus.Fail);
+            stepMock.Setup(step => step.FailOnParallelFailures).Returns(clause);
+            stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
+
+            Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
+
+            // Verify
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult), "Result should be OkObjectResult");
+            OkObjectResult objectResult = result as OkObjectResult;
+            Assert.IsInstanceOfType(objectResult.Value, typeof(SuccessResponse), "Result value should be a SuccessResponse");
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessRequestAsync_ParallelAnySteps_OneSuccessful_ReturnsFirstFailure()
+        {
+            // Arrange
+            string processorName = "processor";
+            string stepName = "step";
+            int payloadSize = 42;
+            int errorPayloadSize = 7;
+
+            IProcessor processor = defaultProcessor;
+            processor.Steps = new List<string> { stepName };
+            processor.SuccessPayloadSize = payloadSize;
+            processor.ErrorPayloadSize = errorPayloadSize;
+
+            GroupClause clause = GroupClause.Any;
+            uint parallelCount = 3;
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.SetupSequence(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.SimulatedFail)
+                .ReturnsAsync(ExecutionStatus.Success)
+                .ReturnsAsync(ExecutionStatus.Fail);
+            stepMock.Setup(step => step.FailOnParallelFailures).Returns(clause);
+            stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
+
+            Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            IActionResult result = await engine.ProcessRequestAsync(processorName).ConfigureAwait(false);
+
+            // Verify
+            Assert.IsNotNull(result, "Result should not be null");
+            Assert.IsInstanceOfType(result, typeof(ObjectResult), "Result should be ObjectResult");
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsTrue(objectResult.StatusCode.HasValue, "Status code should not be null");
+            Assert.AreEqual(StatusCodes.Status418ImATeapot, objectResult.StatusCode.Value,
+                "Status code should be Status418ImATeapot");
         }
 
 

@@ -8,9 +8,9 @@
   <Section Name="Steps">
     <Parameter Name="LoadA" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
     <Parameter Name="LoadB" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
-    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { id : 'RSGoog', client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { cacheKey : 'RSGoog', client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
-    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { id : 'NSGit', client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
+    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { cacheKey : 'NSGit', client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
     <Parameter Name="GoogleA" Value="{ baseAddress : 'https://google.com', policies : [ 'CacheA', 'RetryA', 'TimeoutA' ], headers : { 'Accept' : '*/*' } }" />

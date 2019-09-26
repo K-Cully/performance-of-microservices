@@ -78,15 +78,5 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
             Assert.AreEqual(ExecutionStatus.Success, status);
         }
-
-
-        [TestMethod]
-        public void InitializeLogger_NullLogger_ThrowsException()
-        {
-            var step = new ErrorStep();
-
-            Assert.ThrowsException<ArgumentNullException>(
-                () => step.InitializeLogger(null));
-        }
     }
 }

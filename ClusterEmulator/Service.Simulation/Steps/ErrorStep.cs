@@ -10,16 +10,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
     /// A step that simulates errors with a set probability.
     /// </summary>
     [Serializable]
-    public class ErrorStep : IStep
+    public class ErrorStep : SimulationStep
     {
-        [JsonIgnore]
-        private ILogger log;
-
-
-        [JsonIgnore]
-        private ILogger Logger { get => log; set => log = log ?? value; }
-
-
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
@@ -33,7 +25,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// Executes the action defined by the step.
         /// </summary>
         /// <returns><see cref="ExecutionStatus.Success"/> or <see cref="ExecutionStatus.SimulatedFail"/></returns>
-        public async Task<ExecutionStatus> ExecuteAsync()
+        public async override Task<ExecutionStatus> ExecuteAsync()
         {
             if (Logger is null)
             {
@@ -51,16 +43,6 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
             Logger.LogDebug("{RandomValue} resulted in {ExecutionStatus} for {Probability}", value, status, Probability);
             return await Task.FromResult(status);
-        }
-
-
-        /// <summary>
-        /// Initializes a logger for the step instance.
-        /// </summary>
-        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public void InitializeLogger(ILogger logger)
-        {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
     }
 }
