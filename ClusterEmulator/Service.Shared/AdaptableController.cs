@@ -14,7 +14,6 @@ namespace ClusterEmulator.Service.Shared
     /// An abstract controller that can be inherited to provide the configured API for a configurable service.
     /// </summary>
     [Produces("application/json")]
-    [Consumes("application/json")]
     public abstract class AdaptableController : ControllerBase
     {
         private readonly IEngine engine;
