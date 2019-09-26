@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
+    <!--Controller accepts GET requests to retrieve a single name-->
+    <Parameter Name="GetName" Value="{ errorSize : 128, latency : 0, steps : [ 'RetrievalError', 'RetrieveName' ], successSize : 128 }" />
+    <!--Controller accepts POST requests to retrieve multiple names-->
+    <Parameter Name="GetNames" Value="{ errorSize : 128, latency : 0, steps : [ 'RetrieveNames' ], successSize : 1280 }" />
   </Section>
   <Section Name="Steps">
+    <!--Processor retrieves names from an in memory cache-->
+    <Parameter Name="RetrievalError" Value="{ type : 'ErrorStep', step : { probability: 0.05 } }"/>
+    <Parameter Name="RetrieveName" Value="{ type : 'LoadStep', step : { bytes : 128, time : 0, percent : 0 } }" />
+    <Parameter Name="RetrieveNames" Value="{ type : 'LoadStep', step : { bytes : 1280, time : 0, percent : 1 } }" />
   </Section>
   <Section Name="Clients">
   </Section>

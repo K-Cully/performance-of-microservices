@@ -54,7 +54,9 @@ namespace NameGeneratorService.Controllers
             List<string> names = (await NameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
             if (names is null)
             {
-                // TODO: error and log
+                Logger.LogError("{Operation} failed to generate any valid names",
+                    nameof(NameProcessor.GenerateNamesAsync));
+                return new List<string>();
             }
 
             if (names.Any(name => string.IsNullOrWhiteSpace(name)))

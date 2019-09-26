@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
+    <!--Controller accepts GET requests to retrieve a single name-->
+    <Parameter Name="GetName" Value="{ errorSize : 128, latency : 0, steps : [ 'GETRandomId', 'GETNameLookup' ], successSize : 128 }" />
+    <!--Controller accepts GET requests to retrieve multiple names-->
+    <Parameter Name="GetNames" Value="{ errorSize : 128, latency : 0, steps : [ 'GETRandomIds', 'POSTNameLookup' ], successSize : 1280 }" />
+    
+    <!-- TODO: Complete -->
   </Section>
   <Section Name="Steps">
+    <Parameter Name="GETNameLookup" Value="{ type : 'RequestStep', step : { id : 'GN', client : 'Names', method : 'get', path : '/GetName', size : 32, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="POSTNameLookup" Value="{ type : 'RequestStep', step : { id : 'PN', client : 'Names', method : 'post', path : '/GetNames', size : 320, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="GETRandomId" Value="{ type : 'RequestStep', step : { id : 'GR', client : 'Random', method : 'get', path : '/GetRandom', size : 32, reuseSockets : true, trueAsync : false } }"/>
+
+    <!--TODO: Allow this to run multiple in parallel-->
+    <Parameter Name="GETRandomIds" Value="{ type : 'RequestStep', step : { id : 'GR', client : 'Random', method : 'get', path : '/GetRandom', size : 32, reuseSockets : true, trueAsync : false } }"/>
+
   </Section>
   <Section Name="Clients">
+    <Parameter Name="Random" Value="{ baseAddress : 'http://localhost:8670/api/random', policies : [], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="Names" Value="{ baseAddress : 'http://localhost:8458/api/names', policies : [], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
   </Section>
