@@ -15,6 +15,8 @@ namespace CoreService
     {
         private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
 
+        private const string ServiceTypeName = "CoreServiceType";
+
 
         /// <summary>
         /// App settings for use in log configuration
@@ -34,6 +36,7 @@ namespace CoreService
         {
             try
             {
+                // TODO: set App Insights key from external source
                 var telemetry = new TelemetryConfiguration("");
                 Logger log = new LoggerConfiguration()
                                 .ReadFrom.Configuration(Configuration)
@@ -42,17 +45,18 @@ namespace CoreService
                                 .CreateLogger();
 
                 // Create service instance
-                ServiceRuntime.RegisterServiceAsync("CoreServiceType",
+                ServiceRuntime.RegisterServiceAsync(ServiceTypeName,
                     context => new CoreService(context, log)).GetAwaiter().GetResult();
 
-                Log.Information($"Service registered - {Process.GetCurrentProcess().Id}, {typeof(CoreService).Name}");
+                Log.Information("Service registered - {ProcessId}, {ServiceId}",
+                    Process.GetCurrentProcess().Id, ServiceTypeName);
 
-                // Prevents this host process from terminating so services keeps running. 
+                // Prevents this host process from terminating so services keep running. 
                 Thread.Sleep(Timeout.Infinite);
             }
             catch (Exception e)
             {
-                Log.Fatal(e, "Failed to initialize service");
+                Log.Fatal(e, "Failed to initialize service {ServiceId}", ServiceTypeName);
                 throw;
             }
             finally
