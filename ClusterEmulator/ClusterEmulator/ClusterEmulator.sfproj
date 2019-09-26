@@ -35,6 +35,15 @@
     <ProjectReference Include="..\CoreService\CoreService.csproj">
       <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/adaptable/</ServiceLaunchUrl>
     </ProjectReference>
+    <ProjectReference Include="..\NameGeneratorService\NameGeneratorService.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
+    </ProjectReference>
+    <ProjectReference Include="..\NameLookupService\NameLookupService.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
+    </ProjectReference>
+    <ProjectReference Include="..\RandomGeneratorService\RandomGeneratorService.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
