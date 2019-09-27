@@ -7,8 +7,6 @@
     <Parameter Name="RandomGeneratorService_InstanceCount" DefaultValue="-1" />
     <Parameter Name="NameGeneratorService_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
     <Parameter Name="NameGeneratorService_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="CoreService_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
-    <Parameter Name="CoreService_InstanceCount" DefaultValue="-1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -34,12 +32,6 @@
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[NameGeneratorService_ASPNETCORE_ENVIRONMENT]" />
     </EnvironmentOverrides>
   </ServiceManifestImport>
-  <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="CoreServicePkg" ServiceManifestVersion="1.0.0" />
-    <EnvironmentOverrides CodePackageRef="code">
-      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[CoreService_ASPNETCORE_ENVIRONMENT]" />
-    </EnvironmentOverrides>
-  </ServiceManifestImport>
   <DefaultServices>
     <!-- The section below creates instances of service types, when an instance of this 
          application type is created. You can also create one or more instances of service type using the 
@@ -58,11 +50,6 @@
     </Service>
     <Service Name="NameGeneratorService" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="NameGeneratorServiceType" InstanceCount="[NameGeneratorService_InstanceCount]">
-        <SingletonPartition />
-      </StatelessService>
-    </Service>
-    <Service Name="CoreService" ServicePackageActivationMode="ExclusiveProcess">
-      <StatelessService ServiceTypeName="CoreServiceType" InstanceCount="[CoreService_InstanceCount]">
         <SingletonPartition />
       </StatelessService>
     </Service>

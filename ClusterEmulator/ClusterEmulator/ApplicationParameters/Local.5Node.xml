@@ -7,7 +7,5 @@
     <Parameter Name="RandomGeneratorService_InstanceCount" Value="1" />
     <Parameter Name="NameGeneratorService_ASPNETCORE_ENVIRONMENT" Value="Development" />
     <Parameter Name="NameGeneratorService_InstanceCount" Value="1" />
-    <Parameter Name="CoreService_ASPNETCORE_ENVIRONMENT" Value="Development" />
-    <Parameter Name="CoreService_InstanceCount" Value="1" />
   </Parameters>
 </Application>
