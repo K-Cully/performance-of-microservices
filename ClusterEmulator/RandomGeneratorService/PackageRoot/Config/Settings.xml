@@ -6,7 +6,7 @@
   </Section>
   <Section Name="Steps">
     <!--Processor generates primes then returns a random number seeded from the last prime-->
-    <Parameter Name="GenerateRandom" Value="{ type : 'LoadStep', step : { bytes : 128, time : 1, percent : 100 } }" />
+    <Parameter Name="GenerateRandom" Value="{ type : 'LoadStep', step : { bytes : 128, time : 1.0, percent : 100, processors : 1 } }" />
   </Section>
   <Section Name="Clients">
   </Section>
