@@ -93,7 +93,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
             }
 
-            if (MaxProcessors < 0.0d)
+            if (MaxProcessors < 0)
             {
                 Logger.LogCritical("{Property} is negative", "processors");
                 throw new InvalidOperationException("processors cannot be negative");
