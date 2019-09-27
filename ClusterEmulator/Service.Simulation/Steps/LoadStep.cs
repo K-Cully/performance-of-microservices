@@ -119,15 +119,19 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 }
             }
 
-            List<Task> coreTasks = new List<Task>();
-            for (int i = 0; i < ProcessorCount; i++)
+            if (TimeInSeconds > 0.0d)
             {
-                Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
-                    CpuPercentage, i, TimeInSeconds);
-                coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
+                List<Task> coreTasks = new List<Task>();
+                for (int i = 0; i < ProcessorCount; i++)
+                {
+                    Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
+                        CpuPercentage, i, TimeInSeconds);
+                    coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
+                }
+
+                await Task.WhenAll(coreTasks).ConfigureAwait(false);
             }
 
-            await Task.WhenAll(coreTasks).ConfigureAwait(false);
             Logger.LogInformation("Completed load generation step");
             return ExecutionStatus.Success;
         }
