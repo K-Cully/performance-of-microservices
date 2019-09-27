@@ -11,7 +11,6 @@ namespace ClusterEmulator.Service.Simulation.Steps
     /// <summary>
     /// A step that simulates CPU bound operations and memory allocation.
     /// </summary>
-    [Serializable]
     public class LoadStep : SimulationStep
     {
         /// <summary>
@@ -19,8 +18,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         [JsonProperty("time")]
         [JsonRequired]
-        [Range(0, int.MaxValue, ErrorMessage = "time cannot be negative")]
-        public int TimeInSeconds { get; set; }
+        [Range(0, double.MaxValue, ErrorMessage = "time cannot be negative")]
+        public double TimeInSeconds { get; set; }
 
 
         /// <summary>
@@ -33,11 +32,42 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
 
         /// <summary>
+        /// The maximum number of processors to load.
+        /// </summary>
+        /// <remarks>
+        /// Used to restrict concurrency.
+        /// If 0 or more than the number of available processors is specified, the number of processers available are loaded.
+        /// </remarks>
+        [JsonProperty("processors")]
+        [Range(0, int.MaxValue, ErrorMessage = "processors cannot be negative")]
+        public int MaxProcessors { get; set; }
+
+
+        /// <summary>
         /// The amount of memory to consume.
         /// </summary>
         [JsonProperty("bytes")]
         [JsonRequired]
         public ulong MemoryInBytes { get; set; }
+
+
+        [JsonIgnore]
+        private int? processorCount;
+
+        [JsonIgnore]
+        private int ProcessorCount
+        {
+            get
+            {
+                if (processorCount == null)
+                {
+                    processorCount = MaxProcessors > 0 && MaxProcessors < Environment.ProcessorCount ?
+                        MaxProcessors : Environment.ProcessorCount;
+                }
+
+                return processorCount.Value;
+            }
+        }
 
 
         /// <summary>
@@ -51,7 +81,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException("Logger is not initialized");
             }
 
-            if (TimeInSeconds < 0)
+            if (TimeInSeconds < 0.0d)
             {
                 Logger.LogCritical("{Property} is negative", "time");
                 throw new InvalidOperationException("time cannot be negative");
@@ -61,6 +91,12 @@ namespace ClusterEmulator.Service.Simulation.Steps
             {
                 Logger.LogCritical("{Property} value is not in the accepted range", "percent");
                 throw new InvalidOperationException("percent must be in the range 1 - 100");
+            }
+
+            if (MaxProcessors < 0)
+            {
+                Logger.LogCritical("{Property} is negative", "processors");
+                throw new InvalidOperationException("processors cannot be negative");
             }
 
             List<List<byte>> block = new List<List<byte>>();
@@ -84,7 +120,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
             }
 
             List<Task> coreTasks = new List<Task>();
-            for (int i = 0; i < Environment.ProcessorCount; i++)
+            for (int i = 0; i < ProcessorCount; i++)
             {
                 Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
                     CpuPercentage, i, TimeInSeconds);
@@ -97,13 +133,13 @@ namespace ClusterEmulator.Service.Simulation.Steps
         }
 
 
-        private async Task GenerateLoad(int seconds, int percentage)
+        private async Task GenerateLoad(double seconds, int percentage)
         {
             DateTime start = DateTime.UtcNow;
             Stopwatch watch = new Stopwatch();
 
             watch.Start();
-            while (seconds > DateTime.UtcNow.Subtract(start).Seconds)
+            while (seconds > DateTime.UtcNow.Subtract(start).TotalSeconds)
             {
                 // Generate load for the target percentage, sleep for the remaining time
                 if (watch.ElapsedMilliseconds > percentage)
