@@ -98,16 +98,13 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_ValidState_ExecutesCorrectly()
         {
-            var start = DateTime.UtcNow;
             var step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 0.0d, CpuPercentage = 10 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
             step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
-            var timeSpan = DateTime.UtcNow.Subtract(start);
 
-            Assert.IsTrue(timeSpan.TotalSeconds >= 0.2d);
             Assert.AreEqual(ExecutionStatus.Success, status);
         }
 
