@@ -32,9 +32,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoreService\CoreService.csproj">
-      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/adaptable/</ServiceLaunchUrl>
-    </ProjectReference>
     <ProjectReference Include="..\NameGeneratorService\NameGeneratorService.csproj">
       <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
     </ProjectReference>
