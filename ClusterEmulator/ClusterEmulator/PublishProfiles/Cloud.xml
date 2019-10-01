@@ -20,7 +20,7 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="" />
+  <ClusterConnectionParameters ConnectionEndpoint="cluster-emu-test.northeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="D57DB35E9E76B6E23F2C31D2D4F736310DDC9C3B" FindType="FindByThumbprint" FindValue="D57DB35E9E76B6E23F2C31D2D4F736310DDC9C3B" StoreLocation="CurrentUser" StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
   <UpgradeDeployment Mode="Monitored" Enabled="false">
