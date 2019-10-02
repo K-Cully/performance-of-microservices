@@ -27,6 +27,8 @@ namespace NameGeneratorService
                 c => c.BaseAddress = new Uri(Settings.RandomServiceBaseUrl));
             services.AddHttpClient(Settings.NameLookupApiClientName,
                 c => c.BaseAddress = new Uri(Settings.LookupServiceBaseUrl));
+
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +40,7 @@ namespace NameGeneratorService
             }
 
             app.UseMvc();
+            app.UseHealthChecks("/health");
         }
     }
 }
