@@ -34,6 +34,7 @@ namespace CoreService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddHealthChecks();
             services.AddSimulationEngineClients(Registry);
         }
 
@@ -60,6 +61,7 @@ namespace CoreService
             // Injecting registry here to ensure it is added from the second, more locally scoped, instance container.
             registry.ConfigureHttpClients(clientFactory);
             app.UseMvc();
+            app.UseHealthChecks("/health");
         }
     }
 }
