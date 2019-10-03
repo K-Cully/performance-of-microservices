@@ -71,7 +71,10 @@ namespace NameGeneratorService.Core
 
             // Partition stores the endpoint address in a strange JSON format so this extracts it
             JToken address = JToken.Parse(partition.GetEndpoint().Address);
-            return address.First.First.First.First.Value<string>();
+            string url = address.First.First.First.First.Value<string>();
+
+            ServiceEventSource.Current.Message($"Resolved url '{url}' for 'fabric:/{applicationName}/{serviceName}' from partition '{partition.Info.Id}'");
+            return url;
         }
     }
 }
