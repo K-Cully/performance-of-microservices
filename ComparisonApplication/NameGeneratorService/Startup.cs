@@ -11,26 +11,23 @@ namespace NameGeneratorService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IConfiguration Configuration { get; }
 
-        public ILogger<Startup> Logger;
+        private string randomUrl;
+        private string lookupUrl;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            string randomUrl = Settings.RandomServiceBaseUrl;
-            string lookupUrl = Settings.LookupServiceBaseUrl;
-
-            Logger.LogInformation("Resolved {RandomServiceUrl} for random generator http client", randomUrl);
-            Logger.LogInformation("Resolved {LookupServiceUrl} for name lookup http client", lookupUrl);
+            randomUrl = Settings.RandomServiceBaseUrl;
+            lookupUrl = Settings.LookupServiceBaseUrl;
 
             // Add http clients to the default factory
             services.AddHttpClient(Settings.RandomApiClientName,
@@ -42,12 +39,15 @@ namespace NameGeneratorService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            logger.LogInformation("Resolved {RandomServiceUrl} for random generator http client", randomUrl);
+            logger.LogInformation("Resolved {LookupServiceUrl} for name lookup http client", lookupUrl);
 
             app.UseMvc();
             app.UseHealthChecks("/health");

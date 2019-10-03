@@ -2,6 +2,8 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.ApplicationInsights;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -36,6 +38,12 @@ namespace RandomGeneratorService
 
                         return new WebHostBuilder()
                                     .UseKestrel()
+                                    .ConfigureLogging((hostingContext, logging) =>
+                                    {
+                                        logging.SetMinimumLevel(LogLevel.Information);
+                                        logging.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Information)
+                                            .AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                                    })
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<ITelemetryInitializer>((serviceProvider) =>
