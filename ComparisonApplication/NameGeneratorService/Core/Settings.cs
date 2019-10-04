@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Fabric;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,6 +41,7 @@ namespace NameGeneratorService.Core
             }
         }
 
+
         /// <summary>
         /// The base path of the random number generation service
         /// </summary>
@@ -56,7 +58,10 @@ namespace NameGeneratorService.Core
             }
         }
 
+
         private static ServicePartitionResolver Resolver { get; } = ServicePartitionResolver.GetDefault();
+
+        private static readonly Regex UrlMatch = new Regex("\"(http:.+)\"");
 
         private static string randomServiceUrl;
 
@@ -69,11 +74,16 @@ namespace NameGeneratorService.Core
                 Resolver.ResolveAsync(new Uri($"fabric:/{applicationName}/{serviceName}"), new ServicePartitionKey(), CancellationToken.None);
             ResolvedServicePartition partition = task.Result;
 
-            // Partition stores the endpoint address in a strange JSON format so this extracts it
-            JToken address = JToken.Parse(partition.GetEndpoint().Address);
-            string url = address.First.First.First.First.Value<string>();
+            // Resolve a random endpoint for the service
+            ResolvedServiceEndpoint endpoint = partition.GetEndpoint();
 
-            ServiceEventSource.Current.Message($"Resolved url '{url}' for 'fabric:/{applicationName}/{serviceName}' from partition '{partition.Info.Id}'");
+            // Partition stores the endpoint address in a strange JSON format
+            Match match = UrlMatch.Match(endpoint.Address);
+
+            // Extract JSON escape characters
+            string url = match.Groups[1]?.Value?.Replace("\\", string.Empty);
+            ServiceEventSource.Current.Message(
+                $"Resolved '{url}' from '{partition.Endpoints.Count}' endpoints for 'fabric:/{applicationName}/{serviceName}' from partition '{partition.Info.Id}'");
             return url;
         }
     }
