@@ -76,7 +76,7 @@ namespace NameGeneratorService.Core
         private async Task<IEnumerable<string>> RetrieveName(int id, HttpClient client)
         {
             using (HttpResponseMessage response =
-                await client.GetAsync($"/api/lookup/{id}").ConfigureAwait(false))
+                await client.GetAsync($"{client.BaseAddress?.AbsolutePath}/api/lookup/{id}").ConfigureAwait(false))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
@@ -93,7 +93,7 @@ namespace NameGeneratorService.Core
         private async Task<IEnumerable<string>> RetrieveNames(IEnumerable<int> ids, HttpClient client)
         {
             using (HttpResponseMessage response =
-                await client.PostAsJsonAsync("/api/lookup", ids).ConfigureAwait(false))
+                await client.PostAsJsonAsync($"{client.BaseAddress?.AbsolutePath}/api/lookup", ids).ConfigureAwait(false))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
@@ -118,7 +118,7 @@ namespace NameGeneratorService.Core
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        randomTasks.Add(client.GetAsync($"/api/random/{maximumId}"));
+                        randomTasks.Add(client.GetAsync($"{client.BaseAddress?.AbsolutePath}/api/random/{maximumId}"));
                     }
 
                     await Task.WhenAll(randomTasks).ConfigureAwait(false);
