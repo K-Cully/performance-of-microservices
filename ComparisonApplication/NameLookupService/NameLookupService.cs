@@ -38,7 +38,6 @@ namespace NameLookupService
 
                         return new WebHostBuilder()
                                     .UseKestrel()
-                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.UseUniqueServiceUrl)
                                     .ConfigureLogging((hostingContext, logging) =>
                                     {
                                         logging.SetMinimumLevel(LogLevel.Information);
@@ -54,6 +53,7 @@ namespace NameLookupService
                                             .AddSingleton<INameStore, NameStore>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
+                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
                     }))

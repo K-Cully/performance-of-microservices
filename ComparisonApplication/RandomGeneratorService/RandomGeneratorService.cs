@@ -38,7 +38,6 @@ namespace RandomGeneratorService
 
                         return new WebHostBuilder()
                                     .UseKestrel()
-                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.UseUniqueServiceUrl)
                                     .ConfigureLogging((hostingContext, logging) =>
                                     {
                                         logging.SetMinimumLevel(LogLevel.Information);
@@ -55,6 +54,7 @@ namespace RandomGeneratorService
                                             .AddScoped<IRandomProcessor, RandomProcessor>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
+                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
                     }))

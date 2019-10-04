@@ -59,7 +59,7 @@ namespace NameGeneratorService.Controllers
         [HttpGet("{count}")]
         public async Task<ActionResult<IEnumerable<string>>> GetAsync(int count)
         {
-            IEnumerable<string> names = (await NameProcessor.GenerateNamesAsync(count).ConfigureAwait(false));
+            List<string> names = (await NameProcessor.GenerateNamesAsync(count).ConfigureAwait(false)).ToList();
             if (names is null)
             {
                 Logger.LogError("{Operation} failed. An unexpected error occurred",
@@ -67,14 +67,13 @@ namespace NameGeneratorService.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
-            var nameList = names.ToList();
-            if (nameList.Any(name => string.IsNullOrWhiteSpace(name)))
+            if (names.Any(name => string.IsNullOrWhiteSpace(name)))
             {
                 Logger.LogError("{Operation} failed to generate all {NameCount} valid names",
                     nameof(NameProcessor.GenerateNameAsync), count);
             }
 
-            return nameList;
+            return names.ToList();
         }
     }
 }

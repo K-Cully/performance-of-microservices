@@ -38,7 +38,6 @@ namespace NameGeneratorService
 
                         return new WebHostBuilder()
                                     .UseKestrel()
-                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .ConfigureLogging((hostingContext, logging) =>
                                     {
                                         logging.SetMinimumLevel(LogLevel.Information);
@@ -54,6 +53,7 @@ namespace NameGeneratorService
                                             .AddScoped<INameProcessor, NameProcessor>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
+                                    .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
                     }))
