@@ -1,12 +1,4 @@
-﻿using Microsoft.ServiceFabric.Services.Client;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Fabric;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace NameGeneratorService.Core
+﻿namespace NameGeneratorService.Core
 {
     /// <summary>
     /// Provides access to common application settings
@@ -28,63 +20,15 @@ namespace NameGeneratorService.Core
         /// <summary>
         /// The base path of the random number generation service
         /// </summary>
-        public static string RandomServiceBaseUrl
-        {
-            get
-            {
-                if (randomServiceUrl is null)
-                {
-                    randomServiceUrl = GetUrl("ComparisonApplication", "RandomGeneratorService");
-                }
-
-                return randomServiceUrl;
-            }
-        }
+        public const string RandomServiceBaseUrl = BaseUrl + ":81";
 
 
         /// <summary>
         /// The base path of the random number generation service
         /// </summary>
-        public static string LookupServiceBaseUrl
-        {
-            get
-            {
-                if (lookupServiceUrl is null)
-                {
-                    lookupServiceUrl = GetUrl("ComparisonApplication", "NameLookupService");
-                }
-
-                return lookupServiceUrl;
-            }
-        }
+        public const string LookupServiceBaseUrl = BaseUrl + ":82";
 
 
-        private static ServicePartitionResolver Resolver { get; } = ServicePartitionResolver.GetDefault();
-
-        private static readonly Regex UrlMatch = new Regex("\"(http:.+)\"");
-
-        private static string randomServiceUrl;
-
-        private static string lookupServiceUrl;
-
-
-        private static string GetUrl(string applicationName, string serviceName)
-        {
-            Task<ResolvedServicePartition> task =
-                Resolver.ResolveAsync(new Uri($"fabric:/{applicationName}/{serviceName}"), new ServicePartitionKey(), CancellationToken.None);
-            ResolvedServicePartition partition = task.Result;
-
-            // Resolve a random endpoint for the service
-            ResolvedServiceEndpoint endpoint = partition.GetEndpoint();
-
-            // Partition stores the endpoint address in a strange JSON format
-            Match match = UrlMatch.Match(endpoint.Address);
-
-            // Extract JSON escape characters
-            string url = match.Groups[1]?.Value?.Replace("\\", string.Empty);
-            ServiceEventSource.Current.Message(
-                $"Resolved '{url}' from '{partition.Endpoints.Count}' endpoints for 'fabric:/{applicationName}/{serviceName}' from partition '{partition.Info.Id}'");
-            return url;
-        }
+        private const string BaseUrl = "http://poc-comparison-neu.northeurope.cloudapp.azure.com";
     }
 }
