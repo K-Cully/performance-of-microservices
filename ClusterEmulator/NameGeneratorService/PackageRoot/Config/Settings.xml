@@ -13,8 +13,8 @@
     <Parameter Name="GETRandomIds" Value="{ type : 'RequestStep', step : { parallelCount : 10, parallelError : 'Any', cacheKey : 'GR', client : 'Random', method : 'get', path : '/api/random/GetRandom', size : 32, reuseSockets : true, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
-    <Parameter Name="Random" Value="{ baseAddress : 'http://localhost:8670', policies : [], headers : { 'Accept' : 'application/json' } }" />
-    <Parameter Name="NameLookup" Value="{ baseAddress : 'http://localhost:8991', policies : [], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="Random" Value="{ baseAddress : 'http://cluster-emu-test.northeurope.cloudapp.azure.com:81', policies : [], headers : { 'Accept' : 'application/json' } }" />
+    <Parameter Name="NameLookup" Value="{ baseAddress : 'http://cluster-emu-test.northeurope.cloudapp.azure.com:82', policies : [], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
   </Section>
