@@ -41,8 +41,15 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// The optional id to use for cache key isolation
         /// </summary>
-        [JsonProperty("cacheKey")]
+        [JsonProperty("cacheId")]
         public string CacheId { get; set; }
+
+
+        /// <summary>
+        /// The optional uniqueness factor to to use for cache key isolation
+        /// </summary>
+        [JsonProperty("cacheKeyUniqueness")]
+        public int CacheUniqueness { get; set; }
 
 
         /// <summary>
@@ -388,8 +395,18 @@ namespace ClusterEmulator.Service.Simulation.Steps
         }
 
 
+        /// <summary>
+        /// Retrieves a policy context with a cache key
+        /// </summary>
         [JsonIgnore]
-        private Context Context => new Context($"{nameof(RequestStep)}-{CacheId ?? "NULL"}-{Method}");
+        private Context Context => new Context($"{CacheId ?? "NULL"}-{CacheKeyNumber}-{Method}");
+
+
+        /// <summary>
+        /// Retrieves a value to signify cache key uniqueness for the request
+        /// </summary>
+        [JsonIgnore]
+        private int CacheKeyNumber => CacheUniqueness > 0 ? random.Next(1, CacheUniqueness) : 0;
 
 
         [JsonIgnore]
@@ -402,6 +419,10 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
         [JsonIgnore]
         private IHttpClientFactory clientFactory;
+
+
+        [JsonIgnore]
+        private readonly Random random = new Random();
 
 
         /// <summary>
