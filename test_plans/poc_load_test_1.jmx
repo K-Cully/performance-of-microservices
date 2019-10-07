@@ -10,17 +10,17 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="oneNameUsers" elementType="Argument">
             <stringProp name="Argument.name">oneNameUsers</stringProp>
-            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="tenNameUsers" elementType="Argument">
             <stringProp name="Argument.name">tenNameUsers</stringProp>
-            <stringProp name="Argument.value">5</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="rampUp" elementType="Argument">
             <stringProp name="Argument.name">rampUp</stringProp>
-            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.value">5</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="duration" elementType="Argument">
@@ -40,12 +40,12 @@
           </elementProp>
           <elementProp name="oneNameThroughput" elementType="Argument">
             <stringProp name="Argument.name">oneNameThroughput</stringProp>
-            <stringProp name="Argument.value">600.0</stringProp>
+            <stringProp name="Argument.value">120.0</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="tenNameThroughput" elementType="Argument">
             <stringProp name="Argument.name">tenNameThroughput</stringProp>
-            <stringProp name="Argument.value">300.0</stringProp>
+            <stringProp name="Argument.value">60.0</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="emulatedPort" elementType="Argument">
