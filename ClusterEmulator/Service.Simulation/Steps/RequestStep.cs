@@ -405,8 +405,15 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// Retrieves a value to signify cache key uniqueness for the request
         /// </summary>
+        /// <remarks>
+        /// This avoids negatives and wraparound issues using the followin approach:
+        /// If cache uniqueness is less than 1, 0 is returned.
+        /// If cache uniqueness is int.MaxValue, a random integer in the inclusive range 1 to (int.MaxValue - 1) is returned.
+        /// Otherwise, a random integer in the inclusive range 1 to cache uniqueness is returned.
+        /// </remarks>
         [JsonIgnore]
-        private int CacheKeyNumber => CacheUniqueness > 0 ? random.Next(1, CacheUniqueness) : 0;
+        private int CacheKeyNumber => CacheUniqueness < 1 ? 0 :
+            random.Next(1, CacheUniqueness == int.MaxValue ? int.MaxValue : CacheUniqueness + 1);
 
 
         [JsonIgnore]
