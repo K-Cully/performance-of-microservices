@@ -21,10 +21,11 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public void Deserialization_AllData_CreatesValidInstance()
         {
             RequestStep step = JsonConvert.DeserializeObject<RequestStep>(
-                "{ cacheKey : 'teddy', client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
+                "{ cacheId : 'teddy', cacheKeyUniqueness : 1, client : 'testClient', method : 'get', path : 'test/', size : 128, reuseSockets : true, trueAsync : false }");
 
             Assert.IsFalse(step.Asynchrounous);
             Assert.AreEqual("teddy", step.CacheId);
+            Assert.AreEqual(1, step.CacheUniqueness);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);
@@ -41,6 +42,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
             Assert.IsFalse(step.Asynchrounous);
             Assert.IsNull(step.CacheId);
+            Assert.AreEqual(0, step.CacheUniqueness);
             Assert.AreEqual("testClient", step.ClientName);
             Assert.AreEqual("get", step.Method);
             Assert.AreEqual("test/", step.Path);
