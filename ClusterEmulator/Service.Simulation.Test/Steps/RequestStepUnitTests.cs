@@ -17,9 +17,6 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
     [TestClass]
     public class RequestStepUnitTests
     {
-        // TODO: can I add tests for cache key generation?
-
-
         [TestMethod]
         public void Deserialization_AllData_CreatesValidInstance()
         {
