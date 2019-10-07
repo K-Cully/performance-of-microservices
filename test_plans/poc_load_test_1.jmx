@@ -71,7 +71,6 @@
         <stringProp name="TestPlan.comments">DNS cache manager to allow load balancing to function correctly. (Using Cloudfare)</stringProp>
         <boolProp name="DNSCacheManager.clearEachIteration">false</boolProp>
         <boolProp name="DNSCacheManager.isCustomResolver">true</boolProp>
-        <collectionProp name="DNSCacheManager.hosts"/>
       </DNSCacheManager>
       <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Comparison Application Single Name" enabled="true">
