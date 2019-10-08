@@ -141,12 +141,13 @@ namespace ClusterEmulator.Service.Simulation.Steps
                     throw new InvalidOperationException($"Client '{ClientName}' is null"))
             {
                 ExecutionStatus status = ExecutionStatus.Fail;
+                Guid disposalId = Guid.NewGuid();
                 try
                 {
-                    Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client);
+                    Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client, disposalId);
                     if (ReuseHttpMessageHandler) // Policies are already part of the request pipeline
                     {
-                        status = await HandleRequestAsync(request).ConfigureAwait(false);
+                        status = await HandleRequestAsync(request, disposalId).ConfigureAwait(false);
                     }
                     else
                     {
@@ -162,12 +163,12 @@ namespace ClusterEmulator.Service.Simulation.Steps
                                 (context, cancelationToken) => request(cancelationToken), Context, token);
                         }
 
-                        status = await HandleRequestAsync(combinedAction).ConfigureAwait(false);
+                        status = await HandleRequestAsync(combinedAction, disposalId).ConfigureAwait(false);
                     }
                 }
                 finally
                 {
-                    DisposePending();
+                    DisposePending(disposalId);
                 }
 
                 return status;
@@ -178,14 +179,39 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// Disposes of any disposable objects created during http client creation or response
         /// </summary>
-        private void DisposePending()
+        /// <param name="disposalKey">The id of the request for object disposal.</param>
+        private void DisposePending(Guid disposalKey)
         {
-            foreach (IDisposable disposable in pendingDisposals)
+            if (pendingDisposals.TryGetValue(disposalKey, out IList<IDisposable> pending))
             {
-                disposable.Dispose();
+                if (pending != null)
+                {
+                    foreach (IDisposable disposable in pending)
+                    {
+                        disposable.Dispose();
+                    }
+                }
+
+                pendingDisposals.Remove(disposalKey);
+                return;
+            }
+        }
+
+
+        /// <summary>
+        /// Schedules an object for delayed disposal.
+        /// </summary>
+        /// <param name="disposalKey">The id of the request for thread safe object disposal.</param>
+        /// <param name="disposable">The object for delayed disposal.</param>
+        private void ScheduleDisposal(Guid disposalKey, IDisposable disposable)
+        {
+            if (pendingDisposals.TryGetValue(disposalKey, out IList<IDisposable> pending) && pending != null)
+            {
+                pending.Add(disposable);
+                return;
             }
 
-            pendingDisposals.Clear();
+            pendingDisposals[disposalKey] = new List<IDisposable> { disposable };
         }
 
 
@@ -193,8 +219,9 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// Handles request execution for asynchronous and non-asynchronous workloads
         /// </summary>
         /// <param name="request">The request to execute</param>
+        /// <param name="disposalId">A unique request identifier for object disposal.</param>
         /// <returns>The execution status</returns>
-        private async Task<ExecutionStatus> HandleRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> request)
+        private async Task<ExecutionStatus> HandleRequestAsync(Func<CancellationToken, Task<HttpResponseMessage>> request, Guid disposalId)
         {
             if (Asynchrounous)
             {
@@ -212,7 +239,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 if (!ReuseHttpMessageHandler || !response.Headers.Contains("policyCached"))
                 {
                     // Only dispose message if it is not cached in the http factory pipeline
-                    pendingDisposals.Add(response);
+                    ScheduleDisposal(disposalId, response);
                 }
 
                 Logger.LogInformation("{Id}: Retrieved response {StatusCode}", CacheId, response.StatusCode);
@@ -254,7 +281,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0067:Dispose objects before losing scope", Justification = "Object does not need to be explicitly disposed")]
-        private Func<CancellationToken, Task<HttpResponseMessage>> GetRequestAction(HttpClient client)
+        private Func<CancellationToken, Task<HttpResponseMessage>> GetRequestAction(HttpClient client, Guid disposalId)
         {
             var method = new HttpMethod(Method);
             if (!supportedMethods.Contains(method))
@@ -266,7 +293,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
             Logger.LogDebug("{Id}: Retrieving action for {HttpMethod}", CacheId, Method);
 
             HttpContent content = null;
-            if (method == HttpMethod.Put 
+            if (method == HttpMethod.Put
                 || method == HttpMethod.Post)
             {
                 var adaptableRequest = GenerateRequest();
@@ -276,7 +303,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
             return token =>
             {
                 var request = new HttpRequestMessage(method, Path);
-                pendingDisposals.Add(request);
+                ScheduleDisposal(disposalId, request);
                 if (ReuseHttpMessageHandler)
                 {
                     // Only set the context in the request when policies are registered with HttpClientFactory
@@ -437,7 +464,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         /// <remarks>Allows policies (e.g. Cache) to access http communication objects.</remarks>
         [JsonIgnore]
-        private readonly IList<IDisposable> pendingDisposals = new List<IDisposable>();
+        private readonly IDictionary<Guid, IList<IDisposable>> pendingDisposals = new Dictionary<Guid, IList<IDisposable>>();
 
 
         /// <summary>
