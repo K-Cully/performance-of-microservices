@@ -10,13 +10,13 @@ using System.Linq;
 namespace ClusterEmulator.Service.Shared.Test.Telemetry
 {
     [TestClass]
-    public class OperationTelemetryConverterUnitTests
+    public class AppInsightsTelemetryConverterUnitTests
     {
         [TestMethod]
         public void Convert_WithNullEvent_ThrowsException()
         {
             var formatProvider = new Mock<IFormatProvider>(MockBehavior.Strict);
-            var converter = new OperationTelemetryConverter();
+            var converter = new AppInsightsTelemetryConverter();
 
             var deferredConversion = converter.Convert(null, formatProvider.Object);
 
@@ -31,7 +31,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         {
             var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
             var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty>());
-            var converter = new OperationTelemetryConverter();
+            var converter = new AppInsightsTelemetryConverter();
 
             var deferredConversion = converter.Convert(logEvent, null);
 
@@ -56,7 +56,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
                 new LogEventProperty("Parent Id", new ScalarValue("testParent")),
             };
             var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, properties);
-            var converter = new OperationTelemetryConverter();
+            var converter = new AppInsightsTelemetryConverter();
 
             var deferredConversion = converter.Convert(logEvent, formatProvider.Object);
 

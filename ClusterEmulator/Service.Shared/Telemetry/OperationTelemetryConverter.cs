@@ -9,7 +9,7 @@ namespace ClusterEmulator.Service.Shared.Telemetry
     /// <summary>
     /// Converts trace logs containing operation ids to Application Insights telemetry with correct operation id tracking
     /// </summary>
-    public class OperationTelemetryConverter : TraceTelemetryConverter
+    public class AppInsightsTelemetryConverter : TraceTelemetryConverter
     {
         /// <summary>
         /// Converts the oeration id dat from the log event into telemetry usable by Application Insights
