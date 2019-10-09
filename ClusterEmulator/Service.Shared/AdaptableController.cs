@@ -4,8 +4,6 @@ using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +76,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(HttpContext))
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -98,7 +96,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(HttpContext))
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -118,7 +116,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(HttpContext))
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -139,7 +137,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(HttpContext))
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
                 if (!ModelState.IsValid)
                 {
@@ -172,7 +170,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(HttpContext))
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
                 if (!ModelState.IsValid)
                 {
