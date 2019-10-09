@@ -38,7 +38,7 @@ namespace NameGeneratorService.Core
         /// <returns>The generated name or empty.</returns>
         public async Task<string> GenerateNameAsync()
         {
-            return (await GenerateNamesAsync(1).ConfigureAwait(false)).FirstOrDefault();
+            return (await GenerateNamesAsync(1).ConfigureAwait(false))?.FirstOrDefault();
         }
 
 
