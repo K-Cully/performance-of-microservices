@@ -6,7 +6,6 @@ using Serilog.Events;
 using Serilog.Parsing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace ClusterEmulator.Service.Shared.Test.Telemetry
 {
@@ -25,7 +24,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
 
 
         [TestMethod]
-        public void Enrich_WithNullFactoryAndNullActivity_ProcessesCorrectly()
+        public void Enrich_WithNullFactory_MissingRequestId_ProcessesCorrectly()
         {
             var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
             var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty>());
@@ -34,26 +33,21 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
             enricher.Enrich(logEvent, null);
 
             Assert.IsFalse(logEvent.Properties.ContainsKey(PropertyNames.OperationId));
-            Assert.IsFalse(logEvent.Properties.ContainsKey(PropertyNames.ParentId));
         }
 
 
         [TestMethod]
-        public void Enrich_WithValidActivity_ProcessesCorrectly()
+        public void Enrich_WithValidRequestId_ProcessesCorrectly()
         {
             var factory = new Mock<ILogEventPropertyFactory>(MockBehavior.Strict);
-
             var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
-            var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty>());
+            var logEventProperty = new LogEventProperty(PropertyNames.RequestId, new ScalarValue("test"));
+            var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, new List<LogEventProperty> { logEventProperty });
             var enricher = new OperationIdEnricher();
 
-            var activity = new Activity("testOp");
-            activity.Start();
             enricher.Enrich(logEvent, factory.Object);
-            activity.Stop();
 
             Assert.IsTrue(logEvent.Properties.ContainsKey(PropertyNames.OperationId));
-            Assert.IsTrue(logEvent.Properties.ContainsKey(PropertyNames.ParentId));
         }
     }
 }

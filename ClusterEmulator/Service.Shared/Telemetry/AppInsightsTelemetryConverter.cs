@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace ClusterEmulator.Service.Shared.Telemetry
 {
     /// <summary>
-    /// Converts trace logs containing operation ids to Application Insights telemetry with correct operation id tracking
+    /// Instrunments Application Insights telemetry from log event data
     /// </summary>
     public class AppInsightsTelemetryConverter : TraceTelemetryConverter
     {
@@ -25,9 +25,6 @@ namespace ClusterEmulator.Service.Shared.Telemetry
             {
                 if (TryGetScalarProperty(logEvent, PropertyNames.OperationId, out var operationId))
                     telemetry.Context.Operation.Id = operationId.ToString();
-
-                if (TryGetScalarProperty(logEvent, PropertyNames.ParentId, out var parentId))
-                    telemetry.Context.Operation.ParentId = parentId.ToString();
 
                 yield return telemetry;
             }

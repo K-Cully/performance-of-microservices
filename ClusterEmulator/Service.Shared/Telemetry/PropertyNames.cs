@@ -12,8 +12,8 @@
 
 
         /// <summary>
-        /// The property name for parent operation ID values.
+        /// The property name for request Ids.
         /// </summary>
-        public const string ParentId = "ParentId";
+        public const string RequestId = "RequestId";
     }
 }

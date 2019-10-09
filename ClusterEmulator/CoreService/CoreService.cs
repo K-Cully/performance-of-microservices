@@ -6,7 +6,6 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Serilog;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
@@ -32,15 +31,8 @@ namespace CoreService
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Create log enrichers with service execution context
-            ILogEventEnricher[] properties = new ILogEventEnricher[]
-            {
-                new StatelessServiceEnricher(context),
-                new OperationIdEnricher()
-            };
-
             // Add service context to logger
-            Log = logger.ForContext(properties);
+            Log = logger.ForContext(new StatelessServiceEnricher(context));
         }
 
 

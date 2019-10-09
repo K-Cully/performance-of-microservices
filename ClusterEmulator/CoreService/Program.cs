@@ -41,6 +41,7 @@ namespace CoreService
                 Logger log = new LoggerConfiguration()
                                 .ReadFrom.Configuration(Configuration)
                                 .Enrich.FromLogContext()
+                                .Enrich.WithOperationId()
                                 .WriteTo.ApplicationInsights(telemetry, new AppInsightsTelemetryConverter())
                                 .CreateLogger();
 

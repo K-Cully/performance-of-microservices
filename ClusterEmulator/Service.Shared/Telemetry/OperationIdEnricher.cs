@@ -1,7 +1,6 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
 using System;
-using System.Diagnostics;
 
 namespace ClusterEmulator.Service.Shared.Telemetry
 {
@@ -19,17 +18,10 @@ namespace ClusterEmulator.Service.Shared.Telemetry
         {
             _ = logEvent ?? throw new ArgumentNullException(nameof(logEvent));
 
-
-            // TODO: allow use of HttpContext.Current.RequestId or other values
-
-            Activity activity = Activity.Current;
-            if (activity is null)
+            if (logEvent.Properties.TryGetValue(PropertyNames.RequestId, out var requestId))
             {
-                return;
+                logEvent.AddPropertyIfAbsent(new LogEventProperty(PropertyNames.OperationId, new ScalarValue(requestId)));
             }
-
-            logEvent.AddPropertyIfAbsent(new LogEventProperty(PropertyNames.OperationId, new ScalarValue(activity.RootId)));
-            logEvent.AddPropertyIfAbsent(new LogEventProperty(PropertyNames.ParentId, new ScalarValue(activity.Id)));
         }
     }
 }
