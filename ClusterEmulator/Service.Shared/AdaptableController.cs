@@ -1,4 +1,5 @@
 ﻿using ClusterEmulator.Service.Models;
+using ClusterEmulator.Service.Shared.Telemetry;
 using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +76,10 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
-            return await ProcessRequestAsync(name, caller);
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            {
+                return await ProcessRequestAsync(name, caller);
+            }
         }
 
 
@@ -92,7 +96,10 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
-            return await ProcessRequestAsync(name, caller);
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            {
+                return await ProcessRequestAsync(name, caller);
+            }
         }
 
 
@@ -109,7 +116,10 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
-            return await ProcessRequestAsync(name, caller);
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            {
+                return await ProcessRequestAsync(name, caller);
+            }
         }
 
 
@@ -127,19 +137,22 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (!ModelState.IsValid)
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
-                IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
-            }
+                if (!ModelState.IsValid)
+                {
+                    IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                    return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
+                }
 
-            if (request is null)
-            {
-                log.LogError("A malformed request was received for {Processor}", name);
-                return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
-            }
+                if (request is null)
+                {
+                    log.LogError("A malformed request was received for {Processor}", name);
+                    return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
+                }
 
-            return await ProcessRequestAsync(name, caller);
+                return await ProcessRequestAsync(name, caller);
+            }
         }
 
 
@@ -157,19 +170,22 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            if (!ModelState.IsValid)
+            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
             {
-                IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
-            }
+                if (!ModelState.IsValid)
+                {
+                    IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                    return BadRequest(new ErrorResponse($"['{string.Join("', '", errors)}']"));
+                }
 
-            if (request is null)
-            {
-                log.LogError("A malformed request was received for {Processor}", name);
-                return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
-            }
+                if (request is null)
+                {
+                    log.LogError("A malformed request was received for {Processor}", name);
+                    return BadRequest(new ErrorResponse($"{nameof(request)} is required"));
+                }
 
-            return await ProcessRequestAsync(name, caller);
+                return await ProcessRequestAsync(name, caller);
+            }
         }
     }
 }

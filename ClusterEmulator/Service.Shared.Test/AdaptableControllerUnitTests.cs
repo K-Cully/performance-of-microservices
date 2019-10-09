@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 
 namespace ClusterEmulator.Service.Shared.Test
 {
@@ -295,6 +296,18 @@ namespace ClusterEmulator.Service.Shared.Test
             public DummyController(ILogger<AdaptableController> logger, IEngine simulationEngine)
                 : base(logger, simulationEngine)
             {
+                StringValues values = new StringValues("test");
+                var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
+                headers.Setup(h => h.TryGetValue(It.IsAny<string>(), out values))
+                    .Returns(true);
+
+                var httpRequest = new Mock<HttpRequest>(MockBehavior.Strict);
+                httpRequest.Setup(r => r.Headers).Returns(headers.Object);
+
+                var httpContext = new Mock<HttpContext>(MockBehavior.Strict);
+                httpContext.Setup(c => c.Request).Returns(httpRequest.Object);
+
+                ControllerContext.HttpContext = httpContext.Object;
             }
         }
     }

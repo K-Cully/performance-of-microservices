@@ -17,6 +17,8 @@ namespace CoreService
 
         private const string ServiceTypeName = "CoreServiceType";
 
+        private static readonly string environment = Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production";
+
 
         /// <summary>
         /// App settings for use in log configuration
@@ -24,7 +26,7 @@ namespace CoreService
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production"}.json", optional: true)
+            .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
 
@@ -41,7 +43,9 @@ namespace CoreService
                 Logger log = new LoggerConfiguration()
                                 .ReadFrom.Configuration(Configuration)
                                 .Enrich.FromLogContext()
-                                .WriteTo.ApplicationInsights(telemetry, new OperationTelemetryConverter())
+                                .Enrich.WithOperationId()
+                                .Enrich.WithProperty("Environment", environment)
+                                .WriteTo.ApplicationInsights(telemetry, new AppInsightsTelemetryConverter())
                                 .CreateLogger();
 
                 // Create service instance

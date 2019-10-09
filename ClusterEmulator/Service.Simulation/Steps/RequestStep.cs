@@ -141,13 +141,16 @@ namespace ClusterEmulator.Service.Simulation.Steps
                     throw new InvalidOperationException($"Client '{ClientName}' is null"))
             {
                 ExecutionStatus status = ExecutionStatus.Fail;
-                Guid disposalId = Guid.NewGuid();
+                Guid requestId = Guid.NewGuid();
+                Logger.LogInformation("Setting correlation id for request to '{RequestCorrId}'", requestId);
+                client.DefaultRequestHeaders.Add("Request-Id", requestId.ToString());
+
                 try
                 {
-                    Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client, disposalId);
+                    Func<CancellationToken, Task<HttpResponseMessage>> request = GetRequestAction(client, requestId);
                     if (ReuseHttpMessageHandler) // Policies are already part of the request pipeline
                     {
-                        status = await HandleRequestAsync(request, disposalId).ConfigureAwait(false);
+                        status = await HandleRequestAsync(request, requestId).ConfigureAwait(false);
                     }
                     else
                     {
@@ -163,12 +166,12 @@ namespace ClusterEmulator.Service.Simulation.Steps
                                 (context, cancelationToken) => request(cancelationToken), Context, token);
                         }
 
-                        status = await HandleRequestAsync(combinedAction, disposalId).ConfigureAwait(false);
+                        status = await HandleRequestAsync(combinedAction, requestId).ConfigureAwait(false);
                     }
                 }
                 finally
                 {
-                    DisposePending(disposalId);
+                    DisposePending(requestId);
                 }
 
                 return status;
