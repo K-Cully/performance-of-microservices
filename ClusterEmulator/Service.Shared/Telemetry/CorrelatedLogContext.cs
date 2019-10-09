@@ -22,7 +22,8 @@ namespace ClusterEmulator.Service.Shared.Telemetry
         /// <returns>The a disposable object that must be used to remove the property from the log context.</returns>
         public static IDisposable Create(HttpContext httpContext)
         {
-            // TODO: UTs
+            _ = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
+            _ = httpContext.Request?.Headers ?? throw new ArgumentException("Headers are not initialized", nameof(httpContext));
 
             string correlationId = httpContext.Request.Headers.TryGetValue("Request-Id", out StringValues correlationHeaders) ?
                 correlationHeaders.FirstOrDefault() : null;
