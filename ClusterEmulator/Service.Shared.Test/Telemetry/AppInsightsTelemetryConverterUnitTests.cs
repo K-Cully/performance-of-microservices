@@ -46,14 +46,13 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
 
 
         [TestMethod]
-        public void Convert_WithOpertionIds_ExecutesCorrectly()
+        public void Convert_WithOpertionId_ExecutesCorrectly()
         {
             var formatProvider = new Mock<IFormatProvider>(MockBehavior.Strict);
             var messageTemplate = new MessageTemplate("test", new List<MessageTemplateToken>());
             var properties = new List<LogEventProperty>()
             {
-                new LogEventProperty("Operation Id", new ScalarValue("testOperation")),
-                new LogEventProperty("Parent Id", new ScalarValue("testParent")),
+                new LogEventProperty(PropertyNames.OperationId, new ScalarValue("testOperation"))
             };
             var logEvent = new LogEvent(DateTime.UtcNow, LogEventLevel.Verbose, null, messageTemplate, properties);
             var converter = new AppInsightsTelemetryConverter();
@@ -65,7 +64,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
 
             Assert.IsNotNull(telemetry);
             Assert.IsTrue(telemetry.Any(t => t?.Context?.Operation?.Id != null));
-            Assert.IsTrue(telemetry.Any(t => t?.Context?.Operation?.ParentId != null));
+            Assert.IsFalse(telemetry.Any(t => t?.Context?.Operation?.ParentId != null));
         }
     }
 }
