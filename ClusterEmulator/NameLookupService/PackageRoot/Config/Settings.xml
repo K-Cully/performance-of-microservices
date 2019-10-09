@@ -8,7 +8,7 @@
   </Section>
   <Section Name="Steps">
     <!--Processor retrieves names from an in memory cache-->
-    <Parameter Name="RetrievalError" Value="{ type : 'ErrorStep', step : { probability: 0.05 } }"/>
+    <Parameter Name="RetrievalError" Value="{ type : 'ErrorStep', step : { probability: 0.1 } }"/>
     <Parameter Name="RetrieveName" Value="{ type : 'LoadStep', step : { bytes : 64, time : 0.0, percent : 1 } }" />
     <Parameter Name="RetrieveNames" Value="{ type : 'LoadStep', step : { parallelCount : 10, parallelError : 'None', bytes : 64, time : 0.0, percent : 1 } }" />
   </Section>
