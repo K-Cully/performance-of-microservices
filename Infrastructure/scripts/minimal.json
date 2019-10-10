@@ -38,7 +38,7 @@
        },
        "vmNodeSize": {
           "type": "string",
-          "defaultValue": "Standard_D2_V2"
+          "defaultValue": "Standard_D1_V2"
        }
     },
     "variables": {
