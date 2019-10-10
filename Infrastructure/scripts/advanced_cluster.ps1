@@ -34,7 +34,7 @@ $armParameters = @{
     sourceVaultResourceId = $keyVault.ResourceId;
     certificateUrlValue = $cert.SecretId;
     rdpPassword = GeneratePassword;
-    vmInstanceCount = 5;
+    vmInstanceCount = $NodeCount;
 }
 
 # Create cluster resources based on the specified ARM template
