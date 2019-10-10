@@ -1,6 +1,7 @@
 param(
     [string] [Parameter(Mandatory = $true)] $Name,
-    [string] $TemplateName = "silver.json", # default name of the cluster ARM template
+    [string] $TemplateName = "onenode.json", # Name of the cluster ARM template
+    [int] $NodeCount = 1,                   # Number of nodes to create
     [string] $Location = "northeurope"      # Physical location of all the resources
 )
 
