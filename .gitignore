@@ -194,6 +194,8 @@ ClientBin/
 *~
 *.dbmdl
 *.dbproj.schemaview
+*.pwd.*
+*.thumb.*
 *.pfx
 *.publishsettings
 node_modules/
