@@ -8,7 +8,9 @@ param(
 # Add utility methods
 . "$PSScriptRoot\Common.ps1"
 
-# Define general control variables
+# Define control variables
+$ParentDirectory = $PSScriptRoot | split-path
+$TemplateDirectory = "$ParentDirectory\templates"
 $ResourceGroupName = "$Name-rg"
 $Location = "North Europe"
 $KeyVaultName = "$Name-vault"
@@ -40,7 +42,7 @@ $armParameters = @{
 # Create cluster resources based on the specified ARM template
 New-AzureRmResourceGroupDeployment `
   -ResourceGroupName $ResourceGroupName `
-  -TemplateFile "$PSScriptRoot\$TemplateName" `
+  -TemplateFile "$TemplateDirectory\$TemplateName" `
   -Mode Incremental `
   -TemplateParameterObject $armParameters `
   -Verbose

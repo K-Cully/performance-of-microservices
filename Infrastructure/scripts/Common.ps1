@@ -146,7 +146,7 @@ function Unregister-ApplicationTypeCompletely([string]$ApplicationTypeName)
 {
     Write-Host "checking if application type $ApplicationTypeName is present.."
     $type = Get-ServiceFabricApplicationType -ApplicationTypeName $ApplicationTypeName
-    if($type -eq $null) {
+    if($null -eq $type) {
         Write-Host "  application is not in the cluster"
     } else {
         $runningApps = Get-ServiceFabricApplication -ApplicationTypeName $ApplicationTypeName
