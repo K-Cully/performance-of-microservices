@@ -43,3 +43,6 @@ New-AzureRmResourceGroupDeployment `
   -Mode Incremental `
   -TemplateParameterObject $armParameters `
   -Verbose
+
+  # If the following call (SF SDK) responds successfully, the cluser is provisioned
+  # Connect-ServiceFabricCluster -ConnectionEndpoint $Name.northeurope.cloudapp.azure.com:19000 -X509Credential -FindType FindByThumbprint -FindValue $certThumbprint -StoreLocation CurrentUser -StoreName My
