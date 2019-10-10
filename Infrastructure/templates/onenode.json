@@ -214,6 +214,25 @@
                       },
                       "protocol": "Tcp"
                    }
+                },
+                {
+                   "name": "ApplicationRule",
+                   "properties": {
+                      "backendAddressPool": {
+                         "id": "[variables('lbPoolID0')]"
+                      },
+                      "backendPort": 8561,
+                      "enableFloatingIP": false,
+                      "frontendIPConfiguration": {
+                         "id": "[variables('lbIPConfig0')]"
+                      },
+                      "frontendPort": 80,
+                      "idleTimeoutInMinutes": 5,
+                      "probe": {
+                         "id": "ApplicationProbe"
+                      },
+                      "protocol": "Tcp"
+                   }
                 }
              ],
              "probes": [
@@ -233,6 +252,15 @@
                       "numberOfProbes": 2,
                       "port": "[variables('fabricHttpGatewayPort')]",
                       "protocol": "Tcp"
+                   }
+                },
+                {
+                   "name": "ApplicationProbe",
+                   "properties": {
+                      "intervalInSeconds": 15,
+                      "numberOfProbes": 2,
+                      "port": 8561,
+                      "protocol": "Http"
                    }
                 }
              ],
