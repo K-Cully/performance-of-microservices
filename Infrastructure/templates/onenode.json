@@ -58,6 +58,7 @@
        "lbPoolID0": "[concat(variables('lbID0'), '/backendAddressPools/LoadBalancerBEAddressPool')]",
        "lbProbeID0": "[concat(variables('lbID0'), '/probes/FabricManagementProbe')]",
        "lbHttpProbeID0": "[concat(variables('lbID0'), '/probes/FabricExplorerProbe')]",
+       "lbAppProbeID0": "[concat(variables('lbID0'), '/probes/ApplicationProbe')]",
        "lbNatPoolID0": "[concat(variables('lbID0'), '/inboundNatPools/LoadBalancerBEAddressNatPool')]",
        "vmNodeType0Name": "MiniSet",
        "fabricTcpGatewayPort": "19000",
@@ -229,7 +230,7 @@
                       "frontendPort": 80,
                       "idleTimeoutInMinutes": 5,
                       "probe": {
-                         "id": "ApplicationProbe"
+                         "id": "[variables('lbAppProbeID0')]"
                       },
                       "protocol": "Tcp"
                    }
@@ -260,6 +261,7 @@
                       "intervalInSeconds": 15,
                       "numberOfProbes": 2,
                       "port": 8561,
+                      "requestPath": "/health",
                       "protocol": "Http"
                    }
                 }
