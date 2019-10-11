@@ -44,9 +44,11 @@ $armParameters = @{
 }
 
 # Create cluster resources based on the specified ARM template
-New-AzureRmResourceGroupDeployment `
+$creationResult = New-AzureRmResourceGroupDeployment `
   -ResourceGroupName $ResourceGroupName `
   -TemplateFile "$TemplateDirectory\$TemplateName" `
   -Mode Incremental `
   -TemplateParameterObject $armParameters `
   -Verbose
+
+$creationResult
