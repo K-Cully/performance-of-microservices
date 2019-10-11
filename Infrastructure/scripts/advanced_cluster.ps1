@@ -1,8 +1,9 @@
 param(
     [string] [Parameter(Mandatory = $true)] $Name,
-    [string] $TemplateName = "onenode.json", # Name of the cluster ARM template
-    [int] $NodeCount = 1,                   # Number of nodes to create
-    [string] $Location = "northeurope"      # Physical location of all the resources
+    [string] $TemplateName = "complete.json",   # Name of the cluster ARM template
+    [int] $NodeCount = 1,                       # Number of nodes to create
+    [string] $ClusterTier = "Bronze",           # The reliability and durability tier of the cluster
+    [string] $Location = "northeurope"          # Physical location of all the resources
 )
 
 # Add utility methods
@@ -37,6 +38,7 @@ $armParameters = @{
     certificateUrlValue = $cert.SecretId;
     rdpPassword = GeneratePassword;
     vmInstanceCount = $NodeCount;
+    clusterTier = $ClusterTier
 }
 
 # Create cluster resources based on the specified ARM template
