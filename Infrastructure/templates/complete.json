@@ -54,7 +54,7 @@
          "type": "string",
          "defaultValue": "Standard_D1_V2"
       },
-      "omsWorkspacename": {
+      "omsWorkspaceName": {
          "type": "string",
          "defaultValue": "[toLower(concat(parameters('namePart'), '-oms'))]"
       },
@@ -99,7 +99,7 @@
       "vmImageSku": "2016-Datacenter-with-Containers",
       "vmImageVersion": "latest",
       "rdpUserName": "rdpadmin",
-      "omsSolutionName": "[Concat('ServiceFabric', '(', parameters('omsWorkspacename'), ')')]",
+      "omsSolutionName": "[Concat('ServiceFabric', '(', parameters('omsWorkspaceName'), ')')]",
       "omsSolution": "ServiceFabric"
    },
    "resources": [
@@ -415,6 +415,21 @@
                            },
                            "typeHandlerVersion": "1.5"
                         }
+                     },
+                     {
+                        "name": "[concat(variables('vmNodeType0Name'),'OMS')]",
+                        "properties": {
+                           "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                           "type": "MicrosoftMonitoringAgent",
+                           "typeHandlerVersion": "1.0",
+                           "autoUpgradeMinorVersion": true,
+                           "settings": {
+                              "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').customerId]"
+                           },
+                           "protectedSettings": {
+                              "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')),'2015-11-01-preview').primarySharedKey]"
+                           }
+                        }
                      }
                   ]
                },
@@ -557,7 +572,7 @@
       {
          "apiVersion": "2015-11-01-preview",
          "location": "[parameters('omsRegion')]",
-         "name": "[parameters('omsWorkspacename')]",
+         "name": "[parameters('omsWorkspaceName')]",
          "type": "Microsoft.OperationalInsights/workspaces",
          "properties": {
          "sku": {
@@ -567,10 +582,10 @@
          "resources": [
          {
             "apiVersion": "2015-11-01-preview",
-            "name": "[concat(variables('applicationDiagnosticsStorageAccountName'),parameters('omsWorkspacename'))]",
+            "name": "[concat(variables('applicationDiagnosticsStorageAccountName'),parameters('omsWorkspaceName'))]",
             "type": "storageinsightconfigs",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]",
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
                "[concat('Microsoft.Storage/storageAccounts/', variables('applicationDiagnosticsStorageAccountName'))]"
             ],
             "properties": {
@@ -591,7 +606,7 @@
             "name": "System",
             "type": "datasources",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
             ],
             "kind": "WindowsEvent",
             "properties": {
@@ -610,6 +625,24 @@
             }
          }
          ]
+      },
+      {
+         "apiVersion": "2015-11-01-preview",
+         "location": "[parameters('omsRegion')]",
+         "name": "[variables('omsSolutionName')]",
+         "type": "Microsoft.OperationsManagement/solutions",
+         "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('OMSWorkspacename'))]"
+         ],
+         "properties": {
+            "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+         },
+         "plan": {
+            "name": "[variables('omsSolutionName')]",
+            "publisher": "Microsoft",
+            "product": "[Concat('OMSGallery/', variables('omsSolution'))]",
+            "promotionCode": ""
+         }
       },
       {
          "type": "microsoft.insights/components",

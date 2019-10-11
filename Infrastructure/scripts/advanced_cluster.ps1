@@ -15,7 +15,8 @@ $TemplateDirectory = "$ParentDirectory\templates"
 $ResourceGroupName = "$Name-rg"
 $Location = "North Europe"
 $KeyVaultName = "$Name-vault"
-$durabilityLevel = If ($ClusterTier -eq "None") { "Bronze" } Else { $ClusterTier }
+$DurabilityLevel = If ($ClusterTier -eq "None") { "Bronze" } Else { $ClusterTier }
+$OmsWorkspaceName = "$Name-oms"
 
 # Check that you're logged in to Azure before running anything at all, the call will
 # exit the script if you're not
@@ -40,7 +41,8 @@ $armParameters = @{
     rdpPassword = GeneratePassword;
     vmInstanceCount = $NodeCount;
     reliability = $ClusterTier;
-    durability = $durabilityLevel;
+    durability = $DurabilityLevel;
+    omsWorkspaceName = $OmsWorkspaceName;
 }
 
 # Create cluster resources based on the specified ARM template
@@ -50,5 +52,8 @@ $creationResult = New-AzureRmResourceGroupDeployment `
   -Mode Incremental `
   -TemplateParameterObject $armParameters `
   -Verbose
+
+# Add relevant performance counters to the OMS workspace
+Add-PerformanceCounters -ResourceGroup $ResourceGroupName -WorkspaceName $OmsWorkspaceName
 
 $creationResult

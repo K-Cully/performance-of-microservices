@@ -164,3 +164,41 @@ function Unregister-ApplicationTypeCompletely([string]$ApplicationTypeName)
 
     }
 }
+
+function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
+{
+    $perfCounters = @{}
+    $perfCounters.LogicalDisk = ("*", "% Free Space"), ("*", "Avg. Disk sec/Read"), ("*", "Avg. Disk sec/Write"), `
+        ("*", "Current Disk Queue Length"), ("*", "Disk Reads/sec"), ("*", "Disk Transfers/sec"), ("*", "Disk Writes/sec")
+    $perfCounters.Memory = ("*", "% Committed Bytes In Use"), ("*", "Available MBytes")
+    $perfCounters.Add("Network Adapter", (("*", "Bytes Received/sec"), ("*", "Bytes Sent/sec")))
+    $perfCounters.Add("Network Interface", (("*", "Bytes Total/sec"), $null))
+    $perfCounters.Add("System", (("*", "Processor Queue Length"), $null))
+    $perfCounters.Add("Processor", (("_Total", "% Processor Time"), $null))
+
+    Write-Output("Adding performance counters to OMS workplace $WorkspaceName in resource group $ResourceGroup")
+    foreach($perfCounter in $perfCounters.Keys)
+    {
+        foreach($perfCounterTuple in $perfCounters[$perfCounter])
+        {
+            if ($null -eq $perfCounterTuple)
+            {
+                continue
+            }
+
+            $instanceName = $perfCounterTuple[0]
+            $counterName = $perfCounterTuple[1]
+            $name = "$perfCounter-$counterName"
+            $name = $name.Replace("/", "per").Replace("%", "percent")
+
+            Write-Output("Adding performance counter: $name")
+            # Add Perf Counters
+            New-AzureRmOperationalInsightsWindowsPerformanceCounterDataSource `
+                -ResourceGroupName $ResourceGroup -WorkspaceName $WorkspaceName `
+                -ObjectName $perfCounter -InstanceName $instanceName  -CounterName $counterName `
+                -IntervalSeconds 10 -Name $name
+        }
+    }
+}
+
+
