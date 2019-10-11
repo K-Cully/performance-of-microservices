@@ -2,7 +2,7 @@ param(
     [string] [Parameter(Mandatory = $true)] $Name,
     [string] $TemplateName = "complete.json",   # Name of the cluster ARM template
     [int] $NodeCount = 1,                       # Number of nodes to create
-    [string] $ClusterTier = "Bronze",           # The reliability and durability tier of the cluster
+    [string] $ClusterTier = "None",             # The reliability and durability tier of the cluster
     [string] $Location = "northeurope"          # Physical location of all the resources
 )
 
@@ -15,6 +15,7 @@ $TemplateDirectory = "$ParentDirectory\templates"
 $ResourceGroupName = "$Name-rg"
 $Location = "North Europe"
 $KeyVaultName = "$Name-vault"
+$durabilityLevel = If ($ClusterTier -eq "None") { "Bronze" } Else { $ClusterTier }
 
 # Check that you're logged in to Azure before running anything at all, the call will
 # exit the script if you're not
@@ -38,7 +39,8 @@ $armParameters = @{
     certificateUrlValue = $cert.SecretId;
     rdpPassword = GeneratePassword;
     vmInstanceCount = $NodeCount;
-    clusterTier = $ClusterTier
+    reliability = $ClusterTier;
+    durability = $durabilityLevel;
 }
 
 # Create cluster resources based on the specified ARM template

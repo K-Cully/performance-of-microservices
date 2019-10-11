@@ -29,11 +29,18 @@
             "description": "Refers to the location URL in your key vault where the cluster certificate was uploaded. The format is https://<name of the vault>.vault.azure.net:443/secrets/<exact location>"
          }
       },
-      "clusterTier": {
+      "durability": {
          "type": "string",
          "defaultValue": "Bronze",
          "metadata": {
-            "description": "The reliability and durability tier to set for the cluster and it's nodes"
+            "description": "The durability tier to set for the cluster"
+         }
+      },
+      "reliability": {
+         "type": "string",
+         "defaultValue": "None",
+         "metadata": {
+            "description": "The reliability tier to set for the cluster"
          }
       },
       "vmInstanceCount": {
@@ -331,7 +338,7 @@
                               "nodeTypeRef": "[variables('vmNodeType0Name')]",
                               "enableParallelJobs": true,
                               "dataPath": "D:\\\\SvcFab",
-                              "durabilityLevel": "[parameters('clusterTier')]",
+                              "durabilityLevel": "[parameters('durability')]",
                               "certificate": {
                                  "thumbprint": "[parameters('certificateThumbprint')]",
                                  "x509StoreName": "[variables('certificateStoreValue')]"
@@ -522,7 +529,7 @@
                      "startPort": "[variables('applicationStartPort')]"
                   },
                   "clientConnectionEndpointPort": "[variables('fabricTcpGatewayPort')]",
-                  "durabilityLevel": "[parameters('clusterTier')]",
+                  "durabilityLevel": "[parameters('durability')]",
                   "ephemeralPorts": {
                      "endPort": "[variables('ephemeralEndPort')]",
                      "startPort": "[variables('ephemeralStartPort')]"
@@ -532,7 +539,7 @@
                   "vmInstanceCount": "[parameters('vmInstanceCount')]"
                }
             ],
-            "reliabilityLevel": "[parameters('clusterTier')]",
+            "reliabilityLevel": "[parameters('reliability')]",
             "upgradeMode": "Automatic",
             "vmImage": "Windows"
          }
