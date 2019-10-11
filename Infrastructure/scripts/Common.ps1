@@ -168,8 +168,8 @@ function Unregister-ApplicationTypeCompletely([string]$ApplicationTypeName)
 function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
 {
     $perfCounters = @{}
-    $perfCounters.LogicalDisk = ("*", "% Free Space"), ("*", "Avg. Disk sec/Read"), ("*", "Avg. Disk sec/Write"), `
-        ("*", "Current Disk Queue Length"), ("*", "Disk Reads/sec"), ("*", "Disk Transfers/sec"), ("*", "Disk Writes/sec")
+    $perfCounters.LogicalDisk = ("*", "Avg. Disk sec/Read"), ("*", "Avg. Disk sec/Write"), `
+        ("*", "Disk Reads/sec"), ("*", "Disk Transfers/sec"), ("*", "Disk Writes/sec")
     $perfCounters.Memory = ("*", "% Committed Bytes In Use"), ("*", "Available MBytes")
     $perfCounters.Add("Network Adapter", (("*", "Bytes Received/sec"), ("*", "Bytes Sent/sec")))
     $perfCounters.Add("Network Interface", (("*", "Bytes Total/sec"), $null))
@@ -195,7 +195,7 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
             New-AzureRmOperationalInsightsWindowsPerformanceCounterDataSource `
                 -ResourceGroupName $ResourceGroup -WorkspaceName $WorkspaceName `
                 -ObjectName $perfCounter -InstanceName $instanceName  -CounterName $counterName `
-                -IntervalSeconds 10 -Name $name -Force
+                -IntervalSeconds 15 -Name $name -Force
         }
     }
 }
