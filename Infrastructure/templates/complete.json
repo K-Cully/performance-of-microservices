@@ -54,6 +54,14 @@
          "type": "string",
          "defaultValue": "Standard_D1_V2"
       },
+      "omsWorkspacename": {
+         "type": "string",
+         "defaultValue": "[toLower(concat(parameters('namePart'), '-oms'))]"
+      },
+      "omsRegion": {
+         "type": "string",
+         "defaultValue": "North Europe"
+      },
       "appInsightsName": {
          "type": "string",
          "defaultValue": "[concat(parameters('namePart'), '-ai')]"
@@ -61,12 +69,12 @@
    },
    "variables": {
       "clusterName": "[parameters('namePart')]",
-      "virtualNetworkName": "[concat('vnet-', variables('clusterName'))]",
+      "virtualNetworkName": "[concat(variables('clusterName'), '-vnet')]",
       "addressPrefix": "10.0.0.0/16",
       "subnet1Name": "MiniSub",
       "subnet1Prefix": "10.0.0.0/24",
-      "lbName": "[concat('lb-', parameters('namePart'))]",
-      "lbIPName": "[concat('ip-', parameters('namePart'))]",
+      "lbName": "[concat(parameters('namePart'), '-lb')]",
+      "lbIPName": "[concat(parameters('namePart'), '-ip')]",
       "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "subnet1Ref": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
       "supportLogStorageAccountName": "[concat('logs', uniqueString(resourceGroup().id))]",
@@ -90,7 +98,9 @@
       "vmImageOffer": "WindowsServer",
       "vmImageSku": "2016-Datacenter-with-Containers",
       "vmImageVersion": "latest",
-      "rdpUserName": "rdpadmin"
+      "rdpUserName": "rdpadmin",
+      "omsSolutionName": "[Concat('ServiceFabric', '(', parameters('omsWorkspacename'), ')')]",
+      "omsSolution": "ServiceFabric"
    },
    "resources": [
       {
@@ -543,7 +553,64 @@
             "upgradeMode": "Automatic",
             "vmImage": "Windows"
          }
-      },       
+      }, 
+      {
+         "apiVersion": "2015-11-01-preview",
+         "location": "[parameters('omsRegion')]",
+         "name": "[parameters('omsWorkspacename')]",
+         "type": "Microsoft.OperationalInsights/workspaces",
+         "properties": {
+         "sku": {
+            "name": "Free"
+         }
+         },
+         "resources": [
+         {
+            "apiVersion": "2015-11-01-preview",
+            "name": "[concat(variables('applicationDiagnosticsStorageAccountName'),parameters('omsWorkspacename'))]",
+            "type": "storageinsightconfigs",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]",
+               "[concat('Microsoft.Storage/storageAccounts/', variables('applicationDiagnosticsStorageAccountName'))]"
+            ],
+            "properties": {
+               "containers": [],
+               "tables": [
+               "WADServiceFabric*EventTable",
+               "WADWindowsEventLogsTable",
+               "WADETWEventTable"
+               ],
+               "storageAccount": {
+               "id": "[resourceId('Microsoft.Storage/storageaccounts/', variables('applicationDiagnosticsStorageAccountName'))]",
+               "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('applicationDiagnosticsStorageAccountName')),'2015-06-15').key1]"
+               }
+            }
+         },
+         {
+            "apiVersion": "2015-11-01-preview",
+            "name": "System",
+            "type": "datasources",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+            ],
+            "kind": "WindowsEvent",
+            "properties": {
+               "eventLogName": "System",
+               "eventTypes": [
+               {
+                  "eventType": "Error"
+               },
+               {
+                  "eventType": "Warning"
+               },
+               {
+                  "eventType": "Information"
+               }
+               ]
+            }
+         }
+         ]
+      },
       {
          "type": "microsoft.insights/components",
          "apiVersion": "2015-05-01",
