@@ -300,7 +300,8 @@
          "location": "[resourceGroup().location]",
          "dependsOn": [
             "[variables('supportLogStorageAccountName')]",
-            "[variables('applicationDiagnosticsStorageAccountName')]"
+            "[variables('applicationDiagnosticsStorageAccountName')]",
+            "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]"
          ],
          "tags": {
             "resourceType": "Service Fabric",
@@ -384,6 +385,14 @@
                                           }
                                        ]
                                     }
+                                 },
+                                 "SinksConfig": {
+                                    "Sink": [
+                                       {
+                                          "name": "applicationInsights",
+                                          "ApplicationInsights": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
+                                       }
+                                    ]
                                  }
                               }
                            },
