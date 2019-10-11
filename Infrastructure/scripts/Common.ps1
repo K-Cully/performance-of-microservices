@@ -191,12 +191,11 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
             $name = "$perfCounter-$counterName"
             $name = $name.Replace("/", "per").Replace("%", "percent")
 
-            Write-Output("Adding performance counter: $name")
-            # Add Perf Counters
+            # Add performance counter data sources
             New-AzureRmOperationalInsightsWindowsPerformanceCounterDataSource `
                 -ResourceGroupName $ResourceGroup -WorkspaceName $WorkspaceName `
                 -ObjectName $perfCounter -InstanceName $instanceName  -CounterName $counterName `
-                -IntervalSeconds 10 -Name $name
+                -IntervalSeconds 10 -Name $name -Force
         }
     }
 }
