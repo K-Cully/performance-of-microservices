@@ -554,6 +554,10 @@
       "clusterProperties": {
          "value": "[reference(variables('clusterName'))]",
          "type": "object"
+      },
+      "appInsightsKey": {
+         "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+         "type": "string"
       }
    }
 }
