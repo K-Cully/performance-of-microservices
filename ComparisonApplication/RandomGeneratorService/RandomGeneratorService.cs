@@ -36,7 +36,11 @@ namespace RandomGeneratorService
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
-                        var aiOptions = new ApplicationInsightsServiceOptions { EnableAdaptiveSampling = false };
+                        var aiOptions = new ApplicationInsightsServiceOptions
+                        {
+                            EnableAdaptiveSampling = false,
+                            InstrumentationKey = "2d0aeab8-15c1-4a96-a601-c992d8c17d02"
+                        };
 
                         return new WebHostBuilder()
                                     .UseKestrel()
