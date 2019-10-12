@@ -11,6 +11,7 @@ using RandomGeneratorService.Core;
 using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 namespace RandomGeneratorService
 {
@@ -35,6 +36,7 @@ namespace RandomGeneratorService
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
+                        var aiOptions = new ApplicationInsightsServiceOptions { EnableAdaptiveSampling = false };
 
                         return new WebHostBuilder()
                                     .UseKestrel()
@@ -48,7 +50,7 @@ namespace RandomGeneratorService
                                         services => services
                                             .AddSingleton<ITelemetryInitializer>((serviceProvider) =>
                                                 FabricTelemetryInitializerExtension.CreateFabricTelemetryInitializer(serviceContext))
-                                            .AddApplicationInsightsTelemetry()
+                                            .AddApplicationInsightsTelemetry(aiOptions)
                                             .AddSingleton(serviceContext)
                                             .AddSingleton<ISeedGenerator, PrimeGenerator>()
                                             .AddScoped<IRandomProcessor, RandomProcessor>())

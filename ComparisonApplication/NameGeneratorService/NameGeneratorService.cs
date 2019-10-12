@@ -1,3 +1,4 @@
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace NameGeneratorService
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting Kestrel on {url}");
+                        var aiOptions = new ApplicationInsightsServiceOptions { EnableAdaptiveSampling = false };
 
                         return new WebHostBuilder()
                                     .UseKestrel()
@@ -48,7 +50,7 @@ namespace NameGeneratorService
                                         services => services
                                             .AddSingleton<ITelemetryInitializer>((serviceProvider) =>
                                                 FabricTelemetryInitializerExtension.CreateFabricTelemetryInitializer(serviceContext))
-                                            .AddApplicationInsightsTelemetry()
+                                            .AddApplicationInsightsTelemetry(aiOptions)
                                             .AddSingleton(serviceContext)
                                             .AddScoped<INameProcessor, NameProcessor>())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
