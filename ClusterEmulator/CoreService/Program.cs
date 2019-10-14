@@ -13,11 +13,7 @@ namespace CoreService
 {
     internal static class Program
     {
-        private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
-
         private const string ServiceTypeName = "CoreServiceType";
-
-        private static readonly string environment = Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production";
 
 
         /// <summary>
@@ -26,7 +22,6 @@ namespace CoreService
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
 

@@ -13,11 +13,7 @@ namespace CoreService
 {
     internal static class Program
     {
-        private const string ASPNETCORE_ENVIRONMENT = "ASPNETCORE_ENVIRONMENT";
-
         private const string ServiceTypeName = "CoreServiceType";
-
-        private static readonly string environment = Environment.GetEnvironmentVariable(ASPNETCORE_ENVIRONMENT) ?? "Production";
 
 
         /// <summary>
@@ -26,7 +22,6 @@ namespace CoreService
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
 
@@ -38,14 +33,8 @@ namespace CoreService
         {
             try
             {
-                // TODO: set App Insights key from external source
-                var telemetry = new TelemetryConfiguration("");
                 Logger log = new LoggerConfiguration()
                                 .ReadFrom.Configuration(Configuration)
-                                .Enrich.FromLogContext()
-                                .Enrich.WithOperationId()
-                                .Enrich.WithProperty("Environment", environment)
-                                .WriteTo.ApplicationInsights(telemetry, new AppInsightsTelemetryConverter())
                                 .CreateLogger();
 
                 // Create service instance
