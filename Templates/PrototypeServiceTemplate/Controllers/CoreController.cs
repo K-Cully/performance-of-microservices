@@ -2,7 +2,7 @@ using ClusterEmulator.Service.Simulation.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace ClusterEmulator.Service.Shared
+namespace CoreService.Controllers
 {
     /// <summary>
     /// Provides a service specific controller with the required configuration.
