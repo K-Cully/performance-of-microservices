@@ -2,14 +2,14 @@
     "$schema": "http://json.schemastore.org/template",
     "author": "Keith Cully",
     "classifications": [ "Service Fabric", "Performance" ], 
-    "name": "Prototype Stateless Service",
-    "identity": "SF.ClusterEmulator.PrototypeStatelessService",         
+    "name": "Prototype Stateless .NET Core Service Fabric Service",
+    "identity": "SF.ClusterEmulator.PrototypeStateless",         
     "groupIdentity":"SF.ClusterEmulator",
-    "shortName": "protoStateless",
+    "shortName": "protoCoreSF",
     "tags": {
       "language": "C#",
       "type":"project"
     },
-    "sourceName": "CoreService",
+    "sourceName": "Emulation",
     "preferNameDirectory":true
   }
