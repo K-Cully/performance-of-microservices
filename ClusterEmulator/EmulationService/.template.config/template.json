@@ -18,6 +18,11 @@
       "datatype": "int",
       "defaultValue": "1234"
     },
+    "aiKey": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": ""
+    },
     "regexPort": {
       "type": "generated",
       "generator": "regex",
@@ -30,6 +35,22 @@
           {
             "regex": "^([0-9]+)$",
             "replacement": "Port=\"$1\""
+          }
+        ]
+      }
+    },
+    "regexAIKey": {
+      "type": "generated",
+      "generator": "regex",
+      "dataType": "string",
+      "replaces": "\"instrumentationKey\": \"\"",
+      "parameters": {
+        "action": "replace",
+        "source": "aiKey",
+        "steps": [
+          {
+            "regex": "^(.+)$",
+            "replacement": "\"instrumentationKey\": \"$1\""
           }
         ]
       }
