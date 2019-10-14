@@ -32,9 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoreService\CoreService.csproj">
-      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/api/adaptable/</ServiceLaunchUrl>
-    </ProjectReference>
+    <ProjectReference Include="..\EmulationService\EmulationService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
