@@ -9,14 +9,14 @@ namespace ClusterEmulator.Service.Shared
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class CoreController : AdaptableController
+    public class EmulationController : AdaptableController
     {
         /// <summary>
-        /// Creates a new instance of <see cref="CoreController"/>.
+        /// Creates a new instance of <see cref="EmulationController"/>.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
-        public CoreController(ILogger<CoreController> logger, IEngine simulationEngine)
+        public EmulationController(ILogger<EmulationController> logger, IEngine simulationEngine)
             : base(logger, simulationEngine)
         {}
     }
