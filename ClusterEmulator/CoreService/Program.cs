@@ -38,12 +38,14 @@ namespace CoreService
         {
             try
             {
+                // TODO: set App Insights key from external source
+                var telemetry = new TelemetryConfiguration("");
                 Logger log = new LoggerConfiguration()
                                 .ReadFrom.Configuration(Configuration)
                                 .Enrich.FromLogContext()
                                 .Enrich.WithOperationId()
                                 .Enrich.WithProperty("Environment", environment)
-                                .WriteTo.ApplicationInsights(new AppInsightsTelemetryConverter())
+                                .WriteTo.ApplicationInsights(telemetry, new AppInsightsTelemetryConverter())
                                 .CreateLogger();
 
                 // Create service instance
