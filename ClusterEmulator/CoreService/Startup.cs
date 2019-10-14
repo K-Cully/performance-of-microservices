@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 
-namespace CoreService
+namespace EmulationService
 {
     /// <summary>
     /// Provides an ease-of-use abstraction for instance container managment and http pipeline configuration.

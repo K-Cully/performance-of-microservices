@@ -9,11 +9,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace CoreService
+namespace EmulationService
 {
     internal static class Program
     {
-        private const string ServiceTypeName = "CoreServiceType";
+        private const string ServiceTypeName = "EmulationServiceType";
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace CoreService
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync(ServiceTypeName,
-                    context => new CoreService(context, log)).GetAwaiter().GetResult();
+                    context => new EmulationService(context, log)).GetAwaiter().GetResult();
 
                 Log.Information("Service registered - {ProcessId}, {ServiceId}",
                     Process.GetCurrentProcess().Id, ServiceTypeName);
