@@ -49,7 +49,7 @@
         "source": "aiKey",
         "steps": [
           {
-            "regex": "^(.+)$",
+            "regex": "^(.*)$",
             "replacement": "\"instrumentationKey\": \"$1\""
           }
         ]
