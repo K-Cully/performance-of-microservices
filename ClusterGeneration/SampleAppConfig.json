@@ -1,36 +1,32 @@
 {
     "settingsPath": "",
     "aiKey": "",
-    "services": [
-        {
-            "SampleService1": {
-                "port": 8001,
-                "processors": {
-                    "Processor1": {
+    "services": {
+        "SampleService1": {
+            "port": 8001,
+            "processors": {
+                "Processor1": {
 
-                    }
-                },
-                "steps": {
-                    "Step1": {
+                }
+            },
+            "steps": {
+                "Step1": {
 
-                    }
-                },
-                "clients": {
-                    "Client1": {
+                }
+            },
+            "clients": {
+                "Client1": {
 
-                    }
-                },
-                "Policies": {
-                    "Policy1": {
+                }
+            },
+            "Policies": {
+                "Policy1": {
 
-                    }
                 }
             }
         },
-        {
-            "SampleService2": {
+        "SampleService2": {
 
-            }
         }
-    ]
+    }
 }
