@@ -14,12 +14,13 @@ param(
 
 $UsedPorts = @{}
 $ParentDirectory = $PSScriptRoot | Split-Path
+$EmulatorDirectory = "$ParentDirectory\ClusterEmulator"
 
 if ($OutputFolder){
     $OutputDirectory = $OutputFolder
 }
 else {
-    $OutputDirectory = "$ParentDirectory/generated/$Name/"
+    $OutputDirectory = "$ParentDirectory\generated\$Name\"
 }
 
 $AppConfig = Read-AppConfig -Path $ConfigFile 
@@ -37,9 +38,11 @@ elseif ($AppConfig.aiKey) {
     # TODO: pass to template generation
 }
 
-# TODO: clean builds and copy dependent projects to generated location
+# Clean build folders and copy simulation engine projects
 Clean-BuildFolders -RootPath $ParentDirectory
-
+Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects"
+Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects"
+Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects"
 
 # TODO: build simulation and reference dlls for service validation
 # TODO: .\ClusterEmulator\Service.Simulation\bin\Release\netcoreapp2.2\ClusterEmulator.Service.Simulation.dll
