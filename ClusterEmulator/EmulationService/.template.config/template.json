@@ -28,12 +28,16 @@
     "port": {
       "type": "parameter",
       "datatype": "int",
-      "defaultValue": "1234"
+      "description": "The unique port that the service should listen on",
+      "defaultValue": "1234",
+      "isRequired": true
     },
     "aiKey": {
       "type": "parameter",
       "datatype": "string",
-      "defaultValue": ""
+      "description": "The (optional) Application Insights instrumentation key",
+      "defaultValue": "",
+      "isRequired": false
     },
     "regexPort": {
       "type": "generated",
