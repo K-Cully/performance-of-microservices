@@ -1,4 +1,7 @@
-# Note: Requires Powershell Core 6+
+# Nots:
+# Requires Powershell Core 6+
+# If Visual Studio is open in the background, debug folders may be copied to output though they will not affect execution.
+
 
 param(
     [string] [Parameter(Mandatory = $true)] $Name,
@@ -6,78 +9,48 @@ param(
     [string] [Parameter(Mandatory = $false)] $OutputFolder
 )
 
-function Read-AppConfig([string]$Path)
-{
-    if (-Not (Test-Path -Path $Path)) {
-        Write-Error -Message "File $Path not found"
-        exit 1
-    }
-    
-    $config = Get-Content $Path | ConvertFrom-Json -AsHashtable
-    if ((-Not $config.services) -or $config.services.Count -eq 0)
-    {
-        Write-Error -Message "No services are sepcified in $Path"
-        exit 1
-    }
+# Add utility functions
+. "$PSScriptRoot\Common.ps1"
 
-    $config
-}
-
-function Validate-ServiceConfig([hashtable]$Config)
-{
-    if (-Not $Config.port) {
-        Write-Error -Message "port is missing from service $serviceName"
-        exit 1
-    }
-    elseif($usedPorts[$Config.port]) {
-        $port = $Config.port
-        $otherService = $usedPorts[$port]
-        Write-Error -Message "port $port is already used by $otherService, cannot create $serviceName"
-        exit 1
-    }
-    elseif ((-Not $Config.processors) -or $Config.processors.Count -eq 0) {
-        Write-Error -Message "processors are missing from service $serviceName"
-        exit 1
-    }
-    elseif ((-Not $Config.steps) -or $Config.steps.Count -eq 0) {
-        Write-Error -Message "steps are missing from service $serviceName"
-        exit 1
-    }
-}
-
-
-$usedPorts = @{}
+$UsedPorts = @{}
+$ParentDirectory = $PSScriptRoot | Split-Path
 
 if ($OutputFolder){
     $OutputDirectory = $OutputFolder
 }
 else {
-    $ParentDirectory = $PSScriptRoot | Split-Path
     $OutputDirectory = "$ParentDirectory/generated/$Name/"
 }
 
-$config = Read-AppConfig -Path $ConfigFile 
+$AppConfig = Read-AppConfig -Path $ConfigFile 
 
 $appSettingsFile = $null
-if ($config.settingsPath) {
-    if (-Not (Test-Path -Path $config.settingsPath)) {
+if ($AppConfig.settingsPath) {
+    if (-Not (Test-Path -Path $AppConfig.settingsPath)) {
         Write-Error -Message "Settings path $ConfigFile is not valid"
         exit 1
     }
 
-    $appSettingsFile = $config.settingsPath      
+    $appSettingsFile = $AppConfig.settingsPath      
 }
-elseif ($config.aiKey) {
+elseif ($AppConfig.aiKey) {
     # TODO: pass to template generation
 }
 
+# TODO: clean builds and copy dependent projects to generated location
+Clean-BuildFolders -RootPath $ParentDirectory
+
+
+# TODO: build simulation and reference dlls for service validation
+# TODO: .\ClusterEmulator\Service.Simulation\bin\Release\netcoreapp2.2\ClusterEmulator.Service.Simulation.dll
+
 # Create projects for all services
-foreach ($serviceName in $config.services.Keys) {
-    $serviceConfig = $config.services.$serviceName
-    Validate-ServiceConfig -Config $serviceConfig
+foreach ($serviceName in $AppConfig.services.Keys) {
+    $serviceConfig = $AppConfig.services[$serviceName]
+    Validate-ServiceConfig -Config $serviceConfig -PortAssignments $UsedPorts
 
     # Add port to used table
-    $usedPorts[$serviceConfig.port] = $serviceName
+    $UsedPorts[$serviceConfig.port] = $serviceName
 
     # TODO: call dotnet new for templated service with aiKey
     
