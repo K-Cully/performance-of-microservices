@@ -55,7 +55,7 @@ Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirecto
 Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
 
 # Ensure service template is installed
-dotnet new -i "$EmulatorDirectory\EmulationService"
+$junk = dotnet new -i "$EmulatorDirectory\EmulationService"
 
 # Create projects for all services
 foreach ($serviceName in $AppConfig.services.Keys) {
@@ -74,9 +74,17 @@ foreach ($serviceName in $AppConfig.services.Keys) {
         Copy-Item -Path $AppSettingsFile -Destination "$OutputDirectory\projects\$serviceName\appsettings.json" -Force
     }
 
+    foreach ($processor in $serviceConfig.processors.Keys) {
+        $value = $serviceConfig.processors[$processor]
+        Write-Host -Message "$processor - $value"
+        # TODO: finished here - Need to remove output and fix template generation 
+        Create-Setting -Name $processor -Value $serviceConfig.processors[$processor]
+    }
     # TODO: process policies and steps
     
     # TODO: optionally process clients and policies ()
 }
 
-# TODO: Output Service : Port pairs to config file
+# Output service names and ports to a file
+New-Item -Path "$OutputDirectory\config\" -ItemType directory
+$UsedPorts | Out-File -FilePath "$OutputDirectory\config\ports.txt"

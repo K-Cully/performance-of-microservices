@@ -43,3 +43,11 @@ function Validate-ServiceConfig([hashtable]$Config, [hashtable]$PortAssignments)
         exit 1
     }
 }
+
+function Create-Setting([string]$Name, [hashtable]$Value)
+{
+    $template = @"
+    <Parameter Name="$Name" Value="REPLACE_VALUE" />
+"@
+    Write-Host -Message $template
+}

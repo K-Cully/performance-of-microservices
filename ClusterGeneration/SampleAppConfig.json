@@ -5,46 +5,85 @@
         "SampleService1": {
             "port": 8001,
             "processors": {
-                "Processor1": {
-
+                "DoStuff": {
+                    "errorSize": 100,
+                    "latency": 0,
+                    "steps": [ "LoadA", "RequestA" ],
+                    "successSize": 20 
                 }
             },
             "steps": {
-                "Step1": {
-
+                "LoadA": { 
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 100,
+                        "time": 0.01,
+                        "percent": 1
+                    }
+                },
+                "RequestA": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "ContosoA",
+                        "cacheKeyUniqueness": 50,
+                        "client": "ContosoClient",
+                        "method": "get",
+                        "path": "/",
+                        "size" : 128,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
                 }
             },
             "clients": {
-                "Client1": {
-
+                "ContosoClient": {
+                    "baseAddress": "https://contoso.com",
+                    "policies": [ "SlidingCache", "ThreeRetries", "ThreeSecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
                 }
             },
             "Policies": {
-                "Policy1": {
-
+                "ThreeRetries": {
+                    "type": "RetryConfig",
+                    "policy": {
+                        "retries": 3,
+                        "delays": [ 1, 5 ]
+                    }
+                },
+                "SlidingCache": {
+                    "type": "CacheConfig",
+                    "policy": {
+                        "time": { "minutes": 3 },
+                        "slidingExpiration": true
+                    }
+                },
+                "ThreeSecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : false,
+                        "time" : 3.0
+                    }
                 }
             }
         },
         "SampleService2": {
             "port": 8002,
             "processors": {
-                "Processor1": {
-
+                "GenerateLoad": {
+                    "errorSize": 100,
+                    "latency": 0,
+                    "steps": [ "CpuLoad" ],
+                    "successSize": 20
                 }
             },
             "steps": {
-                "Step1": {
-
-                }
-            },
-            "clients": {
-                "Client1": {
-
-                }
-            },
-            "Policies": {
-                "Policy1": {
-
+                "CpuLoad": {
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 512000,
+                        "time": 3,
+                        "percent" : 90
+                    }
                 }
             }
         }
