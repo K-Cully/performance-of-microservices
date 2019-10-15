@@ -74,13 +74,41 @@ foreach ($serviceName in $AppConfig.services.Keys) {
         Copy-Item -Path $AppSettingsFile -Destination "$OutputDirectory\projects\$serviceName\appsettings.json" -Force
     }
 
+    # TODO: write settings to file
+
     foreach ($processor in $serviceConfig.processors.Keys) {
         $value = $serviceConfig.processors[$processor]
-        Create-Setting -Name $processor -Value $serviceConfig.processors[$processor]
+        $setting = Create-Setting -Name $processor -Value $serviceConfig.processors[$processor]
+
+        Write-Host -Message $setting
     }
-    # TODO: process policies and steps
+
+    foreach ($step in $serviceConfig.steps.Keys) {
+        $value = $serviceConfig.steps[$step]
+        $setting = Create-Setting -Name $step -Value $serviceConfig.steps[$step]
+
+        Write-Host -Message $setting
+    }
+
+    if ($serviceConfig.clients -and $serviceConfig.clients.Keys)
+    {
+        foreach ($client in $serviceConfig.clients.Keys) {
+            $value = $serviceConfig.clients[$client]
+            $setting = Create-Setting -Name $client -Value $serviceConfig.clients[$client]
     
-    # TODO: optionally process clients and policies ()
+            Write-Host -Message $setting
+        }
+    }
+    
+    if ($serviceConfig.policies -and $serviceConfig.policies.Keys)
+    {
+        foreach ($policy in $serviceConfig.policies.Keys) {
+            $value = $serviceConfig.policies[$policy]
+            $setting = Create-Setting -Name $policy -Value $serviceConfig.policies[$policy]
+    
+            Write-Host -Message $setting
+        }
+    }
 }
 
 # Output service names and ports to a file

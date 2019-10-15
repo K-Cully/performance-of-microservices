@@ -96,5 +96,5 @@ function Create-Setting([string]$Name, [hashtable]$Value)
     $template = @"
 <Parameter Name="$Name" Value="$json" />
 "@
-    Write-Host -Message $template
+    $template
 }

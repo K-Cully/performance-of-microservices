@@ -42,7 +42,7 @@
                     "headers": { "Accept": "*/*" }
                 }
             },
-            "Policies": {
+            "policies": {
                 "ThreeRetries": {
                     "type": "RetryConfig",
                     "policy": {
