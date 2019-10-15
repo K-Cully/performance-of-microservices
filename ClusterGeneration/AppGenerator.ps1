@@ -76,8 +76,6 @@ foreach ($serviceName in $AppConfig.services.Keys) {
 
     foreach ($processor in $serviceConfig.processors.Keys) {
         $value = $serviceConfig.processors[$processor]
-        Write-Host -Message "$processor - $value"
-        # TODO: finished here - Need to remove output and fix template generation 
         Create-Setting -Name $processor -Value $serviceConfig.processors[$processor]
     }
     # TODO: process policies and steps

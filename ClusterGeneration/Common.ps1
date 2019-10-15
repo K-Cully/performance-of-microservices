@@ -44,10 +44,57 @@ function Validate-ServiceConfig([hashtable]$Config, [hashtable]$PortAssignments)
     }
 }
 
+function Build-SettingCompatibleJson($TreeNode)
+{
+    if ($TreeNode -is [string]) {
+        $json = @"
+'$TreeNode', 
+"@
+    }
+    elseif ($TreeNode -is [array]) {
+        $inner = ""
+        foreach ($item in $TreeNode) {
+            $itemJson = Build-SettingCompatibleJson($item)
+            $inner = @"
+$inner$itemJson
+"@
+        }
+
+        $inner = $inner.TrimEnd(',', ' ')
+        $json = @"
+[ $inner ], 
+"@
+    }
+    elseif ($TreeNode -is [hashtable]) {
+        $inner = ""
+        foreach ($name in $TreeNode.Keys) {
+            $value = $TreeNode[$name]
+            $childJson = Build-SettingCompatibleJson($value)
+            $inner = @"
+$inner$name : $childJson
+"@
+        }
+        
+        $inner = $inner.TrimEnd(',', ' ')
+        $json = @"
+{ $inner }, 
+"@
+    }
+    else {
+        $json = "$TreeNode, "
+    }
+
+    return $json
+}
+
+
 function Create-Setting([string]$Name, [hashtable]$Value)
 {
+    $json = Build-SettingCompatibleJson($Value)
+    $json = $json.TrimEnd(',', ' ')
+
     $template = @"
-    <Parameter Name="$Name" Value="REPLACE_VALUE" />
+<Parameter Name="$Name" Value="$json" />
 "@
     Write-Host -Message $template
 }
