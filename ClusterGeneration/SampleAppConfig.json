@@ -26,7 +26,27 @@
             }
         },
         "SampleService2": {
+            "port": 8001,
+            "processors": {
+                "Processor1": {
 
+                }
+            },
+            "steps": {
+                "Step1": {
+
+                }
+            },
+            "clients": {
+                "Client1": {
+
+                }
+            },
+            "Policies": {
+                "Policy1": {
+
+                }
+            }
         }
     }
 }

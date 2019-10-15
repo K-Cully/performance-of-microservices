@@ -2,7 +2,8 @@
 
 param(
     [string] [Parameter(Mandatory = $true)] $Name,
-    [string] [Parameter(Mandatory = $true)] $ConfigFile
+    [string] [Parameter(Mandatory = $true)] $ConfigFile,
+    [string] [Parameter(Mandatory = $false)] $OutputFolder
 )
 
 function Read-AppConfig([string]$Path)
@@ -22,8 +23,7 @@ function Read-AppConfig([string]$Path)
     $config
 }
 
-
-function Validate-ServiceConfig([string]$Config)
+function Validate-ServiceConfig([hashtable]$Config)
 {
     if (-Not $Config.port) {
         Write-Error -Message "port is missing from service $serviceName"
@@ -48,6 +48,14 @@ function Validate-ServiceConfig([string]$Config)
 
 $usedPorts = @{}
 
+if ($OutputFolder){
+    $OutputDirectory = $OutputFolder
+}
+else {
+    $ParentDirectory = $PSScriptRoot | Split-Path
+    $OutputDirectory = "$ParentDirectory/generated/$Name/"
+}
+
 $config = Read-AppConfig -Path $ConfigFile 
 
 $appSettingsFile = $null
@@ -63,6 +71,7 @@ elseif ($config.aiKey) {
     # TODO: pass to template generation
 }
 
+# Create projects for all services
 foreach ($serviceName in $config.services.Keys) {
     $serviceConfig = $config.services.$serviceName
     Validate-ServiceConfig -Config $serviceConfig
