@@ -1,6 +1,6 @@
 function Clean-BuildFolders([string]$RootPath)
 {
-    Get-ChildItem $RootPath -Recurse | Where{$_.Name -Match "^obj$|^bin$"} | Remove-Item -Recurse
+    Get-ChildItem $RootPath -Recurse | Where-Object { $_.Name -Match "^obj$|^bin$" } | Remove-Item -Recurse
 }
 
 
@@ -97,4 +97,32 @@ function Create-Setting([string]$Name, [hashtable]$Value)
 <Parameter Name="$Name" Value="$json" />
 "@
     $template
+}
+
+function Generate-Settings([hashtable] $Section, [string] $Placeholder, [string] $File)
+{
+    if (-Not $Section) {
+        Write-Warning -Message "No setting source was not specified, ignoring."
+        return
+    }
+
+    if (-Not (Test-Path -Path $File)) {
+        Write-Error -Message "No file was not found at $File"
+        exit 1
+    }
+
+    # Create and append settings
+    $xmlSettings = ""
+    foreach ($nodeName in $Section.Keys) {
+        $setting = Create-Setting -Name $nodeName -Value $Section[$nodeName]
+        $xmlSettings = @"
+$xmlSettings$setting
+    
+"@
+    }
+
+    # Trim trailing spaces, newline and replace in output file
+    $xmlSettings = $xmlSettings.TrimEnd(' ', [char]0x000A, [char]0x000D)
+    Write-Host -Message "Replacing $Placeholder in $File"
+    ((Get-Content -path $File -Raw) -replace $Placeholder, $xmlSettings) | Set-Content -Path $File
 }

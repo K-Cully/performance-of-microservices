@@ -28,13 +28,13 @@ $AppConfig = Read-AppConfig -Path $ConfigFile
 
 # Set up optional override for appsettings.json files
 $AppSettingsFile = $null
-if ($AppConfig.settingsPath) {
-    if (-Not (Test-Path -Path $AppConfig.settingsPath)) {
-        Write-Error -Message "Settings path $ConfigFile is not valid"
+if ($AppConfig.appsettingsPath) {
+    if (-Not (Test-Path -Path $AppConfig.appsettingsPath)) {
+        Write-Error -Message "Appsettings path $ConfigFile is not valid"
         exit 1
     }
 
-    $AppSettingsFile = $AppConfig.settingsPath      
+    $AppSettingsFile = $AppConfig.appsettingsPath      
 }
 
 # Ensure value is not null
@@ -43,21 +43,21 @@ if (-not $AppInsightsKey) {
     $AppInsightsKey = "0000"
 }
 
-# Clean build and generated folders
+Write-Host -Message "Cleaning build and generated folders"
 Clean-BuildFolders -RootPath $ParentDirectory
 if (Test-Path -Path $OutputDirectory) {
     Remove-Item -Path $OutputDirectory -Recurse -Force
 }
 
-# Copy simulation engine projects
+Write-Host -Message "Copying project dependencies to $OutputFolder\projects"
 Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects\Service.Models" -Recurse -Force
 Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects\" -Recurse -Force
 Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
 
-# Ensure service template is installed
+# Ensure service template is installed and suppress console output
 $junk = dotnet new -i "$EmulatorDirectory\EmulationService"
 
-# Create projects for all services
+Write-Host -Message "Generating services under $OutputFolder\projects"
 foreach ($serviceName in $AppConfig.services.Keys) {
     $serviceConfig = $AppConfig.services[$serviceName]
     Validate-ServiceConfig -Config $serviceConfig -PortAssignments $UsedPorts
@@ -66,51 +66,33 @@ foreach ($serviceName in $AppConfig.services.Keys) {
     $UsedPorts[$serviceConfig.port] = $serviceName
 
     # Geterate basic template
+    Write-Host -Message "Generating $serviceName project with port $port and App Insights key $AppInsightsKey"
     dotnet new protoCoreSF -n $serviceName -p $serviceConfig.port -ai $AppInsightsKey -o "$OutputDirectory\projects\$serviceName\" --force
     
+    # Optionally, replace the appsettings.json file with the one specified
     if ($AppSettingsFile)
     {
-        # Replace the appsettings.json file with the one specified
+        Write-Host -Message "Replacing appsettings.json file"
         Copy-Item -Path $AppSettingsFile -Destination "$OutputDirectory\projects\$serviceName\appsettings.json" -Force
     }
 
-    # TODO: write settings to file
-
-    foreach ($processor in $serviceConfig.processors.Keys) {
-        $value = $serviceConfig.processors[$processor]
-        $setting = Create-Setting -Name $processor -Value $serviceConfig.processors[$processor]
-
-        Write-Host -Message $setting
-    }
-
-    foreach ($step in $serviceConfig.steps.Keys) {
-        $value = $serviceConfig.steps[$step]
-        $setting = Create-Setting -Name $step -Value $serviceConfig.steps[$step]
-
-        Write-Host -Message $setting
-    }
-
-    if ($serviceConfig.clients -and $serviceConfig.clients.Keys)
-    {
-        foreach ($client in $serviceConfig.clients.Keys) {
-            $value = $serviceConfig.clients[$client]
-            $setting = Create-Setting -Name $client -Value $serviceConfig.clients[$client]
-    
-            Write-Host -Message $setting
-        }
-    }
-    
-    if ($serviceConfig.policies -and $serviceConfig.policies.Keys)
-    {
-        foreach ($policy in $serviceConfig.policies.Keys) {
-            $value = $serviceConfig.policies[$policy]
-            $setting = Create-Setting -Name $policy -Value $serviceConfig.policies[$policy]
-    
-            Write-Host -Message $setting
-        }
-    }
+    # Generate Settings    
+    $serviceSettingsFile = "$OutputDirectory\projects\$serviceName\PackageRoot\Config\Settings.xml"
+    Write-Host -Message "Generating processor settings"
+    Generate-Settings -Section $serviceConfig.processors -Placeholder "<!--Processors_Placeholder-->" -File $serviceSettingsFile
+    Write-Host -Message "Generating step settings"    
+    Generate-Settings -Section $serviceConfig.steps -Placeholder "<!--Steps_Placeholder-->" -File $serviceSettingsFile
+    Write-Host -Message "Generating client settings"
+    Generate-Settings -Section $serviceConfig.clients -Placeholder "<!--Clients_Placeholder-->" -File $serviceSettingsFile
+    Write-Host -Message "Generating policy settings"
+    Generate-Settings -Section $serviceConfig.policies -Placeholder "<!--Policies_Placeholder-->" -File $serviceSettingsFile
 }
 
 # Output service names and ports to a file
 New-Item -Path "$OutputDirectory\config\" -ItemType directory
 $UsedPorts | Out-File -FilePath "$OutputDirectory\config\ports.txt"
+
+# Copy AppManifest to output
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifest.xml" -Destination "$OutputDirectory\config\"
+
+Write-Host -Message "Successfully generated application $Name in $OutputDirectory"
