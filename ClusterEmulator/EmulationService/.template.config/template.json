@@ -17,12 +17,12 @@
         "**/[Oo]bj/**",
         ".template.config/**/*",
         "**/*.filelist",
-        "**/*.user",
-        "**/Settings.xml"
+        "**/*.user"
       ]
     }
   ],
   "sourceName": "Emulation",
+  "placeholderFilename": "Settings.xml",
   "preferNameDirectory":true,
   "symbols":{
     "port": {
