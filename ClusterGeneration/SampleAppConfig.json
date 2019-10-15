@@ -26,7 +26,7 @@
             }
         },
         "SampleService2": {
-            "port": 8001,
+            "port": 8002,
             "processors": {
                 "Processor1": {
 

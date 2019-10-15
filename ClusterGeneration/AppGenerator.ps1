@@ -1,7 +1,6 @@
 # Nots:
 # Requires Powershell Core 6+
-# If Visual Studio is open in the background, debug folders may be copied to output though they will not affect execution.
-
+# If the ClusterEmulator project is open in another IDE, there may be issues executing this script.
 
 param(
     [string] [Parameter(Mandatory = $true)] $Name,
@@ -13,39 +12,50 @@ param(
 . "$PSScriptRoot\Common.ps1"
 
 $UsedPorts = @{}
+
+# Set relevant folder locations
 $ParentDirectory = $PSScriptRoot | Split-Path
 $EmulatorDirectory = "$ParentDirectory\ClusterEmulator"
-
 if ($OutputFolder){
     $OutputDirectory = $OutputFolder
 }
 else {
-    $OutputDirectory = "$ParentDirectory\generated\$Name\"
+    $OutputDirectory = "$ParentDirectory\generated\$Name"
 }
 
+# Read the app configuration
 $AppConfig = Read-AppConfig -Path $ConfigFile 
 
-$appSettingsFile = $null
+# Set up optional override for appsettings.json files
+$AppSettingsFile = $null
 if ($AppConfig.settingsPath) {
     if (-Not (Test-Path -Path $AppConfig.settingsPath)) {
         Write-Error -Message "Settings path $ConfigFile is not valid"
         exit 1
     }
 
-    $appSettingsFile = $AppConfig.settingsPath      
-}
-elseif ($AppConfig.aiKey) {
-    # TODO: pass to template generation
+    $AppSettingsFile = $AppConfig.settingsPath      
 }
 
-# Clean build folders and copy simulation engine projects
+# Ensure value is not null
+$AppInsightsKey = $AppConfig.aiKey
+if (-not $AppInsightsKey) {
+    $AppInsightsKey = "0000"
+}
+
+# Clean build and generated folders
 Clean-BuildFolders -RootPath $ParentDirectory
-Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects"
-Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects"
-Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects"
+if (Test-Path -Path $OutputDirectory) {
+    Remove-Item -Path $OutputDirectory -Recurse -Force
+}
 
-# TODO: build simulation and reference dlls for service validation
-# TODO: .\ClusterEmulator\Service.Simulation\bin\Release\netcoreapp2.2\ClusterEmulator.Service.Simulation.dll
+# Copy simulation engine projects
+Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects\Service.Models" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects\" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
+
+# Ensure service template is installed
+dotnet new -i "$EmulatorDirectory\EmulationService"
 
 # Create projects for all services
 foreach ($serviceName in $AppConfig.services.Keys) {
@@ -55,13 +65,18 @@ foreach ($serviceName in $AppConfig.services.Keys) {
     # Add port to used table
     $UsedPorts[$serviceConfig.port] = $serviceName
 
-    # TODO: call dotnet new for templated service with aiKey
+    # Geterate basic template
+    dotnet new protoCoreSF -n $serviceName -p $serviceConfig.port -ai $AppInsightsKey -o "$OutputDirectory\projects\$serviceName\" --force
     
-    if ($appSettingsFile)
+    if ($AppSettingsFile)
     {
-        # TODO: replace the appsettings.json file after project genreration
+        # Replace the appsettings.json file with the one specified
+        Copy-Item -Path $AppSettingsFile -Destination "$OutputDirectory\projects\$serviceName\appsettings.json" -Force
     }
 
+    # TODO: process policies and steps
     
     # TODO: optionally process clients and policies ()
 }
+
+# TODO: Output Service : Port pairs to config file
