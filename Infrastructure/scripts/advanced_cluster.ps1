@@ -34,7 +34,22 @@ $cert = EnsureSelfSignedCertificate $KeyVaultName $Name
 
 
 if ($PortMappingFile) {
+  # Create an array of service parameters
+  $serviceObjects = foreach ($port in $a.Keys) {
+    $obj = New-Object -TypeName psobject
+    $obj | Add-Member -MemberType NoteProperty -Name name -Value $a[$port]
+    $obj | Add-Member -MemberType NoteProperty -Name port -Value $porttion
+    $obj
+  }
+
+  # Convert the array to JSON
+  $serviceJson = $serviceObjects | ConvertTo-Json
+
+  # TODO: pass Json to template
+
+  # TODO: generate JSON with Names and Ports in an acceptable format 
   # TODO: update ports and health checks in load balancer resource
+
 }
 
 
