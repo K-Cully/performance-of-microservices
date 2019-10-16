@@ -65,6 +65,35 @@
       "appInsightsName": {
          "type": "string",
          "defaultValue": "[concat(parameters('namePart'), '-ai')]"
+      },
+      "lbRules": {
+         "type": "array",
+         "defaultValue": [
+            {
+               "name": "LBFabricManagement",
+               "frontendPort": "19000",
+               "backendPort": "19000",
+               "protocol": "tcp",
+               "probeProtocol": "tcp",
+               "probePath": null
+            },
+            {
+               "name": "LBFabricExplorer",
+               "frontendPort": "19080",
+               "backendPort": "19080",
+               "protocol": "tcp",
+               "probeProtocol": "tcp",
+               "probePath": null
+            },
+            {
+               "name": "Application",
+               "frontendPort": "80",
+               "backendPort": "8561",
+               "protocol": "tcp",
+               "probeProtocol": "http",
+               "probePath": "/health"
+            }
+         ]
       }
    },
    "variables": {
@@ -82,8 +111,6 @@
       "lbID0": "[resourceId('Microsoft.Network/loadBalancers', variables('lbName'))]",
       "lbIPConfig0": "[concat(variables('lbID0'), '/frontendIPConfigurations/LoadBalancerIPConfig')]",
       "lbPoolID0": "[concat(variables('lbID0'), '/backendAddressPools/LoadBalancerBEAddressPool')]",
-      "lbProbeID0": "[concat(variables('lbID0'), '/probes/FabricManagementProbe')]",
-      "lbHttpProbeID0": "[concat(variables('lbID0'), '/probes/FabricExplorerProbe')]",
       "lbNatPoolID0": "[concat(variables('lbID0'), '/inboundNatPools/LoadBalancerBEAddressNatPool')]",
       "vmNodeType0Name": "MiniSet",
       "fabricTcpGatewayPort": "19000",
@@ -204,92 +231,42 @@
                   "name": "LoadBalancerBEAddressPool"
                }
             ],
-            "loadBalancingRules": [
+            "copy": [
                {
-                  "name": "LBFabricManagementRule",
-                  "properties": {
-                     "backendAddressPool": {
-                        "id": "[variables('lbPoolID0')]"
-                     },
-                     "backendPort": "[variables('fabricTcpGatewayPort')]",
-                     "enableFloatingIP": false,
-                     "frontendIPConfiguration": {
-                        "id": "[variables('lbIPConfig0')]"
-                     },
-                     "frontendPort": "[variables('fabricTcpGatewayPort')]",
-                     "idleTimeoutInMinutes": 5,
-                     "probe": {
-                        "id": "[variables('lbProbeID0')]"
-                     },
-                     "protocol": "Tcp"
+                  "name": "probes",
+                  "count": "[length(parameters('lbRules'))]",
+                  "input": {
+                     "name": "[concat(parameters('lbRules')[copyIndex('probes')].name, 'Probe')]",
+                     "properties": {
+                        "intervalInSeconds": 15,
+                        "numberOfProbes": 2,
+                        "port": "[parameters('lbRules')[copyIndex('probes')].backendPort]",
+                        "protocol": "[parameters('lbRules')[copyIndex('probes')].probeProtocol]",
+                        "requestPath": "[parameters('lbRules')[copyIndex('probes')].probePath]"
+                     }
                   }
                },
                {
-                  "name": "LBFabricExplorerRule",
-                  "properties": {
-                     "backendAddressPool": {
-                        "id": "[variables('lbPoolID0')]"
-                     },
-                     "backendPort": "[variables('fabricHttpGatewayPort')]",
-                     "enableFloatingIP": false,
-                     "frontendIPConfiguration": {
-                        "id": "[variables('lbIPConfig0')]"
-                     },
-                     "frontendPort": "[variables('fabricHttpGatewayPort')]",
-                     "idleTimeoutInMinutes": 5,
-                     "probe": {
-                        "id": "[variables('lbHttpProbeID0')]"
-                     },
-                     "protocol": "Tcp"
-                  }
-               },
-               {
-                  "name": "ApplicationRule",
-                  "properties": {
-                     "backendAddressPool": {
-                        "id": "[variables('lbPoolID0')]"
-                     },
-                     "backendPort": 8561,
-                     "enableFloatingIP": false,
-                     "frontendIPConfiguration": {
-                        "id": "[variables('lbIPConfig0')]"
-                     },
-                     "frontendPort": 80,
-                     "idleTimeoutInMinutes": 5,
-                     "probe": {
-                        "id": "[concat(variables('lbID0'), '/probes/', 'ApplicationProbe')]"
-                     },
-                     "protocol": "Tcp"
-                  }
-               }
-            ],
-            "probes": [
-               {
-                  "name": "FabricManagementProbe",
-                  "properties": {
-                     "intervalInSeconds": 5,
-                     "numberOfProbes": 2,
-                     "port": "[variables('fabricTcpGatewayPort')]",
-                     "protocol": "Tcp"
-                  }
-               },
-               {
-                  "name": "FabricExplorerProbe",
-                  "properties": {
-                     "intervalInSeconds": 5,
-                     "numberOfProbes": 2,
-                     "port": "[variables('fabricHttpGatewayPort')]",
-                     "protocol": "Tcp"
-                  }
-               },
-               {
-                  "name": "ApplicationProbe",
-                  "properties": {
-                     "intervalInSeconds": 15,
-                     "numberOfProbes": 2,
-                     "port": 8561,
-                     "requestPath": "/health",
-                     "protocol": "Http"
+                  "name": "loadBalancingRules",
+                  "count": "[length(parameters('lbRules'))]",
+                  "input": {
+                     "name": "[concat(parameters('lbRules')[copyIndex('loadBalancingRules')].name, 'Rule')]",
+                     "properties": {
+                           "frontendIPConfiguration": {
+                              "id": "[variables('lbIPConfig0')]"
+                        },
+                        "frontendport": "[parameters('lbRules')[copyIndex('loadBalancingRules')].frontendport]",
+                        "backendport": "[parameters('lbRules')[copyIndex('loadBalancingRules')].backendport]",
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": "5",
+                        "protocol": "[parameters('lbRules')[copyIndex('loadBalancingRules')].protocol]",
+                        "backendAddressPool": {
+                           "id": "[variables('lbPoolID0')]"                           
+                        },
+                        "probe": {
+                           "id": "[concat(variables('lbID0'),'/probes/', parameters('lbRules')[copyIndex('loadBalancingRules')].name, 'Probe')]"
+                        }
+                     }
                   }
                }
             ],

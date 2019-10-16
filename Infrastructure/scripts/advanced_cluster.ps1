@@ -3,7 +3,7 @@ param(
     [string] $TemplateName = "complete.json",   # Name of the cluster ARM template
     [int] $NodeCount = 1,                       # Number of nodes to create
     [string] $ClusterTier = "None",             # The reliability and durability tier of the cluster
-    [string] $Location = "northeurope"          # Physical location of all the resources
+    [string] $Location = "northeurope",         # Physical location of all the resources
     [string] $PortMappingFile                   # A file containing required port to service mapping information
 )
 
