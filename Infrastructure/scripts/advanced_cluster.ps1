@@ -4,6 +4,7 @@ param(
     [int] $NodeCount = 1,                       # Number of nodes to create
     [string] $ClusterTier = "None",             # The reliability and durability tier of the cluster
     [string] $Location = "northeurope"          # Physical location of all the resources
+    [string] $PortMappingFile                   # A file containing required port to service mapping information
 )
 
 # Add utility methods
@@ -30,6 +31,12 @@ $keyVault = EnsureKeyVault $KeyVaultName $ResourceGroupName $Location
 
 # Ensure that a self-signed certificate is created and imported into Key Vault
 $cert = EnsureSelfSignedCertificate $KeyVaultName $Name
+
+
+if ($PortMappingFile) {
+  # TODO: update ports and health checks in load balancer resource
+}
+
 
 # Create parameters for cluster resource deployment
 Write-Host "Applying cluster template $TemplateName..."
