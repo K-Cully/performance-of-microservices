@@ -63,7 +63,7 @@ foreach ($serviceName in $AppConfig.services.Keys) {
     Validate-ServiceConfig -Config $serviceConfig -PortAssignments $UsedPorts
 
     # Add port to used table
-    $UsedPorts[$serviceConfig.port] = $serviceName
+    $UsedPorts["$($serviceConfig.port)"] = $serviceName
 
     # Geterate basic template
     Write-Host -Message "Generating $serviceName project with port $port and App Insights key $AppInsightsKey"
@@ -90,7 +90,7 @@ foreach ($serviceName in $AppConfig.services.Keys) {
 
 # Output service names and ports to a file
 New-Item -Path "$OutputDirectory\config\" -ItemType directory
-$UsedPorts | Out-File -FilePath "$OutputDirectory\config\ports.txt"
+$UsedPorts | ConvertTo-Json | Set-Content -Path "$OutputDirectory\config\ports.json" -Force
 
 # Copy AppManifest to output
 Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifest.xml" -Destination "$OutputDirectory\config\"

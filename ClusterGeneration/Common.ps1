@@ -28,9 +28,9 @@ function Validate-ServiceConfig([hashtable]$Config, [hashtable]$PortAssignments)
         Write-Error -Message "port is missing from service $serviceName"
         exit 1
     }
-    elseif($PortAssignments[$Config.port]) {
+    elseif($PortAssignments["$($Config.port)"]) {
         $port = $Config.port
-        $otherService = $PortAssignments[$port]
+        $otherService = $PortAssignments["$port"]
         Write-Error -Message "port $port is already used by $otherService, cannot create $serviceName"
         exit 1
     }
@@ -132,7 +132,7 @@ function Package-Service([string] $Name, [string] $Location, [string] $PackageRo
 {
     Push-Location -Path "$Location\$Name" # Move to project
 
-    $packagePath = "$PackageRoot\$Name" + "Pkg"
+    $packagePath = "$PackageRoot\$Name" + "ServicePkg"
     Write-Host "Packing $Name to $packagePath"
 
     # Build and publish service code to package
