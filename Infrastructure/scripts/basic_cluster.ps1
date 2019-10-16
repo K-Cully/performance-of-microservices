@@ -39,7 +39,7 @@ $armParameters = @{
 }
 
 # Create cluster resources based on the specified ARM template
-New-AzureRmResourceGroupDeployment `
+New-AzResourceGroupDeployment `
   -ResourceGroupName $ResourceGroupName `
   -TemplateFile "$TemplateDirectory\minimal.json" `
   -Mode Incremental `
