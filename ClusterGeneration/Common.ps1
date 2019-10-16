@@ -126,3 +126,26 @@ $xmlSettings$setting
     Write-Host -Message "Replacing $Placeholder in $File"
     ((Get-Content -path $File -Raw) -replace $Placeholder, $xmlSettings) | Set-Content -Path $File
 }
+
+
+function Package-Service([string] $Name, [string] $Location, [string] $PackageRoot, [string] $Flavour)
+{
+    Push-Location -Path "$Location\$Name" # Move to project
+
+    $packagePath = "$PackageRoot\$Name" + "Pkg"
+    Write-Host "Packing $Name to $packagePath"
+
+    # Build and publish service code to package
+    $packageCode = "$packagePath\Code"    
+    dotnet publish -c $flavour -o $packageCode
+
+    # Copy service manifest
+    Copy-Item -Path ".\PackageRoot\ServiceManifest.xml" -Destination $packagePath -Force
+    
+    # Create config folder and copy service settings
+    $configPath = "$packagePath\Config"
+    New-Item -ItemType Directory -Force -Path $configPath
+    Copy-Item -Path ".\PackageRoot\Config\Settings.xml" -Destination $configPath -Force
+    
+    Pop-Location # Leave project
+}

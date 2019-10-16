@@ -1,5 +1,5 @@
-# Nots:
-# Requires Powershell Core 6+
+# Generates servcices and an application manifest for a prototype application.
+# Requires Powershell Core 6+.
 # If the ClusterEmulator project is open in another IDE, there may be issues executing this script.
 
 param(
@@ -16,7 +16,7 @@ $UsedPorts = @{}
 # Set relevant folder locations
 $ParentDirectory = $PSScriptRoot | Split-Path
 $EmulatorDirectory = "$ParentDirectory\ClusterEmulator"
-if ($OutputFolder){
+if ($OutputFolder) {
     $OutputDirectory = $OutputFolder
 }
 else {
@@ -49,7 +49,7 @@ if (Test-Path -Path $OutputDirectory) {
     Remove-Item -Path $OutputDirectory -Recurse -Force
 }
 
-Write-Host -Message "Copying project dependencies to $OutputFolder\projects"
+Write-Host -Message "Copying project dependencies to $OutputDirectory\projects"
 Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects\Service.Models" -Recurse -Force
 Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects\" -Recurse -Force
 Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
@@ -57,7 +57,7 @@ Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDir
 # Ensure service template is installed and suppress console output
 $junk = dotnet new -i "$EmulatorDirectory\EmulationService"
 
-Write-Host -Message "Generating services under $OutputFolder\projects"
+Write-Host -Message "Generating services under $OutputDirectory\projects"
 foreach ($serviceName in $AppConfig.services.Keys) {
     $serviceConfig = $AppConfig.services[$serviceName]
     Validate-ServiceConfig -Config $serviceConfig -PortAssignments $UsedPorts
@@ -94,5 +94,7 @@ $UsedPorts | Out-File -FilePath "$OutputDirectory\config\ports.txt"
 
 # Copy AppManifest to output
 Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifest.xml" -Destination "$OutputDirectory\config\"
+
+# TODO: Add services and ports to app manifest
 
 Write-Host -Message "Successfully generated application $Name in $OutputDirectory"
