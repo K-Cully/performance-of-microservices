@@ -2,7 +2,7 @@
     "appsettingsPath": "",
     "aiKey": "",
     "services": {
-        "SampleService1": {
+        "Sample1": {
             "port": 8001,
             "processors": {
                 "DoStuff": {
@@ -66,7 +66,7 @@
                 }
             }
         },
-        "SampleService2": {
+        "Sample2": {
             "port": 8002,
             "processors": {
                 "GenerateLoad": {

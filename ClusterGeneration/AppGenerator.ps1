@@ -93,8 +93,8 @@ New-Item -Path "$OutputDirectory\config\" -ItemType directory
 $UsedPorts | ConvertTo-Json | Set-Content -Path "$OutputDirectory\config\ports.json" -Force
 
 # Copy AppManifest to output
-Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifest.xml" -Destination "$OutputDirectory\config\"
-
-# TODO: Add services and ports to app manifest
+$appManifestOutput = "$OutputDirectory\config\ApplicationManifest.xml"
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifestPlaceholder.xml" -Destination $appManifestOutput
+Set-ApplicationManifestPlaceholders -File $appManifestOutput -PortsAndServices $UsedPorts
 
 Write-Host -Message "Successfully generated application $Name in $OutputDirectory"
