@@ -54,7 +54,7 @@ if ($PortMappingFile) {
   $portServiceMap = Get-Content -Path $PortMappingFile | ConvertFrom-Json -AsHashtable
 
   # Add service load balancer rules
-  $serviceObjects = foreach ($port in $portServiceMap.Keys) {
+  foreach ($port in $portServiceMap.Keys) {
     $serviceName = $portServiceMap[$port]
     [array]$rules += @{name="$serviceName"; frontendPort="$port"; backendPort="$port"; protocol="tcp";probeProtocol="http";probePath="/health"}
   }
@@ -64,7 +64,7 @@ if ($PortMappingFile) {
 
 # Create cluster resources based on the specified ARM template
 Write-Host "Applying cluster template $TemplateName..."
-$creationResult = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile "$TemplateDirectory\$TemplateName" -Mode Incremental -TemplateParameterObject $armParameters -Verbose
+$creationResult = New-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile "$TemplateDirectory\$TemplateName" -Mode Incremental -TemplateParameterObject $armParameters -Verbose
 
 # Add relevant performance counters to the OMS workspace
 Add-PerformanceCounters -ResourceGroup $ResourceGroupName -WorkspaceName $OmsWorkspaceName

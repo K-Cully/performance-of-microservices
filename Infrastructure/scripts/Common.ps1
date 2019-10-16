@@ -6,27 +6,27 @@ Write-Host "Loaded $($t.FullName)."
 function CheckLoggedIn()
 {
     Write-Host "Validating if you are logged in..."
-    $rmContext = Get-AzureRmContext
+    $azContext = Get-AzContext
 
-    if($null -eq $rmContext.Account) {
-        Write-Host "  you are not logged into Azure. Use Login-AzureRmAccount to log in first and optionally select a subscription" -ForegroundColor Red
+    if($null -eq $azContext.Account) {
+        Write-Host "  you are not logged into Azure. Use Connect-AzAccount to log in first and optionally select a subscription" -ForegroundColor Red
         exit
     }
 
-    Write-Host "  account:      '$($rmContext.Account.Id)'"
-    Write-Host "  subscription: '$($rmContext.Subscription.Name)'"
-    Write-Host "  tenant:       '$($rmContext.Tenant.Id)'"
+    Write-Host "  account:      '$($azContext.Account.Id)'"
+    Write-Host "  subscription: '$($azContext.Subscription.Name)'"
+    Write-Host "  tenant:       '$($azContext.Tenant.Id)'"
 }
 
 function EnsureResourceGroup([string]$Name, [string]$Location)
 {
     # Prepare resource group
     Write-Host "Checking if resource group '$Name' exists..."
-    $resourceGroup = Get-AzureRmResourceGroup -Name $Name -Location $Location -ErrorAction Ignore
+    $resourceGroup = Get-AzResourceGroup -Name $Name -Location $Location -ErrorAction Ignore
     if($null -eq $resourceGroup)
     {
         Write-Host "  resource group doesn't exist, creating a new one..."
-        $resourceGroup = New-AzureRmResourceGroup -Name $Name -Location $Location
+        $resourceGroup = New-AzResourceGroup -Name $Name -Location $Location
         Write-Host "  resource group created."
     }
     else
@@ -40,11 +40,14 @@ function EnsureKeyVault([string]$Name, [string]$ResourceGroupName, [string]$Loca
     # properly create a new Key Vault
     # KV must be enabled for deployment (last parameter)
     Write-Host "Checking if Key Vault '$Name' exists..."
-    $keyVault = Get-AzureRmKeyVault -VaultName $Name -ErrorAction Ignore
+    $keyVault = Get-AzKeyVault -VaultName $Name -ErrorAction Ignore
     if($null -eq $keyVault)
     {
         Write-Host "  key vault doesn't exist, creating a new one..."
-        $keyVault = New-AzureRmKeyVault -VaultName $Name -ResourceGroupName $ResourceGroupName -Location $Location -EnabledForDeployment
+        # Personal accounts are not autoamtically granted vault access so ignore warning and add access policy
+        $user = Get-AzADUser
+        $keyVault = New-AzKeyVault -VaultName $Name -ResourceGroupName $ResourceGroupName -Location $Location -EnabledForDeployment -WarningAction Ignore
+        Set-AzKeyVaultAccessPolicy -VaultName $Name -UserPrincipalName $user.UserPrincipalName -PermissionsToCertificates get,list,delete,create,import,update -PermissionsToKeys get,list,delete,create,import,update,sign,decrypt,encrypt -PermissionsToSecrets get,list,set,delete -PassThru
         Write-Host "  Key Vault Created and enabled for deployment."
     }
     else
@@ -90,13 +93,19 @@ function ImportCertificateIntoKeyVault([string]$KeyVaultName, [string]$CertName,
     Write-Host "  generating secure password..."
     $securePassword = ConvertTo-SecureString $CertPassword -AsPlainText -Force
     Write-Host "  uploading to KeyVault..."
-    Import-AzureKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName -FilePath $CertFilePath -Password $securePassword
+    Import-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName -FilePath $CertFilePath -Password $securePassword
     Write-Host "  imported."
 }
 
 function GeneratePassword()
 {
-    [System.Web.Security.Membership]::GeneratePassword(15,2)
+    $characters = [char[]]"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    $specialCharacters = [char[]]"!@#%&^?~[]{}_+"
+
+    $inner = $characters | Get-Random -Count 13
+    $outer = $specialCharacters | Get-Random -Count 2
+    $passowrd = "$inner$outer"
+    $passowrd
 }
 
 function EnsureSelfSignedCertificate([string]$KeyVaultName, [string]$CertName)
@@ -117,11 +126,11 @@ function EnsureSelfSignedCertificate([string]$KeyVaultName, [string]$CertName)
 
     #import into vault if needed
     Write-Host "Checking certificate in key vault..."
-    $kvCert = Get-AzureKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName
+    $kvCert = Get-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName
     if($null -eq $kvCert) {
         Write-Host "  importing..."
         $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-        $kvCert = Import-AzureKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName -FilePath $localPath -Password $securePassword
+        $kvCert = Import-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $CertName -FilePath $localPath -Password $securePassword
     } else {
         Write-Host "  certificate already imported."
     }
@@ -192,7 +201,7 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
             $name = $name.Replace("/", "per").Replace("%", "percent")
 
             # Add performance counter data sources
-            New-AzureRmOperationalInsightsWindowsPerformanceCounterDataSource `
+            New-AzOperationalInsightsWindowsPerformanceCounterDataSource `
                 -ResourceGroupName $ResourceGroup -WorkspaceName $WorkspaceName `
                 -ObjectName $perfCounter -InstanceName $instanceName  -CounterName $counterName `
                 -IntervalSeconds 15 -Name $name -Force
