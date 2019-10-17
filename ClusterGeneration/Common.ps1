@@ -135,13 +135,11 @@ $xmlSettings$setting
 }
 
 
-function Set-ApplicationManifestPlaceholders([string] $File, [hashtable] $PortsAndServices)
+function Set-ApplicationManifestPlaceholders([string] $Name, [string] $File, [hashtable] $PortsAndServices)
 {
-    Write-Host -Message "Settings application manifest service values"
+    Write-Host -Message "Settings application manifest values"
     foreach ($port in $PortsAndServices.Keys) {
         $serviceName = $PortsAndServices[$port]
-        Write-Warning -Message $port
-        Write-Warning -Message $serviceName
 
         $parameters = @"
 $parameters
@@ -172,6 +170,7 @@ $services
     $manifests = $manifests.TrimEnd($remove).TrimStart($remove)
     $services = $services.TrimEnd($remove).TrimStart($remove)
 
+    Replace-Placeholder -File $File -Placeholder "<!-- ApplicationType_Placeholder -->" -Value "$($Name)Type"
     Replace-Placeholder -File $File -Placeholder "<!-- Parameters_Placeholder -->" -Value $parameters
     Replace-Placeholder -File $File -Placeholder "<!-- ServiceManifests_Placeholder -->" -Value $manifests
     Replace-Placeholder -File $File -Placeholder "<!-- Services_Placeholder -->" -Value $services

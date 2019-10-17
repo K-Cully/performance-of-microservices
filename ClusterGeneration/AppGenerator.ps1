@@ -95,6 +95,6 @@ $UsedPorts | ConvertTo-Json | Set-Content -Path "$OutputDirectory\config\ports.j
 # Copy AppManifest to output
 $appManifestOutput = "$OutputDirectory\config\ApplicationManifest.xml"
 Copy-Item -Path "$EmulatorDirectory\ClusterEmulator\ApplicationPackageRoot\ApplicationManifestPlaceholder.xml" -Destination $appManifestOutput
-Set-ApplicationManifestPlaceholders -File $appManifestOutput -PortsAndServices $UsedPorts
+Set-ApplicationManifestPlaceholders -Name $Name -File $appManifestOutput -PortsAndServices $UsedPorts
 
 Write-Host -Message "Successfully generated application $Name in $OutputDirectory"
