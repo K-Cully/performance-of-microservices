@@ -16,6 +16,11 @@ $applicationVersion = "1.0.0"
 $endpoint = "$ClusterName.$Location.cloudapp.azure.com:19000"
 $thumbprint = Get-Content "$PSScriptRoot\$ClusterName.thumb.txt"
 
+# Validate the package
+if (-Not (Test-ServiceFabricApplicationPackage -ApplicationPackagePath $PackagePath)) {
+    Write-Error -Message "Package at $PackagePath is not valid"
+}
+
 # Connect to cluster
 Write-Host "connecting to cluster $endpoint using cert thumbprint $thumbprint..."
 Connect-ServiceFabricCluster -ConnectionEndpoint $endpoint `
