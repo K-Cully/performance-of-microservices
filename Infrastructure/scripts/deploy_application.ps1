@@ -22,7 +22,7 @@ if (-Not (Test-ServiceFabricApplicationPackage -ApplicationPackagePath $PackageP
 }
 
 # Connect to cluster
-Write-Host "connecting to cluster $endpoint using cert thumbprint $thumbprint..."
+Write-Host "Connecting to cluster $endpoint using cert thumbprint $thumbprint..."
 Connect-ServiceFabricCluster -ConnectionEndpoint $endpoint `
     -X509Credential `
     -ServerCertThumbprint $thumbprint `

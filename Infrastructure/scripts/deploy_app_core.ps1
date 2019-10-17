@@ -66,17 +66,20 @@ if ($existingContent) {
 # Since the module doesn't return anything useful to indicate failure reason, retry all errors
 $result = $null
 $attempt = 0
-while ($result -ne "Success!" -and $attempt -lt 5) {
+$successMatch = "Success!"
+while ($result -ne $successMatch -and $attempt -lt 5) {
     $attempt = $attempt + 1
     Write-Host "Uploading application package to the cluster image store. (Attempt $attempt)"
-    $result = powershell Copy-SFApplicationPackage -ApplicationPackagePath $PackagePath -ApplicationPackagePathInImageStore $ApplicationType
+    $result = Copy-SFApplicationPackage -ApplicationPackagePath $PackagePath -ApplicationPackagePathInImageStore $ApplicationType -Verbose
 }
 
+# TODO: re-add this once module returns result correctly
+# For now, just retry 5 times and assume that it worked.
 # Return with failure if package could not be uploaded
-if ($result -ne "Success!") {
-    Write-Error -Message "Upload failed with message '$result' after $attempt attempts!"
-    exit 1
-}
+#if (-not ($result -like $successMatch)) {
+#    Write-Error -Message "Upload failed with message '$result' after $attempt attempts!"
+#    exit 1
+#}
 
 Write-Host "Application package uploaded to image store after $attempt attempts."
 

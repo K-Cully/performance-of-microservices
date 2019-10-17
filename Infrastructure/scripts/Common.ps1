@@ -153,20 +153,20 @@ function Connect-SecureCluster([string]$ClusterName, [string]$Thumbprint)
 
 function Unregister-ApplicationTypeCompletely([string]$ApplicationTypeName)
 {
-    Write-Host "checking if application type $ApplicationTypeName is present.."
+    Write-Host "Checking if application type $ApplicationTypeName is present.."
     $type = Get-ServiceFabricApplicationType -ApplicationTypeName $ApplicationTypeName
     if($null -eq $type) {
-        Write-Host "  application is not in the cluster"
+        Write-Host "  Application is not in the cluster"
     } else {
         $runningApps = Get-ServiceFabricApplication -ApplicationTypeName $ApplicationTypeName
         foreach($app in $runningApps) {
             $uri = $app.ApplicationName.AbsoluteUri
-            Write-Host "    unregistering '$uri'..."
+            Write-Host "    Anregistering '$uri'..."
 
             $t = Remove-ServiceFabricApplication -ApplicationName $uri -ForceRemove -Verbose -Force
         }
 
-        Write-Host "  unregistering type..."
+        Write-Host "  Unregistering type..."
         $t =Unregister-ServiceFabricApplicationType `
             -ApplicationTypeName $ApplicationTypeName -ApplicationTypeVersion $type.ApplicationTypeVersion `
             -Force -Confirm
