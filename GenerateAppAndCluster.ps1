@@ -33,10 +33,12 @@ Read-Host -Prompt "Press Enter to continue..."
 $retries = 20
 $WaitTimeSeconds = 60
 $ClusterEndpoint = "https://$ClusterName.$Location.cloudapp.azure.com:19080"
-$ClusterCertThumbprint = Get-Content "$PSScriptRoot\$ClusterName.thumb.txt"
+$ClusterCertThumbprint = Get-Content "$PSScriptRoot\Infrastructure\scripts\$ClusterName.thumb.txt"
 $success = $false
 while ($retries -gt 0 -and -not $success) {
     try {
+        $ClusterCertThumbprint = Get-Content "$PSScriptRoot\Infrastructure\scripts\$ClusterName.thumb.txt"
+        Write-Host "$ClusterCertThumbprint"
         Connect-SFCluster -ConnectionEndpoint $ClusterEndpoint `
             -X509Credential `
             -ServerCertThumbprint $ClusterCertThumbprint `
