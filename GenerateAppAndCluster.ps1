@@ -15,10 +15,12 @@ Import-Module -Name Microsoft.ServiceFabric.Powershell.Http
 $PortMappingFile = "$PSScriptRoot\generated\$AppName\config\ports.json"
 $AppPackagePath = "$PSScriptRoot\generated\$AppName\pkg\"
 $NodeCount = 3
+$ClusterLevel = "Bronze"
 $Location = "northeurope"
 
 # Deploy infrastructure
-.\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount -Location $Location
+.\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
+    -Location $Location -ClusterTier $ClusterLevel
 
 # Prompt user to update config file with App Insights key
 Write-Warning -Message "Application Insights has been provisioned.`nPlease update the application config file '$AppConfigFile' before proceeding."
@@ -27,17 +29,11 @@ Read-Host -Prompt "Press Enter to continue..."
 # Generate application package
 .\ClusterGeneration\AppGenerator.ps1 -Name $AppName -ConfigFile $AppConfigFile
 
-# Re-deploy infra with service port forwarding rules
-.\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount -PortMappingFile $PortMappingFile
-
-# Package app
-.\ClusterGeneration\AppPacker.ps1 -Name $AppName
-
-# Wait up to 15 minutes for cluster to become available
+# Wait up to for cluster upgrade to complete
+$retries = 20
+$WaitTimeSeconds = 60
 $ClusterEndpoint = "https://$ClusterName.$Location.cloudapp.azure.com:19080"
 $ClusterCertThumbprint = Get-Content "$PSScriptRoot\$ClusterName.thumb.txt"
-$WaitTimeSeconds = 30
-$retries = 30
 $success = $false
 while ($retries -gt 0 -and -not $success) {
     try {
@@ -63,6 +59,13 @@ if (-not $success) {
     Write-Host "To manually trigger application deployment run 'deploy_app_core.ps1 -ClusterName $ClusterName -ApplicationName $AppName -PackagePath $AppPackagePath'"
     exit 1
 }
+
+# Re-deploy infra with service port forwarding rules
+.\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount -Location $Location `
+    -PortMappingFile $PortMappingFile -ClusterTier $ClusterLevel
+
+# Package app
+.\ClusterGeneration\AppPacker.ps1 -Name $AppName
 
 # Deploy app to cluster
 .\Infrastructure\scripts\deploy_app_core.ps1 -ClusterName $ClusterName -ApplicationName $AppName -PackagePath $AppPackagePath
