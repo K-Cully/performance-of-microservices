@@ -19,8 +19,18 @@ $ClusterLevel = "Bronze"
 $Location = "northeurope"
 
 # Deploy infrastructure
-.\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
-    -Location $Location -ClusterTier $ClusterLevel
+try {
+    .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
+        -Location $Location -ClusterTier $ClusterLevel
+}
+catch {
+    $deploymentPause = 5
+    Write-Warning -Message "First deployment attempt failed, waiting $deploymentPause seconds and retrying."
+    Start-Sleep -Seconds $deploymentPause
+    .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
+        -Location $Location -ClusterTier $ClusterLevel        
+}
+
 
 # Prompt user to update config file with App Insights key
 Write-Warning -Message "Application Insights has been provisioned.`nPlease update the application config file '$AppConfigFile' before proceeding."
@@ -37,8 +47,6 @@ $ClusterCertThumbprint = Get-Content "$PSScriptRoot\Infrastructure\scripts\$Clus
 $success = $false
 while ($retries -gt 0 -and -not $success) {
     try {
-        $ClusterCertThumbprint = Get-Content "$PSScriptRoot\Infrastructure\scripts\$ClusterName.thumb.txt"
-        Write-Host "$ClusterCertThumbprint"
         Connect-SFCluster -ConnectionEndpoint $ClusterEndpoint `
             -X509Credential `
             -ServerCertThumbprint $ClusterCertThumbprint `
