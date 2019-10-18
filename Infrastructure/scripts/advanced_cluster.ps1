@@ -32,13 +32,16 @@ $keyVault = EnsureKeyVault $KeyVaultName $ResourceGroupName $Location
 # Ensure that a self-signed certificate is created and imported into Key Vault
 $cert = EnsureSelfSignedCertificate $KeyVaultName $Name
 
+# Get rdp password
+$password = Get-RdpPassword -ClusterName $Name
+
 # Create parameters for cluster resource deployment
 $armParameters = @{
   namePart = $Name;
   certificateThumbprint = $cert.Thumbprint;
   sourceVaultResourceId = $keyVault.ResourceId;
   certificateUrlValue = $cert.SecretId;
-  rdpPassword = GeneratePassword;
+  rdpPassword = "$password";
   vmInstanceCount = $NodeCount;
   reliability = $ClusterTier;
   durability = $DurabilityLevel;

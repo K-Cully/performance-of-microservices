@@ -18,6 +18,8 @@ $NodeCount = 3
 $ClusterLevel = "Bronze"
 $Location = "northeurope"
 
+$DeploymentStartTime = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
 # Deploy infrastructure
 try {
     .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
@@ -39,7 +41,7 @@ Read-Host -Prompt "Press Enter to continue..."
 # Generate application package
 .\ClusterGeneration\AppGenerator.ps1 -Name $AppName -ConfigFile $AppConfigFile
 
-# Wait up to for cluster upgrade to complete
+# Wait up to 20 minutes for cluster provisioning to complete
 $retries = 20
 $WaitTimeSeconds = 60
 $ClusterEndpoint = "https://$ClusterName.$Location.cloudapp.azure.com:19080"
@@ -68,6 +70,42 @@ if (-not $success) {
     Write-Error -Message "Could not access cluster, exiting without deploying application"
     Write-Host "To manually trigger application deployment run 'deploy_app_core.ps1 -ClusterName $ClusterName -ApplicationName $AppName -PackagePath $AppPackagePath'"
     exit 1
+}
+
+# Check for in-progress upgrade by using events and 
+# Note, this should really just use Get-SFClusterUpgradeProgress but at time of authoring that had a bug
+$now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+$events = Get-SFClusterEventList -StartTimeUtc $DeploymentStartTime -EndTimeUtc $now
+$upgradeStarted = $events | Where-Object { $_.Category -eq "Upgrade" }
+$SystemServiceCount = 8
+
+# Since the cluster deployment started event can be delayed check that system services are provisioned too
+if (-not $upgradeStarted) {
+    $clusterHealth = Get-SFClusterHealth
+    $serviceHealth = $clusterHealth.HealthStatistics.HealthStateCountList | Where-Object { $_.EntityKind -eq "Service" } 
+    $upgradeStarted = $serviceHealth.HealthStateCount.OkCount -lt $SystemServiceCount
+}
+
+# Wait up to 20 minutes for cluster upgrade to complete
+$retries = 20
+$WaitTimeSeconds = 60
+if ($upgradeStarted) {
+    Write-Host "Cluster upgrade detected, waiting on completion before continuing."
+    $upgradeCompleted = $null
+    while ($retries -gt 0 -and -not $upgradeCompleted) {
+        $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+        $events = Get-SFClusterEventList -StartTimeUtc $DeploymentStartTime -EndTimeUtc $now
+        $upgradeCompleted = $events | Where-Object { $_.OverallUpgradeElapsedTimeInMs }
+
+        if (-not $upgradeCompleted) {
+            $retries = $retries - 1
+            Write-Warning -Message "Cluster upgrade has not completed."            
+            if ($retries -gt 0 -and -not $upgradeCompleted) {
+                Write-Host "Retrying again in $WaitTimeSeconds seconds. ($retries retries remaining)"
+                Start-Sleep -Seconds $WaitTimeSeconds
+            }  
+        }        
+    }
 }
 
 # Re-deploy infra with service port forwarding rules

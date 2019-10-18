@@ -60,6 +60,11 @@ function EnsureKeyVault([string]$Name, [string]$ResourceGroupName, [string]$Loca
 
 function CreateSelfSignedCertificate([string]$DnsName)
 {
+    # TODO: convert cert generation to work with Powershell Core and be cross platform.
+    # See https://github.com/rjmholt/SelfSignedCertificate on cert generation.
+
+    # TODO: Import-WinModule Microsoft.
+
     Write-Host "Creating self-signed certificate with dns name $DnsName"
     
     $filePath = "$PSScriptRoot\$DnsName.pfx"
@@ -210,3 +215,20 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
 }
 
 
+function Get-RdpPassword([string] $ClusterName) {
+    $filePath = "$PSScriptRoot\$ClusterName.rdp.pwd.txt"
+
+    if (Test-Path -Path $filePath) {
+        Write-Warning -Message "Password file exists, retrieving existing password"
+        $rdpPassword = Get-Content -Path $filePath
+        Write-Host "'$rdpPassword' retrieved from $filePath"
+    }
+    else {
+        Write-Host "  generating password... "
+        $rdpPassword = GeneratePassword
+        Set-Content -Path $filePath -Value $rdpPassword        
+        Write-Host "'$rdpPassword' written to $filePath"
+    }
+
+    $rdpPassword
+}
