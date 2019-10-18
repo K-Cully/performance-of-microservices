@@ -80,6 +80,10 @@ $inner$name : $childJson
 { $inner }, 
 "@
     }
+    elseif ($TreeNode -is [bool]) {
+        # Convert booleans to lowercase
+        $json = "$TreeNode, ".ToLower()
+    }
     else {
         $json = "$TreeNode, "
     }
