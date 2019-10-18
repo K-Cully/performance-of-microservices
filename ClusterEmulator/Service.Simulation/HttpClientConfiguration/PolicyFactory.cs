@@ -56,8 +56,8 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
             {
                 foreach (string error in errors)
                 {
-                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
-                        settingValue, error);
+                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}",
+                        error, settingValue);
                 }
 
                 return null;
@@ -65,8 +65,8 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
 
             if (json?.type?.Value is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, "Type not found");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    "Type not found", settingValue);
                 return null;
             }
 
@@ -75,8 +75,8 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
             Type type = Type.GetType(typeName);
             if (type is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, $"{typeName} is not recognised");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    $"{typeName} is not recognised", settingValue);
                 throw new InvalidOperationException($"{typeName} did not resolve to a Type");
             }
 
@@ -84,8 +84,8 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
             JObject policyJson = json.policy;
             if (policyJson is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, "No policy found");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    "No policy found", settingValue);
                 throw new InvalidOperationException($"No policy found in setting '{settingValue}'");
             }
 
@@ -95,8 +95,8 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
             {
                 foreach (string error in errors)
                 {
-                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
-                        settingValue, error);
+                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}",
+                        error, settingValue);
                 }
 
                 return null;

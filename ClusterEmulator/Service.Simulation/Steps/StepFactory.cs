@@ -54,8 +54,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
             {
                 foreach (string error in errors)
                 {
-                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
-                        settingValue, error);
+                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}",
+                        error, settingValue);
                 }
 
                 return null;
@@ -63,8 +63,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
 
             if (json?.type?.Value is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, "Type not found");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    "Type not found", settingValue);
                 return null;
             }
 
@@ -73,8 +73,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
             Type type = Type.GetType(typeName);
             if (type is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, $"{typeName} is not recognised");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    $"{typeName} is not recognised", settingValue);
                 throw new InvalidOperationException($"{typeName} did not resolve to a Type");
             }
 
@@ -82,8 +82,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
             JObject stepJson = json.step;
             if (stepJson is null)
             {
-                log.LogError("Deserializing {SettingValue} encountered {SettingError}",
-                    settingValue, "No step found");
+                log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
+                    "No step found", settingValue);
                 throw new InvalidOperationException($"No step found in setting '{settingValue}'");
             }
 
@@ -94,8 +94,8 @@ namespace ClusterEmulator.Service.Simulation.Steps
             {
                 foreach (string error in errors)
                 {
-                    log.LogError("Deserializing {SettingValue} encountered {JsonError}",
-                        settingValue, error);
+                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}",
+                        error, settingValue);
                 }
 
                 return null;

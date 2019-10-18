@@ -50,7 +50,7 @@ namespace ClusterEmulator.Service.Simulation.Core
             {
                 foreach(string error in errors)
                 {
-                    log.LogError("Deserializing {SettingValue} encountered {JsonError}", settingValue, error);
+                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}", error, settingValue);
                 }
 
                 return null;
