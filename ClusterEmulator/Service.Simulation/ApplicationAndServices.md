@@ -1,4 +1,5 @@
 # Application and Services
+## Description
 The applciation is configured via a JSON file listing any appsettings.json overrides, an optional Application Insights key and a list of services.
 Each service specifies a name, the port it should be exposed upon and configration for processers, steps, clients and policies used by the service.
 
@@ -8,7 +9,7 @@ Adding the Application Insights key (GUID) as the "aiKey" value will result in l
 Alternatively, the path to a complete replacement appsettings.json file can be provided as the "appsettingsPath" value. This file must contain a complete Serilog configuration (See [the Serilog Github](https://github.com/serilog/serilog-settings-configuration "Serilog Settings Configuration") for more information). As this completely replaces the appsettings.json file, it superseeds the "aiKey" value.
 
 
-### Implementation
+## Implementation
 #### appsettingsPath (Optional)
 An absolute path to an appsettings.json file containing a complete Serilog configuration.
 This will replace all service appsettings.json files.
@@ -18,19 +19,18 @@ A GUID value for an Application Insights instance to connect the services to.
 This is superseeded by appsettingsPath.
 
 #### services
-
 <aside class="warning">
 TODO: fix links
 </aside>
 
 A list of service configurations, containing:
 - __port__ : A unique port value
-- __processors__ : A list of request [Processor configurations](./Processors/Processor.md). 
-- __steps__ : A list of execution [Step configurations](./Steps/Steps.md).
-- __clients__ (Optional) : A list of [Http Client configurations](./HttpClientConfiguration/HttpClient.md).
-- __policies__ (Optional) : A list of resiliency [Policy configurations](./HttpClientConfiguration/Policies.md)
+- __processors__ : A list of uniquely named request [Processor configurations](./Processors/Processor.md). 
+- __steps__ : A list of uniquely named execution [Step configurations](./Steps/Steps.md).
+- __clients__ (Optional) : A list of uniquely named [Http Client configurations](./HttpClientConfiguration/HttpClient.md).
+- __policies__ (Optional) : A list of uniquely named resiliency [Policy configurations](./HttpClientConfiguration/Policies.md)
 
-## Sample JSON
+### Sample JSON
 The following JSON defines an application composed of two services.
 The genration step will result in two configured services, using the services' default appsettings.json files, without Application Insights configured.
 
@@ -130,11 +130,11 @@ The genration step will result in two configured services, using the services' d
 
 
 
-## Resultant Service Setting Files 
+### Resultant Service Setting Files 
 The Settings.xml files that are generated for each service.
 
 
-### Sample1 Settings.xml
+#### Sample1 Settings.xml
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
@@ -156,7 +156,7 @@ The Settings.xml files that are generated for each service.
 </Settings>
 ```
 
-### Sample2 Settings.xml
+#### Sample2 Settings.xml
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
