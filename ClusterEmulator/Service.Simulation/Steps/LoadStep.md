@@ -1,7 +1,7 @@
 # Load Step
 
 ## Description
-A load step step provides a mechanism to generate a specific CPU and memory load for a set period of time.
+A load step provides a mechanism to generate a specific CPU and memory load for a set period of time.
 
 ## Implementation
 #### type
@@ -39,9 +39,7 @@ The amount of memory, in bytes, to consume.
 
 ### Direct service setting configuration
 ```xml
-<Section Name="Steps">
-    <Parameter Name="StepA" Value="{ type : 'LoadStep', step : { bytes: 0, time: 7.2, percent: 20, processors: 2, <optional common parameters> } }" />
-  </Section>
+<Parameter Name="StepA" Value="{ type : 'LoadStep', step : { bytes: 0, time: 7.2, percent: 20, processors: 2, <optional common parameters> } }" />
 ```
 
 __See also__<br/>

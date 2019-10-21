@@ -29,9 +29,7 @@ A probability in the range 0 (0%) to 1 (100%) of an error being returned by the 
 
 ### Direct service setting configuration
 ```xml
-<Section Name="Steps">
-    <Parameter Name="StepA" Value="{ type : 'ErrorStep', step : { probability: 0.5, <optional common parameters> } }" />
-  </Section>
+<Parameter Name="StepA" Value="{ type : 'ErrorStep', step : { probability: 0.5, <optional common parameters> } }" />
 ```
 
 __See also__<br/>
