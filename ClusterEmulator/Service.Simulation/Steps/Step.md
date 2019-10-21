@@ -40,22 +40,22 @@ Valid values are __Any__, __All__ and __None__. (Defaults to Any behaviour if un
 ### Setting configuration
 ```json
 "steps": {
-            "StepA": { 
-                "type": "StepType",
-                "step": {
-                    "parallelCount": 2,
-                    "parallelError": "Any",
-                    <StepType parameters>
-                }
-            }
-        },
+    "StepA": { 
+        "type": "StepType",
+        "step": {
+            "parallelCount": 2,
+            "parallelError": "Any",
+            <StepType parameters>
+        }
+    }
+},
 ```
 
 ### Direct service setting configuration
 ```xml
 <Section Name="Steps">
     <Parameter Name="StepA" Value="{ type : 'StepType', step : { parallelCount : 2, parallelError : 'Any', <StepType parameters> } }" />
-  </Section>
+</Section>
 ```
 
 __See also__<br/>
