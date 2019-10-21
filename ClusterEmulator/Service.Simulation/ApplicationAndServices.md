@@ -19,16 +19,12 @@ A GUID value for an Application Insights instance to connect the services to.
 This is superseeded by appsettingsPath.
 
 #### services
-<aside class="warning">
-TODO: fix links
-</aside>
-
 A list of service configurations, containing:
 - __port__ : A unique port value
-- __processors__ : A list of uniquely named request [Processor configurations](./Processors/Processor.md). 
-- __steps__ : A list of uniquely named execution [Step configurations](./Steps/Step.md).
-- __clients__ (Optional) : A list of uniquely named [Http Client configurations](./HttpClientConfiguration/HttpClient.md).
-- __policies__ (Optional) : A list of uniquely named resiliency [Policy configurations](./HttpClientConfiguration/Policies.md)
+- __processors__ : A list of uniquely named [Processor configurations](./Processors/Processor.md). 
+- __steps__ : A list of uniquely named [Step configurations](./Steps/Step.md).
+- __clients__ (Optional) : A list of uniquely named [Http Client configurations](./HttpClientConfiguration/Client.md).
+- __policies__ (Optional) : A list of uniquely named [Policy configurations](./HttpClientConfiguration/Policy.md)
 
 ### Sample JSON
 The following JSON defines an application composed of two services.

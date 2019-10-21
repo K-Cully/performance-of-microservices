@@ -33,4 +33,4 @@ A probability in the range 0 (0%) to 1 (100%) of an error being returned by the 
 ```
 
 __See also__<br/>
-[General Step configuration](./Step.md)
+[Step configuration](./Step.md)

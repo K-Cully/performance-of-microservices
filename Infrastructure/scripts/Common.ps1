@@ -63,8 +63,6 @@ function CreateSelfSignedCertificate([string]$DnsName)
     # TODO: convert cert generation to work with Powershell Core and be cross platform.
     # See https://github.com/rjmholt/SelfSignedCertificate on cert generation.
 
-    # TODO: Import-WinModule Microsoft.
-
     Write-Host "Creating self-signed certificate with dns name $DnsName"
     
     $filePath = "$PSScriptRoot\$DnsName.pfx"

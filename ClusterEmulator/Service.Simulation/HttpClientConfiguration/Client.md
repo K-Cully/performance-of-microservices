@@ -40,4 +40,5 @@ A list of key-value pairs of headers to apply to all request through the client.
 
 __See also__<br/>
 [Policy configuration](./Policy.md)
+[Request Step Configuration](../Steps/RequestStep.md)
 [Application and service configuration](../ApplicationAndServices.md)
