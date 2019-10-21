@@ -26,7 +26,7 @@ TODO: fix links
 A list of service configurations, containing:
 - __port__ : A unique port value
 - __processors__ : A list of uniquely named request [Processor configurations](./Processors/Processor.md). 
-- __steps__ : A list of uniquely named execution [Step configurations](./Steps/Steps.md).
+- __steps__ : A list of uniquely named execution [Step configurations](./Steps/Step.md).
 - __clients__ (Optional) : A list of uniquely named [Http Client configurations](./HttpClientConfiguration/HttpClient.md).
 - __policies__ (Optional) : A list of uniquely named resiliency [Policy configurations](./HttpClientConfiguration/Policies.md)
 
