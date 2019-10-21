@@ -58,5 +58,5 @@ A value indicating whether requests should be fire-and-forget or their responses
 ```
 
 __See also__<br/>
-[Step configuration](./Step.md)
+[Step configuration](./Step.md)<br/>
 [Client configuration](../HttpClientConfiguration/Client.md)

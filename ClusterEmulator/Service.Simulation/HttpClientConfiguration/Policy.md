@@ -47,5 +47,5 @@ An object containing type configuration parameters.
 ```
 
 __See also__<br/>
-[Client configuration](./Client.md)
+[Client configuration](./Client.md)<br/>
 [Application and service configuration](../ApplicationAndServices.md)
