@@ -6,7 +6,7 @@ The break duration, failure rate threshold, sampling timeframe and minimum throu
 
 ## Implementation
 #### type
-__AdvancedCircuitBreakerConfig__ (The typename of the step to create.)
+__AdvancedCircuitBreakerConfig__ (The typename of the policy configuration.)
 
 #### policy
 A dictionary of required configuration parameters.
