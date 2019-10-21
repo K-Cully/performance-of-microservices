@@ -3,16 +3,12 @@
 ## Description
 A request step makes http requests to a sub-path of any URI defined within a configured client, handles responses and manages request lifetime.
 
-<aside class="warning">
-TODO: link to client and policy config docs
-</aside>
-
 ## Implementation
 #### type
 __RequestStep__ (The typename of the step to create.)
 
 ##### cacheId (Optional)
-An id to use as a base for cache key isolation.<br/>
+An id to use as a base for cache key isolation, if a caching policy is enabled.<br/>
 The final cache key will be of the form "cacheId-<randomUniquenessValue>-method", where randomUniquenessValue is based off cacheKeyUniqueness.
 
 ##### cacheKeyUniqueness (Optional)
@@ -62,4 +58,5 @@ A value indicating whether requests should be fire-and-forget or their responses
 ```
 
 __See also__<br/>
-[Application and service configuration](./Step.md)
+[Client configuration](../HttpClientConfiguration/Client.md)
+[General Step configuration](./Step.md)

@@ -43,4 +43,4 @@ The amount of memory, in bytes, to consume.
 ```
 
 __See also__<br/>
-[Application and service configuration](./Step.md)
+[General Step configuration](./Step.md)
