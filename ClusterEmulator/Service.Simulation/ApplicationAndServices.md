@@ -6,7 +6,7 @@ Each service specifies a name, the port it should be exposed upon and configrati
 If using the provided generation and deployment scripts, after the initial provisioning of infrastructure has completed, an option will be presented to the user to update this file with a key from the newly provisioned Application Insights resource.
 Adding the Application Insights key (GUID) as the "aiKey" value will result in logging for each service beign piped to Application Insights. This is achieved by replacing the instrumentationKey value in the appsettings.json file during service generation. 
 
-Alternatively, the path to a complete replacement appsettings.json file can be provided as the "appsettingsPath" value. This file must contain a complete Serilog configuration (See [the Serilog Github](https://github.com/serilog/serilog-settings-configuration "Serilog Settings Configuration") for more information). As this completely replaces the appsettings.json file, it superseeds the "aiKey" value.
+Alternatively, the path to a complete replacement appsettings.json file can be provided as the "appsettingsPath" value. This file must contain a complete Serilog configuration (See the [Serilog Github repository](https://github.com/serilog/serilog-settings-configuration "Serilog Settings Configuration") for more information). As this completely replaces the appsettings.json file, it superseeds the "aiKey" value.
 
 
 ## Implementation

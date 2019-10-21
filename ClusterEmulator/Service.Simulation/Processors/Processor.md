@@ -36,13 +36,13 @@ Steps will be executed in left-to-right order and a single step can be repeated 
 ### Setting configuration
 ```json
 "processors": {
-                "DoStuff": {
-                    "errorSize": 100,
-                    "latency": 0,
-                    "steps": [ "LoadA", "RequestA" ],
-                    "successSize": 20 
-                }
-            },
+    "DoStuff": {
+        "errorSize": 100,
+        "latency": 0,
+        "steps": [ "LoadA", "RequestA" ],
+        "successSize": 20 
+    }
+},
 ```
 
 ### Direct service setting configuration
