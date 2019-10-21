@@ -5,7 +5,7 @@
 TODO: add content
 </aside>
 
-## Configuring an Applciation
+## Documentation
 [Application and service configuration](./ClusterEmulator/Service.Simulation/ApplicationAndServices.md)
 
 ## Generation and Deployment
