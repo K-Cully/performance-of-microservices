@@ -6,6 +6,11 @@ Steps can be chained via a processor or executed in parallel to emulate many ser
 Each type of step defines its own configuration parameters but some are common.
 
 ### Types of Step
+| Type          | Descritpsion  |
+| ------------- |:------------- |
+| [Error Step](./ErrorStep.md) | Generates errors at a set rate |
+
+
 <aside class="warning">
 TODO: Link to other steps
 </aside>
