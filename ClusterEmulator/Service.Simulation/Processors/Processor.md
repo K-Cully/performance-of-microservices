@@ -53,4 +53,5 @@ Steps will be executed in left-to-right order and a single step can be repeated 
 ```
 
 __See also__<br/>
+[Step Configuration](../Steps/Step.md)
 [Application and service configuration](../ApplicationAndServices.md)
