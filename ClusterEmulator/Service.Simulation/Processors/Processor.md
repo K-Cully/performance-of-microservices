@@ -1,11 +1,12 @@
 # Processor
 
 ## Description
-A Processor is a named entity that is called via the service API (e.g. https://contoso.com:8008/api/ServiceName/ProcessorName) and organises the flow of control for a given service request.
-Multiple processors may be defined for a service to facilitate different API requests yielding different service actions.
+A Processor organises the flow of control for a given service request.<br/>
+It is a named entity that is called via the service API (e.g. https://contoso.com:8008/api/ServiceName/ProcessorName).<br/>
+Multiple processors may be defined for a service to facilitate different API requests yielding different service actions.<br/>
 A processor allows the configuration of simulated latency, response sizes and an ordered list of steps to execute.
 
-A processor will always return one of the following:
+### Processor response codes
 
 | Response Code | Reason        |
 | ------------- |:------------- |
@@ -16,7 +17,7 @@ A processor will always return one of the following:
 
 
 ## Implementation
-Each processor in the service list is referenced by name so these must be unique within a service.
+Each processor in the service list is referenced by name so these must be unique within a service.<br/>
 A processor in the list takes the form "ProcessorName": { Configuration Object }
 
 #### errorSize
@@ -25,7 +26,12 @@ The size in bytes of an error response.
 #### successSize
 The size in bytes of a success response.
 
-####
+#### latency
+Simulated latency in milliseconds to add to all requests.
+
+#### steps
+A list of step names to execute as part of the processor.<br/>
+Steps will be executed in left-to-right order and a single step can be repeated multiple times, if required.
 
 ### Setting configuration
 ```json
