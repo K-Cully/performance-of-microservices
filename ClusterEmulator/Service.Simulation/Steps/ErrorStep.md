@@ -1,7 +1,7 @@
 # Error Step
 
 ## Description
-An error step provides a mechanisism to emulate a particular error rate from a service.<br/>
+An error step provides a mechanism to emulate a particular error rate from a service.<br/>
 This is done by configuring an error probability.<br/>
 Each run of the step then has the configured probability of returning a failure response.
 
@@ -30,7 +30,7 @@ A probability in the range 0 (0%) to 1 (100%) of an error being returned by the 
 ### Direct service setting configuration
 ```xml
 <Section Name="Steps">
-    <Parameter Name="StepA" Value="{ type : 'StepType', step : { probability: 0.5, <optional common parameters> } }" />
+    <Parameter Name="StepA" Value="{ type : 'ErrorStep', step : { probability: 0.5, <optional common parameters> } }" />
   </Section>
 ```
 

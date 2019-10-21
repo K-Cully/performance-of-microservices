@@ -9,6 +9,7 @@ Each type of step defines its own configuration parameters but some are common.
 | Type          | Descritpsion  |
 | ------------- |:------------- |
 | [Error Step](./ErrorStep.md) | Generates errors at a set rate |
+| [Load Step](./LoadStep.md) | Generates specefic system load |
 
 
 <aside class="warning">
