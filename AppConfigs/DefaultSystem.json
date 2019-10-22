@@ -68,19 +68,19 @@
             }
         },        
         "Search": {
-            "comment": "TODO: Add static memory load for query index. The search service provides query to index mapping then performs efficient catalogue queries.",
+            "comment": "TODO: Add static memory load for query index. TODO: set uri. The search service provides query to index mapping then performs efficient catalogue queries.",
             "port": 8002,
             "processors": {
                 "GetBatch" : {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "LookupIndexes", "BatchQueryStep" ],
+                    "steps": [ "LookupIndexes", "BatchQuery" ],
                     "successSize": 76800
                 },
                 "Query" : {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "LookupIndexes", "SearchQueryStep" ],
+                    "steps": [ "LookupIndexes", "SearchQuery" ],
                     "successSize": 9216
                 }
             },
@@ -94,7 +94,7 @@
                         "processors": 1
                     }
                 },
-                "BatchQueryStep": {
+                "BatchQuery": {
                     "type": "RequestStep",
                     "step": {
                         "cacheId": "BatchQuery",
@@ -107,7 +107,7 @@
                         "trueAsync" : false 
                     }
                 },
-                "SearchQueryStep": {
+                "SearchQuery": {
                     "type": "RequestStep",
                     "step": {
                         "cacheId": "SearchQuery",
@@ -187,6 +187,76 @@
                     "type": "DelayStep",
                     "step": {
                         "time" : 0.03
+                    }
+                }
+            }
+        },
+        "Cart": {
+            "comment": "TODO: set uri. The cart service maintains a temporary list of products for a customer to purchase at the end of their session.",
+            "port": 8004,
+            "processors": {
+                "AddItem": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "GetCatalogItem", "ModifyCart" ],
+                    "successSize": 64
+                },
+                "RemoveItem": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "ModifyCart" ],
+                    "successSize": 64
+                },
+                "EmptyCart": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "ModifyCart" ],
+                    "successSize": 32
+                },
+                "GetItems": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "ModifyCart" ],
+                    "successSize": 2048
+                }
+            },
+            "steps": {
+                "GetCatalogItem": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetCatalogItem",
+                        "cacheKeyUniqueness": 1000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProduct",
+                        "size" : 4,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "ModifyCart": {
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 64,
+                        "time" : 0.0,
+                        "percent" : 1,
+                        "processors" : 1
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
                     }
                 }
             }
