@@ -3,6 +3,7 @@
     "aiKey": "",
     "services": {
         "Catalogue": {
+            "comment": "The catalogue service provides stock access and update capabilities. Database access is modelled using a delay.",
             "port": 8001,
             "processors": {
                 "GetProduct": {
@@ -67,6 +68,7 @@
             }
         },        
         "Search": {
+            "comment": "TODO: Add static memory load for query index. The search service provides query to index mapping then performs efficient catalogue queries.",
             "port": 8002,
             "processors": {
                 "GetBatch" : {
@@ -132,6 +134,44 @@
                     "policy": {
                         "cancelDelegates" : true,
                         "time" : 30.0
+                    }
+                }
+            }
+        },
+        "Accounts": {
+            "comment": "The accounts service provides account information. Database access is modelled using a delay.",
+            "port": 8003,
+            "processors": {
+                "GetAccountId": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "DatabaseCall" ],
+                    "successSize": 64 
+                },
+                "GetAccounts": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "DatabaseCall" ],
+                    "successSize": 16                    
+                },
+                "GetPaymentInfo": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "DatabaseCall" ],
+                    "successSize": 16                    
+                },
+                "UpdatePurchases": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "DatabaseCall" ],
+                    "successSize": 16                    
+                }
+            },
+            "steps": {
+                "DatabaseCall": { 
+                    "type": "DelayStep",
+                    "step": {
+                        "time" : 0.03
                     }
                 }
             }
