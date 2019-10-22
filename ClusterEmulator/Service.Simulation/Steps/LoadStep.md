@@ -5,7 +5,7 @@ A load step provides a mechanism to generate a specific CPU and memory load for 
 
 ## Implementation
 #### type
-__LaodStep__ (The typename of the step to create.)
+__LoadStep__ (The typename of the step to create.)
 
 #### step
 An object containing required configuration parameters and optionally, common configuration parameters.
