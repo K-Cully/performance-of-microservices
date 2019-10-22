@@ -68,7 +68,7 @@
             }
         },        
         "Search": {
-            "comment": "TODO: Add static memory load for query index. TODO: set uri. The search service provides query to index mapping then performs efficient catalogue queries.",
+            "comment": "TODO: Add static memory load for query index. The search service provides query to index mapping then performs efficient catalogue queries.",
             "port": 8002,
             "processors": {
                 "GetBatch" : {
@@ -192,7 +192,7 @@
             }
         },
         "Cart": {
-            "comment": "TODO: set uri. The cart service maintains a temporary list of products for a customer to purchase at the end of their session.",
+            "comment": "The cart service maintains a temporary list of products for a customer to purchase at the end of their session.",
             "port": 8004,
             "processors": {
                 "AddItem": {
