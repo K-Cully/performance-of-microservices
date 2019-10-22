@@ -436,19 +436,62 @@
 
             },
             "steps": {
-
+                "GetCartItems": {
+                    "type": "RequestStep",
+                    "step": {
+                        "client": "CartClient",
+                        "method": "get",
+                        "path": "/api/Cart/GetItems",
+                        "size" : 64,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "AddCartItem": {
+                    "type": "RequestStep",
+                    "step": {
+                        "client": "CartClient",
+                        "method": "put",
+                        "path": "/api/Cart/AddItem",
+                        "size" : 64,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "RemoveCartItem": {
+                    "type": "RequestStep",
+                    "step": {
+                        "client": "CartClient",
+                        "method": "put",
+                        "path": "/api/Cart/RemoveItem",
+                        "size" : 64,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "PayForItem": {
+                    "type": "RequestStep",
+                    "step": {
+                        "client": "PaymentClient",
+                        "method": "post",
+                        "path": "/api/Payments/ProcessPayment",
+                        "size" : 128,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                }
             },
             "clients": {
-                "AccountsClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                "CartClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
                     "policies": [ "30SecondTimeout" ], 
                     "headers": { "Accept": "*/*" }
-                },                
-                "SearchClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8002",
+                },
+                "PaymentClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8005",
                     "policies": [ "30SecondTimeout" ], 
                     "headers": { "Accept": "*/*" }
-                }
+                }   
             },
             "policies": {
                 "30SecondTimeout": {
@@ -470,16 +513,16 @@
 
             },
             "clients": {
-                "CartClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
+                "AccountsClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
                     "policies": [ "30SecondTimeout" ], 
                     "headers": { "Accept": "*/*" }
-                },
-                "PaymentClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8005",
+                },                
+                "SearchClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8002",
                     "policies": [ "30SecondTimeout" ], 
                     "headers": { "Accept": "*/*" }
-                }                
+                }             
             },
             "policies": {
                 "30SecondTimeout": {
