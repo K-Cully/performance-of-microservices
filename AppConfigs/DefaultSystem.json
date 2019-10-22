@@ -145,30 +145,45 @@
                 "GetAccountId": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall" ],
-                    "successSize": 64 
+                    "steps": [ "DatabaseRead" ],
+                    "successSize": 16 
                 },
-                "GetAccounts": {
+                "GetPurchases": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall" ],
-                    "successSize": 16                    
+                    "steps": [ "InterpretQuery", "DatabaseRead" ],
+                    "successSize": 320000                    
                 },
                 "GetPaymentInfo": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall" ],
-                    "successSize": 16                    
+                    "steps": [ "DatabaseRead" ],
+                    "successSize": 64                    
                 },
                 "UpdatePurchases": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall" ],
+                    "steps": [ "DatabaseWrite" ],
                     "successSize": 16                    
                 }
             },
             "steps": {
-                "DatabaseCall": { 
+                "InterpretQuery": {
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 128,
+                        "time" : 0.005,
+                        "percent" : 5,
+                        "processors" : 1
+                    }
+                },
+                "DatabaseRead": { 
+                    "type": "DelayStep",
+                    "step": {
+                        "time" : 0.01
+                    }
+                },
+                "DatabaseWrite": { 
                     "type": "DelayStep",
                     "step": {
                         "time" : 0.03
