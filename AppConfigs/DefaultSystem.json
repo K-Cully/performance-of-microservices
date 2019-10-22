@@ -374,8 +374,12 @@
             "comment": "The BusinessIntelligence service allows querying for information on purchases over a given period.",
             "port": 8006,
             "processors": {
-                "steps": [ "GetUserDetails", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems" ]
-
+                "GetData": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "GetUserDetails", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems" ],
+                    "successSize": 3686400
+                }
             },
             "steps": {
                 "GetUserDetails": {
@@ -433,7 +437,30 @@
             "comment": "The Checkout service provides a frontend API for checkout web page interactions.",
             "port": 8007,
             "processors": {
-
+                "AddItem": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "AddCartItem" ],
+                    "successSize": 32
+                },
+                "RemoveItem": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "RemoveCartItem" ],
+                    "successSize": 32
+                },
+                "GetItems": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "GetCartItems" ],
+                    "successSize": 1536                    
+                },
+                "MakePayment": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "PayForItem" ],
+                    "successSize": 32
+                }
             },
             "steps": {
                 "GetCartItems": {
@@ -507,10 +534,72 @@
             "comment": "The Browse service provides a frontend API for store web page interactions.",
             "port": 8008,
             "processors": {
-
+                "Login": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "Authenticate", "GetAccount" ],
+                    "successSize": 512
+                },
+                "GetProducts": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "GetProducts" ],
+                    "successSize": 76800
+                },
+                "Search": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "SearchProducts" ],
+                    "successSize": 9216
+                }
             },
             "steps": {
-
+                "Authenticate": {
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 16,
+                        "time": 0.001,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "GetAccount": {
+                    "type": "RequestStep",
+                    "step": {
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetAccountId",
+                        "size" : 128,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "GetProducts": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetProducts",
+                        "cacheKeyUniqueness": 50,
+                        "client": "SearchClient",
+                        "method": "get",
+                        "path": "/api/Search/GetBatch",
+                        "size" : 2,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "SearchProducts": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "Search",
+                        "cacheKeyUniqueness": 5000,
+                        "client": "SearchClient",
+                        "method": "get",
+                        "path": "/api/Search/Query",
+                        "size" : 2,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                }
             },
             "clients": {
                 "AccountsClient": {
