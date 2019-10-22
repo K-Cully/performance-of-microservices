@@ -13,7 +13,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
     public class ErrorStep : SimulationStep
     {
         /// <summary>
-        /// The length of time the load should last for.
+        /// The probability of returning an error.
         /// </summary>
         [JsonProperty("probability")]
         [JsonRequired]

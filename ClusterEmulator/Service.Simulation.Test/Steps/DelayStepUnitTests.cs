@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 namespace ClusterEmulator.Service.Simulation.Test.Steps
 {
     [TestClass]
-    public class ErrorStepUnitTests
+    public class DelayStepUnitTests
     {
         [TestMethod]
         public void Deserialization_ValidData_CreatesValidInstance()
         {
-            ErrorStep step = JsonConvert.DeserializeObject<ErrorStep>("{ probability: 0.5 }");
+            DelayStep step = JsonConvert.DeserializeObject<DelayStep>("{ time: 0.5 }");
 
-            Assert.AreEqual(0.5d, step.Probability, 0.0001d);
+            Assert.AreEqual(0.5d, step.Time, 0.0001d);
         }
 
 
@@ -24,15 +24,15 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public void Deserialization_InvalidData_Throws()
         {
             Assert.ThrowsException<JsonSerializationException>(
-                () => JsonConvert.DeserializeObject<ErrorStep>("{ }"));
+                () => JsonConvert.DeserializeObject<DelayStep>("{ }"));
         }
 
 
         [TestMethod]
         public async Task ExecuteAsync_LoggerNotInitialized_Throws()
         {
-            var step = new ErrorStep()
-            { Probability = 0.5d };
+            var step = new DelayStep()
+            { Time = 2.0d };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -40,10 +40,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_InvalidProbability_Throws()
+        public async Task ExecuteAsync_InvalidTime_Throws()
         {
-            var step = new ErrorStep()
-            { Probability = 2.0d };
+            var step = new DelayStep()
+            { Time = -2.0d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
             step.InitializeLogger(logger.Object);
 
@@ -53,24 +53,24 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_ProbabilityOne_ReturnsFail()
+        public async Task ExecuteAsync_TimeTen_ReturnsSuccess()
         {
-            var step = new ErrorStep()
-            { Probability = 1.0d };
+            var step = new DelayStep()
+            { Time = 10.0d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
             step.InitializeLogger(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 
-            Assert.AreEqual(ExecutionStatus.SimulatedFail, status);
+            Assert.AreEqual(ExecutionStatus.Success, status);
         }
 
 
         [TestMethod]
-        public async Task ExecuteAsync_ProbabilityZero_ReturnsSuccess()
+        public async Task ExecuteAsync_TimeZero_ReturnsSuccess()
         {
-            var step = new ErrorStep()
-            { Probability = 0.0d };
+            var step = new DelayStep()
+            { Time = 0.0d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
             step.InitializeLogger(logger.Object);
 
