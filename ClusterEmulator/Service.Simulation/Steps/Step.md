@@ -8,6 +8,7 @@ Each type of step defines its own configuration parameters but some are common.
 ### Types of Step
 | Type          | Descritpsion  |
 | ------------- |:------------- |
+| [Delay Step](./DelayStep.md) | Adds a wait period |
 | [Error Step](./ErrorStep.md) | Generates errors at a set rate |
 | [Load Step](./LoadStep.md) | Generates specefic system load |
 | [Request Step](./RequestStep.md) | Makes http requests |
