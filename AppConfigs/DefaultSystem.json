@@ -369,6 +369,65 @@
                     }
                 }
             }
+        },
+        "BusinessIntelligence": {
+            "comment": "The BusinessIntelligence service allows querying for information on purchases over a given period.",
+            "port": 8006,
+            "processors": {
+                "steps": [ "GetUserDetails", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems", "GetCatalogueItems" ]
+
+            },
+            "steps": {
+                "GetUserDetails": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetUser",
+                        "cacheKeyUniqueness": 20,
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetPurchases",
+                        "size" : 64,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "GetCatalogueItems": {
+                    "type": "RequestStep",
+                    "step": {
+                        "parallelCount": 12,
+                        "parallelError": "Any",
+                        "cacheId": "GetCatalogue",
+                        "cacheKeyUniqueness": 3000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProducts",
+                        "size" : 16,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                },
+                "AccountsClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
+                    }
+                }
+            }
         }
     }
 }
