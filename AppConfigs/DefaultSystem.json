@@ -14,13 +14,13 @@
                 "GetProducts": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall", "DeserializeFewItems" ],
+                    "steps": [ "DatabaseCall", "DeserializeManyItems" ],
                     "successSize": 76800
                 },
                 "GetSearchProducts": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [ "DatabaseCall", "DeserializeManyItems" ],
+                    "steps": [ "DatabaseCall", "DeserializeFewItems" ],
                     "successSize": 9216
                 },
                 "UpdateProduct": {
@@ -69,8 +69,71 @@
         "Search": {
             "port": 8002,
             "processors": {
+                "GetBatch" : {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "LookupIndexes", "BatchQueryStep" ],
+                    "successSize": 76800
+                },
+                "Query" : {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "LookupIndexes", "SearchQueryStep" ],
+                    "successSize": 9216
+                }
             },
             "steps": {
+                "LookupIndexes": { 
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 16,
+                        "time": 0.0001,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "BatchQueryStep": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "BatchQuery",
+                        "cacheKeyUniqueness": 40,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProducts",
+                        "size" : 16,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "SearchQueryStep": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "SearchQuery",
+                        "cacheKeyUniqueness": 5000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetSearchProducts",
+                        "size" : 16,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }
+            },
+            "poilicies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
+                    }
+                }
             }
         }
     }
