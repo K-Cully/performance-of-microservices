@@ -428,6 +428,68 @@
                     }
                 }
             }
+        },
+        "Checkout": {
+            "comment": "The Checkout service provides a frontend API for checkout web page interactions.",
+            "port": 8007,
+            "processors": {
+
+            },
+            "steps": {
+
+            },
+            "clients": {
+                "AccountsClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                },                
+                "SearchClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8002",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
+                    }
+                }
+            }
+        },
+        "Browse": {
+            "comment": "The Browse service provides a frontend API for store web page interactions.",
+            "port": 8008,
+            "processors": {
+
+            },
+            "steps": {
+
+            },
+            "clients": {
+                "CartClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                },
+                "PaymentClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8005",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }                
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
+                    }
+                }
+            }
         }
     }
 }
