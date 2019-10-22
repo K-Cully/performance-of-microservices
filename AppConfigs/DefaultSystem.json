@@ -2,44 +2,75 @@
     "appsettingsPath": "",
     "aiKey": "",
     "services": {
-        "ProductCatalogue": {
+        "Catalogue": {
             "port": 8001,
             "processors": {
                 "GetProduct": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [],
+                    "steps": [ "DatabaseCall", "DeserializeOneItem" ],
                     "successSize": 3072 
                 },
                 "GetProducts": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [],
+                    "steps": [ "DatabaseCall", "DeserializeFewItems" ],
                     "successSize": 76800
                 },
                 "GetSearchProducts": {
                     "errorSize": 256,
                     "latency": 0,
-                    "steps": [],
+                    "steps": [ "DatabaseCall", "DeserializeManyItems" ],
                     "successSize": 9216
                 },
                 "UpdateProduct": {
                     "errorSize": 64,
                     "latency": 0,
-                    "steps": [ "UpdateItem" ],
+                    "steps": [ "DatabaseCall", "DeserializeOneItem" ],
                     "successSize": 64
                 }
             },
             "steps": {
-                "LoadA": { 
-                    "type": "UpdateItem",
+                "DatabaseCall": { 
+                    "type": "DelayStep",
                     "step": {
-                        "bytes": 64,
+                        "time" : 0.03
+                    }
+                },
+                "DeserializeOneItem": { 
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 3072,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "DeserializeFewItems": { 
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 9216,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "DeserializeManyItems": { 
+                    "type": "LoadStep",
+                    "step": {
+                        "bytes": 76800,
                         "time": 0.0,
                         "percent": 1,
                         "processors": 1
                     }
                 }
+            }
+        },        
+        "Search": {
+            "port": 8002,
+            "processors": {
+            },
+            "steps": {
             }
         }
     }
