@@ -260,6 +260,115 @@
                     }
                 }
             }
+        },
+        "Payments": {
+            "comment": "The payments service processes payment with a third-party and notifies other services to fulfil their part in the order. The third-party is modelled using a delay.",
+            "port": 8005,
+            "processors": {
+                "ProcessPayment": {
+                    "errorSize": 256,
+                    "latency": 0,
+                    "steps": [ "GetCartItems", "GetCatalogItems", "GetPaymentInstrument", "AuthorizePayment", "PlaceOrder", "UpdatePurchases", "EmptyCart" ],
+                    "successSize": 64
+                }
+            },
+            "steps": {
+                "AuthorizePayment": {
+                    "type": "DelayStep",
+                    "step": {
+                        "time": "4.2"
+                    }
+                },
+                "GetCatalogItems": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetCatalog",
+                        "cacheKeyUniqueness": 10000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetSearchProducts",
+                        "size" : 4,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "GetCartItems": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetCart",
+                        "cacheKeyUniqueness": 10000,
+                        "client": "CartClient",
+                        "method": "get",
+                        "path": "/api/Cart/GetItems",
+                        "size" : 4,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "GetPaymentInstrument": {
+                    "type": "RequestStep",
+                    "step": {
+                        "cacheId": "GetPayment",
+                        "cacheKeyUniqueness": 1000,
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetPaymentInfo",
+                        "size" : 4,
+                        "reuseSockets": true,
+                        "trueAsync" : false 
+                    }
+                },
+                "EmptyCart": {
+                    "client": "CartClient",
+                    "method": "post",
+                    "path": "/api/Cart/GetItems",
+                    "size" : 16,
+                    "reuseSockets": true,
+                    "trueAsync" : true 
+                },
+                "PlaceOrder": {
+                    "client": "CatalogueClient",
+                    "method": "post",
+                    "path": "/api/Catalogue/UpdateProduct",
+                    "size" : 512,
+                    "reuseSockets": true,
+                    "trueAsync" : true                    
+                },
+                "UpdatePurchases": {
+                    "client": "AccountsClient",
+                    "method": "post",
+                    "path": "/api/Accounts/UpdatePurchases",
+                    "size" : 64,
+                    "reuseSockets": true,
+                    "trueAsync" : true
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                },
+                "CartClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                },
+                "AccountsClient": {
+                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "policies": [ "30SecondTimeout" ], 
+                    "headers": { "Accept": "*/*" }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "policy": {
+                        "cancelDelegates" : true,
+                        "time" : 30.0
+                    }
+                }
+            }
         }
     }
 }
