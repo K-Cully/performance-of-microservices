@@ -549,45 +549,6 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         }
 
 
-        [TestMethod]
-        [TestCategory("Functional")]
-        public async Task ProcessStartupActionsAsync_Asynchronous_Logs_WhenStepsFail()
-        {
-            // Arrange
-            string stepName = "step";
-
-            DateTime start = DateTime.Now;
-
-            IStartupProcessor processor = defaultStartupProcessor;
-            processor.Steps = new List<string> { stepName, stepName };
-            processor.Asynchronous = true;
-
-            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
-            stepMock.Setup(step => step.ExecuteAsync())
-                .ReturnsAsync(ExecutionStatus.Fail);
-            stepMock.Setup(step => step.FailOnParallelFailures)
-                .Returns(GroupClause.Undefined);
-            stepMock.Setup(step => step.ParallelCount)
-                .Returns<uint?>(null);
-
-            var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetStartupProcessors())
-                .Returns(new List<IStartupProcessor>() { processor });
-            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
-                .Returns<string>(n => stepMock.Object);
-
-            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
-            Engine engine = new Engine(logger.Object, registry.Object);
-
-            // Act
-            await engine.ProcessStartupActionsAsync().ConfigureAwait(false);
-            Thread.Sleep(20);
-
-            // Verify
-            logger.Verify(l => l.LogCritical(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        }
-
-
         private readonly StartupProcessor defaultStartupProcessor = new StartupProcessor
         {
             Steps = new List<string>(),
