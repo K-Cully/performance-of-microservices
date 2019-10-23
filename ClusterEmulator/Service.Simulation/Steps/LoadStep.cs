@@ -16,9 +16,9 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
+        /// <remarks>A negative value indicates run forever</remarks>
         [JsonProperty("time")]
         [JsonRequired]
-        [Range(0, double.MaxValue, ErrorMessage = "time cannot be negative")]
         public double TimeInSeconds { get; set; }
 
 
@@ -27,7 +27,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         [JsonProperty("percent")]
         [JsonRequired]
-        [Range(1, 100, ErrorMessage = "percent must be in the range 1 - 100")]
+        [Range(0, 100, ErrorMessage = "percent must be in the range 0 - 100")]
         public int CpuPercentage { get; set; }
 
 
@@ -81,16 +81,10 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException("Logger is not initialized");
             }
 
-            if (TimeInSeconds < 0.0d)
-            {
-                Logger.LogCritical("{Property} is negative", "time");
-                throw new InvalidOperationException("time cannot be negative");
-            }
-
-            if (CpuPercentage < 1 || CpuPercentage > 100)
+            if (CpuPercentage < 0 || CpuPercentage > 100)
             {
                 Logger.LogCritical("{Property} value is not in the accepted range", "percent");
-                throw new InvalidOperationException("percent must be in the range 1 - 100");
+                throw new InvalidOperationException("percent must be in the range 0 - 100");
             }
 
             if (MaxProcessors < 0)
@@ -119,18 +113,36 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 }
             }
 
-            if (TimeInSeconds > 0.0d)
+            if (TimeInSeconds == 0.0d)
             {
-                List<Task> coreTasks = new List<Task>();
-                for (int i = 0; i < ProcessorCount; i++)
-                {
-                    Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
-                        CpuPercentage, i, TimeInSeconds);
-                    coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
-                }
-
-                await Task.WhenAll(coreTasks).ConfigureAwait(false);
+                Logger.LogInformation("Completed load generation step");
+                return ExecutionStatus.Success;
             }
+
+            // Run once for all cases but run forever if time is negative
+            TimeSpan runTime = TimeInSeconds > 0.0d ?
+                TimeSpan.FromSeconds(TimeInSeconds) : TimeSpan.MaxValue;
+            do
+            {
+                if (CpuPercentage > 0)
+                {
+                    // Generate CPU load
+                    List<Task> coreTasks = new List<Task>();
+                    for (int i = 0; i < ProcessorCount; i++)
+                    {
+                        Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
+                            CpuPercentage, i, runTime.TotalSeconds);
+                        coreTasks.Add(GenerateLoad(runTime.TotalSeconds, CpuPercentage));
+                    }
+
+                    await Task.WhenAll(coreTasks).ConfigureAwait(false);
+                }
+                else
+                {
+                    // Utilize memory only
+                    await Task.Delay(runTime);
+                }
+            } while (TimeInSeconds < 0.0d);
 
             Logger.LogInformation("Completed load generation step");
             return ExecutionStatus.Success;

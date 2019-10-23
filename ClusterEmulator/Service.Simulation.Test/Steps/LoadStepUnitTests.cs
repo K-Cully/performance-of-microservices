@@ -70,19 +70,6 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
 
 
         [TestMethod]
-        public async Task ExecuteAsync_InvalidTime_Throws()
-        {
-            IStep step = new LoadStep()
-            { MemoryInBytes = 5, TimeInSeconds = -15.0d, CpuPercentage = 5 };
-            var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step = step.AsTypeModel(logger.Object);
-
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                () => step.ExecuteAsync());
-        }
-
-
-        [TestMethod]
         public async Task ExecuteAsync_InvalidMaxProcessors_Throws()
         {
             IStep step = new LoadStep()
@@ -164,7 +151,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public async Task ExecuteAsync_ValidBytesMax_Throws()
         {
             IStep step = new LoadStep()
-            { MemoryInBytes = ulong.MaxValue, TimeInSeconds = 2, CpuPercentage = 50 };
+            { MemoryInBytes = ulong.MaxValue, TimeInSeconds = 2, CpuPercentage = 0 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
             step = step.AsTypeModel(logger.Object);
 
