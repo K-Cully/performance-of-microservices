@@ -9,7 +9,7 @@ The status code, reason phrase and response content are configurable.
 #### type
 __FallbackConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### content (Optional)
@@ -25,7 +25,7 @@ The status code for the fallback response.
 ```json
 "PolicyA": {
     "type": "FallbackConfig",
-    "policy": {
+    "value": {
         "statusCode" : 200,
         "reason" : "fallback triggered",
         "content" : "who knows?"
@@ -35,7 +35,7 @@ The status code for the fallback response.
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'FallbackConfig', policy : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
+<Parameter Name="PolicyA" Value="{ type : 'FallbackConfig', value : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
 ```
 
 __See also__<br/>

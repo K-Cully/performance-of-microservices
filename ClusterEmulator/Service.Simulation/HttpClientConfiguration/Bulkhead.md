@@ -8,7 +8,7 @@ The maximum number of concurrent requests through the bulkhead and queuing at th
 #### type
 __BulkheadConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### bandwidth
@@ -23,7 +23,7 @@ If this is not set, no queuing of requests is allowed causing requests exceeding
 ```json
 "PolicyA": {
     "type": "BulkheadConfig",
-    "policy": {
+    "value": {
         "bandwidth" : 10,
         "queueLength" : 5
     }
@@ -32,7 +32,7 @@ If this is not set, no queuing of requests is allowed causing requests exceeding
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 10, queueLength : 5 } }" /> 
+<Parameter Name="PolicyA" Value="{ type : 'BulkheadConfig', value : { bandwidth : 10, queueLength : 5 } }" /> 
 ```
 
 __See also__<br/>

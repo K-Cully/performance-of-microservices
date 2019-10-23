@@ -23,7 +23,7 @@ A policy in the list takes the form "PolicyName": { Configuration Object }
 #### type
 The typename of the policy configuration.
 
-#### policy
+#### value
 An object containing type configuration parameters.
 
 
@@ -32,7 +32,7 @@ An object containing type configuration parameters.
 "policies": {
     "PolicyA": {
         "type": "PolicyType",
-        "policy": {
+        "value": {
             <PolicyType parameters>
         }
     }
@@ -42,7 +42,7 @@ An object containing type configuration parameters.
 ### Direct service setting configuration
 ```xml
 <Section Name="Policies">
-    <Parameter Name="PolicyA" Value="{ type : 'PolicyType', policy : { <PolicyType parameters> } }" />
+    <Parameter Name="PolicyA" Value="{ type : 'PolicyType', value : { <PolicyType parameters> } }" />
 </Section>
 ```
 

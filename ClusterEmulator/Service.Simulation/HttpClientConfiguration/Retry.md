@@ -9,7 +9,7 @@ Configuration options provided allow for various retry behaviours such as; immed
 #### type
 __RetryConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### retries
@@ -28,7 +28,7 @@ A positive value, in milliseconds, specifying the maximum jitter to apply to app
 ```json
 "PolicyA": {
     "type": "RetryConfig",
-    "policy": {
+    "value": {
         "retries" : 0,
         "delays" : [ -1.0 ],
         "jitter" : 300
@@ -36,7 +36,7 @@ A positive value, in milliseconds, specifying the maximum jitter to apply to app
 },
 "PolicyB": {
     "type": "RetryConfig",
-    "policy": {
+    "value": {
         "retries" : 3,
         "delays" : [ 1.0, 5.0 ]
     }
@@ -45,8 +45,8 @@ A positive value, in milliseconds, specifying the maximum jitter to apply to app
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1.0 ], jitter : 300 } }" />
-<Parameter Name="PolicyB" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1.0, 5.0 ] } }" />
+<Parameter Name="PolicyA" Value="{ type : 'RetryConfig', value : { retries : 0, delays : [ -1.0 ], jitter : 300 } }" />
+<Parameter Name="PolicyB" Value="{ type : 'RetryConfig', value : { retries : 3, delays : [ 1.0, 5.0 ] } }" />
 ```
 
 __See also__<br/>

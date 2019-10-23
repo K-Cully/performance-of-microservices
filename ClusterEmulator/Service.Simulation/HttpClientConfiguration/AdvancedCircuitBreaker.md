@@ -8,7 +8,7 @@ The break duration, failure rate threshold, sampling timeframe and minimum throu
 #### type
 __AdvancedCircuitBreakerConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### breakDuration
@@ -27,7 +27,7 @@ The minimum number of requests that must pass through the circuit during the sam
 ```json
 "PolicyA": {
     "type": "AdvancedCircuitBreakerConfig",
-    "policy": {
+    "value": {
         "breakDuration" : 5.2,
         "threshold" : 0.75,
         "samplingDuration" : 30.5,
@@ -38,7 +38,7 @@ The minimum number of requests that must pass through the circuit during the sam
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'AdvancedCircuitBreakerConfig', policy : { breakDuration : 5.2, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
+<Parameter Name="PolicyA" Value="{ type : 'AdvancedCircuitBreakerConfig', value : { breakDuration : 5.2, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
     
 ```
 
