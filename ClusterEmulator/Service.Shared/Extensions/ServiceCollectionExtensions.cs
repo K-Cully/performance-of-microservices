@@ -29,7 +29,7 @@ namespace ClusterEmulator.Service.Shared.Extensions
                 .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
                 .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
                 .AddSingleton<IPolicyFactory, PolicyFactory>()
-                .AddSingleton<IStepFactory, StepFactory>()
+                .AddSingleton<IConfigFactory<IStep>, NestedConfigFactory<IStep, IStep>>()
                 .AddSingleton<IConfigFactory<RequestProcessor>, ConfigFactory<RequestProcessor>>()
                 .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
                 .AddSingleton<IRegistry, Registry>()

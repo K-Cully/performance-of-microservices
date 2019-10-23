@@ -21,8 +21,8 @@ A step in the list takes the form "StepName": { Configuration Object }
 #### type
 The typename of the step to create.
 
-#### step
-An object containing optional common configuration parameters and required type configuration parameters.
+#### value
+An object containing required configuration parameters and optionally, common configuration parameters.
 
 ##### parallelCount (Optional)
 The number of parallel execution of the step logic to run each time the step is started.
@@ -43,7 +43,7 @@ Valid values are __Any__, __All__ and __None__. (Defaults to Any behaviour if un
 "steps": {
     "StepA": { 
         "type": "StepType",
-        "step": {
+        "value": {
             "parallelCount": 2,
             "parallelError": "Any",
             <StepType parameters>
@@ -55,7 +55,7 @@ Valid values are __Any__, __All__ and __None__. (Defaults to Any behaviour if un
 ### Direct service setting configuration
 ```xml
 <Section Name="Steps">
-    <Parameter Name="StepA" Value="{ type : 'StepType', step : { parallelCount : 2, parallelError : 'Any', <StepType parameters> } }" />
+    <Parameter Name="StepA" Value="{ type : 'StepType', value : { parallelCount : 2, parallelError : 'Any', <StepType parameters> } }" />
 </Section>
 ```
 

@@ -9,7 +9,7 @@ Each run of the step then has the configured probability of returning a failure 
 #### type
 __ErrorStep__ (The typename of the step to create.)
 
-#### step
+#### value
 An object containing required configuration parameters and optionally, common configuration parameters.
 
 ##### probability
@@ -20,7 +20,7 @@ A probability in the range 0 (0%) to 1 (100%) of an error being returned by the 
 ```json
 "StepA": { 
     "type": "ErrorStep",
-    "step": {
+    "value": {
         "probability": 0.5,
         <optional common parameter>
     }
@@ -29,7 +29,7 @@ A probability in the range 0 (0%) to 1 (100%) of an error being returned by the 
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="StepA" Value="{ type : 'ErrorStep', step : { probability: 0.5, <optional common parameters> } }" />
+<Parameter Name="StepA" Value="{ type : 'ErrorStep', value : { probability: 0.5, <optional common parameters> } }" />
 ```
 
 __See also__<br/>

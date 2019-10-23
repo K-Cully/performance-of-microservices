@@ -7,7 +7,7 @@ A load step provides a mechanism to generate a specific CPU and memory load for 
 #### type
 __LoadStep__ (The typename of the step to create.)
 
-#### step
+#### value
 An object containing required configuration parameters and optionally, common configuration parameters.
 
 ##### time
@@ -27,7 +27,7 @@ The amount of memory, in bytes, to consume.
 ```json
 "StepA": { 
     "type": "LoadStep",
-    "step": {
+    "value": {
         "bytes": 0,
         "time" : 7.2,
         "percent" : 20,
@@ -39,7 +39,7 @@ The amount of memory, in bytes, to consume.
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="StepA" Value="{ type : 'LoadStep', step : { bytes: 0, time: 7.2, percent: 20, processors: 2, <optional common parameters> } }" />
+<Parameter Name="StepA" Value="{ type : 'LoadStep', value : { bytes: 0, time: 7.2, percent: 20, processors: 2, <optional common parameters> } }" />
 ```
 
 __See also__<br/>
