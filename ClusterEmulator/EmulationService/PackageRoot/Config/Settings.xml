@@ -6,7 +6,7 @@
     <Parameter Name="NewSockets" Value="{ errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 100, time : 10, percent : 20 } }" />
+    <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 0, time : 10, percent : 20 } }" />
     <Parameter Name="LoadB" Value="{ type : 'LoadStep', value : { bytes : 512000000, time : -1, percent : 0 } }" />
     <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', value : { cacheId : 'RSGoog', cacheKeyUniqueness : 4, client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', value : { probability: 0.3 } }"/>
