@@ -43,7 +43,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => config.AsPolicy(null));
+                () => config.AsTypeModel(null));
         }
 
 
@@ -58,7 +58,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -73,7 +73,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -88,7 +88,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -102,7 +102,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 CancelDelegates = true
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncTimeoutPolicy<HttpResponseMessage>));
@@ -119,7 +119,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 CancelDelegates = false
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncTimeoutPolicy<HttpResponseMessage>));

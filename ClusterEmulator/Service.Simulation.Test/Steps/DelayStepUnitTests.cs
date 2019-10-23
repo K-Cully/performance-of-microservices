@@ -31,7 +31,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_LoggerNotInitialized_Throws()
         {
-            var step = new DelayStep()
+            IStep step = new DelayStep()
             { Time = 0.2d };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
@@ -42,10 +42,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_InvalidTime_Throws()
         {
-            var step = new DelayStep()
+            IStep step = new DelayStep()
             { Time = -2.0d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -55,10 +55,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_TimeOnePointFive_ReturnsSuccess()
         {
-            var step = new DelayStep()
+            IStep step = new DelayStep()
             { Time = 1.5d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 
@@ -69,10 +69,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_TimeZero_ReturnsSuccess()
         {
-            var step = new DelayStep()
+            IStep step = new DelayStep()
             { Time = 0.0d };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 

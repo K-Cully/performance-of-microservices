@@ -48,7 +48,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => retryConfig.AsPolicy(null));
+                () => retryConfig.AsTypeModel(null));
         }
 
 
@@ -64,7 +64,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy(logger.Object));
+                () => retryConfig.AsTypeModel(logger.Object));
         }
 
 
@@ -80,7 +80,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy(logger.Object));
+                () => retryConfig.AsTypeModel(logger.Object));
         }
 
 
@@ -95,7 +95,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = -1
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -113,7 +113,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 0
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -131,7 +131,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -150,7 +150,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy(logger.Object));
+                () => retryConfig.AsTypeModel(logger.Object));
         }
 
 
@@ -166,7 +166,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => retryConfig.AsPolicy(logger.Object));
+                () => retryConfig.AsTypeModel(logger.Object));
         }
 
 
@@ -181,7 +181,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -199,7 +199,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 0
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -217,7 +217,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = -100
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -235,7 +235,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -253,7 +253,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 1
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));
@@ -271,7 +271,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 Retries = 5
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = retryConfig.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncRetryPolicy<HttpResponseMessage>));

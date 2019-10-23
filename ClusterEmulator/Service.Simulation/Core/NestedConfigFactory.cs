@@ -12,13 +12,10 @@ namespace ClusterEmulator.Service.Simulation.Core
     /// <typeparam name="TConfigModel">The generic type stored in the setting values.</typeparam>
     /// <typeparam name="TModel">The generic type to generate from setting values.</typeparam>
     public class NestedConfigFactory<TConfigModel, TModel> : ConfigFactory<TModel>, IConfigFactory<TModel>
-        where TConfigModel : class
+        where TConfigModel : class, IConfigModel<TModel>
         where TModel : class
     {
-        private readonly Func<TConfigModel, ILogger, TModel> conversion;
         private readonly ILoggerFactory logFactory;
-        private readonly Type ModelType = typeof(TModel);
-        private readonly Type ConfigType = typeof(TConfigModel);
         private readonly string configNamespace = typeof(TConfigModel).Namespace;
 
 
@@ -27,20 +24,12 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
-        /// <param name="converter">An optional converter between <see cref="TConfigModel"/> and <see cref="TModel"/> instances to finalize creation. If null an as</param>
         public NestedConfigFactory(
             ILogger<NestedConfigFactory<TConfigModel, TModel>> logger,
-            ILoggerFactory loggerFactory,
-            Func<TConfigModel, ILogger, TModel> converter = null)
+            ILoggerFactory loggerFactory)
             : base(logger)
         {
             logFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            conversion = converter;
-
-            if (conversion is null && !ModelType.IsAssignableFrom(ConfigType))
-            {
-                throw new ArgumentException("Model is not assignable from config. A converter must be provided.", nameof(converter));
-            }
         }
 
 
@@ -93,8 +82,8 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
 
             // Convert the value JSON object to the identified concrete type
-            JObject cvalueJson = json.value;
-            if (cvalueJson is null)
+            JObject valueJson = json.value;
+            if (valueJson is null)
             {
                 log.LogError("'{SettingError}' encountered deserializing {SettingValue}",
                     "No value found", settingValue);
@@ -102,7 +91,7 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
 
             var serializer = JsonSerializer.CreateDefault(SerializerSettings);
-            TConfigModel config = cvalueJson.ToObject(type, serializer) as TConfigModel;
+            TConfigModel config = valueJson.ToObject(type, serializer) as TConfigModel;
             if (Errors.Any())
             {
                 foreach (string error in Errors)
@@ -114,13 +103,8 @@ namespace ClusterEmulator.Service.Simulation.Core
                 return null;
             }
 
-            if (conversion is null)
-            {
-                return config as TModel;
-            }
-
             ILogger typeLogger = logFactory.CreateLogger(type);
-            return conversion(config, typeLogger);
+            return config.AsTypeModel(typeLogger);
         }
     }
 }

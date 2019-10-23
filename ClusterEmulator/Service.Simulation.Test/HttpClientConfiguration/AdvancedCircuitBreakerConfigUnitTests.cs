@@ -47,7 +47,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => config.AsPolicy(null));
+                () => config.AsTypeModel(null));
         }
 
 
@@ -64,7 +64,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -81,7 +81,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -98,7 +98,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -115,7 +115,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             };
 
             Assert.ThrowsException<InvalidOperationException>(
-                () => config.AsPolicy(logger.Object));
+                () => config.AsTypeModel(logger.Object));
         }
 
 
@@ -131,7 +131,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 SamplingDuration = 3.2d
             };
 
-            IAsyncPolicy<HttpResponseMessage> policy = config.AsPolicy(logger.Object);
+            IAsyncPolicy<HttpResponseMessage> policy = config.AsTypeModel(logger.Object);
 
             Assert.IsNotNull(policy);
             Assert.IsInstanceOfType(policy, typeof(AsyncCircuitBreakerPolicy<HttpResponseMessage>));

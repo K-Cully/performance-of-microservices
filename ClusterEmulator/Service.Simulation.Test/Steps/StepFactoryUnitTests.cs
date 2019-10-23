@@ -10,20 +10,13 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
     [TestClass]
     public class StepFactoryUnitTests
     {
-        private readonly Func<IStep, ILogger, IStep> Converter = new Func<IStep, ILogger, IStep>((step, log) =>
-        {
-            step.InitializeLogger(log);
-            return step;
-        });
-
-
         [TestMethod]
         public void Constructor_WithNullLogger_ThrowsException()
         {
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => new NestedConfigFactory<IStep, IStep>(null, loggerFactory.Object, Converter),
+                () => new NestedConfigFactory<IStep, IStep>(null, loggerFactory.Object),
                 "Constructor should throw.");
         }
 
@@ -34,23 +27,8 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => new NestedConfigFactory<IStep, IStep>(logger.Object, null, Converter),
+                () => new NestedConfigFactory<IStep, IStep>(logger.Object, null),
                 "Constructor should throw.");
-        }
-
-
-        [TestMethod]
-        public void Constructor_WithNullConverter_Succeeds()
-        {
-            // Arrange
-            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Strict);
-
-            // Act
-            var stepFactory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, null);
-
-            // Verify
-            Assert.IsNotNull(stepFactory);
         }
 
 
@@ -59,7 +37,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         {
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -72,7 +50,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             string setting = "???";
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             IStep step = factory.Create(setting);
 
@@ -86,7 +64,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             string setting = "{ }";
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             IStep step = factory.Create(setting);
 
@@ -100,7 +78,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             string setting = "{ type : 'FrontStep', value : { time : 10, percent : 20 } }";
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -113,7 +91,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             string setting = "{ type : 'LoadStep', value : {  } }";
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             IStep step = factory.Create(setting);
 
@@ -127,7 +105,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             string setting = "{ type : 'LoadStep' }";
             var logger = new Mock<ILogger<NestedConfigFactory<IStep, IStep>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -145,7 +123,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
                 .Returns(new Mock<ILogger>().Object);
 
-            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object, Converter);
+            var factory = new NestedConfigFactory<IStep, IStep>(logger.Object, loggerFactory.Object);
 
             IStep step = factory.Create(setting);
 

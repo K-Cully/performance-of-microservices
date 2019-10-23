@@ -13,10 +13,6 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
     [TestClass]
     public class PolicyFactoryUnitTests
     {
-        private readonly Func<IPolicyConfiguration, ILogger, IAsyncPolicy<HttpResponseMessage>> Converter =
-            new Func<IPolicyConfiguration, ILogger, IAsyncPolicy<HttpResponseMessage>>((config, log) => config.AsPolicy(log));
-
-
         [TestMethod]
         public void Constructor_WithNullLogger_ThrowsException()
         {
@@ -24,7 +20,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                    null, loggerFactory.Object, Converter), "Constructor should throw.");
+                    null, loggerFactory.Object), "Constructor should throw.");
         }
 
 
@@ -36,21 +32,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                    logger.Object, null, Converter), "Constructor should throw.");
-        }
-
-
-        [TestMethod]
-        public void Constructor_WithNullConverter_Throws()
-        {
-            // Arrange
-            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
-            var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
-
-            // Act & Verify
-            Assert.ThrowsException<ArgumentException>(
-                () => new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                    logger.Object, loggerFactory.Object, null), "Constructor should throw");
+                    logger.Object, null), "Constructor should throw.");
         }
 
 
@@ -60,7 +42,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -74,7 +56,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
@@ -89,7 +71,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
@@ -104,7 +86,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -118,7 +100,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => factory.Create(setting), "Create should throw");
@@ -132,7 +114,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
             var logger = new Mock<ILogger<NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 
@@ -152,7 +134,7 @@ namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
                 .Returns(new Mock<ILogger>().Object);
 
             var factory = new NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>(
-                logger.Object, loggerFactory.Object, Converter);
+                logger.Object, loggerFactory.Object);
 
             IAsyncPolicy<HttpResponseMessage> policy = factory.Create(setting);
 

@@ -85,7 +85,7 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
         /// Currently only supports in-memory cache.
         /// Operation key set on the context is used as the cache key.
         /// </remarks>
-        public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
+        public IAsyncPolicy<HttpResponseMessage> AsTypeModel(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 

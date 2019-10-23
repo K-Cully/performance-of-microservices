@@ -6,7 +6,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
     /// <summary>
     /// Interface for request steps requiring http factory configuration.
     /// </summary>
-    public interface IRequestStep
+    public interface IRequestStep : IStep
     {
         /// <summary>
         /// The name of the client to use

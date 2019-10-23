@@ -48,7 +48,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_LoggerNotInitialized_Throws()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 2, TimeInSeconds = 5, CpuPercentage = 2 };
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
@@ -59,10 +59,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_InvalidPercent_Throws()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 2, TimeInSeconds = 15.1d, CpuPercentage = -100, };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -72,10 +72,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_InvalidTime_Throws()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 5, TimeInSeconds = -15.0d, CpuPercentage = 5 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -85,10 +85,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_InvalidMaxProcessors_Throws()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 5, TimeInSeconds = 2.0d, CpuPercentage = 5, MaxProcessors = -1 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -98,10 +98,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_ValidState_ExecutesCorrectly()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 0.0d, CpuPercentage = 10 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
 
@@ -113,10 +113,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public async Task ExecuteAsync_ProcessorOverrideHigherThanProcessorCount_ExecutesCorrectly()
         {
             var start = DateTime.UtcNow;
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 0.2d, CpuPercentage = 10, MaxProcessors = int.MaxValue };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
@@ -130,10 +130,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public async Task ExecuteAsync_ProcessorCountOverriden_ExecutesCorrectly()
         {
             var start = DateTime.UtcNow;
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 10, TimeInSeconds = 0.2d, CpuPercentage = 10, MaxProcessors = 1 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
@@ -147,10 +147,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         public async Task ExecuteAsync_ValidBytesOne_ExecutesCorrectly()
         {
             var start = DateTime.UtcNow;
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = 1, TimeInSeconds = 1.0d, CpuPercentage = 1 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             ExecutionStatus status = await step.ExecuteAsync();
             var timeSpan = DateTime.UtcNow.Subtract(start);
@@ -163,10 +163,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public async Task ExecuteAsync_ValidBytesMax_Throws()
         {
-            var step = new LoadStep()
+            IStep step = new LoadStep()
             { MemoryInBytes = ulong.MaxValue, TimeInSeconds = 2, CpuPercentage = 50 };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object);
 
             await Assert.ThrowsExceptionAsync<OutOfMemoryException>(
                 () => step.ExecuteAsync());

@@ -51,10 +51,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
         [TestMethod]
         public void InitializeLogger_NullLogger_ThrowsException()
         {
-            var step = new DummyStep();
+            IStep step = new DummyStep();
 
             Assert.ThrowsException<ArgumentNullException>(
-                () => step.InitializeLogger(null));
+                () => step.AsTypeModel(null));
         }
     }
 
