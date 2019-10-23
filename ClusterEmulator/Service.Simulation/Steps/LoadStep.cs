@@ -119,30 +119,26 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 return ExecutionStatus.Success;
             }
 
-            // Run once for all cases but run forever if time is negative
-            TimeSpan runTime = TimeInSeconds > 0.0d ?
-                TimeSpan.FromSeconds(TimeInSeconds) : TimeSpan.MaxValue;
-            do
+            if (CpuPercentage > 0)
             {
-                if (CpuPercentage > 0)
+                // Generate CPU load
+                List<Task> coreTasks = new List<Task>();
+                for (int i = 0; i < ProcessorCount; i++)
                 {
-                    // Generate CPU load
-                    List<Task> coreTasks = new List<Task>();
-                    for (int i = 0; i < ProcessorCount; i++)
-                    {
-                        Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
-                            CpuPercentage, i, runTime.TotalSeconds);
-                        coreTasks.Add(GenerateLoad(runTime.TotalSeconds, CpuPercentage));
-                    }
+                    Logger.LogDebug("Generating {LoadPercent}% load on processor {ProcessorNumber} for {Time} seconds",
+                        CpuPercentage, i, TimeInSeconds);
+                    coreTasks.Add(GenerateLoad(TimeInSeconds, CpuPercentage));
+                }
 
-                    await Task.WhenAll(coreTasks).ConfigureAwait(false);
-                }
-                else
-                {
-                    // Utilize memory only
-                    await Task.Delay(runTime);
-                }
-            } while (TimeInSeconds < 0.0d);
+                await Task.WhenAll(coreTasks).ConfigureAwait(false);
+            }
+            else
+            {
+                // Utilize memory only, waiting forever if time is negative
+                TimeSpan runTime = TimeInSeconds > 0.0d ?
+                    TimeSpan.FromSeconds(TimeInSeconds) : TimeSpan.FromMilliseconds(-1.0d);
+                await Task.Delay(runTime);
+            }
 
             Logger.LogInformation("Completed load generation step");
             return ExecutionStatus.Success;
@@ -154,8 +150,9 @@ namespace ClusterEmulator.Service.Simulation.Steps
             DateTime start = DateTime.UtcNow;
             Stopwatch watch = new Stopwatch();
 
+            // Run for the set time or forever if time is negative
             watch.Start();
-            while (seconds > DateTime.UtcNow.Subtract(start).TotalSeconds)
+            while (seconds < 0.0d || seconds > DateTime.UtcNow.Subtract(start).TotalSeconds)
             {
                 // Generate load for the target percentage, sleep for the remaining time
                 if (watch.ElapsedMilliseconds > percentage)
