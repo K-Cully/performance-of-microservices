@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="Load" Value="{ errorSize : 100, latency : 0, steps : [ 'LoadA', 'LoadB' ], successSize : 20 }" />
-    <Parameter Name="ReuseSockets" Value="{ errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 16 }" />
-    <Parameter Name="NewSockets" Value="{ errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 }" />
+    <Parameter Name="Load" Value="{ type : 'RequestProcessor', value : { errorSize : 100, latency : 0, steps : [ 'LoadA', 'LoadB' ], successSize : 20 } }" />
+    <Parameter Name="ReuseSockets" Value="{ type : 'RequestProcessor', value : { errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 16 } }" />
+    <Parameter Name="NewSockets" Value="{ type : 'RequestProcessor', value : { errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 } }" />
+    <Parameter Name="StartupLoad" Value="{ type : 'StartupProcessor', value : { asynchronous : true, steps : [ 'LoadB' ] } }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 100, time : 10, percent : 20 } }" />
-    <Parameter Name="LoadB" Value="{ type : 'LoadStep', value : { bytes : 512000000, time : 3, percent : 90 } }" />
+    <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 0, time : 10, percent : 20 } }" />
+    <Parameter Name="LoadB" Value="{ type : 'LoadStep', value : { bytes : 512000000, time : -1, percent : 0 } }" />
     <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', value : { cacheId : 'RSGoog', cacheKeyUniqueness : 4, client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
     <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', value : { probability: 0.3 } }"/>
     <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', value : { cacheId : 'NSGit', cacheKeyUniqueness : 5, client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>

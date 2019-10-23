@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ClusterEmulator.Service.Simulation.Test.Core
@@ -69,7 +70,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             string name = "test";
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
+            registry.Setup(reg => reg.GetRequestProcessor(name)).Returns<string>(null);
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
@@ -83,11 +84,11 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public async Task ProcessRequestAsync_Throws_WhenStepIsNull()
         {
             string name = "test";
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { null };
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(name))
+            registry.Setup(reg => reg.GetRequestProcessor(name))
                 .Returns<string>((n) => processor);
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -110,7 +111,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             DateTime start = DateTime.Now;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { stepName, stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.IngressLatencyMilliseconds = latency;
@@ -124,7 +125,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(n => stepMock.Object);
@@ -159,7 +160,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -180,7 +181,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
@@ -215,7 +216,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -236,7 +237,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
@@ -271,7 +272,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -287,7 +288,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -314,7 +315,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -329,7 +330,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -358,7 +359,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -374,7 +375,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -401,7 +402,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IRequestProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultRequestProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -417,7 +418,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -436,7 +437,125 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         }
 
 
-        private readonly RequestProcessor defaultProcessor = new RequestProcessor
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessStartupActionsAsync_ExecutesCorrectly_WhenStepsAreSuccessful()
+        {
+            // Arrange
+            string stepName = "step";
+
+            DateTime start = DateTime.Now;
+
+            IStartupProcessor processor = defaultStartupProcessor;
+            processor.Steps = new List<string> { stepName, stepName };
+            processor.Asynchronous = false;
+
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
+
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetStartupProcessors())
+                .Returns(new List<IStartupProcessor>() { processor });
+            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
+                .Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            await engine.ProcessStartupActionsAsync().ConfigureAwait(false);
+
+            // Verify
+            Assert.IsTrue(true);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessStartupActionsAsync_Throws_WhenStepsFail()
+        {
+            // Arrange
+            string stepName = "step";
+
+            DateTime start = DateTime.Now;
+
+            IStartupProcessor processor = defaultStartupProcessor;
+            processor.Steps = new List<string> { stepName, stepName };
+            processor.Asynchronous = false;
+
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Fail);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
+
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetStartupProcessors())
+                .Returns(new List<IStartupProcessor>() { processor });
+            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
+                .Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act & Verify
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
+                engine.ProcessStartupActionsAsync());
+        }
+
+
+        [TestMethod]
+        [TestCategory("Functional")]
+        public async Task ProcessStartupActionsAsync__Asynchronous_ExecutesCorrectly_WhenStepsAreSuccessful()
+        {
+            // Arrange
+            string stepName = "step";
+
+            DateTime start = DateTime.Now;
+
+            IStartupProcessor processor = defaultStartupProcessor;
+            processor.Steps = new List<string> { stepName, stepName };
+            processor.Asynchronous = true;
+
+            Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
+            stepMock.Setup(step => step.ExecuteAsync())
+                .ReturnsAsync(ExecutionStatus.Success);
+            stepMock.Setup(step => step.FailOnParallelFailures)
+                .Returns(GroupClause.Undefined);
+            stepMock.Setup(step => step.ParallelCount)
+                .Returns<uint?>(null);
+
+            var registry = new Mock<IRegistry>(MockBehavior.Strict);
+            registry.Setup(reg => reg.GetStartupProcessors())
+                .Returns(new List<IStartupProcessor>() { processor });
+            registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
+                .Returns<string>(n => stepMock.Object);
+
+            var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
+            Engine engine = new Engine(logger.Object, registry.Object);
+
+            // Act
+            await engine.ProcessStartupActionsAsync().ConfigureAwait(false);
+
+            // Verify
+            Assert.IsTrue(true);
+        }
+
+
+        private readonly StartupProcessor defaultStartupProcessor = new StartupProcessor
+        {
+            Steps = new List<string>(),
+            Asynchronous = false
+        };
+
+        private readonly RequestProcessor defaultRequestProcessor = new RequestProcessor
         {
             Steps = new List<string>(),
             ErrorPayloadSize = 0,

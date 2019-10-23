@@ -10,18 +10,20 @@ __LoadStep__ (The typename of the step to create.)
 #### value
 An object containing required configuration parameters and optionally, common configuration parameters.
 
+##### bytes
+The amount of memory, in bytes, to consume.
+
 ##### time
-A non-neagative time value to execute the step for. 
+The length of time, in seconds, to execute the step for.<br/>
+Negative values will result in the step runnign for the lifetime of the executing process.
 
 ##### percent
-The percentage of processor time that should be consumed, as a positive integer.
+The percentage of processor time that should be consumed, in the range 0 to 100.<br/>
 
 ##### processors (Optional)
 A maximum number of processors to load.<br/>
 If 0 or more than the number of available processors is specified, the number of processers available are loaded.
 
-##### bytes (Optional)
-The amount of memory, in bytes, to consume.
 
 ### Setting configuration
 ```json

@@ -49,11 +49,18 @@ namespace ClusterEmulator.Service.Simulation.Core
 
 
         /// <summary>
-        /// Retrieves the processor with a given name, if it is registered.
+        /// Retrieves the  request processor with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>The <see cref="IRequestProcessor"/> instance.</returns>
-        IRequestProcessor GetProcessor(string name);
+        IRequestProcessor GetRequestProcessor(string name);
+
+
+        /// <summary>
+        /// Retrieves all registered startup processors.
+        /// </summary>
+        /// <returns>An enumerable of registered <see cref="IStartupProcessor"/> instances.</returns>
+        IEnumerable<IStartupProcessor> GetStartupProcessors();
 
 
         /// <summary>

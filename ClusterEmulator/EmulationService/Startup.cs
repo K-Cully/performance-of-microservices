@@ -46,7 +46,8 @@ namespace EmulationService
         /// <param name="env">Environemnt information wrapper.</param>
         /// <param name="clientFactory">A factory for creating Http Clients</param>
         /// <param name="registry">The simulation registry containing configuration information.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpClientFactory clientFactory, IRegistry registry)
+        /// <param name="engine">The simulation engine to execute startup processes from.</param>
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpClientFactory clientFactory, IRegistry registry, IEngine engine)
         {
             _ = app ?? throw new ArgumentNullException(nameof(app));
             _ = env ?? throw new ArgumentNullException(nameof(env));
@@ -62,6 +63,9 @@ namespace EmulationService
             registry.ConfigureHttpClients(clientFactory);
             app.UseMvc();
             app.UseHealthChecks("/health");
+
+            // Trigger startup processes
+            engine.ProcessStartupActionsAsync();
         }
     }
 }

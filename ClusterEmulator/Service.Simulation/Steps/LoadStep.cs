@@ -16,9 +16,9 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// <summary>
         /// The length of time the load should last for.
         /// </summary>
+        /// <remarks>A negative value indicates run forever</remarks>
         [JsonProperty("time")]
         [JsonRequired]
-        [Range(0, double.MaxValue, ErrorMessage = "time cannot be negative")]
         public double TimeInSeconds { get; set; }
 
 
@@ -27,7 +27,7 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         [JsonProperty("percent")]
         [JsonRequired]
-        [Range(1, 100, ErrorMessage = "percent must be in the range 1 - 100")]
+        [Range(0, 100, ErrorMessage = "percent must be in the range 0 - 100")]
         public int CpuPercentage { get; set; }
 
 
@@ -81,16 +81,10 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 throw new InvalidOperationException("Logger is not initialized");
             }
 
-            if (TimeInSeconds < 0.0d)
-            {
-                Logger.LogCritical("{Property} is negative", "time");
-                throw new InvalidOperationException("time cannot be negative");
-            }
-
-            if (CpuPercentage < 1 || CpuPercentage > 100)
+            if (CpuPercentage < 0 || CpuPercentage > 100)
             {
                 Logger.LogCritical("{Property} value is not in the accepted range", "percent");
-                throw new InvalidOperationException("percent must be in the range 1 - 100");
+                throw new InvalidOperationException("percent must be in the range 0 - 100");
             }
 
             if (MaxProcessors < 0)
@@ -119,8 +113,15 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 }
             }
 
-            if (TimeInSeconds > 0.0d)
+            if (TimeInSeconds == 0.0d)
             {
+                Logger.LogInformation("Completed load generation step");
+                return ExecutionStatus.Success;
+            }
+
+            if (CpuPercentage > 0)
+            {
+                // Generate CPU load
                 List<Task> coreTasks = new List<Task>();
                 for (int i = 0; i < ProcessorCount; i++)
                 {
@@ -130,6 +131,13 @@ namespace ClusterEmulator.Service.Simulation.Steps
                 }
 
                 await Task.WhenAll(coreTasks).ConfigureAwait(false);
+            }
+            else
+            {
+                // Utilize memory only, waiting forever if time is negative
+                TimeSpan runTime = TimeInSeconds > 0.0d ?
+                    TimeSpan.FromSeconds(TimeInSeconds) : TimeSpan.FromMilliseconds(-1.0d);
+                await Task.Delay(runTime);
             }
 
             Logger.LogInformation("Completed load generation step");
@@ -142,8 +150,9 @@ namespace ClusterEmulator.Service.Simulation.Steps
             DateTime start = DateTime.UtcNow;
             Stopwatch watch = new Stopwatch();
 
+            // Run for the set time or forever if time is negative
             watch.Start();
-            while (seconds > DateTime.UtcNow.Subtract(start).TotalSeconds)
+            while (seconds < 0.0d || seconds > DateTime.UtcNow.Subtract(start).TotalSeconds)
             {
                 // Generate load for the target percentage, sleep for the remaining time
                 if (watch.ElapsedMilliseconds > percentage)
