@@ -18,7 +18,7 @@ namespace ClusterEmulator.Service.Simulation.Core
     {
         private readonly IDictionary<string, ClientConfig> clients;
         private readonly IDictionary<string, IAsyncPolicy<HttpResponseMessage>> policies;
-        private readonly IDictionary<string, IProcessor> processors;
+        private readonly IDictionary<string, IRequestProcessor> processors;
         private readonly IDictionary<string, IStep> steps;
         private readonly ILogger<Registry> log;
 
@@ -76,7 +76,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
         public Registry(IRegistrySettings settings, IStepFactory stepFactory,
-            IConfigFactory<Processor> processorFactory, IPolicyFactory policyFactory,
+            IConfigFactory<RequestProcessor> processorFactory, IPolicyFactory policyFactory,
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
         {
@@ -141,14 +141,14 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// Retrieves the processor with a given name, if it is registered.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
-        /// <returns>The <see cref="IProcessor"/> instance.</returns>
+        /// <returns>The <see cref="IRequestProcessor"/> instance.</returns>
         /// <exception cref="ArgumentException">
         /// name is null or white space.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// The processor is not registered or the registration is not valid.
         /// </exception>
-        public IProcessor GetProcessor(string name)
+        public IRequestProcessor GetProcessor(string name)
         {
             return GetRegisteredValue(name, processors, "Processor");
         }

@@ -22,7 +22,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
@@ -37,7 +37,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
@@ -70,7 +70,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
@@ -87,7 +87,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
             Assert.ThrowsException<ArgumentNullException>(
@@ -102,7 +102,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
@@ -118,7 +118,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
 
@@ -139,7 +139,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns(false);
 
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
@@ -171,7 +171,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -212,7 +212,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void GetProcessor_ReturnsCorrectValue_WhenRegistered()
         {
             string processorName = "Bob";
-            Processor expectedProcessor = new Processor();
+            RequestProcessor expectedProcessor = new RequestProcessor();
 
             // Create settings
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
@@ -226,7 +226,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -245,7 +245,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var registry = new Registry(
                 settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
-            IProcessor processor = registry.GetProcessor(processorName);
+            IRequestProcessor processor = registry.GetProcessor(processorName);
 
             // Verify
             Assert.IsNotNull(processor, "GetProcessor should return the registered value");
@@ -268,7 +268,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -298,7 +298,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void GetProcessor_Throws_WhenNameIsNotRegistered()
         {
             string processorName = "Xi";
-            Processor expectedProcessor = new Processor();
+            RequestProcessor expectedProcessor = new RequestProcessor();
 
             // Create settings
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
@@ -307,7 +307,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -336,7 +336,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void GetProcessor_Throws_WhenNameIsNull()
         {
             string processorName = null;
-            Processor expectedProcessor = new Processor();
+            RequestProcessor expectedProcessor = new RequestProcessor();
 
             // Create settings
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
@@ -345,7 +345,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -387,7 +387,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -431,7 +431,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -475,7 +475,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -516,7 +516,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -558,7 +558,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -601,7 +601,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -662,7 +662,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -718,7 +718,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -769,7 +769,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -825,7 +825,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -880,7 +880,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -937,7 +937,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -993,7 +993,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -1049,7 +1049,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
@@ -1105,7 +1105,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq factory instances
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IStepFactory>(MockBehavior.Strict);
-            var processorFactory = new Mock<IConfigFactory<Processor>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 

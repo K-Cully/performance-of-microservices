@@ -6,7 +6,7 @@ namespace ClusterEmulator.Service.Simulation.Processors
     /// <summary>
     /// An interface to define request processing configuration.
     /// </summary>
-    public interface IProcessor
+    public interface IRequestProcessor
     {
         /// <summary>
         /// Gets the error payload data.

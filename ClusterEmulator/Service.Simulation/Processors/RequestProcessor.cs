@@ -11,7 +11,7 @@ namespace ClusterEmulator.Service.Simulation.Processors
     /// Defines request processing configuration.
     /// </summary>
     [Serializable]
-    public class Processor : IProcessor
+    public class RequestProcessor : IRequestProcessor
     {
         /// <summary>
         /// Gets the error payload data.

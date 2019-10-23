@@ -47,7 +47,7 @@ namespace ClusterEmulator.Service.Simulation.Core
                 throw new ArgumentException($"{nameof(name)} cannot be null or whitespace", nameof(name));
             }
 
-            IProcessor processor = registry.GetProcessor(name);
+            IRequestProcessor processor = registry.GetProcessor(name);
             await Task.Delay(processor.IngressLatencyMilliseconds);
 
             ObjectResult errorResult = new ObjectResult(processor.ErrorPayload);

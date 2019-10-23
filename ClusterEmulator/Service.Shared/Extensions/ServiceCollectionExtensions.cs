@@ -30,7 +30,7 @@ namespace ClusterEmulator.Service.Shared.Extensions
                 .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
                 .AddSingleton<IPolicyFactory, PolicyFactory>()
                 .AddSingleton<IStepFactory, StepFactory>()
-                .AddSingleton<IConfigFactory<Processor>, ConfigFactory<Processor>>()
+                .AddSingleton<IConfigFactory<RequestProcessor>, ConfigFactory<RequestProcessor>>()
                 .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
                 .AddSingleton<IRegistry, Registry>()
                 .AddScoped<IEngine, Engine>();
