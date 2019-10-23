@@ -2,30 +2,30 @@
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
     <Parameter Name="Load" Value="{ errorSize : 100, latency : 0, steps : [ 'LoadA', 'LoadB' ], successSize : 20 }" />
-    <Parameter Name="ReuseSockets" Value="{ errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 0 }" />
+    <Parameter Name="ReuseSockets" Value="{ errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 16 }" />
     <Parameter Name="NewSockets" Value="{ errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 }" />
   </Section>
   <Section Name="Steps">
-    <Parameter Name="LoadA" Value="{ type : 'LoadStep', step : { bytes : 100, time : 10, percent : 20 } }" />
-    <Parameter Name="LoadB" Value="{ type : 'LoadStep', step : { bytes : 512000000, time : 3, percent : 90 } }" />
-    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', step : { cacheId : 'RSGoog', cacheKeyUniqueness : 4, client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
-    <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', step : { probability: 0.3 } }"/>
-    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', step : { cacheId : 'NSGit', cacheKeyUniqueness : 5, client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
+    <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 100, time : 10, percent : 20 } }" />
+    <Parameter Name="LoadB" Value="{ type : 'LoadStep', value : { bytes : 512000000, time : 3, percent : 90 } }" />
+    <Parameter Name="RequestReuseSocketA" Value="{ type : 'RequestStep', value : { cacheId : 'RSGoog', cacheKeyUniqueness : 4, client : 'GoogleA', method : 'get', path : '/', size : 128, reuseSockets : true, trueAsync : false } }"/>
+    <Parameter Name="ErrorA" Value="{ type : 'ErrorStep', value : { probability: 0.3 } }"/>
+    <Parameter Name="RequestNewSocketA" Value="{ type : 'RequestStep', value : { cacheId : 'NSGit', cacheKeyUniqueness : 5, client : 'GithubA', method : 'get', path : '/', size : 128, reuseSockets : false, trueAsync : false } }"/>
   </Section>
   <Section Name="Clients">
     <Parameter Name="GoogleA" Value="{ baseAddress : 'https://google.com', policies : [ 'CacheA', 'RetryA', 'TimeoutA' ], headers : { 'Accept' : '*/*' } }" />
     <Parameter Name="GithubA" Value="{ baseAddress : 'https://github.com', policies : [ 'CircuitA' ], headers : { 'Accept' : 'application/json' } }" />
   </Section>
   <Section Name="Policies">
-    <Parameter Name="RetryA" Value="{ type : 'RetryConfig', policy : { retries : 3, delays : [ 1, 5 ] } }" />
-    <Parameter Name="RetryB" Value="{ type : 'RetryConfig', policy : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
-    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : false, time : 3.0 } }" />
-    <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 0.001 } }" />
-    <Parameter Name="FallbackA" Value="{ type : 'FallbackConfig', policy : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
-    <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 30.0, tolerance : 3 } }" />
-    <Parameter Name="AdvancedCircuitA" Value="{ type : 'AdvancedCircuitBreakerConfig', policy : { breakDuration : 5.0, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
-    <Parameter Name="BulkheadA" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 10, queueLength : 5 } }" />
-    <Parameter Name="BulkheadB" Value="{ type : 'BulkheadConfig', policy : { bandwidth : 20 } }" />
-    <Parameter Name="CacheA" Value="{ type : 'CacheConfig', policy : { time : { minutes : 3 }, slidingExpiration : true } }" />
+    <Parameter Name="RetryA" Value="{ type : 'RetryConfig', value : { retries : 3, delays : [ 1, 5 ] } }" />
+    <Parameter Name="RetryB" Value="{ type : 'RetryConfig', value : { retries : 0, delays : [ -1 ], jitter : 300 } }" />
+    <Parameter Name="TimeoutA" Value="{ type : 'TimeoutConfig', value : { cancelDelegates : false, time : 3.0 } }" />
+    <Parameter Name="TimeoutB" Value="{ type : 'TimeoutConfig', value : { cancelDelegates : true, time : 0.001 } }" />
+    <Parameter Name="FallbackA" Value="{ type : 'FallbackConfig', value : { statusCode : 200, reason : 'fallback triggered', content : 'who knows?' } }" />
+    <Parameter Name="CircuitA" Value="{ type : 'CircuitBreakerConfig', value : { duration : 30.0, tolerance : 3 } }" />
+    <Parameter Name="AdvancedCircuitA" Value="{ type : 'AdvancedCircuitBreakerConfig', value : { breakDuration : 5.0, threshold : 0.75, samplingDuration : 30, throughput : 20 } }" />
+    <Parameter Name="BulkheadA" Value="{ type : 'BulkheadConfig', value : { bandwidth : 10, queueLength : 5 } }" />
+    <Parameter Name="BulkheadB" Value="{ type : 'BulkheadConfig', value : { bandwidth : 20 } }" />
+    <Parameter Name="CacheA" Value="{ type : 'CacheConfig', value : { time : { minutes : 3 }, slidingExpiration : true } }" />
   </Section>
 </Settings>

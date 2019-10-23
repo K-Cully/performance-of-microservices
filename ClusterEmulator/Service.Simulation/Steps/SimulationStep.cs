@@ -39,9 +39,10 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// Initializes a logger for the step instance.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        public void InitializeLogger(ILogger logger)
+        public IStep AsTypeModel(ILogger logger)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            return this;
         }
 
 

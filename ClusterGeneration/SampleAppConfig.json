@@ -15,7 +15,7 @@
             "steps": {
                 "LoadA": { 
                     "type": "LoadStep",
-                    "step": {
+                    "value": {
                         "bytes": 100,
                         "time": 0.01,
                         "percent": 1
@@ -23,7 +23,7 @@
                 },
                 "RequestA": {
                     "type": "RequestStep",
-                    "step": {
+                    "value": {
                         "cacheId": "ContosoA",
                         "cacheKeyUniqueness": 50,
                         "client": "ContosoClient",
@@ -45,21 +45,21 @@
             "policies": {
                 "ThreeRetries": {
                     "type": "RetryConfig",
-                    "policy": {
+                    "value": {
                         "retries": 3,
                         "delays": [ 1, 5 ]
                     }
                 },
                 "SlidingCache": {
                     "type": "CacheConfig",
-                    "policy": {
+                    "value": {
                         "time": { "minutes": 3 },
                         "slidingExpiration": true
                     }
                 },
                 "ThreeSecondTimeout": {
                     "type": "TimeoutConfig",
-                    "policy": {
+                    "value": {
                         "cancelDelegates" : false,
                         "time" : 3.0
                     }
@@ -79,7 +79,7 @@
             "steps": {
                 "CpuLoad": {
                     "type": "LoadStep",
-                    "step": {
+                    "value": {
                         "bytes": 512000,
                         "time": 3,
                         "percent" : 90

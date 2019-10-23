@@ -83,7 +83,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public async Task ProcessRequestAsync_Throws_WhenStepIsNull()
         {
             string name = "test";
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { null };
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
@@ -110,7 +110,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             DateTime start = DateTime.Now;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName, stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.IngressLatencyMilliseconds = latency;
@@ -159,7 +159,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -215,7 +215,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { okayStepName, failStepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -271,7 +271,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -314,7 +314,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -358,7 +358,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -401,7 +401,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             int payloadSize = 42;
             int errorPayloadSize = 7;
 
-            IProcessor processor = defaultProcessor;
+            IRequestProcessor processor = defaultProcessor;
             processor.Steps = new List<string> { stepName };
             processor.SuccessPayloadSize = payloadSize;
             processor.ErrorPayloadSize = errorPayloadSize;
@@ -436,7 +436,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         }
 
 
-        private readonly Processor defaultProcessor = new Processor
+        private readonly RequestProcessor defaultProcessor = new RequestProcessor
         {
             Steps = new List<string>(),
             ErrorPayloadSize = 0,

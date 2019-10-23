@@ -82,7 +82,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = string.Empty, Method = "GET", Path = "test/",
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -96,7 +96,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = string.Empty,
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -110,7 +110,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "file://test.txt",
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -124,7 +124,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "http://test.html",
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -138,7 +138,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = string.Empty, Path = "test/",
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -152,7 +152,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "BREAK", Path = "test/",
                 PayloadSize = 15, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -166,7 +166,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = -1, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -180,7 +180,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
                 () => step.ExecuteAsync());
@@ -198,7 +198,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
@@ -227,7 +227,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory);
 
             var result = await step.ExecuteAsync();
@@ -256,7 +256,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "HEAD", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory);
 
             var result = await step.ExecuteAsync();
@@ -285,7 +285,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "DELETE", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory);
 
             await Assert.ThrowsExceptionAsync<Exception>(
@@ -313,7 +313,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
@@ -341,7 +341,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "TRACE", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory);
             var result = await step.ExecuteAsync();
 
@@ -373,7 +373,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -408,7 +408,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "POST", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -458,7 +458,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
                 ReuseHttpMessageHandler = false
             };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -501,7 +501,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
 
             var result = await step.ExecuteAsync();
@@ -535,7 +535,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
 
             await Assert.ThrowsExceptionAsync<Exception>(
@@ -567,7 +567,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "PUT", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policy);
             var result = await step.ExecuteAsync();
 
@@ -599,7 +599,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policies);
             var result = await step.ExecuteAsync();
 
@@ -637,7 +637,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
                 ReuseHttpMessageHandler = false
             };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, policy);
             var result = await step.ExecuteAsync();
 
@@ -668,7 +668,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = false, ClientName = "testClient", Method = "OPTIONS", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, null);
             var result = await step.ExecuteAsync();
 
@@ -700,7 +700,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
             step.Configure(factory, null);
 
             var result = await step.ExecuteAsync();
@@ -739,7 +739,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => step.Configure(factory.Object));
@@ -753,7 +753,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => step.Configure(null));
@@ -768,7 +768,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             step.Configure(factory.Object);
 
@@ -784,7 +784,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             step.Configure(factory.Object);
 
@@ -825,7 +825,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = true };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             Assert.ThrowsException<InvalidOperationException>(
                 () => step.Configure(factory.Object, policies));
@@ -841,7 +841,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             Assert.ThrowsException<ArgumentNullException>(
                 () => step.Configure(null, policies));
@@ -857,7 +857,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             step.Configure(factory.Object, null);
             Assert.IsTrue(step.Configured);
@@ -874,7 +874,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             step.Configure(factory.Object, policies);
             Assert.IsTrue(step.Configured);
@@ -891,7 +891,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Steps
             { Asynchrounous = true, ClientName = "testClient", Method = "GET", Path = "test/",
                 PayloadSize = 16, ReuseHttpMessageHandler = false };
             var logger = new Mock<ILogger>(MockBehavior.Loose);
-            step.InitializeLogger(logger.Object);
+            step = step.AsTypeModel(logger.Object) as RequestStep;
 
             step.Configure(factory.Object, policy);
             Assert.IsTrue(step.Configured);

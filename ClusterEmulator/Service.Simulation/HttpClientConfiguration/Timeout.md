@@ -8,7 +8,7 @@ The timeout wait length and how co-operative cancellation is managed are configu
 #### type
 __TimeoutConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### cancelDelegates
@@ -21,7 +21,7 @@ The time in seconds to wait for execution to complete before timeing out the req
 ```json
 "PolicyA": {
     "type": "TimeoutConfig",
-    "policy": {
+    "value": {
         "cancelDelegates" : true,
         "time" : 15.2
     }
@@ -30,7 +30,7 @@ The time in seconds to wait for execution to complete before timeing out the req
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'TimeoutConfig', policy : { cancelDelegates : true, time : 15.2 } }" />
+<Parameter Name="PolicyA" Value="{ type : 'TimeoutConfig', value : { cancelDelegates : true, time : 15.2 } }" />
 ```
 
 __See also__<br/>

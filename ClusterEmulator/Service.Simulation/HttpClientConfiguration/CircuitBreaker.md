@@ -8,7 +8,7 @@ The break duration and acceptable fault volume are configurable.
 #### type
 __CircuitBreakerConfig__ (The typename of the policy configuration.)
 
-#### policy
+#### value
 A dictionary of required configuration parameters.
 
 ##### duration
@@ -21,7 +21,7 @@ The number of failed responses to allow before triggering a break in the circuit
 ```json
 "PolicyA": {
     "type": "CircuitBreakerConfig",
-    "policy": {
+    "value": {
         "duration" : 5.2,
         "tolerance" : 3
     }
@@ -30,7 +30,7 @@ The number of failed responses to allow before triggering a break in the circuit
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'CircuitBreakerConfig', policy : { duration : 5.2, tolerance : 3 } }" />
+<Parameter Name="PolicyA" Value="{ type : 'CircuitBreakerConfig', value : { duration : 5.2, tolerance : 3 } }" />
 ```
 
 __See also__<br/>

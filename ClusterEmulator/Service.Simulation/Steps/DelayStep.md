@@ -9,7 +9,7 @@ The delay time can be configured.
 #### type
 __DelayStep__ (The typename of the step to create.)
 
-#### step
+#### value
 An object containing required configuration parameters and optionally, common configuration parameters.
 
 ##### time
@@ -20,7 +20,7 @@ A positive delay time, in seconds
 ```json
 "StepA": { 
     "type": "DelayStep",
-    "step": {
+    "value": {
         "time": 15.5,
         <optional common parameter>
     }
@@ -29,7 +29,7 @@ A positive delay time, in seconds
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="StepA" Value="{ type : 'DelayStep', step : { time: 15.5, <optional common parameters> } }" />
+<Parameter Name="StepA" Value="{ type : 'DelayStep', value : { time: 15.5, <optional common parameters> } }" />
 ```
 
 __See also__<br/>

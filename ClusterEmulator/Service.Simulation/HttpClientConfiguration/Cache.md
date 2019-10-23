@@ -9,7 +9,10 @@ Cache invalidation time, wheteher invalidation time is absolute or not and wheth
 #### type
 __CacheConfig__ (The typename of the policy configuration.)
 
-#### time
+#### value
+A dictionary of required configuration parameters.
+
+##### time
 The cache invalidation time as an object of the form:
 ```json
 {
@@ -35,7 +38,7 @@ Defaults to false (set once and invalidate after invalidation time) if unspecifi
 ```json
 "PolicyA": {
     "type": "CacheConfig",
-    "policy": {
+    "value": {
         "time" : { "minutes" : 3 },
         "absoluteTime" : false,
         "slidingExpiration" : true
@@ -45,7 +48,7 @@ Defaults to false (set once and invalidate after invalidation time) if unspecifi
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="PolicyA" Value="{ type : 'CacheConfig', policy : { time : { minutes : 3 }, slidingExpiration : true } }" />
+<Parameter Name="PolicyA" Value="{ type : 'CacheConfig', value : { time : { minutes : 3 }, slidingExpiration : true } }" />
 ```
 
 __See also__<br/>

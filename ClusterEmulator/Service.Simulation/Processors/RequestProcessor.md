@@ -1,7 +1,7 @@
-# Processor
+# Request Processor
 
 ## Description
-A Processor organises the flow of control for a given service request.<br/>
+A Request Processor organises the flow of control for a given service request.<br/>
 It is a named entity that is called via the service API (e.g. https://contoso.com:8008/api/ServiceName/ProcessorName).<br/>
 Multiple processors may be defined for a service to facilitate different API requests yielding different service actions.<br/>
 A processor allows the configuration of simulated latency, response sizes and an ordered list of steps to execute.

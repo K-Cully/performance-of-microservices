@@ -36,7 +36,7 @@ namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <returns>A <see cref="BulkheadPolicy{HttpResponseMessage}"/> instance.</returns>
-        public IAsyncPolicy<HttpResponseMessage> AsPolicy(ILogger logger)
+        public IAsyncPolicy<HttpResponseMessage> AsTypeModel(ILogger logger)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));
 

@@ -7,6 +7,9 @@ A request step makes http requests to a sub-path of any URI defined within a con
 #### type
 __RequestStep__ (The typename of the step to create.)
 
+#### value
+An object containing required configuration parameters and optionally, common configuration parameters.
+
 ##### cacheId (Optional)
 An id to use as a base for cache key isolation, if a caching policy is enabled.<br/>
 The final cache key will be of the form "cacheId-<randomUniquenessValue>-method", where randomUniquenessValue is based off cacheKeyUniqueness.
@@ -38,7 +41,7 @@ A value indicating whether requests should be fire-and-forget or their responses
 ```json
 "StepA": {
     "type": "RequestStep",
-    "step": {
+    "value": {
         "cacheId": "ContosoA",
         "cacheKeyUniqueness": 50,
         "client": "ContosoClient",
@@ -54,7 +57,7 @@ A value indicating whether requests should be fire-and-forget or their responses
 
 ### Direct service setting configuration
 ```xml
-<Parameter Name="RequestA" Value="{ type : 'RequestStep', step : { client : 'ContosoClient', size : 128, trueAsync : false, method : 'get', cacheKeyUniqueness : 50, reuseSockets : true, path : '/sub/path', cacheId : 'ContosoA' } }" />
+<Parameter Name="RequestA" Value="{ type : 'RequestStep', value : { client : 'ContosoClient', size : 128, trueAsync : false, method : 'get', cacheKeyUniqueness : 50, reuseSockets : true, path : '/sub/path', cacheId : 'ContosoA' } }" />
 ```
 
 __See also__<br/>

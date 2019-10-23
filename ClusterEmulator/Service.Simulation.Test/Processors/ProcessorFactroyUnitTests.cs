@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ClusterEmulator.Service.Simulation.Test.Processors
 {
@@ -16,15 +15,15 @@ namespace ClusterEmulator.Service.Simulation.Test.Processors
         public void Constructor_WithNullLogger_ThrowsException()
         {
             Assert.ThrowsException<ArgumentNullException>(
-                () => new ConfigFactory<Processor>(null), "Constructor should throw.");
+                () => new ConfigFactory<RequestProcessor>(null), "Constructor should throw.");
         }
 
 
         [TestMethod]
         public void Create_WithNullName_ThrowsException()
         {
-            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var logger = new Mock<ILogger<ConfigFactory<RequestProcessor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<RequestProcessor>(logger.Object);
 
             Assert.ThrowsException<ArgumentException>(
                 () => factory.Create(null), "Create should throw.");
@@ -36,10 +35,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Processors
         {
             HashSet<string> steps = new HashSet<string>{ "A" };
             string setting = "{ errorSize : 100, latency : 42, steps : [ 'A' ], successSize : 20 }";
-            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var logger = new Mock<ILogger<ConfigFactory<RequestProcessor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<RequestProcessor>(logger.Object);
 
-            IProcessor processor = factory.Create(setting);
+            IRequestProcessor processor = factory.Create(setting);
 
             Assert.IsNotNull(processor, "Processor should not be null");
             Assert.AreEqual(100, processor.ErrorPayloadSize, "Error size should be set correctly");
@@ -59,10 +58,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Processors
         public void Create_WithNonJsonData_ReturnsNull()
         {
             string setting = "???";
-            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var logger = new Mock<ILogger<ConfigFactory<RequestProcessor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<RequestProcessor>(logger.Object);
 
-            IProcessor processor = factory.Create(setting);
+            IRequestProcessor processor = factory.Create(setting);
 
             Assert.IsNull(processor, "Processor should be null");
         }
@@ -72,10 +71,10 @@ namespace ClusterEmulator.Service.Simulation.Test.Processors
         public void Create_WithEmptyJson_ReturnsNull()
         {
             string setting = "{ }";
-            var logger = new Mock<ILogger<ConfigFactory<Processor>>>(MockBehavior.Loose);
-            var factory = new ConfigFactory<Processor>(logger.Object);
+            var logger = new Mock<ILogger<ConfigFactory<RequestProcessor>>>(MockBehavior.Loose);
+            var factory = new ConfigFactory<RequestProcessor>(logger.Object);
 
-            IProcessor processor = factory.Create(setting);
+            IRequestProcessor processor = factory.Create(setting);
 
             Assert.IsNull(processor, "Processor should be null");
         }

@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using ClusterEmulator.Service.Simulation.Core;
 
 namespace ClusterEmulator.Service.Simulation.Steps
 {
     /// <summary>
     /// Interface for all execution steps.
     /// </summary>
-    public interface IStep
+    public interface IStep : IConfigModel<IStep>
     {
         /// <summary>
         /// The number of times the step should be executed in parallel.
@@ -25,12 +25,5 @@ namespace ClusterEmulator.Service.Simulation.Steps
         /// </summary>
         /// <returns>A <see cref="ExecutionStatus"/> value.</returns>
         Task<ExecutionStatus> ExecuteAsync();
-
-
-        /// <summary>
-        /// Initializes a logger for the step instance.
-        /// </summary>
-        /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
-        void InitializeLogger(ILogger logger);
     }
 }
