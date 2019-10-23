@@ -18,7 +18,7 @@ namespace ClusterEmulator.Service.Simulation.Core
     {
         private readonly IDictionary<string, ClientConfig> clients;
         private readonly IDictionary<string, IAsyncPolicy<HttpResponseMessage>> policies;
-        private readonly IDictionary<string, IRequestProcessor> processors;
+        private readonly IDictionary<string, IProcessor> processors;
         private readonly IDictionary<string, IStep> steps;
         private readonly ILogger<Registry> log;
 
@@ -77,7 +77,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
         public Registry(IRegistrySettings settings,
             IConfigFactory<IStep> stepFactory,
-            IConfigFactory<RequestProcessor> processorFactory,
+            IConfigFactory<IProcessor> processorFactory,
             IConfigFactory<IAsyncPolicy<HttpResponseMessage>> policyFactory,
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
@@ -153,6 +153,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         public IRequestProcessor GetRequestProcessor(string name)
         {
             // TODO: UTs
+            // TODO: update processor storage to deal with IProcessor
 
             IProcessor processor = GetRegisteredValue(name, processors, "Processor");
             if (processor is IRequestProcessor)
@@ -162,6 +163,18 @@ namespace ClusterEmulator.Service.Simulation.Core
 
             log.LogError("{RegistryValue} is not a request processor", name);
             throw new InvalidOperationException($"'{name}' is not a request processor");
+        }
+
+
+        /// <summary>
+        /// Retrieves all registered startup processors.
+        /// </summary>
+        /// <returns>An enumerable of registered <see cref="IStartupProcessor"/> instances.</returns>
+        public IEnumerable<IStartupProcessor> GetStartupProcessors()
+        {
+            // TODO: UTs and support
+            return processors.Values.Where(p => p is IStartupProcessor)
+                .Select(p => p as IStartupProcessor);
         }
 
 

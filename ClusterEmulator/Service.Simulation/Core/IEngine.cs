@@ -16,5 +16,14 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// An <see cref="IActionResult"/> instance indicating the overall processing result.
         /// </returns>
         Task<IActionResult> ProcessRequestAsync(string name);
+
+
+        /// <summary>
+        /// Emulates startup business logic by executing all registered startup procsssors.
+        /// </summary>
+        /// <returns>
+        /// A task.
+        /// </returns>
+        Task ProcessStartupActionsAsync();
     }
 }

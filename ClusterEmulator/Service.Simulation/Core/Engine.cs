@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace ClusterEmulator.Service.Simulation.Core
 {
     /// <summary>
-    /// Loads and executes emulated and simulated request components.
+    /// Loads and executes emulated and simulated components.
     /// </summary>
     public class Engine : IEngine
     {
@@ -78,6 +78,60 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
 
             return new OkObjectResult(processor.SuccessPayload);
+        }
+
+
+        /// <summary>
+        /// Emulates startup business logic by executing all registered startup procsssors.
+        /// </summary>
+        /// <returns>
+        /// A task.
+        /// </returns>
+        public async Task ProcessStartupActionsAsync()
+        {
+            // TODO: use this
+
+            List<IStartupProcessor> processors = registry.GetStartupProcessors().ToList();
+            foreach (var processor in processors)
+            {
+                if (processor.Asynchronous)
+                {
+                    Task task = RunStartupSteps(processor.Steps, nameof(processor));
+                    _ = task.ContinueWith(t =>
+                    {
+                        log.LogError("Asynchronous startup processor failed {Processor}", nameof(processor));
+                        t.Exception.Handle(ex =>
+                        {
+                            // Log and set all exceptions as handled to avoid rethrowing
+                            log.LogCritical(ex, "{Processor}: Exception returned from asynchronous startup processor", nameof(processor));
+                            return true;
+                        });
+                    }, TaskContinuationOptions.OnlyOnFaulted);
+                }
+                else
+                {
+                    await RunStartupSteps(processor.Steps, nameof(processor)).ConfigureAwait(false);
+                }
+            }
+        }
+
+
+        private async Task RunStartupSteps(IList<string> steps, string processorName)
+        {
+            foreach (string stepName in steps)
+            {
+                IStep step = registry.GetStep(stepName);
+                ExecutionStatus status = step.ParallelCount == null || step.ParallelCount < 2
+                    ? await step.ExecuteAsync().ConfigureAwait(false)
+                    : await ExcuteStepInParallel(processorName, stepName, step).ConfigureAwait(false);
+
+                if (status != ExecutionStatus.Success)
+                {
+                    log.LogCritical("{Step} experienced an error in startup processor {Processor}",
+                        stepName, processorName);
+                    throw new InvalidOperationException($"Startup processor {processorName} encountered an error");
+                }
+            }
         }
 
 
