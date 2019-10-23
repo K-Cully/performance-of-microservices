@@ -6,10 +6,13 @@
             "port": 8001,
             "processors": {
                 "DoStuff": {
-                    "errorSize": 100,
-                    "latency": 0,
-                    "steps": [ "LoadA", "RequestA" ],
-                    "successSize": 20 
+                    "type": "RequestProcessor",
+                    "value": { 
+                        "errorSize": 100,
+                        "latency": 0,
+                        "steps": [ "LoadA", "RequestA" ],
+                        "successSize": 20 
+                    }
                 }
             },
             "steps": {
@@ -70,10 +73,13 @@
             "port": 8002,
             "processors": {
                 "GenerateLoad": {
-                    "errorSize": 100,
-                    "latency": 0,
-                    "steps": [ "CpuLoad" ],
-                    "successSize": 20
+                    "type": "RequestProcessor",
+                    "value": { 
+                        "errorSize": 100,
+                        "latency": 0,
+                        "steps": [ "CpuLoad" ],
+                        "successSize": 20
+                    }
                 }
             },
             "steps": {

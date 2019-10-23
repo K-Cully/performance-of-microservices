@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="Processors">
-    <Parameter Name="Load" Value="{ errorSize : 100, latency : 0, steps : [ 'LoadA', 'LoadB' ], successSize : 20 }" />
-    <Parameter Name="ReuseSockets" Value="{ errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 16 }" />
-    <Parameter Name="NewSockets" Value="{ errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 }" />
+    <Parameter Name="Load" Value="{ type : 'RequestProcessor', value : { errorSize : 100, latency : 0, steps : [ 'LoadA', 'LoadB' ], successSize : 20 } }" />
+    <Parameter Name="ReuseSockets" Value="{ type : 'RequestProcessor', value : { errorSize : 15, latency : 0, steps : [ 'RequestReuseSocketA' ], successSize : 16 } }" />
+    <Parameter Name="NewSockets" Value="{ type : 'RequestProcessor', value : { errorSize : 128, latency : 60, steps : [ 'RequestNewSocketA' ], successSize : 512 } }" />
   </Section>
   <Section Name="Steps">
     <Parameter Name="LoadA" Value="{ type : 'LoadStep', value : { bytes : 0, time : 10, percent : 20 } }" />
