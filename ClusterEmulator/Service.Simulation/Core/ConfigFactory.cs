@@ -13,8 +13,8 @@ namespace ClusterEmulator.Service.Simulation.Core
     public class ConfigFactory<TModel> : IConfigFactory<TModel>
         where TModel : class
     {
-        private readonly ILogger<ConfigFactory<TModel>> log;
-        private List<string> errors;
+        protected readonly ILogger<ConfigFactory<TModel>> log;
+        private JsonSerializerSettings serializerSettings;
 
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// Expected setting form:
         /// { <object> }
         /// </remarks>
-        public TModel Create(string settingValue)
+        public virtual TModel Create(string settingValue)
         {
             if (string.IsNullOrWhiteSpace(settingValue))
             {
@@ -44,13 +44,23 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
 
             log.LogInformation("Creating {ConfigType} from {SettingValue}", typeof(TModel).Name, settingValue);
+            return DeserializeSettingWithErrorHandling(settingValue);
+        }
 
+
+        /// <summary>
+        /// Deserializes a setting value with JSON serialization error handling
+        /// </summary>
+        /// <param name="settingValue">The JSON setting value</param>
+        /// <returns>An instance of <see cref="TModel"/>, if successful. Null otherwise.</returns>
+        protected TModel DeserializeSettingWithErrorHandling(string settingValue)
+        {
             TModel value = JsonConvert.DeserializeObject<TModel>(settingValue, SerializerSettings);
-            if (errors.Any())
+            if (Errors.Any())
             {
-                foreach(string error in errors)
+                foreach (string error in Errors)
                 {
-                    log.LogError("'{JsonError}' encountered deserializing {SettingValue}", error, settingValue);
+                    log.LogCritical("'{JsonError}' encountered deserializing {SettingValue}", error, settingValue);
                 }
 
                 return null;
@@ -60,11 +70,11 @@ namespace ClusterEmulator.Service.Simulation.Core
         }
 
 
-        private JsonSerializerSettings SerializerSettings
+        protected JsonSerializerSettings SerializerSettings
         {
             get
             {
-                errors = new List<string>();
+                Errors = new List<string>();
                 if (serializerSettings is null)
                 {
                     serializerSettings = new JsonSerializerSettings()
@@ -72,7 +82,7 @@ namespace ClusterEmulator.Service.Simulation.Core
                         Error = (o, e) =>
                         {
                             e.ErrorContext.Handled = true;
-                            errors.Add(e.ErrorContext?.Error?.Message);
+                            Errors.Add(e.ErrorContext?.Error?.Message);
                         },
                         NullValueHandling = NullValueHandling.Ignore,
                     };
@@ -82,7 +92,6 @@ namespace ClusterEmulator.Service.Simulation.Core
             }
         }
 
-
-        private JsonSerializerSettings serializerSettings;
+        protected List<string> Errors { get; set; }
     }
 }
