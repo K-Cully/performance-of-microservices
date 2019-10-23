@@ -9,6 +9,7 @@ using Polly;
 using Polly.Wrap;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 
 namespace ClusterEmulator.Service.Simulation.Test.Core
@@ -209,7 +210,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
 
         [TestMethod]
-        public void GetProcessor_ReturnsCorrectValue_WhenRegistered()
+        public void GetRequestProcessor_ReturnsCorrectValue_WhenRegistered()
         {
             string processorName = "Bob";
             RequestProcessor expectedProcessor = new RequestProcessor();
@@ -248,12 +249,12 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             IRequestProcessor processor = registry.GetRequestProcessor(processorName);
 
             // Verify
-            Assert.IsNotNull(processor, "GetProcessor should return the registered value");
+            Assert.IsNotNull(processor, "GetRequestProcessor should return the registered value");
         }
 
 
         [TestMethod]
-        public void GetProcessor_Throws_WhenRegisteredValueIsNull()
+        public void GetRequestProcessor_Throws_WhenRegisteredValueIsNull()
         {
             string processorName = "Bob";
 
@@ -295,7 +296,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
 
         [TestMethod]
-        public void GetProcessor_Throws_WhenNameIsNotRegistered()
+        public void GetRequestProcessor_Throws_WhenNameIsNotRegistered()
         {
             string processorName = "Xi";
             RequestProcessor expectedProcessor = new RequestProcessor();
@@ -333,7 +334,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
 
         [TestMethod]
-        public void GetProcessor_Throws_WhenNameIsNull()
+        public void GetRequestProcessor_Throws_WhenNameIsNull()
         {
             string processorName = null;
             RequestProcessor expectedProcessor = new RequestProcessor();
@@ -367,6 +368,142 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Verify
             Assert.ThrowsException<ArgumentException>(() => registry.GetRequestProcessor(processorName));
+        }
+
+
+        [TestMethod]
+        public void GetRequestProcessor_Throws_WhenNameIsOfWrongType()
+        {
+            string processorName = "Bob";
+            IProcessor expectedProcessor = new StartupProcessor();
+
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(processorName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
+
+            // Create Moq proxy instances
+            var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<IProcessor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>((s) => expectedProcessor);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
+
+            // Act
+            var registry = new Registry(
+                settings.Object, stepFactory.Object, processorFactory.Object,
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
+
+            // Verify
+            Assert.ThrowsException<InvalidOperationException>(() => registry.GetRequestProcessor(processorName));
+        }
+
+
+        [TestMethod]
+        public void GetStartupProcessors_ReturnsInitializedList_WhenStartUpProcessorExists()
+        {
+            string processorName = "Bob";
+            IProcessor expectedProcessor = new StartupProcessor();
+
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(processorName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
+
+            // Create Moq proxy instances
+            var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<IProcessor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>((s) => expectedProcessor);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
+
+            // Act
+            var registry = new Registry(
+                settings.Object, stepFactory.Object, processorFactory.Object,
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
+            var query = registry.GetStartupProcessors();
+
+            // Verify
+            Assert.IsNotNull(query);
+            var processors = query.ToList();
+            Assert.AreEqual(1, processors.Count);
+            Assert.IsInstanceOfType(processors.First(), typeof(IStartupProcessor));
+        }
+
+
+        [TestMethod]
+        public void GetStartupProcessors_ReturnsEmptyList_WhenStartUpProcessorDoNotExists()
+        {
+            string processorName = "Bob";
+            IProcessor expectedProcessor = new RequestProcessor();
+
+            // Create settings
+            var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
+            IEnumerable<KeyValuePair<string, string>> outList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(processorName, "setting")
+            };
+            settings.Setup(s => s.TryGetSection(It.IsAny<string>(), out outList))
+                .Returns(true);
+
+            // Create Moq proxy instances
+            var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
+            var processorFactory = new Mock<IConfigFactory<IProcessor>>(MockBehavior.Strict);
+            var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
+            stepFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            processorFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>((s) => expectedProcessor);
+            policyFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            clientFactory.Setup(f => f.Create(It.IsAny<string>()))
+                .Returns<string>(null);
+            var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
+            var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
+            loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>()))
+                .Returns(new Mock<ILogger>().Object);
+
+            // Act
+            var registry = new Registry(
+                settings.Object, stepFactory.Object, processorFactory.Object,
+                policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
+            var query = registry.GetStartupProcessors();
+
+            // Verify
+            Assert.IsNotNull(query);
+            var processors = query.ToList();
+            Assert.AreEqual(0, processors.Count);
         }
 
 

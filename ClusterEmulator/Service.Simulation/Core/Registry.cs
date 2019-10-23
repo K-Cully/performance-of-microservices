@@ -152,9 +152,6 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// </exception>
         public IRequestProcessor GetRequestProcessor(string name)
         {
-            // TODO: UTs
-            // TODO: update processor storage to deal with IProcessor
-
             IProcessor processor = GetRegisteredValue(name, processors, "Processor");
             if (processor is IRequestProcessor)
             {
@@ -172,7 +169,6 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <returns>An enumerable of registered <see cref="IStartupProcessor"/> instances.</returns>
         public IEnumerable<IStartupProcessor> GetStartupProcessors()
         {
-            // TODO: UTs and support
             return processors.Values.Where(p => p is IStartupProcessor)
                 .Select(p => p as IStartupProcessor);
         }
