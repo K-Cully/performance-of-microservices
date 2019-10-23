@@ -1,12 +1,11 @@
 ﻿using ClusterEmulator.Service.Models;
-using System.Collections.Generic;
 
 namespace ClusterEmulator.Service.Simulation.Processors
 {
     /// <summary>
     /// An interface to define request processing configuration.
     /// </summary>
-    public interface IRequestProcessor
+    public interface IRequestProcessor : IProcessor
     {
         /// <summary>
         /// Gets the error payload data.
@@ -24,12 +23,6 @@ namespace ClusterEmulator.Service.Simulation.Processors
         /// The artificial latency to apply to incoming requests.
         /// </summary>
         int IngressLatencyMilliseconds { get; set; }
-
-
-        /// <summary>
-        /// The list of steps to perform as part of this processor.
-        /// </summary>
-        IList<string> Steps { get; set; }
 
 
         /// <summary>

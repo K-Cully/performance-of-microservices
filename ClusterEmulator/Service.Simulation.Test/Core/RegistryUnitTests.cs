@@ -245,7 +245,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var registry = new Registry(
                 settings.Object, stepFactory.Object, processorFactory.Object,
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
-            IRequestProcessor processor = registry.GetProcessor(processorName);
+            IRequestProcessor processor = registry.GetRequestProcessor(processorName);
 
             // Verify
             Assert.IsNotNull(processor, "GetProcessor should return the registered value");
@@ -290,7 +290,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
-            Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
+            Assert.ThrowsException<InvalidOperationException>(() => registry.GetRequestProcessor(processorName));
         }
 
 
@@ -328,7 +328,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
-            Assert.ThrowsException<InvalidOperationException>(() => registry.GetProcessor(processorName));
+            Assert.ThrowsException<InvalidOperationException>(() => registry.GetRequestProcessor(processorName));
         }
 
 
@@ -366,7 +366,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 policyFactory.Object, clientFactory.Object, logger.Object, loggerFactory.Object);
 
             // Verify
-            Assert.ThrowsException<ArgumentException>(() => registry.GetProcessor(processorName));
+            Assert.ThrowsException<ArgumentException>(() => registry.GetRequestProcessor(processorName));
         }
 
 

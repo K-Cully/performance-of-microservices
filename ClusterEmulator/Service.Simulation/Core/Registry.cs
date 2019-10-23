@@ -150,9 +150,18 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <exception cref="InvalidOperationException">
         /// The processor is not registered or the registration is not valid.
         /// </exception>
-        public IRequestProcessor GetProcessor(string name)
+        public IRequestProcessor GetRequestProcessor(string name)
         {
-            return GetRegisteredValue(name, processors, "Processor");
+            // TODO: UTs
+
+            IProcessor processor = GetRegisteredValue(name, processors, "Processor");
+            if (processor is IRequestProcessor)
+            {
+                return processor as IRequestProcessor;
+            }
+
+            log.LogError("{RegistryValue} is not a request processor", name);
+            throw new InvalidOperationException($"'{name}' is not a request processor");
         }
 
 

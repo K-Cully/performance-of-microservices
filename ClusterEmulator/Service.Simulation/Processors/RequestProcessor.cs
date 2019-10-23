@@ -2,7 +2,6 @@
 using ClusterEmulator.Service.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClusterEmulator.Service.Simulation.Processors
@@ -11,7 +10,7 @@ namespace ClusterEmulator.Service.Simulation.Processors
     /// Defines request processing configuration.
     /// </summary>
     [Serializable]
-    public class RequestProcessor : IRequestProcessor
+    public class RequestProcessor : Processor, IRequestProcessor
     {
         /// <summary>
         /// Gets the error payload data.
@@ -36,14 +35,6 @@ namespace ClusterEmulator.Service.Simulation.Processors
         [JsonRequired]
         [Range(0, int.MaxValue, ErrorMessage = "latency cannot be negative")]
         public int IngressLatencyMilliseconds { get; set; }
-
-
-        /// <summary>
-        /// The list of steps to perform as part of this processor.
-        /// </summary>
-        [JsonProperty("steps")]
-        [JsonRequired]
-        public IList<string> Steps { get; set; }
 
 
         /// <summary>

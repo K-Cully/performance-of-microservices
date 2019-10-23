@@ -69,7 +69,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             string name = "test";
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(name)).Returns<string>(null);
+            registry.Setup(reg => reg.GetRequestProcessor(name)).Returns<string>(null);
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
             Engine engine = new Engine(logger.Object, registry.Object);
 
@@ -87,7 +87,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             processor.Steps = new List<string> { null };
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(name))
+            registry.Setup(reg => reg.GetRequestProcessor(name))
                 .Returns<string>((n) => processor);
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -124,7 +124,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(It.IsAny<string>()))
                 .Returns<string>(n => stepMock.Object);
@@ -180,7 +180,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             var registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
@@ -236,7 +236,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
                 .Returns<uint?>(null);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName))
+            registry.Setup(reg => reg.GetRequestProcessor(processorName))
                 .Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(okayStepName))
                 .Returns<string>(n => stepMock.Object);
@@ -287,7 +287,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -329,7 +329,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -374,7 +374,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);
@@ -417,7 +417,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             stepMock.Setup(step => step.ParallelCount).Returns(parallelCount);
 
             Mock<IRegistry> registry = new Mock<IRegistry>(MockBehavior.Strict);
-            registry.Setup(reg => reg.GetProcessor(processorName)).Returns<string>(n => processor);
+            registry.Setup(reg => reg.GetRequestProcessor(processorName)).Returns<string>(n => processor);
             registry.Setup(reg => reg.GetStep(stepName)).Returns<string>(n => stepMock.Object);
 
             var logger = new Mock<ILogger<Engine>>(MockBehavior.Loose);

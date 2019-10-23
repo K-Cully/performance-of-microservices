@@ -53,7 +53,7 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>The <see cref="IRequestProcessor"/> instance.</returns>
-        IRequestProcessor GetProcessor(string name);
+        IRequestProcessor GetRequestProcessor(string name);
 
 
         /// <summary>
