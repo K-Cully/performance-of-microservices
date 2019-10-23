@@ -21,7 +21,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
@@ -36,7 +36,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         public void Constructor_Throws_WhenStepFactoryIsNull()
         {
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
@@ -54,7 +54,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
@@ -86,7 +86,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
 
@@ -101,7 +101,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
@@ -117,7 +117,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
         {
             var settings = new Mock<IRegistrySettings>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
@@ -140,7 +140,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             var logger = new Mock<ILogger<Registry>>(MockBehavior.Loose);
             var loggerFactory = new Mock<ILoggerFactory>(MockBehavior.Strict);
@@ -172,7 +172,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -225,7 +225,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -269,7 +269,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -306,7 +306,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -344,7 +344,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
 
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -388,7 +388,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             Mock<IStep> stepMock = new Mock<IStep>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(s => stepMock.Object);
@@ -432,7 +432,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -476,7 +476,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -517,7 +517,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             // Create Moq proxy instances
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -559,7 +559,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
             stepFactory.Setup(f => f.Create(It.IsAny<string>()))
                 .Returns<string>(null);
@@ -602,7 +602,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -663,7 +663,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -719,7 +719,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -770,7 +770,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -826,7 +826,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -881,7 +881,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -938,7 +938,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -994,7 +994,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -1050,7 +1050,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))
@@ -1106,7 +1106,7 @@ namespace ClusterEmulator.Service.Simulation.Test.Core
             var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
             var stepFactory = new Mock<IConfigFactory<IStep>>(MockBehavior.Strict);
             var processorFactory = new Mock<IConfigFactory<RequestProcessor>>(MockBehavior.Strict);
-            var policyFactory = new Mock<IPolicyFactory>(MockBehavior.Strict);
+            var policyFactory = new Mock<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>>(MockBehavior.Strict);
             var clientFactory = new Mock<IConfigFactory<ClientConfig>>(MockBehavior.Strict);
 
             processorFactory.Setup(f => f.Create(It.IsAny<string>()))

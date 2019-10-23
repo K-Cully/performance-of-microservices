@@ -4,8 +4,10 @@ using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
 using ClusterEmulator.Service.Simulation.Processors;
 using ClusterEmulator.Service.Simulation.Steps;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using System;
 using System.Fabric;
+using System.Net.Http;
 
 namespace ClusterEmulator.Service.Shared.Extensions
 {
@@ -28,7 +30,7 @@ namespace ClusterEmulator.Service.Shared.Extensions
             return serviceCollection
                 .AddSingleton(serviceContext.CodePackageActivationContext.GetConfigurationPackageObject("Config").Settings)
                 .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
-                .AddSingleton<IPolicyFactory, PolicyFactory>()
+                .AddSingleton<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>, NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>()
                 .AddSingleton<IConfigFactory<IStep>, NestedConfigFactory<IStep, IStep>>()
                 .AddSingleton<IConfigFactory<RequestProcessor>, ConfigFactory<RequestProcessor>>()
                 .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()

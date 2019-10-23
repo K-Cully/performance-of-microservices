@@ -77,7 +77,8 @@ namespace ClusterEmulator.Service.Simulation.Core
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> instance to use for initializing loggers for created objects.</param>
         public Registry(IRegistrySettings settings,
             IConfigFactory<IStep> stepFactory,
-            IConfigFactory<RequestProcessor> processorFactory, IPolicyFactory policyFactory,
+            IConfigFactory<RequestProcessor> processorFactory,
+            IConfigFactory<IAsyncPolicy<HttpResponseMessage>> policyFactory,
             IConfigFactory<ClientConfig> clientFactory, ILogger<Registry> logger,
             ILoggerFactory loggerFactory)
         {
