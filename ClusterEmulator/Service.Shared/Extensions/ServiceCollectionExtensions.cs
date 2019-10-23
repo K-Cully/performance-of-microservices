@@ -32,7 +32,7 @@ namespace ClusterEmulator.Service.Shared.Extensions
                 .AddSingleton<IRegistrySettings, FabricConfigurationSettings>()
                 .AddSingleton<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>, NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>()
                 .AddSingleton<IConfigFactory<IStep>, NestedConfigFactory<IStep, IStep>>()
-                .AddSingleton<IConfigFactory<RequestProcessor>, ConfigFactory<RequestProcessor>>()
+                .AddSingleton<IConfigFactory<IProcessor>, NestedConfigFactory<IProcessor, IProcessor>>()
                 .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
                 .AddSingleton<IRegistry, Registry>()
                 .AddScoped<IEngine, Engine>();
