@@ -433,7 +433,7 @@
                     }
                 },
                 "EmptyCart": {
-                    "type": "RequestStep",
+                    "type": "AsyncRequestStep",
                     "value": {
                         "client": "CartClient",
                         "method": "post",
@@ -446,7 +446,7 @@
                 "PlaceOrder": {
                     "type": "RequestStep",
                     "value": {
-                        "client": "CatalogueClient",
+                        "client": "AsyncCatalogueClient",
                         "method": "post",
                         "path": "/api/Catalogue/UpdateProduct",
                         "size": 512,
@@ -457,7 +457,7 @@
                 "UpdatePurchases": {
                     "type": "RequestStep",
                     "value": {
-                        "client": "AccountsClient",
+                        "client": "AsyncAccountsClient",
                         "method": "post",
                         "path": "/api/Accounts/UpdatePurchases",
                         "size": 64,
@@ -493,6 +493,33 @@
                     "headers": {
                         "Accept": "*/*"
                     }
+                },
+                "AsyncCatalogueClient": {
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AsyncCartClient": {
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8004",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AsyncAccountsClient": {
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8003",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
                 }
             },
             "policies": {
@@ -501,6 +528,14 @@
                     "value": {
                         "cancelDelegates": true,
                         "time": 30.0
+                    }
+                },
+                "ExponentialRetry": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries" : 6,
+                        "delays" : [ -1.0 ],
+                        "jitter" : 2000
                     }
                 }
             }
@@ -685,7 +720,9 @@
                 "CartClient": {
                     "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8004",
                     "policies": [
-                        "30SecondTimeout"
+                        "30SecondTimeout",
+                        "Basic3Retries",
+                        "15SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -694,7 +731,9 @@
                 "PaymentClient": {
                     "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8005",
                     "policies": [
-                        "30SecondTimeout"
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -702,11 +741,28 @@
                 }
             },
             "policies": {
+                "15SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 15.0
+                    }
+                },
                 "30SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
                         "time": 30.0
+                    }
+                },
+                "Basic2Retries": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 2,
+                        "delays": [
+                            2.0,
+                            5.0
+                        ]
                     }
                 }
             }
