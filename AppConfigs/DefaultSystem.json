@@ -721,7 +721,7 @@
                     "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic3Retries",
+                        "Basic2Retries",
                         "15SecondTimeout"
                     ],
                     "headers": {
