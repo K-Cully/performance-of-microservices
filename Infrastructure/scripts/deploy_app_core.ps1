@@ -83,9 +83,21 @@ while ($result -ne $successMatch -and $attempt -lt 5) {
 
 Write-Host "Application package uploaded to image store after $attempt attempts."
 
-# Note, may need to make async and delay creation for large app sizes
+# Register the application with asynchronous provisioning
 Write-Host "Registering application $ApplicationType..."
-Register-SFApplicationType -ImageStorePath -ApplicationTypeBuildPath $ApplicationType -ServerTimeout $TimeoutSeconds
+Register-SFApplicationType -ImageStorePath -ApplicationTypeBuildPath $ApplicationType -ServerTimeout $TimeoutSeconds -Async $True
+
+
+while ($provisioningState.ApplicationTypeStatus -ne "Available") {
+    # Wait on the application to be fully provisioned
+    $provisioningState = Get-SFApplicationType -ApplicationTypeName $ApplicationType -ServerTimeout $TimeoutSeconds
+    
+    Write-Host "Provisioning state is $($provisioningState.ApplicationTypeStatus)"
+    if ($provisioningState.ApplicationTypeStatus -eq "Provisioning") {
+        Write-Warning "Provisioning has not completed, waiting 60 seconds and retrying"
+        Start-Sleep -Seconds 60
+    }
+}
 
 Write-Host "Creating application..."
 New-SFApplication -Name "fabric:/$ApplicationType" -TypeName $ApplicationType -TypeVersion $ApplicationVersion `
