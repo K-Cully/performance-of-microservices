@@ -19,7 +19,9 @@ Values less than 1 indicate retry forever.
 ##### delays
 An ordered list of delays, measured in seconds, to apply to each retry attempt.<br/>
 If the number of retries exceeds the list length, the last value in the list will be used for all retries thereafter.<br/>
-A list containing a single value of -1.0 will configure exponential backoff.
+<br/>
+A list containing a single value of -1.0 will configure exponential backoff.<br/>
+Exponential backoff delay is calculated as (retry attempt number) squared seconds plus jitter, where applicable.
 
 ##### jitter (Optional)
 A positive value, in milliseconds, specifying the maximum jitter to apply to apply to retry delays.
