@@ -176,7 +176,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -345,7 +345,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -468,7 +468,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -477,7 +477,7 @@
                     }
                 },
                 "CartClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -486,7 +486,7 @@
                     }
                 },
                 "AccountsClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -558,7 +558,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -567,7 +567,7 @@
                     }
                 },
                 "AccountsClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -683,7 +683,7 @@
             },
             "clients": {
                 "CartClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8004",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -692,7 +692,7 @@
                     }
                 },
                 "PaymentClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8005",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8005",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -800,7 +800,7 @@
             },
             "clients": {
                 "AccountsClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -809,7 +809,7 @@
                     }
                 },
                 "SearchClient": {
-                    "baseAddress": "http://todo-cluster-name.northeurope.cloudapp.azure.com:8002",
+                    "baseAddress": "http://emu-infra-three.northeurope.cloudapp.azure.com:8002",
                     "policies": [
                         "30SecondTimeout"
                     ],
