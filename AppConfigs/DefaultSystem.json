@@ -433,28 +433,37 @@
                     }
                 },
                 "EmptyCart": {
-                    "client": "CartClient",
-                    "method": "post",
-                    "path": "/api/Cart/GetItems",
-                    "size": 16,
-                    "reuseSockets": true,
-                    "trueAsync": true
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "CartClient",
+                        "method": "post",
+                        "path": "/api/Cart/GetItems",
+                        "size": 16,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
                 },
                 "PlaceOrder": {
-                    "client": "CatalogueClient",
-                    "method": "post",
-                    "path": "/api/Catalogue/UpdateProduct",
-                    "size": 512,
-                    "reuseSockets": true,
-                    "trueAsync": true
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "CatalogueClient",
+                        "method": "post",
+                        "path": "/api/Catalogue/UpdateProduct",
+                        "size": 512,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
                 },
                 "UpdatePurchases": {
-                    "client": "AccountsClient",
-                    "method": "post",
-                    "path": "/api/Accounts/UpdatePurchases",
-                    "size": 64,
-                    "reuseSockets": true,
-                    "trueAsync": true
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "AccountsClient",
+                        "method": "post",
+                        "path": "/api/Accounts/UpdatePurchases",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
                 }
             },
             "clients": {
