@@ -406,7 +406,7 @@
         <hashTree/>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Browse Store" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
-          <stringProp name="TestPlan.comments">Searches for items and adds them to the user&apos;s cart with a set probebility</stringProp>
+          <stringProp name="TestPlan.comments">Browses store web pages</stringProp>
           <stringProp name="LoopController.loops">8</stringProp>
         </LoopController>
         <hashTree>
@@ -468,6 +468,7 @@
         </RandomVariableConfig>
         <hashTree/>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Checkout with probability" enabled="true">
+          <stringProp name="TestPlan.comments">Adds an item to the cart and purchases it</stringProp>
           <stringProp name="IfController.condition">${__jexl3(${browsePurchaseValue}&lt;=${browsePurchasePercent})}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
