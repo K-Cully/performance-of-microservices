@@ -107,9 +107,9 @@ try {
 catch {
     $errorMessage = $_.Exception.Message
     $failedItem = $_.Exception.ItemName
-    Write-Error -Message "New-SFApplication reported an error. Item: $failedItem, Message: $errorMessage"
-
+    Write-Warning -Message "New-SFApplication reported an error. Item: $failedItem, Message: $errorMessage"
+    Write-Warning -Message "The error may have been a false positive!`nPlease check the cluster management page to confirm: $Endpoint"
+    
     $appState = Get-SFApplication -ApplicationTypeName $ApplicationType -ServerTimeout $TimeoutSeconds
     Write-Host "Current aplication status is: $($appState.ApplicationStatus)"
-    Write-Warning -Message "The error may have been a false positive!`nPlease check the cluster management page to confirm: $Endpoint"
 }
