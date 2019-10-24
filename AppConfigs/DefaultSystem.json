@@ -185,7 +185,7 @@
                     }
                 }
             },
-            "poilicies": {
+            "policies": {
                 "30SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
