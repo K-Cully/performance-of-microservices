@@ -87,9 +87,8 @@ Write-Host "Application package uploaded to image store after $attempt attempts.
 Write-Host "Registering application $ApplicationType..."
 Register-SFApplicationType -ImageStorePath -ApplicationTypeBuildPath $ApplicationType -ServerTimeout $TimeoutSeconds -Async $True
 
-
+# Wait on the application type to be fully provisioned
 while ($provisioningState.ApplicationTypeStatus -ne "Available") {
-    # Wait on the application to be fully provisioned
     $provisioningState = Get-SFApplicationType -ApplicationTypeName $ApplicationType -ServerTimeout $TimeoutSeconds
     
     Write-Host "Provisioning state is $($provisioningState.ApplicationTypeStatus)"
@@ -99,6 +98,7 @@ while ($provisioningState.ApplicationTypeStatus -ne "Available") {
     }
 }
 
+# Create an app instance from the registered type
 Write-Host "Creating application..."
 New-SFApplication -Name "fabric:/$ApplicationType" -TypeName $ApplicationType -TypeVersion $ApplicationVersion `
     -ServerTimeout $TimeoutSeconds
