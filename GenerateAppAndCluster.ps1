@@ -6,7 +6,7 @@ param(
    [string] [Parameter(Mandatory = $true)] $AppName,
    [string] [Parameter(Mandatory = $true)] $ClusterName,
    [string] [Parameter(Mandatory = $true)] $AppConfigFile,
-   [switch] [Parameter] $SkipProvisioning
+   [switch] $SkipProvisioning
 )
 
 # Add REST based SF module
