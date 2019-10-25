@@ -6,7 +6,7 @@ param(
    [string] [Parameter(Mandatory = $true)] $AppName,
    [string] [Parameter(Mandatory = $true)] $ClusterName,
    [string] [Parameter(Mandatory = $true)] $AppConfigFile,
-   [bool] [Parameter] $ProvisionInfrastructure = $True
+   [switch] [Parameter] $SkipProvisioning
 )
 
 # Add REST based SF module
@@ -22,7 +22,7 @@ $Location = "northeurope"
 $DeploymentStartTime = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 # By default, provision infrastructure first so that generation can proceed while the cluster is provisioning
-if ($ProvisionInfrastructure){
+if (-not $SkipProvisioning){
     # Deploy infrastructure
     try {
         .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
