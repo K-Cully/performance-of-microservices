@@ -30,6 +30,7 @@ pkg/
 
 # Generated projects
 [Gg]enerated/
+[Ss]ecrets/
 
 # Visual Studio 2015 cache/options directory
 .vs/
