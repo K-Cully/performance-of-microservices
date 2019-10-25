@@ -96,8 +96,12 @@ function EnsureSelfSignedCertificate([string]$KeyVaultName, [string]$CertName)
         $password = Get-Content $passPath
         Write-Host "  thumb: $thumbprint, pass: $password"
 
-    } else {
-        # TODO: $thumbprint, $password, $localPath = CreateSelfSignedCertificate $CertName
+    }
+    else {
+        # TODO: implement cert generation in Powershell Core script.
+        # See https://github.com/rjmholt/SelfSignedCertificate on cert generation.
+        # $thumbprint, $password, $localPath = CreateSelfSignedCertificate $CertName
+        
         Write-Error -Message "Certificate not found. Please generate the certificate details at the following locations:`nCert: $localPath`nThumbprint: $thumbPath`nPassword: $passPath"
         return
     }

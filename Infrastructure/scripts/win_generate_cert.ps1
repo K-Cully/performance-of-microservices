@@ -5,14 +5,16 @@ param(
     [string] [Parameter(Mandatory = $true)] $Name
 )
 
+$ErrorActionPreference = 'Stop'
+
+# Add utility methods
+. "$PSScriptRoot\Common.ps1"
+
 # Set secrets folder to ..\secrets
 $SecretsRoot = "$($PSScriptRoot | split-path)\secrets"
 
 function CreateSelfSignedCertificate([string]$DnsName)
 {
-    # TODO: convert cert generation to work with Powershell Core and be cross platform.
-    # See https://github.com/rjmholt/SelfSignedCertificate on cert generation.
-
     Write-Host "Creating self-signed certificate with dns name $DnsName"
     
     $filePath = "$SecretsRoot\$DnsName.pfx"
