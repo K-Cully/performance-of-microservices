@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$t = [Reflection.Assembly]::LoadWithPartialName("System.Web")
-Write-Host "Loaded $($t.FullName)."
+# Set secrets folder to ..\secrets
+$SecretsRoot = "$($PSScriptRoot | split-path)\secrets"
 
 function CheckLoggedIn()
 {
@@ -84,9 +84,9 @@ function GeneratePassword()
 
 function EnsureSelfSignedCertificate([string]$KeyVaultName, [string]$CertName)
 {
-    $localPath = "$PSScriptRoot\$CertName.pfx"
-    $thumbPath = "$PSScriptRoot\$Certname.thumb.txt"
-    $passPath = "$PSScriptRoot\$Certname.pwd.txt"
+    $localPath = "$SecretsRoot\$CertName.pfx"
+    $thumbPath = "$SecretsRoot\$Certname.thumb.txt"
+    $passPath = "$SecretsRoot\$Certname.pwd.txt"
     $existsLocally = Test-Path $localPath
 
     # create or read certificate
@@ -189,7 +189,7 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
 
 
 function Get-RdpPassword([string] $ClusterName) {
-    $filePath = "$PSScriptRoot\$ClusterName.rdp.pwd.txt"
+    $filePath = "$SecretsRoot\$ClusterName.rdp.pwd.txt"
 
     if (Test-Path -Path $filePath) {
         Write-Warning -Message "Password file exists, retrieving existing password"
