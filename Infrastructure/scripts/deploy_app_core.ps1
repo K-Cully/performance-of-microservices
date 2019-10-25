@@ -64,11 +64,11 @@ if ($existingContent) {
     Remove-SFImageStoreContent -ContentPath $ApplicationType -ServerTimeout $TimeoutSeconds -Force
 }
 
-# Since the module doesn't return anything useful to indicate failure reason, retry all errors
+# Since the module doesn't return anything useful to indicate failure, retry 3 times
 $result = $null
 $attempt = 0
 $successMatch = "Success!"
-while ($result -ne $successMatch -and $attempt -lt 5) {
+while ($result -ne $successMatch -and $attempt -lt 3) {
     $attempt = $attempt + 1
     Write-Host "Uploading application package to the cluster image store. (Attempt $attempt)"
     $result = Copy-SFApplicationPackage -ApplicationPackagePath $PackagePath -ApplicationPackagePathInImageStore $ApplicationType -Verbose
