@@ -5,6 +5,9 @@ param(
     [string] [Parameter(Mandatory = $true)] $Name
 )
 
+# Set secrets folder to ..\secrets
+$SecretsRoot = "$($PSScriptRoot | split-path)\secrets"
+
 function CreateSelfSignedCertificate([string]$DnsName)
 {
     # TODO: convert cert generation to work with Powershell Core and be cross platform.
@@ -12,7 +15,7 @@ function CreateSelfSignedCertificate([string]$DnsName)
 
     Write-Host "Creating self-signed certificate with dns name $DnsName"
     
-    $filePath = "$PSScriptRoot\$DnsName.pfx"
+    $filePath = "$SecretsRoot\$DnsName.pfx"
 
     Write-Host "  generating password... " -NoNewline
     $certPassword = GeneratePassword
@@ -26,8 +29,8 @@ function CreateSelfSignedCertificate([string]$DnsName)
     Write-Host "  exporting to $filePath..."
     $certContent = (Get-ChildItem -Path cert:\CurrentUser\My\$thumbprint)
     $t = Export-PfxCertificate -Cert $certContent -FilePath $filePath -Password $securePassword
-    Set-Content -Path "$PSScriptRoot\$DnsName.thumb.txt" -Value $thumbprint
-    Set-Content -Path "$PSScriptRoot\$DnsName.pwd.txt" -Value $certPassword
+    Set-Content -Path "$SecretsRoot\$DnsName.thumb.txt" -Value $thumbprint
+    Set-Content -Path "$SecretsRoot\$DnsName.pwd.txt" -Value $certPassword
     Write-Host "  exported."
 
     $thumbprint
