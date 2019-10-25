@@ -58,35 +58,6 @@ function EnsureKeyVault([string]$Name, [string]$ResourceGroupName, [string]$Loca
     $keyVault
 }
 
-function CreateSelfSignedCertificate([string]$DnsName)
-{
-    # TODO: convert cert generation to work with Powershell Core and be cross platform.
-    # See https://github.com/rjmholt/SelfSignedCertificate on cert generation.
-
-    Write-Host "Creating self-signed certificate with dns name $DnsName"
-    
-    $filePath = "$PSScriptRoot\$DnsName.pfx"
-
-    Write-Host "  generating password... " -NoNewline
-    $certPassword = GeneratePassword
-    Write-Host "$certPassword"
-
-    Write-Host "  generating certificate... " -NoNewline
-    $securePassword = ConvertTo-SecureString $certPassword -AsPlainText -Force
-    $thumbprint = (New-SelfSignedCertificate -DnsName $DnsName -CertStoreLocation Cert:\CurrentUser\My -KeySpec KeyExchange).Thumbprint
-    Write-Host "$thumbprint."
-    
-    Write-Host "  exporting to $filePath..."
-    $certContent = (Get-ChildItem -Path cert:\CurrentUser\My\$thumbprint)
-    $t = Export-PfxCertificate -Cert $certContent -FilePath $filePath -Password $securePassword
-    Set-Content -Path "$PSScriptRoot\$DnsName.thumb.txt" -Value $thumbprint
-    Set-Content -Path "$PSScriptRoot\$DnsName.pwd.txt" -Value $certPassword
-    Write-Host "  exported."
-
-    $thumbprint
-    $certPassword
-    $filePath
-}
 
 function ImportCertificateIntoKeyVault([string]$KeyVaultName, [string]$CertName, [string]$CertFilePath, [string]$CertPassword)
 {
@@ -114,17 +85,21 @@ function GeneratePassword()
 function EnsureSelfSignedCertificate([string]$KeyVaultName, [string]$CertName)
 {
     $localPath = "$PSScriptRoot\$CertName.pfx"
+    $thumbPath = "$PSScriptRoot\$Certname.thumb.txt"
+    $passPath = "$PSScriptRoot\$Certname.pwd.txt"
     $existsLocally = Test-Path $localPath
 
     # create or read certificate
     if($existsLocally) {
         Write-Host "Certificate exists locally."
-        $thumbprint = Get-Content "$PSScriptRoot\$Certname.thumb.txt"
-        $password = Get-Content "$PSScriptRoot\$Certname.pwd.txt"
+        $thumbprint = Get-Content $thumbPath
+        $password = Get-Content $passPath
         Write-Host "  thumb: $thumbprint, pass: $password"
 
     } else {
-        $thumbprint, $password, $localPath = CreateSelfSignedCertificate $CertName
+        # TODO: $thumbprint, $password, $localPath = CreateSelfSignedCertificate $CertName
+        Write-Error -Message "Certificate not found. Please generate the certificate details at the following locations:`nCert: $localPath`nThumbprint: $thumbPath`nPassword: $passPath"
+        return
     }
 
     #import into vault if needed
