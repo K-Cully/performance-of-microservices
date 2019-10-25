@@ -5,7 +5,8 @@
 param(
    [string] [Parameter(Mandatory = $true)] $AppName,
    [string] [Parameter(Mandatory = $true)] $ClusterName,
-   [string] [Parameter(Mandatory = $true)] $AppConfigFile
+   [string] [Parameter(Mandatory = $true)] $AppConfigFile,
+   [bool] [Parameter] $ProvisionInfrastructure = $True
 )
 
 # Add REST based SF module
@@ -20,23 +21,25 @@ $Location = "northeurope"
 
 $DeploymentStartTime = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
-# Deploy infrastructure
-try {
-    .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
-        -Location $Location -ClusterTier $ClusterLevel
-}
-catch {
-    $deploymentPause = 5
-    Write-Warning -Message "First deployment attempt failed, waiting $deploymentPause seconds and retrying."
-    Start-Sleep -Seconds $deploymentPause
-    .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
-        -Location $Location -ClusterTier $ClusterLevel        
-}
+# By default, provision infrastructure first so that generation can proceed while the cluster is provisioning
+if ($ProvisionInfrastructure){
+    # Deploy infrastructure
+    try {
+        .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
+            -Location $Location -ClusterTier $ClusterLevel
+    }
+    catch {
+        $deploymentPause = 5
+        Write-Warning -Message "First deployment attempt failed, waiting $deploymentPause seconds and retrying."
+        Start-Sleep -Seconds $deploymentPause
+        .\Infrastructure\scripts\advanced_cluster.ps1 -Name $ClusterName -NodeCount $NodeCount `
+            -Location $Location -ClusterTier $ClusterLevel        
+    }
 
-
-# Prompt user to update config file with App Insights key
-Write-Warning -Message "Application Insights has been provisioned.`nPlease update the application config file '$AppConfigFile' before proceeding."
-Read-Host -Prompt "Press Enter to continue..."
+    # Prompt user to update config file with App Insights key
+    Write-Warning -Message "Application Insights has been provisioned.`nPlease update the application config file '$AppConfigFile' before proceeding."
+    Read-Host -Prompt "Press Enter to continue..."
+}
 
 # Generate application package
 .\ClusterGeneration\AppGenerator.ps1 -Name $AppName -ConfigFile $AppConfigFile
