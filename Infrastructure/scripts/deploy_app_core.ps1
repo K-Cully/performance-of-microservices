@@ -16,8 +16,9 @@ $ApplicationType = $ApplicationName + "Type"
 $ApplicationVersion = "1.0.0"
 
 # Configure cluster connection
+$SecretsRoot = "$($PSScriptRoot | split-path)\secrets"
 $Endpoint = "https://$ClusterName.$Location.cloudapp.azure.com:19080"
-$Thumbprint = Get-Content "$PSScriptRoot\$ClusterName.thumb.txt"
+$Thumbprint = Get-Content "$SecretsRoot\$ClusterName.thumb.txt"
 $TimeoutSeconds = 600
 
 # Connect to cluster
