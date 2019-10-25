@@ -433,9 +433,9 @@
                     }
                 },
                 "EmptyCart": {
-                    "type": "AsyncRequestStep",
+                    "type": "RequestStep",
                     "value": {
-                        "client": "CartClient",
+                        "client": "AsyncCartClient",
                         "method": "post",
                         "path": "/api/Cart/GetItems",
                         "size": 16,

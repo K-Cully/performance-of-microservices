@@ -98,6 +98,11 @@
             <stringProp name="Argument.value">600000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="biDuration" elementType="Argument">
+            <stringProp name="Argument.name">biDuration</stringProp>
+            <stringProp name="Argument.value">900</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
@@ -234,7 +239,7 @@
           </RandomVariableConfig>
           <hashTree/>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Add to cart with probability" enabled="true">
-            <stringProp name="IfController.condition">${__jexl3(${shopAddValue}&lt;=${shopAddPercent})}</stringProp>
+            <stringProp name="IfController.condition">${__jexl3(${shopAddValue}&lt;${shopAddPercent})}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
@@ -271,7 +276,7 @@
         </RandomVariableConfig>
         <hashTree/>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Checkout with probability" enabled="true">
-          <stringProp name="IfController.condition">${__jexl3(${shopPurchaseValue}&lt;=${shopPurchasePercent})}</stringProp>
+          <stringProp name="IfController.condition">${__jexl3(${shopPurchaseValue}&lt;${shopPurchacePercent})}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -306,7 +311,7 @@
           </RandomVariableConfig>
           <hashTree/>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Remove from cart with probability" enabled="true">
-            <stringProp name="IfController.condition">${__jexl3(${shopRemoveValue}&lt;=${shopRemovePercent})}</stringProp>
+            <stringProp name="IfController.condition">${__jexl3(${shopRemoveValue}&lt;${shopRemovePercent})}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
@@ -479,7 +484,7 @@
         <hashTree/>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Checkout with probability" enabled="true">
           <stringProp name="TestPlan.comments">Adds an item to the cart and purchases it</stringProp>
-          <stringProp name="IfController.condition">${__jexl3(${browsePurchaseValue}&lt;=${browsePurchasePercent})}</stringProp>
+          <stringProp name="IfController.condition">${__jexl3(${browsePurchaseValue}&lt;${browsePurchacePercent})}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -555,7 +560,7 @@
         <stringProp name="ThreadGroup.num_threads">${analyticBots}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${durationSeconds}</stringProp>
+        <stringProp name="ThreadGroup.duration">${biDuration}</stringProp>
         <stringProp name="ThreadGroup.delay">${biStartDelaySeconds}</stringProp>
       </ThreadGroup>
       <hashTree>
