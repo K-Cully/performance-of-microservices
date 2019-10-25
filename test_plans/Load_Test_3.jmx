@@ -35,7 +35,7 @@
           </elementProp>
           <elementProp name="host" elementType="Argument">
             <stringProp name="Argument.name">host</stringProp>
-            <stringProp name="Argument.value">some-cluster-name.northeurope.cloudapp.azure.com</stringProp>
+            <stringProp name="Argument.value">emu-neu-base.northeurope.cloudapp.azure.com</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="browsePort" elementType="Argument">
@@ -96,6 +96,11 @@
           <elementProp name="biWaitMilliseconds" elementType="Argument">
             <stringProp name="Argument.name">biWaitMilliseconds</stringProp>
             <stringProp name="Argument.value">600000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="biDurationSeconds" elementType="Argument">
+            <stringProp name="Argument.name">biDurationSeconds</stringProp>
+            <stringProp name="Argument.value">900</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -198,6 +203,18 @@
           <stringProp name="TestPlan.comments">Open the homepage of the store</stringProp>
         </HTTPSamplerProxy>
         <hashTree/>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">500</stringProp>
+            <stringProp name="RandomTimer.range">1200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Retrieve Items" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
           <stringProp name="TestPlan.comments">Searches for items and adds them to the user&apos;s cart with a set probebility</stringProp>
@@ -228,13 +245,25 @@
             <stringProp name="maximumValue">100</stringProp>
             <stringProp name="minimumValue">1</stringProp>
             <stringProp name="outputFormat">0</stringProp>
-            <boolProp name="perThread">false</boolProp>
+            <boolProp name="perThread">true</boolProp>
             <stringProp name="randomSeed">11111</stringProp>
             <stringProp name="variableName">shopAddValue</stringProp>
           </RandomVariableConfig>
           <hashTree/>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">800</stringProp>
+              <stringProp name="RandomTimer.range">1700</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Add to cart with probability" enabled="true">
-            <stringProp name="IfController.condition">${__jexl3(${shopAddValue}&lt;=${shopAddPercent})}</stringProp>
+            <stringProp name="IfController.condition">${__jexl3(${shopAddValue}&lt;${shopAddPercent})}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
@@ -247,7 +276,7 @@
               <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">${checkoutPath}/AddItem</stringProp>
+              <stringProp name="HTTPSampler.path">${checkoutPath}/AddItem?probability=${shopAddValue}</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -267,11 +296,11 @@
           <stringProp name="minimumValue">1</stringProp>
           <stringProp name="maximumValue">100</stringProp>
           <stringProp name="randomSeed">2131</stringProp>
-          <boolProp name="perThread">false</boolProp>
+          <boolProp name="perThread">true</boolProp>
         </RandomVariableConfig>
         <hashTree/>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Checkout with probability" enabled="true">
-          <stringProp name="IfController.condition">${__jexl3(${shopPurchaseValue}&lt;=${shopPurchasePercent})}</stringProp>
+          <stringProp name="IfController.condition">${__jexl3(${shopPurchaseValue}&lt;${shopPurchacePercent})}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -284,7 +313,7 @@
             <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${checkoutPath}/GetItems</stringProp>
+            <stringProp name="HTTPSampler.path">${checkoutPath}/GetItems?probability=${shopPurchaseValue}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -296,17 +325,29 @@
             <stringProp name="TestPlan.comments">Retrieves Items from the cart for page rendering</stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">500</stringProp>
+              <stringProp name="RandomTimer.range">1200</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
           <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Remove random" enabled="true">
             <stringProp name="variableName">shopRemoveValue</stringProp>
             <stringProp name="outputFormat">0</stringProp>
             <stringProp name="minimumValue">1</stringProp>
             <stringProp name="maximumValue">100</stringProp>
             <stringProp name="randomSeed">3632</stringProp>
-            <boolProp name="perThread">false</boolProp>
+            <boolProp name="perThread">true</boolProp>
           </RandomVariableConfig>
           <hashTree/>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Remove from cart with probability" enabled="true">
-            <stringProp name="IfController.condition">${__jexl3(${shopRemoveValue}&lt;=${shopRemovePercent})}</stringProp>
+            <stringProp name="IfController.condition">${__jexl3(${shopRemoveValue}&lt;${shopRemovePercent})}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
@@ -319,7 +360,7 @@
               <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">${checkoutPath}/RemoveItem</stringProp>
+              <stringProp name="HTTPSampler.path">${checkoutPath}/RemoveItem?probability=${shopRemoveValue}</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -331,6 +372,18 @@
               <stringProp name="TestPlan.comments">Remove an item from the user&apos;s cart</stringProp>
             </HTTPSamplerProxy>
             <hashTree/>
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+              <intProp name="ActionProcessor.action">1</intProp>
+              <intProp name="ActionProcessor.target">0</intProp>
+              <stringProp name="ActionProcessor.duration">0</stringProp>
+            </TestAction>
+            <hashTree>
+              <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+                <stringProp name="ConstantTimer.delay">500</stringProp>
+                <stringProp name="RandomTimer.range">1200</stringProp>
+              </UniformRandomTimer>
+              <hashTree/>
+            </hashTree>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Purchase Items" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -340,7 +393,7 @@
             <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${checkoutPath}/MakePayment</stringProp>
+            <stringProp name="HTTPSampler.path">${checkoutPath}/MakePayment?probability=${shopPurchaseValue}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -414,6 +467,18 @@
           <stringProp name="TestPlan.comments">Open the homepage of the store</stringProp>
         </HTTPSamplerProxy>
         <hashTree/>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">500</stringProp>
+            <stringProp name="RandomTimer.range">1200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Browse Store" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
           <stringProp name="TestPlan.comments">Browses store web pages</stringProp>
@@ -440,6 +505,18 @@
             <stringProp name="TestPlan.comments">Open a page of the store</stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">500</stringProp>
+              <stringProp name="RandomTimer.range">1200</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Search Items" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
@@ -467,6 +544,18 @@
             <stringProp name="TestPlan.comments">Search for a particular item</stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">800</stringProp>
+              <stringProp name="RandomTimer.range">1700</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Purchase random" enabled="true">
           <stringProp name="variableName">browsePurchaseValue</stringProp>
@@ -474,12 +563,12 @@
           <stringProp name="minimumValue">1</stringProp>
           <stringProp name="maximumValue">100</stringProp>
           <stringProp name="randomSeed">2131</stringProp>
-          <boolProp name="perThread">false</boolProp>
+          <boolProp name="perThread">true</boolProp>
         </RandomVariableConfig>
         <hashTree/>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Checkout with probability" enabled="true">
           <stringProp name="TestPlan.comments">Adds an item to the cart and purchases it</stringProp>
-          <stringProp name="IfController.condition">${__jexl3(${browsePurchaseValue}&lt;=${browsePurchasePercent})}</stringProp>
+          <stringProp name="IfController.condition">${__jexl3(${browsePurchaseValue}&lt;${browsePurchacePercent})}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -492,7 +581,7 @@
             <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${checkoutPath}/AddItem</stringProp>
+            <stringProp name="HTTPSampler.path">${checkoutPath}/AddItem?probability=${browsePurchaseValue}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -504,6 +593,18 @@
             <stringProp name="TestPlan.comments">Adds an item to the user&apos;s cart</stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">500</stringProp>
+              <stringProp name="RandomTimer.range">1200</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Items" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -512,7 +613,7 @@
             <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${checkoutPath}/GetItems</stringProp>
+            <stringProp name="HTTPSampler.path">${checkoutPath}/GetItems?probability=${browsePurchaseValue}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -532,7 +633,7 @@
             <stringProp name="HTTPSampler.port">${checkoutPort}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${checkoutPath}/MakePayment</stringProp>
+            <stringProp name="HTTPSampler.path">${checkoutPath}/MakePayment?probability=${browsePurchaseValue}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -555,7 +656,7 @@
         <stringProp name="ThreadGroup.num_threads">${analyticBots}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.duration">${biDurationSeconds}</stringProp>
         <stringProp name="ThreadGroup.delay">${biStartDelaySeconds}</stringProp>
       </ThreadGroup>
       <hashTree>
@@ -582,9 +683,19 @@
         <hashTree/>
         <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="Retry failures" enabled="true">
           <stringProp name="TestPlan.comments">Retries failed requests twice</stringProp>
-          <stringProp name="WhileController.condition">${__groovy(&quot;&quot;.equals(&quot;${biQueryResult}&quot;) &amp;&amp; ${biCounter} &lt; 3)}</stringProp>
+          <stringProp name="WhileController.condition">${__groovy(&quot;&quot;.equals(&quot;${biQueryResult}&quot;) &amp;&amp; ${biCounter}&lt;3)}</stringProp>
         </WhileController>
         <hashTree>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <stringProp name="CounterConfig.start">1</stringProp>
+            <stringProp name="CounterConfig.end"></stringProp>
+            <stringProp name="CounterConfig.incr">1</stringProp>
+            <stringProp name="CounterConfig.name">biCounter</stringProp>
+            <stringProp name="CounterConfig.format"></stringProp>
+            <boolProp name="CounterConfig.per_user">true</boolProp>
+            <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
+          </CounterConfig>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Query Data" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -614,21 +725,37 @@
             <stringProp name="RegexExtractor.match_number">1</stringProp>
           </RegexExtractor>
           <hashTree/>
-          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
-            <stringProp name="CounterConfig.start">1</stringProp>
-            <stringProp name="CounterConfig.end"></stringProp>
-            <stringProp name="CounterConfig.incr">1</stringProp>
-            <stringProp name="CounterConfig.name">biCounter</stringProp>
-            <stringProp name="CounterConfig.format"></stringProp>
-            <boolProp name="CounterConfig.per_user">true</boolProp>
-            <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
-          </CounterConfig>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait befor retry" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">5000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Reset loop variables" enabled="true">
+          <stringProp name="BeanShellSampler.query">vars.put(&quot;biCounter&quot;, &quot;1&quot;);
+vars.put(&quot;biQueryResult&quot;, &quot;&quot;);</stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="BI query delay" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">${biWaitMilliseconds}</stringProp>
+          </ConstantTimer>
           <hashTree/>
         </hashTree>
-        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait timer" enabled="true">
-          <stringProp name="ConstantTimer.delay">${biWaitMilliseconds}</stringProp>
-        </ConstantTimer>
-        <hashTree/>
       </hashTree>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
