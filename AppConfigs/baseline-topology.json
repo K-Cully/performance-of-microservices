@@ -1,6 +1,6 @@
 {
     "appsettingsPath": "",
-    "aiKey": "9c274216-754a-4ad4-9709-0d6d1cd5e945",
+    "aiKey": "",
     "services": {
         "Catalogue": {
             "comment": "The catalogue service provides stock access and update capabilities. Database access is modelled using a delay.",
