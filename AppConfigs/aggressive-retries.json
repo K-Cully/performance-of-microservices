@@ -723,7 +723,7 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
+                        "3ImmediateRetries",
                         "15SecondTimeout"
                     ],
                     "headers": {
@@ -734,7 +734,7 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8005",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
+                        "3ImmediateRetries",
                         "15SecondTimeout"
                     ],
                     "headers": {
@@ -757,14 +757,11 @@
                         "time": 30.0
                     }
                 },
-                "Basic2Retries": {
+                "3ImmediateRetries": {
                     "type": "RetryConfig",
                     "value": {
-                        "retries": 2,
-                        "delays": [
-                            2.0,
-                            5.0
-                        ]
+                        "retries": 3,
+                        "delays": []
                     }
                 }
             }
@@ -861,7 +858,7 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
+                        "3ImmediateRetries",
                         "15SecondTimeout"
                     ],
                     "headers": {
@@ -872,7 +869,7 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8002",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
+                        "3ImmediateRetries",
                         "15SecondTimeout"
                     ],
                     "headers": {
@@ -895,14 +892,11 @@
                         "time": 30.0
                     }
                 },
-                "Basic2Retries": {
+                "3ImmediateRetries": {
                     "type": "RetryConfig",
                     "value": {
-                        "retries": 2,
-                        "delays": [
-                            2.0,
-                            5.0
-                        ]
+                        "retries": 3,
+                        "delays": []
                     }
                 }
             }
