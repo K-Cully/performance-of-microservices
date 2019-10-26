@@ -23,7 +23,7 @@ The cache invalidation time as an object of the form:
 }
 ```
 Where invalidation time is absolute, this time is added to 00:00 on the day a cache entry is created.<br/>
-When the time has already passed on cache emtry creation, a day is added to the absolute time.<br/>
+When the time has already passed on cache entry creation, a day is added to the absolute time.<br/>
 For all other cache expiration types, this is added the time of cache entry creation.<br/>
 
 ##### absoluteTime (Optional)
