@@ -722,9 +722,8 @@
                 "CartClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
-                        "30SecondTimeout",
-                        "Basic2Retries",
-                        "15SecondTimeout"
+                        "2QuickRetries",
+                        "5SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -733,8 +732,7 @@
                 "PaymentClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8005",
                     "policies": [
-                        "30SecondTimeout",
-                        "Basic2Retries",
+                        "2QuickRetries",
                         "15SecondTimeout"
                     ],
                     "headers": {
@@ -750,20 +748,20 @@
                         "time": 15.0
                     }
                 },
-                "30SecondTimeout": {
+                "5SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
-                        "cancelDelegates": true,
-                        "time": 30.0
+                        "cancelDelegates": false,
+                        "time": 5.0
                     }
                 },
-                "Basic2Retries": {
+                "2QuickRetries": {
                     "type": "RetryConfig",
                     "value": {
                         "retries": 2,
                         "delays": [
-                            2.0,
-                            5.0
+                            1.0,
+                            1.0
                         ]
                     }
                 }
