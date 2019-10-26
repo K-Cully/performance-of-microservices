@@ -177,20 +177,9 @@
             "clients": {
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
-                    "policies": [
-                        "30SecondTimeout"
-                    ],
+                    "policies": [],
                     "headers": {
                         "Accept": "*/*"
-                    }
-                }
-            },
-            "policies": {
-                "30SecondTimeout": {
-                    "type": "TimeoutConfig",
-                    "value": {
-                        "cancelDelegates": true,
-                        "time": 30.0
                     }
                 }
             }
@@ -346,20 +335,9 @@
             "clients": {
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
-                    "policies": [
-                        "30SecondTimeout"
-                    ],
+                    "policies": [],
                     "headers": {
                         "Accept": "*/*"
-                    }
-                }
-            },
-            "policies": {
-                "30SecondTimeout": {
-                    "type": "TimeoutConfig",
-                    "value": {
-                        "cancelDelegates": true,
-                        "time": 30.0
                     }
                 }
             }
@@ -469,27 +447,21 @@
             "clients": {
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
-                    "policies": [
-                        "30SecondTimeout"
-                    ],
+                    "policies": [],
                     "headers": {
                         "Accept": "*/*"
                     }
                 },
                 "CartClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
-                    "policies": [
-                        "30SecondTimeout"
-                    ],
+                    "policies": [],
                     "headers": {
                         "Accept": "*/*"
                     }
                 },
                 "AccountsClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
-                    "policies": [
-                        "30SecondTimeout"
-                    ],
+                    "policies": [],
                     "headers": {
                         "Accept": "*/*"
                     }
@@ -523,13 +495,6 @@
                 }
             },
             "policies": {
-                "30SecondTimeout": {
-                    "type": "TimeoutConfig",
-                    "value": {
-                        "cancelDelegates": true,
-                        "time": 30.0
-                    }
-                },
                 "ExponentialRetry": {
                     "type": "RetryConfig",
                     "value": {
@@ -724,7 +689,7 @@
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
-                        "15SecondTimeout"
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -735,7 +700,7 @@
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
-                        "15SecondTimeout"
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -743,11 +708,11 @@
                 }
             },
             "policies": {
-                "15SecondTimeout": {
+                "10SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
-                        "time": 15.0
+                        "time": 10.0
                     }
                 },
                 "30SecondTimeout": {
@@ -862,7 +827,7 @@
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
-                        "15SecondTimeout"
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -873,7 +838,7 @@
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
-                        "15SecondTimeout"
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -881,11 +846,11 @@
                 }
             },
             "policies": {
-                "15SecondTimeout": {
+                "10SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
-                        "cancelDelegates": true,
-                        "time": 15.0
+                        "cancelDelegates": false,
+                        "time": 10.0
                     }
                 },
                 "30SecondTimeout": {
