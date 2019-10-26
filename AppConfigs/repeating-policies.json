@@ -347,7 +347,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryTwice",
+                        "8SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -355,11 +356,22 @@
                 }
             },
             "policies": {
-                "30SecondTimeout": {
+                "8SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
-                        "time": 30.0
+                        "time": 8.0
+                    }
+                },
+                "RetryTwice": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 2,
+                        "delays": [
+                            2.0,
+                            4.0
+                        ],
+                        "jitter": 500
                     }
                 }
             }
@@ -470,7 +482,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryOnce",
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -479,7 +492,8 @@
                 "CartClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryOnce",
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -488,7 +502,8 @@
                 "AccountsClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryOnce",
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -523,11 +538,11 @@
                 }
             },
             "policies": {
-                "30SecondTimeout": {
+                "10SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
-                        "time": 30.0
+                        "time": 10.0
                     }
                 },
                 "ExponentialRetry": {
@@ -538,6 +553,15 @@
                             -1.0
                         ],
                         "jitter": 2000
+                    }
+                },
+                "RetryOnce": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 1,
+                        "delays": [
+                            2.0
+                        ]
                     }
                 }
             }
