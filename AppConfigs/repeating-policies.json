@@ -859,8 +859,8 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
-                        "15SecondTimeout"
+                        "3Retries",
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -870,8 +870,8 @@
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8002",
                     "policies": [
                         "30SecondTimeout",
-                        "Basic2Retries",
-                        "15SecondTimeout"
+                        "3Retries",
+                        "10SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -879,28 +879,28 @@
                 }
             },
             "policies": {
-                "15SecondTimeout": {
+                "10SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
-                        "time": 15.0
+                        "time": 10.0
                     }
                 },
                 "30SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
-                        "cancelDelegates": true,
+                        "cancelDelegates": false,
                         "time": 30.0
                     }
                 },
-                "Basic2Retries": {
+                "3Retries": {
                     "type": "RetryConfig",
                     "value": {
-                        "retries": 2,
+                        "retries": 3,
                         "delays": [
-                            2.0,
-                            5.0
-                        ]
+                            -1.0
+                        ],
+                        "jitter": 1000
                     }
                 }
             }
