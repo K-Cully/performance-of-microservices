@@ -156,7 +156,7 @@
                         "method": "get",
                         "path": "/api/Catalogue/GetProducts",
                         "size": 16,
-                        "reuseSockets": true,
+                        "reuseSockets": false,
                         "trueAsync": false
                     }
                 },
@@ -169,7 +169,7 @@
                         "method": "get",
                         "path": "/api/Catalogue/GetSearchProducts",
                         "size": 16,
-                        "reuseSockets": true,
+                        "reuseSockets": false,
                         "trueAsync": false
                     }
                 }
