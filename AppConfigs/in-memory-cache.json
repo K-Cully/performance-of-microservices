@@ -1,0 +1,943 @@
+{
+    "appsettingsPath": "",
+    "aiKey": "",
+    "services": {
+        "Catalogue": {
+            "comment": "The catalogue service provides stock access and update capabilities. Database access is modelled using a delay.",
+            "port": 8001,
+            "processors": {
+                "GetProduct": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseCall",
+                            "DeserializeOneItem"
+                        ],
+                        "successSize": 3072
+                    }
+                },
+                "GetProducts": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseCall",
+                            "DeserializeManyItems"
+                        ],
+                        "successSize": 76800
+                    }
+                },
+                "GetSearchProducts": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseCall",
+                            "DeserializeFewItems"
+                        ],
+                        "successSize": 9216
+                    }
+                },
+                "UpdateProduct": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 64,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseCall",
+                            "DeserializeOneItem"
+                        ],
+                        "successSize": 64
+                    }
+                }
+            },
+            "steps": {
+                "DatabaseCall": {
+                    "type": "DelayStep",
+                    "value": {
+                        "time": 0.03
+                    }
+                },
+                "DeserializeOneItem": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 3072,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "DeserializeFewItems": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 9216,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "DeserializeManyItems": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 76800,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                }
+            }
+        },
+        "Search": {
+            "comment": "The search service provides query to index mapping then performs efficient catalogue queries.",
+            "port": 8002,
+            "processors": {
+                "InitializeIndexes": {
+                    "type": "StartupProcessor",
+                    "value": {
+                        "asynchronous": true,
+                        "steps": [
+                            "StaticIndexLoad"
+                        ]
+                    }
+                },
+                "GetBatch": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "LookupIndexes",
+                            "BatchQuery"
+                        ],
+                        "successSize": 76800
+                    }
+                },
+                "Query": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "LookupIndexes",
+                            "SearchQuery"
+                        ],
+                        "successSize": 9216
+                    }
+                }
+            },
+            "steps": {
+                "StaticIndexLoad": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 128000000,
+                        "time": -1.0,
+                        "percent": 0
+                    }
+                },
+                "LookupIndexes": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 16,
+                        "time": 0.0001,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "BatchQuery": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "BatchQuery",
+                        "cacheKeyUniqueness": 40,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProducts",
+                        "size": 16,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "SearchQuery": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "SearchQuery",
+                        "cacheKeyUniqueness": 5000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetSearchProducts",
+                        "size": 16,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "30SecondTimeout",
+                        "3MinuteCache"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "3MinuteCache": {
+                    "type": "CacheConfig",
+                    "value": {
+                        "time" : { "minutes" : 3 },
+                        "slidingExpiration" : true
+                    }
+                }
+            }
+        },
+        "Accounts": {
+            "comment": "The accounts service provides account information. Database access is modelled using a delay.",
+            "port": 8003,
+            "processors": {
+                "GetAccountId": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseRead"
+                        ],
+                        "successSize": 16
+                    }
+                },
+                "GetPurchases": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "InterpretQuery",
+                            "DatabaseRead"
+                        ],
+                        "successSize": 320000
+                    }
+                },
+                "GetPaymentInfo": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseRead"
+                        ],
+                        "successSize": 64
+                    }
+                },
+                "UpdatePurchases": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "DatabaseWrite"
+                        ],
+                        "successSize": 16
+                    }
+                }
+            },
+            "steps": {
+                "InterpretQuery": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 128,
+                        "time": 0.005,
+                        "percent": 5,
+                        "processors": 1
+                    }
+                },
+                "DatabaseRead": {
+                    "type": "DelayStep",
+                    "value": {
+                        "time": 0.01
+                    }
+                },
+                "DatabaseWrite": {
+                    "type": "DelayStep",
+                    "value": {
+                        "time": 0.03
+                    }
+                }
+            }
+        },
+        "Cart": {
+            "comment": "The cart service maintains a temporary list of products for a customer to purchase at the end of their session.",
+            "port": 8004,
+            "processors": {
+                "AddItem": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "GetCatalogItem",
+                            "ModifyCart"
+                        ],
+                        "successSize": 64
+                    }
+                },
+                "RemoveItem": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "ModifyCart"
+                        ],
+                        "successSize": 64
+                    }
+                },
+                "EmptyCart": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "ModifyCart"
+                        ],
+                        "successSize": 32
+                    }
+                },
+                "GetItems": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "ModifyCart"
+                        ],
+                        "successSize": 2048
+                    }
+                }
+            },
+            "steps": {
+                "GetCatalogItem": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetCatalogItem",
+                        "cacheKeyUniqueness": 1000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProduct",
+                        "size": 4,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "ModifyCart": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 64,
+                        "time": 0.0,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "30SecondTimeout",
+                        "3MinuteCache"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "3MinuteCache": {
+                    "type": "CacheConfig",
+                    "value": {
+                        "time" : { "minutes" : 3 },
+                        "slidingExpiration" : true
+                    }
+                }
+            }
+        },
+        "Payments": {
+            "comment": "The payments service processes payment with a third-party and notifies other services to fulfil their part in the order. The third-party is modelled using a delay.",
+            "port": 8005,
+            "processors": {
+                "ProcessPayment": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "GetCartItems",
+                            "GetCatalogItems",
+                            "GetPaymentInstrument",
+                            "AuthorizePayment",
+                            "PlaceOrder",
+                            "UpdatePurchases",
+                            "EmptyCart"
+                        ],
+                        "successSize": 64
+                    }
+                }
+            },
+            "steps": {
+                "AuthorizePayment": {
+                    "type": "DelayStep",
+                    "value": {
+                        "time": "4.2"
+                    }
+                },
+                "GetCatalogItems": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetCatalog",
+                        "cacheKeyUniqueness": 10000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetSearchProducts",
+                        "size": 4,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "GetCartItems": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetCart",
+                        "cacheKeyUniqueness": 10000,
+                        "client": "CartClient",
+                        "method": "get",
+                        "path": "/api/Cart/GetItems",
+                        "size": 4,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "GetPaymentInstrument": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetPayment",
+                        "cacheKeyUniqueness": 1000,
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetPaymentInfo",
+                        "size": 4,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "EmptyCart": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "AsyncCartClient",
+                        "method": "post",
+                        "path": "/api/Cart/GetItems",
+                        "size": 16,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
+                },
+                "PlaceOrder": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "AsyncCatalogueClient",
+                        "method": "post",
+                        "path": "/api/Catalogue/UpdateProduct",
+                        "size": 512,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
+                },
+                "UpdatePurchases": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "AsyncAccountsClient",
+                        "method": "post",
+                        "path": "/api/Accounts/UpdatePurchases",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": true
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "30SecondTimeout",
+                        "3MinuteCache"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "CartClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "policies": [
+                        "30SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AccountsClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "policies": [
+                        "30SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AsyncCatalogueClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AsyncCartClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AsyncAccountsClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "policies": [
+                        "ExponentialRetry"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "ExponentialRetry": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 6,
+                        "delays": [
+                            -1.0
+                        ],
+                        "jitter": 2000
+                    }
+                },
+                "3MinuteCache": {
+                    "type": "CacheConfig",
+                    "value": {
+                        "time" : { "minutes" : 3 },
+                        "slidingExpiration" : true
+                    }
+                }
+            }
+        },
+        "BusinessIntelligence": {
+            "comment": "The BusinessIntelligence service allows querying for information on purchases over a given period.",
+            "port": 8006,
+            "processors": {
+                "GetData": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "GetUserDetails",
+                            "GetCatalogueItems",
+                            "GetCatalogueItems",
+                            "GetCatalogueItems",
+                            "GetCatalogueItems",
+                            "GetCatalogueItems"
+                        ],
+                        "successSize": 3686400
+                    }
+                }
+            },
+            "steps": {
+                "GetUserDetails": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetUser",
+                        "cacheKeyUniqueness": 20,
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetPurchases",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "GetCatalogueItems": {
+                    "type": "RequestStep",
+                    "value": {
+                        "parallelCount": 12,
+                        "parallelError": "Any",
+                        "cacheId": "GetCatalogue",
+                        "cacheKeyUniqueness": 3000,
+                        "client": "CatalogueClient",
+                        "method": "get",
+                        "path": "/api/Catalogue/GetProducts",
+                        "size": 16,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                }
+            },
+            "clients": {
+                "CatalogueClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "policies": [
+                        "30SecondTimeout",
+                        "3MinuteCache"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "AccountsClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "policies": [
+                        "30SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "3MinuteCache": {
+                    "type": "CacheConfig",
+                    "value": {
+                        "time" : { "minutes" : 3 },
+                        "slidingExpiration" : true
+                    }
+                }
+            }
+        },
+        "Checkout": {
+            "comment": "The Checkout service provides a frontend API for checkout web page interactions.",
+            "port": 8007,
+            "processors": {
+                "AddItem": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "AddCartItem"
+                        ],
+                        "successSize": 32
+                    }
+                },
+                "RemoveItem": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "RemoveCartItem"
+                        ],
+                        "successSize": 32
+                    }
+                },
+                "GetItems": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "GetCartItems"
+                        ],
+                        "successSize": 1536
+                    }
+                },
+                "MakePayment": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "PayForItem"
+                        ],
+                        "successSize": 32
+                    }
+                }
+            },
+            "steps": {
+                "GetCartItems": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "CartClient",
+                        "method": "get",
+                        "path": "/api/Cart/GetItems",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "AddCartItem": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "CartClient",
+                        "method": "put",
+                        "path": "/api/Cart/AddItem",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "RemoveCartItem": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "CartClient",
+                        "method": "put",
+                        "path": "/api/Cart/RemoveItem",
+                        "size": 64,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "PayForItem": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "PaymentClient",
+                        "method": "post",
+                        "path": "/api/Payments/ProcessPayment",
+                        "size": 128,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                }
+            },
+            "clients": {
+                "CartClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "policies": [
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "PaymentClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8005",
+                    "policies": [
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "15SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 15.0
+                    }
+                },
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "Basic2Retries": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 2,
+                        "delays": [
+                            2.0,
+                            5.0
+                        ]
+                    }
+                }
+            }
+        },
+        "Browse": {
+            "comment": "The Browse service provides a frontend API for store web page interactions.",
+            "port": 8008,
+            "processors": {
+                "Login": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "Authenticate",
+                            "GetAccount"
+                        ],
+                        "successSize": 512
+                    }
+                },
+                "GetProducts": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "GetProducts"
+                        ],
+                        "successSize": 76800
+                    }
+                },
+                "Search": {
+                    "type": "RequestProcessor",
+                    "value": {
+                        "errorSize": 256,
+                        "latency": 0,
+                        "steps": [
+                            "SearchProducts"
+                        ],
+                        "successSize": 9216
+                    }
+                }
+            },
+            "steps": {
+                "Authenticate": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 16,
+                        "time": 0.001,
+                        "percent": 1,
+                        "processors": 1
+                    }
+                },
+                "GetAccount": {
+                    "type": "RequestStep",
+                    "value": {
+                        "client": "AccountsClient",
+                        "method": "get",
+                        "path": "/api/Accounts/GetAccountId",
+                        "size": 128,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "GetProducts": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "GetProducts",
+                        "cacheKeyUniqueness": 50,
+                        "client": "SearchClient",
+                        "method": "get",
+                        "path": "/api/Search/GetBatch",
+                        "size": 2,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                },
+                "SearchProducts": {
+                    "type": "RequestStep",
+                    "value": {
+                        "cacheId": "Search",
+                        "cacheKeyUniqueness": 5000,
+                        "client": "SearchClient",
+                        "method": "get",
+                        "path": "/api/Search/Query",
+                        "size": 2,
+                        "reuseSockets": true,
+                        "trueAsync": false
+                    }
+                }
+            },
+            "clients": {
+                "AccountsClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "policies": [
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                },
+                "SearchClient": {
+                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8002",
+                    "policies": [
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
+                    ],
+                    "headers": {
+                        "Accept": "*/*"
+                    }
+                }
+            },
+            "policies": {
+                "15SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 15.0
+                    }
+                },
+                "30SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 30.0
+                    }
+                },
+                "Basic2Retries": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 2,
+                        "delays": [
+                            2.0,
+                            5.0
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
