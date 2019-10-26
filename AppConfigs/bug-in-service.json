@@ -13,7 +13,8 @@
                         "latency": 0,
                         "steps": [
                             "DatabaseCall",
-                            "DeserializeOneItem"
+                            "DeserializeOneItem",
+                            "Error"
                         ],
                         "successSize": 3072
                     }
@@ -25,7 +26,8 @@
                         "latency": 0,
                         "steps": [
                             "DatabaseCall",
-                            "DeserializeManyItems"
+                            "DeserializeManyItems",
+                            "Error"
                         ],
                         "successSize": 76800
                     }
@@ -37,7 +39,8 @@
                         "latency": 0,
                         "steps": [
                             "DatabaseCall",
-                            "DeserializeFewItems"
+                            "DeserializeFewItems",
+                            "Error"
                         ],
                         "successSize": 9216
                     }
@@ -87,6 +90,12 @@
                         "time": 0.0,
                         "percent": 1,
                         "processors": 1
+                    }
+                },
+                "Error": { 
+                    "type": "ErrorStep",
+                    "value": {
+                        "probability": 0.02
                     }
                 }
             }
