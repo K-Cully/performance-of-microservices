@@ -597,7 +597,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryOnce",
+                        "25SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -606,7 +607,8 @@
                 "AccountsClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
-                        "30SecondTimeout"
+                        "RetryOnce",
+                        "25SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -614,11 +616,20 @@
                 }
             },
             "policies": {
-                "30SecondTimeout": {
+                "25SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
-                        "time": 30.0
+                        "time": 25.0
+                    }
+                },
+                "RetryOnce": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 1,
+                        "delays": [
+                            10.0
+                        ]
                     }
                 }
             }
