@@ -533,9 +533,11 @@
                 "ExponentialRetry": {
                     "type": "RetryConfig",
                     "value": {
-                        "retries" : 6,
-                        "delays" : [ -1.0 ],
-                        "jitter" : 2000
+                        "retries": 6,
+                        "delays": [
+                            -1.0
+                        ],
+                        "jitter": 2000
                     }
                 }
             }
@@ -858,7 +860,9 @@
                 "AccountsClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
-                        "30SecondTimeout"
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -867,7 +871,9 @@
                 "SearchClient": {
                     "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8002",
                     "policies": [
-                        "30SecondTimeout"
+                        "30SecondTimeout",
+                        "Basic2Retries",
+                        "15SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -875,11 +881,28 @@
                 }
             },
             "policies": {
+                "15SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": true,
+                        "time": 15.0
+                    }
+                },
                 "30SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": true,
                         "time": 30.0
+                    }
+                },
+                "Basic2Retries": {
+                    "type": "RetryConfig",
+                    "value": {
+                        "retries": 2,
+                        "delays": [
+                            2.0,
+                            5.0
+                        ]
                     }
                 }
             }
