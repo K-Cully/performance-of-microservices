@@ -1,0 +1,208 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/K-Cully/performance-of-microservices/ClusterGeneration/schema",
+    "title": "Application",
+    "description": "The applciation topology to be generated",
+    "definitions": {
+        "processors": {
+            "$id": "#processors",
+            "description": "Processors which chain emulated business logic steps",
+            "type": "object",
+            "additionalProperties": {
+                "description": "A processor configuration",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The type of processor to create",
+                        "type": "string",
+                        "enum": [
+                            "RequestProcessor",
+                            "StartupProcessor"
+                        ]
+                    },
+                    "value": {
+                        "description": "Configuration values for the specific processor type",
+                        "type": "object",
+                        "properties": {
+                            "steps": {
+                                "description": "The ordered list of steps to be executed by the processor",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": true
+                        },
+                        "required": [
+                            "steps"
+                        ]
+                    }
+                },
+                "required": [
+                    "type",
+                    "value"
+                ]
+            }
+        },
+        "steps": {
+            "$id": "#steps",
+            "description": "Emulated business logic steps",
+            "type": "object",
+            "additionalProperties": {
+                "description": "A step configuration",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The type of step to create",
+                        "type": "string",
+                        "enum": [
+                            "DelayStep",
+                            "ErrorStep",
+                            "LoadStep",
+                            "RequestStep"
+                        ]
+                    },
+                    "value": {
+                        "description": "Configuration values for the specific step type",
+                        "type": "object"
+                    },
+                    "parallelCount": {
+                        "description": "The number of parallel executions of the step",
+                        "type": "number"
+                    },
+                    "parallelError": {
+                        "description": "A clause for how parallel execution errors affect the step result",
+                        "type": "string",
+                        "enum": [
+                            "All",
+                            "Any",
+                            "None"
+                        ]
+                    }
+                },
+                "required": [
+                    "type",
+                    "value"
+                ]
+            }
+        },
+        "clients": {
+            "$id": "#clients",
+            "description": "Http request clients",
+            "type": "object",
+            "additionalProperties": {
+                "description": "The http client to use for requests to a host",
+                "type": "object",
+                "properties": {
+                    "baseAddress": {
+                        "description": "The domain and (optionally) port of the host to connect to",
+                        "type": "string"
+                    },
+                    "policies": {
+                        "description": "A list of policies to apply to all requests through the client",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "headers": {
+                        "description": "A dictionary of headers to apply to all requests through the client",
+                        "type": "object",
+                        "additionalProperties": {
+                            "description": "A header key-value pair",
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "baseAddress",
+                    "policies"
+                ]
+            }
+        },
+        "policies": {
+            "$id": "#policies",
+            "description": "Resiliancy policies for http requests",
+            "type": "object",
+            "additionalProperties": {
+                "description": "The policy to be created",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The type of the policy config defined",
+                        "type": "string",
+                        "enum": [
+                            "AdvancedCircuitBreakerConfig",
+                            "BulkheadConfig",
+                            "CacheConfig",
+                            "CircuitBreakerConfig",
+                            "FallbackConfig",
+                            "RetryConfig",
+                            "TimeoutConfig"
+                        ]
+                    },
+                    "value": {
+                        "description": "The configuration values for the specified type",
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "type",
+                    "value"
+                ]
+            }
+        },
+        "services": {
+            "$id": "#services",
+            "description": "The dictionary of services to create as part of the application",
+            "type": "object",
+            "additionalProperties": {
+                "description": "The service to be generated",
+                "type": "object",
+                "properties": {
+                    "port": {
+                        "description": "The unique port to listen for requests on",
+                        "type": "number"
+                    },
+                    "processors": {
+                        "$ref": "#processors"
+                    },
+                    "steps": {
+                        "$ref": "#steps"
+                    },
+                    "clients": {
+                        "$ref": "#clients"
+                    },
+                    "policies": {
+                        "$ref": "#policies"
+                    }
+                },
+                "required": [
+                    "port",
+                    "processors",
+                    "steps"
+                ]
+            }
+        }
+    },
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "appsettingsPath": {
+            "description": "A complete path to a substitute appsettings.json file for services",
+            "type": "string"
+        },
+        "aiKey": {
+            "description": "An instrumentation key for service connectivity to Application Insights",
+            "type": "string"
+        },
+        "services": {
+            "$ref": "#services"
+        }
+    },
+    "required": [
+        "services"
+    ]
+}
