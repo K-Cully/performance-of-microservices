@@ -66,7 +66,9 @@
                     },
                     "parallelCount": {
                         "description": "The number of parallel executions of the step",
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": 0,
+                        "multipleOf": 1
                     },
                     "parallelError": {
                         "description": "A clause for how parallel execution errors affect the step result",
@@ -169,9 +171,15 @@
                 "description": "The service to be generated",
                 "type": "object",
                 "properties": {
+                    "comment": {
+                        "description": "Details about the service",
+                        "type": "string"
+                    },
                     "port": {
                         "description": "The unique port to listen for requests on",
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": 1,
+                        "multipleOf": 1
                     },
                     "processors": {
                         "$ref": "#/definitions/processors"
