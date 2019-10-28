@@ -1,6 +1,6 @@
 {
     "$schema": "../ClusterGeneration/app.schema.json",
-    "appsettingsPath": "",
+    "appsettingsPath": "6b84b933-890c-4331-8bcb-3812c1c6adde",
     "aiKey": "",
     "services": {
         "Catalogue": {
