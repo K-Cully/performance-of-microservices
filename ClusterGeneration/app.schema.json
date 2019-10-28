@@ -5,7 +5,6 @@
     "description": "The applciation topology to be generated",
     "definitions": {
         "processors": {
-            "$id": "#processors",
             "description": "Processors which chain emulated business logic steps",
             "type": "object",
             "additionalProperties": {
@@ -45,7 +44,6 @@
             }
         },
         "steps": {
-            "$id": "#steps",
             "description": "Emulated business logic steps",
             "type": "object",
             "additionalProperties": {
@@ -87,7 +85,6 @@
             }
         },
         "clients": {
-            "$id": "#clients",
             "description": "Http request clients",
             "type": "object",
             "additionalProperties": {
@@ -121,7 +118,6 @@
             }
         },
         "policies": {
-            "$id": "#policies",
             "description": "Resiliancy policies for http requests",
             "type": "object",
             "additionalProperties": {
@@ -178,16 +174,16 @@
                         "type": "number"
                     },
                     "processors": {
-                        "$ref": "#processors"
+                        "$ref": "#/definitions/processors"
                     },
                     "steps": {
-                        "$ref": "#steps"
+                        "$ref": "#/definitions/steps"
                     },
                     "clients": {
-                        "$ref": "#clients"
+                        "$ref": "#/definitions/clients"
                     },
                     "policies": {
-                        "$ref": "#policies"
+                        "$ref": "#/definitions/policies"
                     }
                 },
                 "required": [
