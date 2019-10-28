@@ -1,4 +1,5 @@
 {
+    "$schema": "../ClusterGeneration/app.schema.json",
     "appsettingsPath": "",
     "aiKey": "",
     "services": {

@@ -151,9 +151,22 @@
                     "value"
                 ]
             }
+        }
+    },
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "appsettingsPath": {
+            "description": "A complete path to a substitute appsettings.json file for services",
+            "type": "string"
+        },
+        "aiKey": {
+            "description": "An instrumentation key for service connectivity to Application Insights",
+            "type": "string"
         },
         "services": {
-            "$id": "#services",
             "description": "The dictionary of services to create as part of the application",
             "type": "object",
             "additionalProperties": {
@@ -183,23 +196,6 @@
                     "steps"
                 ]
             }
-        }
-    },
-    "type": "object",
-    "properties": {
-        "$schema": {
-            "type": "string"
-        },
-        "appsettingsPath": {
-            "description": "A complete path to a substitute appsettings.json file for services",
-            "type": "string"
-        },
-        "aiKey": {
-            "description": "An instrumentation key for service connectivity to Application Insights",
-            "type": "string"
-        },
-        "services": {
-            "$ref": "#services"
         }
     },
     "required": [
