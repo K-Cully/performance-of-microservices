@@ -257,8 +257,8 @@
           </TestAction>
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
-              <stringProp name="ConstantTimer.delay">800</stringProp>
-              <stringProp name="RandomTimer.range">1700</stringProp>
+              <stringProp name="ConstantTimer.delay">500</stringProp>
+              <stringProp name="RandomTimer.range">1200</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -551,8 +551,8 @@
           </TestAction>
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
-              <stringProp name="ConstantTimer.delay">800</stringProp>
-              <stringProp name="RandomTimer.range">1700</stringProp>
+              <stringProp name="ConstantTimer.delay">500</stringProp>
+              <stringProp name="RandomTimer.range">1200</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
