@@ -186,7 +186,7 @@ function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
             New-AzOperationalInsightsWindowsPerformanceCounterDataSource `
                 -ResourceGroupName $ResourceGroup -WorkspaceName $WorkspaceName `
                 -ObjectName $perfCounter -InstanceName $instanceName  -CounterName $counterName `
-                -IntervalSeconds 15 -Name $name -Force
+                -IntervalSeconds 30 -Name $name -Force
         }
     }
 }
