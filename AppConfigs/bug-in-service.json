@@ -152,8 +152,8 @@
                     "type": "LoadStep",
                     "value": {
                         "bytes": 16,
-                        "time": 0.005,
-                        "percent": 1,
+                        "time": 0.01,
+                        "percent": 10,
                         "processors": 1
                     }
                 },
@@ -260,8 +260,8 @@
                     "type": "LoadStep",
                     "value": {
                         "bytes": 128,
-                        "time": 0.005,
-                        "percent": 5,
+                        "time": 0.015,
+                        "percent": 15,
                         "processors": 1
                     }
                 },
@@ -653,6 +653,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "AddCartItem"
                         ],
                         "successSize": 32
@@ -664,6 +665,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "RemoveCartItem"
                         ],
                         "successSize": 32
@@ -675,6 +677,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "GetCartItems"
                         ],
                         "successSize": 1536
@@ -686,6 +689,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "PayForItem"
                         ],
                         "successSize": 32
@@ -693,6 +697,15 @@
                 }
             },
             "steps": {
+                "Authenticate": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 16,
+                        "time": 0.002,
+                        "percent": 5,
+                        "processors": 1
+                    }
+                },
                 "GetCartItems": {
                     "type": "RequestStep",
                     "value": {
@@ -811,6 +824,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "GetProducts"
                         ],
                         "successSize": 76800
@@ -822,6 +836,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "SearchProducts"
                         ],
                         "successSize": 9216
@@ -834,7 +849,7 @@
                     "value": {
                         "bytes": 16,
                         "time": 0.002,
-                        "percent": 1,
+                        "percent": 5,
                         "processors": 1
                     }
                 },
