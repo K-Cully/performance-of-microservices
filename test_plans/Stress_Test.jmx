@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load_Test_4" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Stress_Test" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -10,12 +10,12 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="shoppers" elementType="Argument">
             <stringProp name="Argument.name">shoppers</stringProp>
-            <stringProp name="Argument.value">100</stringProp>
+            <stringProp name="Argument.value">120</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="browsers" elementType="Argument">
             <stringProp name="Argument.name">browsers</stringProp>
-            <stringProp name="Argument.value">200</stringProp>
+            <stringProp name="Argument.value">240</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="analyticBots" elementType="Argument">
@@ -25,12 +25,12 @@
           </elementProp>
           <elementProp name="rampUpSeconds" elementType="Argument">
             <stringProp name="Argument.name">rampUpSeconds</stringProp>
-            <stringProp name="Argument.value">480</stringProp>
+            <stringProp name="Argument.value">600</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="durationSeconds" elementType="Argument">
             <stringProp name="Argument.name">durationSeconds</stringProp>
-            <stringProp name="Argument.value">1200</stringProp>
+            <stringProp name="Argument.value">900</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="host" elementType="Argument">
@@ -90,32 +90,17 @@
           </elementProp>
           <elementProp name="biStartDelaySeconds" elementType="Argument">
             <stringProp name="Argument.name">biStartDelaySeconds</stringProp>
-            <stringProp name="Argument.value">150</stringProp>
+            <stringProp name="Argument.value">60</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="biWaitMilliseconds" elementType="Argument">
             <stringProp name="Argument.name">biWaitMilliseconds</stringProp>
-            <stringProp name="Argument.value">180000</stringProp>
+            <stringProp name="Argument.value">150000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="biDurationSeconds" elementType="Argument">
             <stringProp name="Argument.name">biDurationSeconds</stringProp>
-            <stringProp name="Argument.value">1050</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="dataScientists" elementType="Argument">
-            <stringProp name="Argument.name">dataScientists</stringProp>
-            <stringProp name="Argument.value">1</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="dataScientistMinWaitMs" elementType="Argument">
-            <stringProp name="Argument.name">dataScientistMinWaitMs</stringProp>
-            <stringProp name="Argument.value">240000</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="dataScientistMaxWaitMs" elementType="Argument">
-            <stringProp name="Argument.name">dataScientistMaxWaitMs</stringProp>
-            <stringProp name="Argument.value">300000</stringProp>
+            <stringProp name="Argument.value">840</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -672,68 +657,6 @@ vars.put(&quot;biQueryResult&quot;, &quot;&quot;);</stringProp>
         <hashTree>
           <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait timer" enabled="true">
             <stringProp name="ConstantTimer.delay">${biWaitMilliseconds}</stringProp>
-          </ConstantTimer>
-          <hashTree/>
-        </hashTree>
-      </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Data Scientists" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-          <intProp name="LoopController.loops">-1</intProp>
-        </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${dataScientists}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
-        <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${durationSeconds}</stringProp>
-        <stringProp name="ThreadGroup.delay"></stringProp>
-        <stringProp name="TestPlan.comments">A thread group representing data scientist interactions</stringProp>
-      </ThreadGroup>
-      <hashTree>
-        <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager" enabled="true">
-          <boolProp name="clearEachIteration">true</boolProp>
-          <boolProp name="useExpires">true</boolProp>
-          <stringProp name="TestPlan.comments">Clears any cache between requests</stringProp>
-        </CacheManager>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Query Data" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port">${biPort}</stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${biPath}/GetData</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="TestPlan.comments">Queries for data from the BI service</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Wait" enabled="true">
-          <stringProp name="TestPlan.comments">Sets the wait time to a value in the specified range</stringProp>
-          <stringProp name="variableName">dataScientistWait</stringProp>
-          <stringProp name="outputFormat">000000</stringProp>
-          <stringProp name="minimumValue">${dataScientistMinWaitMs}</stringProp>
-          <stringProp name="maximumValue">${dataScientistMaxWaitMs}</stringProp>
-          <stringProp name="randomSeed">3847</stringProp>
-          <boolProp name="perThread">false</boolProp>
-        </RandomVariableConfig>
-        <hashTree/>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Data scientist query delay" enabled="true">
-          <intProp name="ActionProcessor.action">1</intProp>
-          <intProp name="ActionProcessor.target">0</intProp>
-          <stringProp name="ActionProcessor.duration">0</stringProp>
-        </TestAction>
-        <hashTree>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait timer" enabled="true">
-            <stringProp name="ConstantTimer.delay">${dataScientistWait}</stringProp>
           </ConstantTimer>
           <hashTree/>
         </hashTree>

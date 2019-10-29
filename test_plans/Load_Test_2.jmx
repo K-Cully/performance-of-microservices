@@ -10,12 +10,12 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="shoppers" elementType="Argument">
             <stringProp name="Argument.name">shoppers</stringProp>
-            <stringProp name="Argument.value">45</stringProp>
+            <stringProp name="Argument.value">75</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="browsers" elementType="Argument">
             <stringProp name="Argument.name">browsers</stringProp>
-            <stringProp name="Argument.value">90</stringProp>
+            <stringProp name="Argument.value">150</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="analyticBots" elementType="Argument">
@@ -25,12 +25,12 @@
           </elementProp>
           <elementProp name="rampUpSeconds" elementType="Argument">
             <stringProp name="Argument.name">rampUpSeconds</stringProp>
-            <stringProp name="Argument.value">480</stringProp>
+            <stringProp name="Argument.value">300</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="durationSeconds" elementType="Argument">
             <stringProp name="Argument.name">durationSeconds</stringProp>
-            <stringProp name="Argument.value">1200</stringProp>
+            <stringProp name="Argument.value">720</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="host" elementType="Argument">
@@ -90,17 +90,17 @@
           </elementProp>
           <elementProp name="biStartDelaySeconds" elementType="Argument">
             <stringProp name="Argument.name">biStartDelaySeconds</stringProp>
-            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.value">240</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="biWaitMilliseconds" elementType="Argument">
             <stringProp name="Argument.name">biWaitMilliseconds</stringProp>
-            <stringProp name="Argument.value">600000</stringProp>
+            <stringProp name="Argument.value">240000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="biDurationSeconds" elementType="Argument">
             <stringProp name="Argument.name">biDurationSeconds</stringProp>
-            <stringProp name="Argument.value">900</stringProp>
+            <stringProp name="Argument.value">480</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
