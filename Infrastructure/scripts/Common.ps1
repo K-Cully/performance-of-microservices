@@ -159,10 +159,10 @@ function Unregister-ApplicationTypeCompletely([string]$ApplicationTypeName)
 function Add-PerformanceCounters([string]$ResourceGroup, [string]$WorkspaceName)
 {
     $perfCounters = @{}
-    $perfCounters.LogicalDisk = ("*", "Avg. Disk sec/Read"), ("*", "Avg. Disk sec/Write"), `
-        ("*", "Disk Reads/sec"), ("*", "Disk Transfers/sec"), ("*", "Disk Writes/sec")
+    $perfCounters.LogicalDisk = ("*", "Disk Transfers/sec")
+    #("*", "Avg. Disk sec/Read"), ("*", "Avg. Disk sec/Write"), ("*", "Disk Reads/sec"), , ("*", "Disk Writes/sec")
     $perfCounters.Memory = ("*", "% Committed Bytes In Use"), ("*", "Available MBytes")
-    $perfCounters.Add("Network Adapter", (("*", "Bytes Received/sec"), ("*", "Bytes Sent/sec")))
+    #$perfCounters.Add("Network Adapter", (("*", "Bytes Received/sec"), ("*", "Bytes Sent/sec")))
     $perfCounters.Add("Network Interface", (("*", "Bytes Total/sec"), $null))
     $perfCounters.Add("System", (("*", "Processor Queue Length"), $null))
     $perfCounters.Add("Processor", (("_Total", "% Processor Time"), $null))
