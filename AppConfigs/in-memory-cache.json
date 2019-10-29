@@ -198,8 +198,10 @@
                 "3MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
-                        "time" : { "minutes" : 3 },
-                        "slidingExpiration" : true
+                        "time": {
+                            "minutes": 3
+                        },
+                        "slidingExpiration": true
                     }
                 }
             }
@@ -375,8 +377,10 @@
                 "3MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
-                        "time" : { "minutes" : 3 },
-                        "slidingExpiration" : true
+                        "time": {
+                            "minutes": 3
+                        },
+                        "slidingExpiration": true
                     }
                 }
             }
@@ -394,6 +398,7 @@
                             "GetCartItems",
                             "GetCatalogItems",
                             "GetPaymentInstrument",
+                            "ValidatePaymentInstrument",
                             "AuthorizePayment",
                             "PlaceOrder",
                             "UpdatePurchases",
@@ -404,10 +409,19 @@
                 }
             },
             "steps": {
+                "ValidatePaymentInstrument": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 128,
+                        "time": 0.01,
+                        "percent": 15,
+                        "processors": 1
+                    }
+                },
                 "AuthorizePayment": {
                     "type": "DelayStep",
                     "value": {
-                        "time": "4.2"
+                        "time": "3.6"
                     }
                 },
                 "GetCatalogItems": {
@@ -561,8 +575,10 @@
                 "3MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
-                        "time" : { "minutes" : 3 },
-                        "slidingExpiration" : true
+                        "time": {
+                            "minutes": 3
+                        },
+                        "slidingExpiration": true
                     }
                 }
             }
@@ -650,8 +666,10 @@
                 "3MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
-                        "time" : { "minutes" : 3 },
-                        "slidingExpiration" : true
+                        "time": {
+                            "minutes": 3
+                        },
+                        "slidingExpiration": true
                     }
                 }
             }

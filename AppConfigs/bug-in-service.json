@@ -93,7 +93,7 @@
                         "processors": 1
                     }
                 },
-                "Error": { 
+                "Error": {
                     "type": "ErrorStep",
                     "value": {
                         "probability": 0.02
@@ -387,6 +387,7 @@
                             "GetCartItems",
                             "GetCatalogItems",
                             "GetPaymentInstrument",
+                            "ValidatePaymentInstrument",
                             "AuthorizePayment",
                             "PlaceOrder",
                             "UpdatePurchases",
@@ -397,10 +398,19 @@
                 }
             },
             "steps": {
+                "ValidatePaymentInstrument": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 128,
+                        "time": 0.01,
+                        "percent": 15,
+                        "processors": 1
+                    }
+                },
                 "AuthorizePayment": {
                     "type": "DelayStep",
                     "value": {
-                        "time": "4.2"
+                        "time": "3.6"
                     }
                 },
                 "GetCatalogItems": {
