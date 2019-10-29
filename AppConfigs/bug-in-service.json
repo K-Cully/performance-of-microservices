@@ -572,6 +572,7 @@
                         "errorSize": 256,
                         "latency": 0,
                         "steps": [
+                            "Authenticate",
                             "GetUserDetails",
                             "GetCatalogueItems",
                             "GetCatalogueItems",
@@ -584,6 +585,15 @@
                 }
             },
             "steps": {
+                "Authenticate": {
+                    "type": "LoadStep",
+                    "value": {
+                        "bytes": 16,
+                        "time": 0.002,
+                        "percent": 5,
+                        "processors": 1
+                    }
+                },
                 "GetUserDetails": {
                     "type": "RequestStep",
                     "value": {
