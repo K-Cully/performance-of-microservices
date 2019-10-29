@@ -12,7 +12,7 @@
          "type": "string",
          "metadata": {
             "description": "Password to node VMs RDP connections"
-         }      
+         }
       },
       "certificateThumbprint": {
          "type": "string"
@@ -124,9 +124,7 @@
       "vmImageOffer": "WindowsServer",
       "vmImageSku": "2016-Datacenter-with-Containers",
       "vmImageVersion": "latest",
-      "rdpUserName": "rdpadmin",
-      "omsSolutionName": "[Concat('ServiceFabric', '(', parameters('omsWorkspaceName'), ')')]",
-      "omsSolution": "ServiceFabric"
+      "rdpUserName": "rdpadmin"
    },
    "resources": [
       {
@@ -252,8 +250,8 @@
                   "input": {
                      "name": "[concat(parameters('lbRules')[copyIndex('loadBalancingRules')].name, 'Rule')]",
                      "properties": {
-                           "frontendIPConfiguration": {
-                              "id": "[variables('lbIPConfig0')]"
+                        "frontendIPConfiguration": {
+                           "id": "[variables('lbIPConfig0')]"
                         },
                         "frontendport": "[parameters('lbRules')[copyIndex('loadBalancingRules')].frontendport]",
                         "backendport": "[parameters('lbRules')[copyIndex('loadBalancingRules')].backendport]",
@@ -261,7 +259,7 @@
                         "idleTimeoutInMinutes": "5",
                         "protocol": "[parameters('lbRules')[copyIndex('loadBalancingRules')].protocol]",
                         "backendAddressPool": {
-                           "id": "[variables('lbPoolID0')]"                           
+                           "id": "[variables('lbPoolID0')]"
                         },
                         "probe": {
                            "id": "[concat(variables('lbID0'),'/probes/', parameters('lbRules')[copyIndex('loadBalancingRules')].name, 'Probe')]"
@@ -498,8 +496,10 @@
                "thumbprint": "[parameters('certificateThumbprint')]",
                "x509StoreName": "[variables('certificateStoreValue')]"
             },
-            "clientCertificateCommonNames": [],
-            "clientCertificateThumbprints": [],
+            "clientCertificateCommonNames": [
+            ],
+            "clientCertificateThumbprints": [
+            ],
             "diagnosticsStorageAccountConfig": {
                "blobEndpoint": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('supportLogStorageAccountName')), '2016-01-01').primaryEndpoints.blob]",
                "protectedAccountKeyName": "StorageAccountKey1",
@@ -544,81 +544,61 @@
             "upgradeMode": "Automatic",
             "vmImage": "Windows"
          }
-      }, 
+      },
       {
          "apiVersion": "2015-11-01-preview",
          "location": "[parameters('omsRegion')]",
          "name": "[parameters('omsWorkspaceName')]",
          "type": "Microsoft.OperationalInsights/workspaces",
          "properties": {
-         "sku": {
-            "name": "Free"
-         }
+            "sku": {
+               "name": "Free"
+            }
          },
          "resources": [
-         {
-            "apiVersion": "2015-11-01-preview",
-            "name": "[concat(variables('applicationDiagnosticsStorageAccountName'),parameters('omsWorkspaceName'))]",
-            "type": "storageinsightconfigs",
-            "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-               "[concat('Microsoft.Storage/storageAccounts/', variables('applicationDiagnosticsStorageAccountName'))]"
-            ],
-            "properties": {
-               "containers": [],
-               "tables": [
-               "WADServiceFabric*EventTable",
-               "WADWindowsEventLogsTable",
-               "WADETWEventTable"
+            {
+               "apiVersion": "2015-11-01-preview",
+               "name": "[concat(variables('applicationDiagnosticsStorageAccountName'),parameters('omsWorkspaceName'))]",
+               "type": "storageinsightconfigs",
+               "dependsOn": [
+                  "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                  "[concat('Microsoft.Storage/storageAccounts/', variables('applicationDiagnosticsStorageAccountName'))]"
                ],
-               "storageAccount": {
-               "id": "[resourceId('Microsoft.Storage/storageaccounts/', variables('applicationDiagnosticsStorageAccountName'))]",
-               "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('applicationDiagnosticsStorageAccountName')),'2015-06-15').key1]"
+               "properties": {
+                  "containers": [
+                  ],
+                  "tables": [
+                  ],
+                  "storageAccount": {
+                     "id": "[resourceId('Microsoft.Storage/storageaccounts/', variables('applicationDiagnosticsStorageAccountName'))]",
+                     "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('applicationDiagnosticsStorageAccountName')),'2015-06-15').key1]"
+                  }
+               }
+            },
+            {
+               "apiVersion": "2015-11-01-preview",
+               "name": "System",
+               "type": "datasources",
+               "dependsOn": [
+                  "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+               ],
+               "kind": "WindowsEvent",
+               "properties": {
+                  "eventLogName": "System",
+                  "eventTypes": [
+                     {
+                        "eventType": "Error"
+                     },
+                     {
+                        "eventType": "Warning"
+                     },
+                     {
+                        "eventType": "Information"
+                     }
+                  ]
                }
             }
-         },
-         {
-            "apiVersion": "2015-11-01-preview",
-            "name": "System",
-            "type": "datasources",
-            "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-            ],
-            "kind": "WindowsEvent",
-            "properties": {
-               "eventLogName": "System",
-               "eventTypes": [
-               {
-                  "eventType": "Error"
-               },
-               {
-                  "eventType": "Warning"
-               },
-               {
-                  "eventType": "Information"
-               }
-               ]
-            }
-         }
          ]
-      },
-      {
-         "apiVersion": "2015-11-01-preview",
-         "location": "[parameters('omsRegion')]",
-         "name": "[variables('omsSolutionName')]",
-         "type": "Microsoft.OperationsManagement/solutions",
-         "dependsOn": [
-            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('OMSWorkspacename'))]"
-         ],
-         "properties": {
-            "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-         },
-         "plan": {
-            "name": "[variables('omsSolutionName')]",
-            "publisher": "Microsoft",
-            "product": "[Concat('OMSGallery/', variables('omsSolution'))]",
-            "promotionCode": ""
-         }
       },
       {
          "type": "microsoft.insights/components",
