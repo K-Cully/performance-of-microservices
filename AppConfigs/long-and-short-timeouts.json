@@ -68,7 +68,7 @@
                     "value": {
                         "bytes": 3072,
                         "time": 0.002,
-                        "percent": 1,
+                        "percent": 3,
                         "processors": 1
                     }
                 },
@@ -77,7 +77,7 @@
                     "value": {
                         "bytes": 9216,
                         "time": 0.002,
-                        "percent": 1,
+                        "percent": 5,
                         "processors": 1
                     }
                 },
@@ -86,7 +86,7 @@
                     "value": {
                         "bytes": 76800,
                         "time": 0.003,
-                        "percent": 2,
+                        "percent": 6,
                         "processors": 1
                     }
                 }
@@ -328,7 +328,7 @@
                     "value": {
                         "bytes": 64,
                         "time": 0.002,
-                        "percent": 1,
+                        "percent": 8,
                         "processors": 1
                     }
                 }
