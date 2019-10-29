@@ -4,42 +4,99 @@
     "title": "Application",
     "description": "The applciation topology to be generated",
     "definitions": {
+        "requestProcessor": {
+            "description": "Configuration for a request processor",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "RequestProcessor"
+                    ]
+                },
+                "value": {
+                    "type": "object",
+                    "properties": {
+                        "steps": {
+                            "description": "The ordered list of steps to be executed by the processor",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "errorSize": {
+                            "description": "The size in bytes of an error response",
+                            "type": "integer",
+                            "multipleOf": 1,
+                            "minimum": 0
+                        },
+                        "successSize": {
+                            "description": "The size in bytes of a success response",
+                            "type": "integer",
+                            "multipleOf": 1,
+                            "minimum": 0
+                        },
+                        "latency": {
+                            "description": "Simulated latency in milliseconds to add to all requests",
+                            "type": "integer",
+                            "multipleOf": 1,
+                            "minimum": 0
+                        }
+                    },
+                    "required": [
+                        "errorSize",
+                        "successSize",
+                        "latency",
+                        "steps"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ]
+        },
+        "startupProcessor": {
+            "description": "Configuration for a startup processor",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "StartupProcessor"
+                    ]
+                },
+                "value": {
+                    "type": "object",
+                    "properties": {
+                        "steps": {
+                            "description": "The ordered list of steps to be executed by the processor",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "asynchronous": {
+                            "description": "Whether processor execution should be asynchronous or not",
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
+                        "asynchronous",
+                        "steps"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ]
+        },
         "processors": {
             "description": "Processors which chain emulated business logic steps",
             "type": "object",
             "additionalProperties": {
-                "description": "A processor configuration",
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "description": "The type of processor to create",
-                        "type": "string",
-                        "enum": [
-                            "RequestProcessor",
-                            "StartupProcessor"
-                        ]
-                    },
-                    "value": {
-                        "description": "Configuration values for the specific processor type",
-                        "type": "object",
-                        "properties": {
-                            "steps": {
-                                "description": "The ordered list of steps to be executed by the processor",
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": true
-                        },
-                        "required": [
-                            "steps"
-                        ]
-                    }
-                },
-                "required": [
-                    "type",
-                    "value"
+                "anyOf": [
+                    { "$ref": "#/definitions/startupProcessor" },
+                    { "$ref": "#/definitions/requestProcessor" }
                 ]
             }
         },
