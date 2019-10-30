@@ -414,7 +414,7 @@
                 "value"
             ]
         },
-        "advancedCircuitBreaker": {
+        "advancedCircuitBreakerPolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -467,7 +467,7 @@
                 }
             ]
         },
-        "bulkhead": {
+        "bulkheadPolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -507,7 +507,7 @@
                 }
             ]
         },
-        "cache": {
+        "cachePolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -569,7 +569,7 @@
                 }
             ]
         },
-        "circuitBreaker": {
+        "circuitBreakerPolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -608,7 +608,7 @@
                 }
             ]
         },
-        "fallback": {
+        "fallbackPolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -650,7 +650,7 @@
                 }
             ]
         },
-        "retry": {
+        "retryPolicy": {
             "allOf": [
                 {
                     "$ref": "#/definitions/policy"
@@ -697,34 +697,70 @@
                 }
             ]
         },
+        "timeoutPolicy": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Timeout policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "TimeoutConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "cancelDelegates": {
+                                    "description": "Wheteher to use co-operative cancellation of delegates or to hard cancel after the timeout interval.",
+                                    "type": "boolean"
+                                },
+                                "time": {
+                                    "description": "Time, in seconds, allowed for wrapped requests/policies to complete.",
+                                    "type": "number",
+                                    "minimum": 0
+                                }
+                            },
+                            "required": [
+                                "cancelDelegates",
+                                "time"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
         "policies": {
             "description": "Resiliancy policies for http requests",
             "type": "object",
             "additionalProperties": {
-                "description": "The policy to be created",
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "description": "The type of the policy config defined",
-                        "type": "string",
-                        "enum": [
-                            "AdvancedCircuitBreakerConfig",
-                            "BulkheadConfig",
-                            "CacheConfig",
-                            "CircuitBreakerConfig",
-                            "FallbackConfig",
-                            "RetryConfig",
-                            "TimeoutConfig"
-                        ]
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/advancedCircuitBreakerPolicy"
                     },
-                    "value": {
-                        "description": "The configuration values for the specified type",
-                        "type": "object"
+                    {
+                        "$ref": "#/definitions/bulkheadPolicy"
+                    },
+                    {
+                        "$ref": "#/definitions/cachePolicy"
+                    },
+                    {
+                        "$ref": "#/definitions/circuitBreakerPolicy"
+                    },
+                    {
+                        "$ref": "#/definitions/fallbackPolicy"
+                    },
+                    {
+                        "$ref": "#/definitions/retryPolicy"
+                    },
+                    {
+                        "$ref": "#/definitions/timeoutPolicy"
                     }
-                },
-                "required": [
-                    "type",
-                    "value"
                 ]
             }
         }
