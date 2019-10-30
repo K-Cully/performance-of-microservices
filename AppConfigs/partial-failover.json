@@ -1,6 +1,6 @@
 {
     "$schema": "../ClusterGeneration/app.schema.json",
-    "appsettingsPath": "",
+    "appsettingsPath": "C:/Users/Keith/source/repos/performance-of-microservices/Infrastructure/secrets/appsettings.json",
     "aiKey": "",
     "services": {
         "Catalogue": {

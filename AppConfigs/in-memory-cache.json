@@ -1,6 +1,6 @@
 {
     "$schema": "../ClusterGeneration/app.schema.json",
-    "appsettingsPath": "",
+    "appsettingsPath": "C:/Users/Keith/source/repos/performance-of-microservices/Infrastructure/secrets/appsettings.json",
     "aiKey": "",
     "services": {
         "Catalogue": {
@@ -177,7 +177,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout",
                         "3MinuteCache"
@@ -356,7 +356,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout",
                         "3MinuteCache"
@@ -499,7 +499,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout",
                         "3MinuteCache"
@@ -509,7 +509,7 @@
                     }
                 },
                 "CartClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -518,7 +518,7 @@
                     }
                 },
                 "AccountsClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -527,7 +527,7 @@
                     }
                 },
                 "AsyncCatalogueClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "ExponentialRetry"
                     ],
@@ -536,7 +536,7 @@
                     }
                 },
                 "AsyncCartClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "ExponentialRetry"
                     ],
@@ -545,7 +545,7 @@
                     }
                 },
                 "AsyncAccountsClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "ExponentialRetry"
                     ],
@@ -646,7 +646,7 @@
             },
             "clients": {
                 "CatalogueClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8001",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
                         "30SecondTimeout",
                         "3MinuteCache"
@@ -656,7 +656,7 @@
                     }
                 },
                 "AccountsClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout"
                     ],
@@ -794,7 +794,7 @@
             },
             "clients": {
                 "CartClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8004",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8004",
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
@@ -805,7 +805,7 @@
                     }
                 },
                 "PaymentClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8005",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8005",
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
@@ -934,7 +934,7 @@
             },
             "clients": {
                 "AccountsClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8003",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8003",
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
@@ -945,7 +945,7 @@
                     }
                 },
                 "SearchClient": {
-                    "baseAddress": "http://emu-neu-base.northeurope.cloudapp.azure.com:8002",
+                    "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8002",
                     "policies": [
                         "30SecondTimeout",
                         "Basic2Retries",
