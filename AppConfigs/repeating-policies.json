@@ -421,7 +421,7 @@
                 "AuthorizePayment": {
                     "type": "DelayStep",
                     "value": {
-                        "time": "3.6"
+                        "time": 3.6
                     }
                 },
                 "GetCatalogItems": {
