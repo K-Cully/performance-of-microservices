@@ -467,6 +467,236 @@
                 }
             ]
         },
+        "bulkhead": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Bulkhead policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "BulkheadConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "bandwidth": {
+                                    "description": "Maximum concurrent requests allowed through the bulkhead.",
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "multipleOf": 1
+                                },
+                                "queueLength": {
+                                    "description": "Maximum requests that can queue at the bulkhead.",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                }
+                            },
+                            "required": [
+                                "bandwidth"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "cache": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Cache policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "CacheConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "time": {
+                                    "description": "Maximum concurrent requests allowed through the bulkhead.",
+                                    "type": "object",
+                                    "properties": {
+                                        "days": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "multipleOf": 1
+                                        },
+                                        "hours": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "multipleOf": 1
+                                        },
+                                        "hinutes": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "multipleOf": 1
+                                        },
+                                        "seconds": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "multipleOf": 1
+                                        }
+                                    }
+                                },
+                                "absoluteTime": {
+                                    "description": "Whether the time should be absolute or relative",
+                                    "type": "boolean"
+                                },
+                                "slidingExpiration": {
+                                    "description": "Whether the time should be extended on cache access or not",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "time"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "circuitBreaker": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Circuit breaker policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "CircuitBreakerConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "duration": {
+                                    "description": "Minimum time in seconds the circuit should remain open.",
+                                    "type": "number",
+                                    "minimum": 0
+                                },
+                                "tolerance": {
+                                    "description": "Number of successive failures required to trigger a break.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "duration",
+                                "tolerance"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "fallback": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Fallback policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "FallbackConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "description": "Response content.",
+                                    "type": "string"
+                                },
+                                "reason": {
+                                    "description": "Response reason phrase.",
+                                    "type": "string"
+                                },
+                                "statusCode": {
+                                    "description": "Response status code.",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                }
+                            },
+                            "required": [
+                                "statusCode"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "retry": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Retry policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "RetryConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "retries": {
+                                    "description": "Number of retry attempts. (Less than 1 == forever)",
+                                    "type": "integer",
+                                    "multipleOf": 1
+                                },
+                                "delays": {
+                                    "description": "Wait times, in seconds, between each retry. ",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number"
+                                    }
+                                },
+                                "jitter": {
+                                    "description": "Maximum jitter, in milliseconds, to apply to retry delay times",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                }
+                            },
+                            "required": [
+                                "retries",
+                                "delays"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
         "policies": {
             "description": "Resiliancy policies for http requests",
             "type": "object",
