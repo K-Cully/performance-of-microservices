@@ -10,7 +10,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="shoppers" elementType="Argument">
             <stringProp name="Argument.name">shoppers</stringProp>
-            <stringProp name="Argument.value">250</stringProp>
+            <stringProp name="Argument.value">200</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="browsers" elementType="Argument">
