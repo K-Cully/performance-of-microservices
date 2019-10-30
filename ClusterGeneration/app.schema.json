@@ -4,7 +4,7 @@
     "title": "Application",
     "description": "The applciation topology to be generated",
     "definitions": {
-        "processorValues": {
+        "processor": {
             "description": "Configuration for all processors",
             "type": "object",
             "properties": {
@@ -35,7 +35,7 @@
         "requestProcessor": {
             "allOf": [
                 {
-                    "$ref": "#/definitions/processorValues"
+                    "$ref": "#/definitions/processor"
                 },
                 {
                     "description": "Configuration for a request processor",
@@ -82,7 +82,7 @@
         "startupProcessor": {
             "allOf": [
                 {
-                    "$ref": "#/definitions/processorValues"
+                    "$ref": "#/definitions/processor"
                 },
                 {
                     "description": "Configuration for a startup processor",
@@ -124,24 +124,17 @@
                 ]
             }
         },
-        "delayStep": {
-            "description": "A delay step configuration",
+        "step": {
+            "description": "Common step configuration",
             "type": "object",
             "properties": {
                 "type": {
-                    "type": "string",
-                    "enum": [
-                        "DelayStep"
-                    ]
+                    "type": "string"
                 },
                 "value": {
                     "description": "Configuration values",
                     "type": "object",
                     "properties": {
-                        "time": {
-                            "type": "number",
-                            "minimum": 0
-                        },
                         "parallelCount": {
                             "description": "The number of parallel executions of the step",
                             "type": "integer",
@@ -157,205 +150,198 @@
                                 "None"
                             ]
                         }
-                    },
-                    "required": [
-                        "time"
-                    ]
+                    }
                 }
             },
             "required": [
                 "type",
                 "value"
+            ]
+        },
+        "delayStep": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/step"
+                },
+                {
+                    "description": "A delay step configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "DelayStep"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "time": {
+                                    "type": "number",
+                                    "minimum": 0
+                                }
+                            },
+                            "required": [
+                                "time"
+                            ]
+                        }
+                    }
+                }
             ]
         },
         "errorStep": {
-            "description": "An error step configuration",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "ErrorStep"
-                    ]
+            "allOf": [
+                {
+                    "$ref": "#/definitions/step"
                 },
-                "value": {
-                    "description": "Configuration values",
+                {
+                    "description": "An error step configuration",
                     "type": "object",
                     "properties": {
-                        "probability": {
-                            "type": "number",
-                            "minimum": 0,
-                            "maximum": 1.0
-                        },
-                        "parallelCount": {
-                            "description": "The number of parallel executions of the step",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "parallelError": {
-                            "description": "A clause for how parallel execution errors affect the step result",
+                        "type": {
                             "type": "string",
                             "enum": [
-                                "All",
-                                "Any",
-                                "None"
+                                "ErrorStep"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "probability": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1.0
+                                }
+                            },
+                            "required": [
+                                "probability"
                             ]
                         }
-                    },
-                    "required": [
-                        "probability"
-                    ]
+                    }
                 }
-            },
-            "required": [
-                "type",
-                "value"
             ]
         },
         "loadStep": {
-            "description": "A load step configuration",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "LoadStep"
-                    ]
+            "allOf": [
+                {
+                    "$ref": "#/definitions/step"
                 },
-                "value": {
-                    "description": "Configuration values",
+                {
+                    "description": "A load step configuration",
                     "type": "object",
                     "properties": {
-                        "bytes": {
-                            "description": "The amount of bytes to consume",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "time": {
-                            "description": "The time in seconds to run for. (negative == forever)",
-                            "type": "number"
-                        },
-                        "percent": {
-                            "description": "The percentage of processor time to consume",
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 100,
-                            "multipleOf": 1
-                        },
-                        "processors": {
-                            "description": "The maximum number of processors to load. (0 == all available)",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "parallelCount": {
-                            "description": "The number of parallel executions of the step",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "parallelError": {
-                            "description": "A clause for how parallel execution errors affect the step result",
+                        "type": {
                             "type": "string",
                             "enum": [
-                                "All",
-                                "Any",
-                                "None"
+                                "LoadStep"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "bytes": {
+                                    "description": "The amount of bytes to consume",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                },
+                                "time": {
+                                    "description": "The time in seconds to run for. (negative == forever)",
+                                    "type": "number"
+                                },
+                                "percent": {
+                                    "description": "The percentage of processor time to consume",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100,
+                                    "multipleOf": 1
+                                },
+                                "processors": {
+                                    "description": "The maximum number of processors to load. (0 == all available)",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                }
+                            },
+                            "required": [
+                                "bytes",
+                                "time",
+                                "percent"
                             ]
                         }
-                    },
-                    "required": [
-                        "bytes",
-                        "time",
-                        "percent"
-                    ]
+                    }
                 }
-            },
-            "required": [
-                "type",
-                "value"
             ]
         },
         "requestStep": {
-            "description": "A request step configuration",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "RequestStep"
-                    ]
+            "allOf": [
+                {
+                    "$ref": "#/definitions/step"
                 },
-                "value": {
-                    "description": "Configuration values",
+                {
+                    "description": "A request step configuration",
                     "type": "object",
                     "properties": {
-                        "cacheId": {
-                            "type": "string"
-                        },
-                        "cacheKeyUniqueness": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "multipleOf": 1
-                        },
-                        "client": {
-                            "description": "The name of the client to use for requests",
-                            "type": "string"
-                        },
-                        "method": {
-                            "description": "The http method type",
-                            "type": "string"
-                        },
-                        "path": {
-                            "description": "A path to append to the client request",
-                            "type": "string",
-                            "default": "/"
-                        },
-                        "size": {
-                            "description": "The request size in bytes",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "reuseSockets": {
-                            "description": "Whether sockets should be reused between requests or not",
-                            "type": "boolean"
-                        },
-                        "trueAsync": {
-                            "description": "Whether requests should fire-and-forget or await responses",
-                            "type": "boolean"
-                        },
-                        "parallelCount": {
-                            "description": "The number of parallel executions of the step",
-                            "type": "integer",
-                            "minimum": 0,
-                            "multipleOf": 1
-                        },
-                        "parallelError": {
-                            "description": "A clause for how parallel execution errors affect the step result",
+                        "type": {
                             "type": "string",
                             "enum": [
-                                "All",
-                                "Any",
-                                "None"
+                                "RequestStep"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "cacheId": {
+                                    "type": "string"
+                                },
+                                "cacheKeyUniqueness": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "multipleOf": 1
+                                },
+                                "client": {
+                                    "description": "The name of the client to use for requests",
+                                    "type": "string"
+                                },
+                                "method": {
+                                    "description": "The http method type",
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "description": "A path to append to the client request",
+                                    "type": "string",
+                                    "default": "/"
+                                },
+                                "size": {
+                                    "description": "The request size in bytes",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                },
+                                "reuseSockets": {
+                                    "description": "Whether sockets should be reused between requests or not",
+                                    "type": "boolean"
+                                },
+                                "trueAsync": {
+                                    "description": "Whether requests should fire-and-forget or await responses",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "client",
+                                "method",
+                                "path",
+                                "size",
+                                "reuseSockets",
+                                "trueAsync"
                             ]
                         }
-                    },
-                    "required": [
-                        "client",
-                        "method",
-                        "path",
-                        "size",
-                        "reuseSockets",
-                        "trueAsync"
-                    ]
+                    }
                 }
-            },
-            "required": [
-                "type",
-                "value"
             ]
         },
         "steps": {
@@ -410,6 +396,76 @@
                     "policies"
                 ]
             }
+        },
+        "policy": {
+            "description": "Common policy configuration",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "description": "Configuration values",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ]
+        },
+        "advancedCircuitBreaker": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/policy"
+                },
+                {
+                    "description": "Advanced Circuit breaker policy configuration",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "AdvancedCircuitBreakerConfig"
+                            ]
+                        },
+                        "value": {
+                            "description": "Configuration values",
+                            "type": "object",
+                            "properties": {
+                                "breakDuration": {
+                                    "description": "Minimum duration, in seconds, that a broken circuit should be left open.",
+                                    "type": "number",
+                                    "minimum": 0
+                                },
+                                "threshold": {
+                                    "description": "Failure rate threshold.",
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1.0
+                                },
+                                "samplingDuration": {
+                                    "description": "Time window, in seconds, to compute error rate over.",
+                                    "type": "number",
+                                    "minimum": 0
+                                },
+                                "throughput": {
+                                    "description": "Minimum number of events in sampling window to allow circuit evaluation.",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "multipleOf": 1
+                                }
+                            },
+                            "required": [
+                                "breakDuration",
+                                "threshold",
+                                "samplingDuration",
+                                "throughput"
+                            ]
+                        }
+                    }
+                }
+            ]
         },
         "policies": {
             "description": "Resiliancy policies for http requests",
