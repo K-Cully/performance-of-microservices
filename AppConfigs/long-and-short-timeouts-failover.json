@@ -11,7 +11,7 @@
                     "type": "RequestProcessor",
                     "value": {
                         "errorSize": 256,
-                        "latency": 0,
+                        "latency": 500,
                         "steps": [
                             "DatabaseCall",
                             "DeserializeOneItem"
@@ -23,7 +23,7 @@
                     "type": "RequestProcessor",
                     "value": {
                         "errorSize": 256,
-                        "latency": 0,
+                        "latency": 500,
                         "steps": [
                             "DatabaseCall",
                             "DeserializeManyItems"
@@ -35,7 +35,7 @@
                     "type": "RequestProcessor",
                     "value": {
                         "errorSize": 256,
-                        "latency": 0,
+                        "latency": 500,
                         "steps": [
                             "DatabaseCall",
                             "DeserializeFewItems"
@@ -47,7 +47,7 @@
                     "type": "RequestProcessor",
                     "value": {
                         "errorSize": 64,
-                        "latency": 0,
+                        "latency": 500,
                         "steps": [
                             "DatabaseCall",
                             "DeserializeOneItem"
