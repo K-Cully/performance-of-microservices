@@ -179,8 +179,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout",
-                        "3MinuteCache"
+                        "3MinuteCache",
+                        "30SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -358,8 +358,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout",
-                        "3MinuteCache"
+                        "3MinuteCache",
+                        "30SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -501,8 +501,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout",
-                        "3MinuteCache"
+                        "3MinuteCache",
+                        "30SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -648,8 +648,8 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "30SecondTimeout",
-                        "3MinuteCache"
+                        "3MinuteCache",
+                        "30SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
