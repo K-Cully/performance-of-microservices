@@ -152,7 +152,7 @@
                     "type": "RequestStep",
                     "value": {
                         "cacheId": "BatchQuery",
-                        "cacheKeyUniqueness": 40,
+                        "cacheKeyUniqueness": 2500,
                         "client": "CatalogueClient",
                         "method": "get",
                         "path": "/api/Catalogue/GetProducts",
@@ -165,7 +165,7 @@
                     "type": "RequestStep",
                     "value": {
                         "cacheId": "SearchQuery",
-                        "cacheKeyUniqueness": 5000,
+                        "cacheKeyUniqueness": 500000,
                         "client": "CatalogueClient",
                         "method": "get",
                         "path": "/api/Catalogue/GetSearchProducts",
@@ -179,7 +179,7 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "3MinuteCache",
+                        "15MinuteCache",
                         "30SecondTimeout"
                     ],
                     "headers": {
@@ -195,11 +195,11 @@
                         "time": 30.0
                     }
                 },
-                "3MinuteCache": {
+                "15MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
                         "time": {
-                            "minutes": 3
+                            "minutes": 15
                         },
                         "slidingExpiration": true
                     }
@@ -335,7 +335,7 @@
                     "type": "RequestStep",
                     "value": {
                         "cacheId": "GetCatalogItem",
-                        "cacheKeyUniqueness": 1000,
+                        "cacheKeyUniqueness": 500000,
                         "client": "CatalogueClient",
                         "method": "get",
                         "path": "/api/Catalogue/GetProduct",
@@ -358,7 +358,7 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "3MinuteCache",
+                        "15MinuteCache",
                         "30SecondTimeout"
                     ],
                     "headers": {
@@ -374,11 +374,11 @@
                         "time": 30.0
                     }
                 },
-                "3MinuteCache": {
+                "15MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
                         "time": {
-                            "minutes": 3
+                            "minutes": 15
                         },
                         "slidingExpiration": true
                     }
@@ -428,7 +428,7 @@
                     "type": "RequestStep",
                     "value": {
                         "cacheId": "GetCatalog",
-                        "cacheKeyUniqueness": 10000,
+                        "cacheKeyUniqueness": 10000000,
                         "client": "CatalogueClient",
                         "method": "get",
                         "path": "/api/Catalogue/GetSearchProducts",
@@ -501,7 +501,7 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "3MinuteCache",
+                        "15MinuteCache",
                         "30SecondTimeout"
                     ],
                     "headers": {
@@ -572,11 +572,11 @@
                         "jitter": 2000
                     }
                 },
-                "3MinuteCache": {
+                "15MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
                         "time": {
-                            "minutes": 3
+                            "minutes": 15
                         },
                         "slidingExpiration": true
                     }
@@ -634,7 +634,7 @@
                         "parallelCount": 12,
                         "parallelError": "Any",
                         "cacheId": "GetCatalogue",
-                        "cacheKeyUniqueness": 3000,
+                        "cacheKeyUniqueness": 10000000,
                         "client": "CatalogueClient",
                         "method": "get",
                         "path": "/api/Catalogue/GetProducts",
@@ -648,7 +648,7 @@
                 "CatalogueClient": {
                     "baseAddress": "http://emu-e-base.northeurope.cloudapp.azure.com:8001",
                     "policies": [
-                        "3MinuteCache",
+                        "15MinuteCache",
                         "30SecondTimeout"
                     ],
                     "headers": {
@@ -673,11 +673,11 @@
                         "time": 30.0
                     }
                 },
-                "3MinuteCache": {
+                "15MinuteCache": {
                     "type": "CacheConfig",
                     "value": {
                         "time": {
-                            "minutes": 3
+                            "minutes": 15
                         },
                         "slidingExpiration": true
                     }
