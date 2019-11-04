@@ -769,7 +769,7 @@
                     "policies": [
                         "10SecondTimeout",
                         "Basic2Retries",
-                        "5SecondTimeout"
+                        "4SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -784,11 +784,11 @@
                         "time": 3.0
                     }
                 },
-                "5SecondTimeout": {
+                "4SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
                         "cancelDelegates": false,
-                        "time": 5.0
+                        "time": 4.2
                     }
                 },
                 "10SecondTimeout": {
@@ -916,7 +916,7 @@
                     "policies": [
                         "10SecondTimeout",
                         "Basic2Retries",
-                        "3SecondTimeout"
+                        "1SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -924,6 +924,13 @@
                 }
             },
             "policies": {
+                "1SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": false,
+                        "time": 1.0
+                    }
+                },
                 "3SecondTimeout": {
                     "type": "TimeoutConfig",
                     "value": {
