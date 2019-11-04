@@ -769,7 +769,7 @@
                     "policies": [
                         "10SecondTimeout",
                         "Basic2Retries",
-                        "3SecondTimeout"
+                        "5SecondTimeout"
                     ],
                     "headers": {
                         "Accept": "*/*"
@@ -782,6 +782,13 @@
                     "value": {
                         "cancelDelegates": false,
                         "time": 3.0
+                    }
+                },
+                "5SecondTimeout": {
+                    "type": "TimeoutConfig",
+                    "value": {
+                        "cancelDelegates": false,
+                        "time": 5.0
                     }
                 },
                 "10SecondTimeout": {
