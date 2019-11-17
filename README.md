@@ -6,7 +6,7 @@ TODO: add content
 </aside>
 
 ## Documentation
-[Application and service configuration](./ClusterEmulator/Service.Simulation/ApplicationAndServices.md)
+[Application and service configuration](./ClusterEmulator/ClusterEmulator.Emulation/ApplicationAndServices.md)
 
 ## Generation and Deployment
 <aside class="warning">
