@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Shared.Telemetry;
+﻿using ClusterEmulator.ServiceFabric.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Core;
@@ -8,7 +8,7 @@ using ServiceFabric.Mocks;
 using System;
 using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Shared.Test.Telemetry
+namespace ClusterEmulator.ServiceFabric.Test.Telemetry
 {
     [TestClass]
     public class StatelessServiceEnricherUnitTests
