@@ -1,16 +1,16 @@
-﻿using ClusterEmulator.Models;
-using ClusterEmulator.Emulation.Core;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Logging;
+using ClusterEmulator.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
-using ClusterEmulator.Service.Shared.Telemetry;
 
-namespace ClusterEmulator.Service.Shared.Test
+namespace ClusterEmulator.Emulation.Controllers.Test
 {
     [TestClass]
     public class AdaptableControllerUnitTests
