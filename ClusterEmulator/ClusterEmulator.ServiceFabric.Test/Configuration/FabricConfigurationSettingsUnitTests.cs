@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Shared.Configuration;
+﻿using ClusterEmulator.ServiceFabric.Configuration;
 using ClusterEmulator.Emulation.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceFabric.Mocks;
@@ -8,7 +8,7 @@ using System.Fabric.Description;
 using System.Linq;
 using ConfigurationSectionCollection = ServiceFabric.Mocks.MockConfigurationPackage.ConfigurationSectionCollection;
 
-namespace ClusterEmulator.Service.Shared.Test.Configuration
+namespace ClusterEmulator.ServiceFabric.Test.Configuration
 {
     [TestClass]
     public class FabricConfigurationSettingsUnitTests

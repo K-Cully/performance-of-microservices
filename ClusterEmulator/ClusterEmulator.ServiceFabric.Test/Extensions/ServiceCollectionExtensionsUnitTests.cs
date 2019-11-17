@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Shared.Extensions;
+﻿using ClusterEmulator.ServiceFabric.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -8,7 +8,7 @@ using System.Fabric;
 using System.Fabric.Description;
 using static ServiceFabric.Mocks.MockConfigurationPackage;
 
-namespace ClusterEmulator.Service.Shared.Test.Extensions
+namespace ClusterEmulator.ServiceFabric.Test.Extensions
 {
     [TestClass]
     public class ServiceCollectionExtensionsUnitTests

@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Shared.Configuration;
+﻿using ClusterEmulator.ServiceFabric.Configuration;
 using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Emulation.HttpClientConfiguration;
 using ClusterEmulator.Emulation.Processors;
@@ -9,7 +9,7 @@ using System;
 using System.Fabric;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Shared.Extensions
+namespace ClusterEmulator.ServiceFabric.Extensions
 {
     /// <summary>
     /// Contains extensions for registering components with a service collection.
