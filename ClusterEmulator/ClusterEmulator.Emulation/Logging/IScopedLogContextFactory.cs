@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 
-namespace ClusterEmulator.Service.Shared.Telemetry
+namespace ClusterEmulator.Emulation.Logging
 {
     /// <summary>
     /// A factory for creation of scoped logging contexts.

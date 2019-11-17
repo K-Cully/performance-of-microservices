@@ -1,6 +1,6 @@
-﻿using ClusterEmulator.Models;
-using ClusterEmulator.Service.Shared.Telemetry;
-using ClusterEmulator.Emulation.Core;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Logging;
+using ClusterEmulator.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ClusterEmulator.Service.Shared
+namespace ClusterEmulator.Emulation.Controllers
 {
     /// <summary>
     /// An abstract controller that can be inherited to provide the configured API for a configurable service.
