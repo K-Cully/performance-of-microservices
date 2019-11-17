@@ -1,4 +1,4 @@
-using ClusterEmulator.Service.Shared.Extensions;
+using ClusterEmulator.ServiceFabric.Extensions;
 using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
