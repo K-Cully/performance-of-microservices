@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Service.Shared\ClusterEmulator.Service.Shared.csproj" />
+    <ProjectReference Include="..\ClusterEmulator.ApplicationInsights\ClusterEmulator.ApplicationInsights.csproj" />
     <ProjectReference Include="..\ClusterEmulator.Emulation\ClusterEmulator.Emulation.csproj" />
     <ProjectReference Include="..\ClusterEmulator.ServiceFabric\ClusterEmulator.ServiceFabric.csproj" />
   </ItemGroup>

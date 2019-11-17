@@ -2,7 +2,7 @@
 using Serilog.Events;
 using System;
 
-namespace ClusterEmulator.Service.Shared.Telemetry
+namespace ClusterEmulator.ApplicationInsights.Telemetry
 {
     /// <summary>
     /// Enriches log data with an operation and parent operation id

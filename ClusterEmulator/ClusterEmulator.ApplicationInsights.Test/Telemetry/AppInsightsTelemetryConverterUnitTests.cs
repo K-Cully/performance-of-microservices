@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Shared.Telemetry;
+﻿using ClusterEmulator.ApplicationInsights.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ClusterEmulator.Service.Shared.Test.Telemetry
+namespace ClusterEmulator.ApplicationInsights.Test.Telemetry
 {
     [TestClass]
     public class AppInsightsTelemetryConverterUnitTests

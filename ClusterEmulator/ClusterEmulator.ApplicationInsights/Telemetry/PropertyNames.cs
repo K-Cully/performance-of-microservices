@@ -1,4 +1,4 @@
-﻿namespace ClusterEmulator.Service.Shared.Telemetry
+﻿namespace ClusterEmulator.ApplicationInsights.Telemetry
 {
     /// <summary>
     /// Contains shared constants related to telemetry

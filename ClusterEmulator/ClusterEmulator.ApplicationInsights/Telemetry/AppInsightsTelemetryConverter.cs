@@ -4,7 +4,7 @@ using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConve
 using System;
 using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Shared.Telemetry
+namespace ClusterEmulator.ApplicationInsights.Telemetry
 {
     /// <summary>
     /// Instrunments Application Insights telemetry from log event data

@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 using System;
-using LoggerExtensions = ClusterEmulator.Service.Shared.Telemetry.LoggerExtensions;
+using LoggerExtensions = ClusterEmulator.ApplicationInsights.Telemetry.LoggerExtensions;
 
-namespace ClusterEmulator.Service.Shared.Test.Telemetry
+namespace ClusterEmulator.ApplicationInsights.Test.Telemetry
 {
     [TestClass]
     public class LoggerExtensionsUnitTests

@@ -2,7 +2,7 @@
 using Serilog.Configuration;
 using System;
 
-namespace ClusterEmulator.Service.Shared.Telemetry
+namespace ClusterEmulator.ApplicationInsights.Telemetry
 {
     /// <summary>
     /// Extensions for Serilog Logger components
