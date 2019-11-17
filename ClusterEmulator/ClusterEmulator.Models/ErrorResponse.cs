@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace ClusterEmulator.Service.Models
+namespace ClusterEmulator.Models
 {
     public class ErrorResponse
     {

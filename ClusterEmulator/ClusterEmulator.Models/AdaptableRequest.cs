@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Models
+namespace ClusterEmulator.Models
 {
     /// <summary>
     /// An adaptable request object containing a list of values

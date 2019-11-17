@@ -1,4 +1,4 @@
-using ClusterEmulator.Service.Models;
+using ClusterEmulator.Models;
 using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Emulation.Processors;
 using ClusterEmulator.Emulation.Steps;

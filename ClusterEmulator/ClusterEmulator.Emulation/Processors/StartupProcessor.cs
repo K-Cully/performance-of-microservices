@@ -1,5 +1,5 @@
 ﻿
-using ClusterEmulator.Service.Models;
+using ClusterEmulator.Models;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;

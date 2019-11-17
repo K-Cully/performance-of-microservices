@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Models;
+﻿using ClusterEmulator.Models;
 using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Service.Shared;
 using Microsoft.AspNetCore.Http;

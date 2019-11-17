@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Models;
+﻿using ClusterEmulator.Models;
 using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
