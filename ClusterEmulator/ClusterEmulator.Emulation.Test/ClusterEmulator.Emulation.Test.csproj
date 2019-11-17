@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Service.Models\ClusterEmulator.Service.Models.csproj" />
-    <ProjectReference Include="..\Service.Simulation\ClusterEmulator.Emulation.csproj" />
+    <ProjectReference Include="..\ClusterEmulator.Emulation\ClusterEmulator.Emulation.csproj" />
   </ItemGroup>
 
 </Project>
