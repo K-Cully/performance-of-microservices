@@ -1,13 +1,36 @@
 ﻿using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Emulation.HttpClientConfiguration;
+using ClusterEmulator.Emulation.Processors;
+using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace ClusterEmulator.Emulation.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Registers components that are required by the simulation engine.
+        /// </summary>
+        /// <param name="serviceCollection">The DI service collection.</param>
+        /// <returns>The <see cref="IServiceCollection"/> with all simulation engine components registered.</returns>
+        public static IServiceCollection AddSimulationEngine(this IServiceCollection serviceCollection)
+        {
+            _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+
+            return serviceCollection
+                .AddSingleton<IConfigFactory<IAsyncPolicy<HttpResponseMessage>>, NestedConfigFactory<IPolicyConfiguration, IAsyncPolicy<HttpResponseMessage>>>()
+                .AddSingleton<IConfigFactory<IStep>, NestedConfigFactory<IStep, IStep>>()
+                .AddSingleton<IConfigFactory<IProcessor>, NestedConfigFactory<IProcessor, IProcessor>>()
+                .AddSingleton<IConfigFactory<ClientConfig>, ConfigFactory<ClientConfig>>()
+                .AddSingleton<IRegistry, Registry>()
+                .AddScoped<IEngine, Engine>();
+        }
+
+
         /// <summary>
         /// Registers configured clients and policies with the DI container and HTTP client factory.
         /// </summary>

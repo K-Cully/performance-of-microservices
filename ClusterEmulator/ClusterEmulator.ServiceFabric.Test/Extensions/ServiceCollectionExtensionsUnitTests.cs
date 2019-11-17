@@ -14,31 +14,31 @@ namespace ClusterEmulator.ServiceFabric.Test.Extensions
     public class ServiceCollectionExtensionsUnitTests
     {
         [TestMethod]
-        public void AddSimulationEngine_NullCollection_Throws()
+        public void AddSimulationSettings_NullCollection_Throws()
         {
             // Arrange
             var context = MockStatelessServiceContextFactory.Default;
 
             // Act & Verify
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = ServiceCollectionExtensions.AddSimulationEngine(null, context));
+                () => _ = ServiceCollectionExtensions.AddSimulationSettings(null, context));
         }
 
 
         [TestMethod]
-        public void AddSimulationEngine_NullContext_Throws()
+        public void AddSimulationSettings_NullContext_Throws()
         {
             // Arrange
             var serviceCollection = new Mock<IServiceCollection>(MockBehavior.Loose);
 
             // Act & Verify
             Assert.ThrowsException<ArgumentNullException>(
-                () => _ = ServiceCollectionExtensions.AddSimulationEngine(serviceCollection.Object, null));
+                () => _ = ServiceCollectionExtensions.AddSimulationSettings(serviceCollection.Object, null));
         }
 
 
         [TestMethod]
-        public void AddSimulationEngine_ValidContent_ReturnsCorrectly()
+        public void AddSimulationSettings_ValidContent_ReturnsCorrectly()
         {
             // Initialize config
             var configSections = new ConfigurationSectionCollection();
@@ -63,11 +63,11 @@ namespace ClusterEmulator.ServiceFabric.Test.Extensions
             var services = new ServiceCollection();
 
             // Act
-            IServiceCollection collection = services.AddSimulationEngine(serviceContext);
+            IServiceCollection collection = services.AddSimulationSettings(serviceContext);
 
             // Verify
             Assert.IsNotNull(collection);
-            Assert.AreEqual(8, collection.Count);
+            Assert.AreEqual(2, collection.Count);
         }
     }
 }

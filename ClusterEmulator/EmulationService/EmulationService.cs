@@ -55,7 +55,7 @@ namespace EmulationService
                                         services => services
                                             .AddSingleton(serviceContext)
                                             .AddHttpClient()
-                                            .AddSimulationEngine(serviceContext))
+                                            .AddSimulationSettings(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseSerilog(Log, dispose: true)

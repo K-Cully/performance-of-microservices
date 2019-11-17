@@ -16,6 +16,29 @@ namespace ClusterEmulator.Emulation.Test.Processors
     public class ServiceCollectionExtensionsUnitTests
     {
         [TestMethod]
+        public void AddSimulationEngine_NullCollection_Throws()
+        {
+            // Arrange, Act & Verify
+            Assert.ThrowsException<ArgumentNullException>(
+                () => _ = ServiceCollectionExtensions.AddSimulationEngine(null));
+        }
+
+
+        [TestMethod]
+        public void AddSimulationEngine_ValidContent_ReturnsCorrectly()
+        {
+            var services = new ServiceCollection();
+
+            // Act
+            IServiceCollection collection = services.AddSimulationEngine();
+
+            // Verify
+            Assert.IsNotNull(collection);
+            Assert.AreEqual(6, collection.Count);
+        }
+
+
+        [TestMethod]
         public void AddSimulationEngineClients_NullCollection_Throws()
         {
             // Arrange
