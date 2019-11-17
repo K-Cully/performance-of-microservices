@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
+using ClusterEmulator.Emulation.Extensions;
 
 namespace EmulationService
 {
@@ -55,7 +56,8 @@ namespace EmulationService
                                         services => services
                                             .AddSingleton(serviceContext)
                                             .AddHttpClient()
-                                            .AddSimulationSettings(serviceContext))
+                                            .AddSimulationSettings(serviceContext)
+                                            .AddSimulationEngine())
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseSerilog(Log, dispose: true)

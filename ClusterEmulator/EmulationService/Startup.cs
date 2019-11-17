@@ -35,7 +35,7 @@ namespace EmulationService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHealthChecks();
-            services.AddSimulationEngine().AddSimulationEngineClients(Registry);
+            services.AddSimulationEngineClients(Registry);
         }
 
 
