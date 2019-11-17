@@ -24,6 +24,8 @@ namespace ClusterEmulator.Service.Shared.Extensions
         /// <returns>The <see cref="IServiceCollection"/> with all simulation engine components registered.</returns>
         public static IServiceCollection AddSimulationEngine(this IServiceCollection serviceCollection, ServiceContext serviceContext)
         {
+            // TODO: separate SF specific items from core items
+
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             _ = serviceContext?.CodePackageActivationContext ?? throw new ArgumentNullException(nameof(serviceContext));
 
