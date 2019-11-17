@@ -67,7 +67,7 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Strict);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
             var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
