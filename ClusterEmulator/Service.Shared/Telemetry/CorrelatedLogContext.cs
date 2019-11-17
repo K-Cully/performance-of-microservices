@@ -9,7 +9,7 @@ namespace ClusterEmulator.Service.Shared.Telemetry
     /// <summary>
     /// Creates a log context with a correlation id.
     /// </summary>
-    public static class CorrelatedLogContext
+    public class CorrelatedLogContext : IScopedLogContextFactory
     {
         /// <summary>
         /// Pushes a corerlation id onto the context, returning an System.IDisposable that must later
@@ -20,7 +20,7 @@ namespace ClusterEmulator.Service.Shared.Telemetry
         /// <remarks>Uses the correlation header if available, generates a new id otherwise.</remarks>
         /// <param name="httpContext">The current http context.</param>
         /// <returns>The a disposable object that must be used to remove the property from the log context.</returns>
-        public static IDisposable Create(HttpContext httpContext)
+        public IDisposable InitializeFrom(HttpContext httpContext)
         {
             _ = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
             _ = httpContext.Request?.Headers ?? throw new ArgumentException("Headers are not initialized", nameof(httpContext));

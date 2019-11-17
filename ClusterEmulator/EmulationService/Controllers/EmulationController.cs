@@ -1,4 +1,5 @@
 using ClusterEmulator.Service.Shared;
+using ClusterEmulator.Service.Shared.Telemetry;
 using ClusterEmulator.Emulation.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,8 +18,9 @@ namespace EmulationService.Controllers
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
-        public EmulationController(ILogger<EmulationController> logger, IEngine simulationEngine)
-            : base(logger, simulationEngine)
+        /// <param name="logContextFactory">The factory for creating correlated log contexts.</param>
+        public EmulationController(ILogger<EmulationController> logger, IEngine simulationEngine, IScopedLogContextFactory logContextFactory)
+            : base(logger, simulationEngine, logContextFactory)
         {}
     }
 }

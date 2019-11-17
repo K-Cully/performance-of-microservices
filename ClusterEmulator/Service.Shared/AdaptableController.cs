@@ -19,6 +19,7 @@ namespace ClusterEmulator.Service.Shared
     {
         private readonly IEngine engine;
         private readonly ILogger<AdaptableController> log;
+        private readonly IScopedLogContextFactory correlatedLog;
 
 
         /// <summary>
@@ -26,10 +27,12 @@ namespace ClusterEmulator.Service.Shared
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/> instance to use for logging.</param>
         /// <param name="simulationEngine">The engine for performing simulated and emulated processing.</param>
-        protected AdaptableController(ILogger<AdaptableController> logger, IEngine simulationEngine)
+        /// <param name="logContextFactory">The factory for creating correlated log contexts.</param>
+        protected AdaptableController(ILogger<AdaptableController> logger, IEngine simulationEngine, IScopedLogContextFactory logContextFactory)
         {
             log = logger ?? throw new ArgumentNullException(nameof(logger));
             engine = simulationEngine ?? throw new ArgumentNullException(nameof(simulationEngine));
+            correlatedLog = logContextFactory ?? throw new ArgumentNullException(nameof(logContextFactory));
         }
 
 
@@ -76,7 +79,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            using (correlatedLog.InitializeFrom(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -96,7 +99,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            using (correlatedLog.InitializeFrom(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -116,7 +119,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Options(string name, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            using (correlatedLog.InitializeFrom(ControllerContext.HttpContext))
             {
                 return await ProcessRequestAsync(name, caller);
             }
@@ -137,7 +140,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            using (correlatedLog.InitializeFrom(ControllerContext.HttpContext))
             {
                 if (!ModelState.IsValid)
                 {
@@ -170,7 +173,7 @@ namespace ClusterEmulator.Service.Shared
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(string name, [FromBody] AdaptableRequest request, [FromQuery] string caller)
         {
-            using (CorrelatedLogContext.Create(ControllerContext.HttpContext))
+            using (correlatedLog.InitializeFrom(ControllerContext.HttpContext))
             {
                 if (!ModelState.IsValid)
                 {

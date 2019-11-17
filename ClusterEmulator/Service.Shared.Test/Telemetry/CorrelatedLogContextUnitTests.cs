@@ -13,8 +13,9 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         [TestMethod]
         public void Create_NullContext_Throws()
         {
+            var context = new CorrelatedLogContext();
             Assert.ThrowsException<ArgumentNullException>(
-                () => CorrelatedLogContext.Create(null));
+                () => context.InitializeFrom(null));
         }
 
 
@@ -22,13 +23,14 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_NullRequest_Throws()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             var httpContext = new Mock<HttpContext>(MockBehavior.Strict);
             httpContext.Setup(c => c.Request)
                 .Returns<HttpRequest>(null);
 
             // Act & Verify
             Assert.ThrowsException<ArgumentException>(
-                () => CorrelatedLogContext.Create(httpContext.Object));
+                () => context.InitializeFrom(httpContext.Object));
         }
 
 
@@ -36,6 +38,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_NullHeaders_Throws()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             var httpRequest = new Mock<HttpRequest>(MockBehavior.Strict);
             httpRequest.Setup(r => r.Headers)
                 .Returns<IHeaderDictionary>(null);
@@ -45,7 +48,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
 
             // Act & Verify
             Assert.ThrowsException<ArgumentException>(
-                () => CorrelatedLogContext.Create(httpContext.Object));
+                () => context.InitializeFrom(httpContext.Object));
         }
 
 
@@ -53,6 +56,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_HeaderNotFound_ReturnsDisposable()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             StringValues values = new StringValues("test");
             var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
             headers.Setup(h => h.TryGetValue(It.IsAny<string>(), out values))
@@ -65,7 +69,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
                 .Returns(httpRequest.Object);
 
             // Act
-            IDisposable disposable = CorrelatedLogContext.Create(httpContext.Object);
+            IDisposable disposable = context.InitializeFrom(httpContext.Object);
 
             // Verify
             Assert.IsNotNull(disposable);
@@ -77,6 +81,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_HeaderBlank_ReturnsDisposable()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             StringValues values = new StringValues(string.Empty);
             var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
             headers.Setup(h => h.TryGetValue(It.IsAny<string>(), out values))
@@ -89,7 +94,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
                 .Returns(httpRequest.Object);
 
             // Act
-            IDisposable disposable = CorrelatedLogContext.Create(httpContext.Object);
+            IDisposable disposable = context.InitializeFrom(httpContext.Object);
 
             // Verify
             Assert.IsNotNull(disposable);
@@ -101,6 +106,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_HeaderEmpty_ReturnsDisposable()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             StringValues values = new StringValues();
             var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
             headers.Setup(h => h.TryGetValue(It.IsAny<string>(), out values))
@@ -113,7 +119,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
                 .Returns(httpRequest.Object);
 
             // Act
-            IDisposable disposable = CorrelatedLogContext.Create(httpContext.Object);
+            IDisposable disposable = context.InitializeFrom(httpContext.Object);
 
             // Verify
             Assert.IsNotNull(disposable);
@@ -125,6 +131,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
         public void Create_HeaderCorrect_ReturnsDisposable()
         {
             // Arrange
+            var context = new CorrelatedLogContext();
             StringValues values = new StringValues("test");
             var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
             headers.Setup(h => h.TryGetValue(It.IsAny<string>(), out values))
@@ -137,7 +144,7 @@ namespace ClusterEmulator.Service.Shared.Test.Telemetry
                 .Returns(httpRequest.Object);
 
             // Act
-            IDisposable disposable = CorrelatedLogContext.Create(httpContext.Object);
+            IDisposable disposable = context.InitializeFrom(httpContext.Object);
 
             // Verify
             Assert.IsNotNull(disposable);

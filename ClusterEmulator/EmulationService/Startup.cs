@@ -1,5 +1,6 @@
 ﻿using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Emulation.Extensions;
+using ClusterEmulator.Service.Shared.Telemetry;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,7 @@ namespace EmulationService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHealthChecks();
             services.AddSimulationEngineClients(Registry);
+            services.AddScoped<IScopedLogContextFactory, CorrelatedLogContext>();
         }
 
 

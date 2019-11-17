@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using ClusterEmulator.Service.Shared.Telemetry;
 
 namespace ClusterEmulator.Service.Shared.Test
 {
@@ -24,9 +25,10 @@ namespace ClusterEmulator.Service.Shared.Test
         {
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Strict);
 
             // Act
-            _ = new DummyController(null, engine.Object);
+            _ = new DummyController(null, engine.Object, logContextFactory.Object);
         }
 
 
@@ -37,9 +39,24 @@ namespace ClusterEmulator.Service.Shared.Test
         {
             // Setup
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Strict);
 
             // Act
-            _ = new DummyController(logger.Object, null);
+            _ = new DummyController(logger.Object, null, logContextFactory.Object);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Input")]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Constructor_Throws_WhenPassedNullLogContextFactory()
+        {
+            // Setup
+            var engine = new Mock<IEngine>(MockBehavior.Strict);
+            var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Strict);
+
+            // Act
+            _ = new DummyController(logger.Object, engine.Object, null);
         }
 
 
@@ -50,7 +67,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Strict);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Get(null, "test").ConfigureAwait(false);
@@ -71,7 +89,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Options(null, null).ConfigureAwait(false);
@@ -92,7 +111,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -114,7 +134,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Post("test", null, "test").ConfigureAwait(false);
@@ -135,7 +156,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
             controller.ModelState.AddModelError("value_2", "value_2 is not valid");
 
@@ -159,7 +181,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
             var request = new AdaptableRequest();
 
             // Act
@@ -181,7 +204,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Put("test", null, "test").ConfigureAwait(false);
@@ -202,7 +226,8 @@ namespace ClusterEmulator.Service.Shared.Test
             // Setup
             var engine = new Mock<IEngine>(MockBehavior.Strict);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
             controller.ModelState.AddModelError("value_1", "value_1 is not valid");
 
             // Act
@@ -228,7 +253,8 @@ namespace ClusterEmulator.Service.Shared.Test
             engine.Setup(e => e.ProcessRequestAsync(name))
                 .ReturnsAsync(okResult);
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Get(name, "test").ConfigureAwait(false);
@@ -251,8 +277,8 @@ namespace ClusterEmulator.Service.Shared.Test
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException(message));
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
@@ -277,7 +303,8 @@ namespace ClusterEmulator.Service.Shared.Test
             engine.Setup(e => e.ProcessRequestAsync(It.IsAny<string>()))
                 .ThrowsAsync(new Exception(message));
             var logger = new Mock<ILogger<AdaptableController>>(MockBehavior.Loose);
-            var controller = new DummyController(logger.Object, engine.Object);
+            var logContextFactory = new Mock<IScopedLogContextFactory>(MockBehavior.Loose);
+            var controller = new DummyController(logger.Object, engine.Object, logContextFactory.Object);
 
             // Act
             IActionResult result = await controller.Get("test", "test").ConfigureAwait(false);
@@ -292,8 +319,8 @@ namespace ClusterEmulator.Service.Shared.Test
 
         private class DummyController : AdaptableController
         {
-            public DummyController(ILogger<AdaptableController> logger, IEngine simulationEngine)
-                : base(logger, simulationEngine)
+            public DummyController(ILogger<AdaptableController> logger, IEngine simulationEngine, IScopedLogContextFactory logContextFactory)
+                : base(logger, simulationEngine, logContextFactory)
             {
                 StringValues values = new StringValues("test");
                 var headers = new Mock<IHeaderDictionary>(MockBehavior.Strict);
