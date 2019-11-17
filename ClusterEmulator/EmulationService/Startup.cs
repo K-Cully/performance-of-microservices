@@ -1,5 +1,5 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.Extensions;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

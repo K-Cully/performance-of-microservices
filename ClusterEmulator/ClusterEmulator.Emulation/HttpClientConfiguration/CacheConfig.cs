@@ -9,7 +9,7 @@ using Polly;
 using Polly.Caching;
 using Polly.Caching.Memory;
 
-namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a cache policy.

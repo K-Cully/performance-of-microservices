@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Fabric.Description;
 using System.Linq;
-using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Emulation.Core;
 
 namespace ClusterEmulator.Service.Shared.Configuration
 {

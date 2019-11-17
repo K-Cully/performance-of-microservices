@@ -1,11 +1,11 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.Steps;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 
-namespace ClusterEmulator.Service.Simulation.Test.Steps
+namespace ClusterEmulator.Emulation.Test.Steps
 {
     [TestClass]
     public class StepFactoryUnitTests

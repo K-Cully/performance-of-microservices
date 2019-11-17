@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Polly;
 using Polly.Bulkhead;
 
-namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a bulkhead policy.

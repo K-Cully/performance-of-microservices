@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace ClusterEmulator.Service.Simulation.Steps
+namespace ClusterEmulator.Emulation.Steps
 {
     /// <summary>
     /// A step that simulates CPU bound operations and memory allocation.

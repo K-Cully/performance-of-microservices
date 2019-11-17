@@ -1,9 +1,9 @@
-﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polly;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.Test.HttpClientConfiguration
 {
     [TestClass]
     public class PolicyExtensionsUnitTests

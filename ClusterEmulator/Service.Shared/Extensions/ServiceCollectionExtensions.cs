@@ -1,8 +1,8 @@
 ﻿using ClusterEmulator.Service.Shared.Configuration;
-using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
-using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
+using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.HttpClientConfiguration;
+using ClusterEmulator.Emulation.Processors;
+using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;

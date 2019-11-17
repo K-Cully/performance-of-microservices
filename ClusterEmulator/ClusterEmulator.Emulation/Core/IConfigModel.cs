@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace ClusterEmulator.Service.Simulation.Core
+namespace ClusterEmulator.Emulation.Core
 {
     /// <summary>
     /// An interface for types representing config models that can be converted to an internal type model.

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace ClusterEmulator.Service.Simulation.Steps
+namespace ClusterEmulator.Emulation.Steps
 {
     /// <summary>
     /// Abstract base class for all execution steps.

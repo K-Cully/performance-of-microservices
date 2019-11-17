@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Emulation.Core;
 
-namespace ClusterEmulator.Service.Simulation.Steps
+namespace ClusterEmulator.Emulation.Steps
 {
     /// <summary>
     /// Interface for all execution steps.

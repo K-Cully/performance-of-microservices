@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Simulation.Core
+namespace ClusterEmulator.Emulation.Core
 {
     /// <summary>
     /// Interface to facilitate flexible registry setting loading

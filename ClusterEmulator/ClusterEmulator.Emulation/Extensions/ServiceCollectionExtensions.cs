@@ -1,10 +1,10 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Simulation.Extensions
+namespace ClusterEmulator.Emulation.Extensions
 {
     public static class ServiceCollectionExtensions
     {

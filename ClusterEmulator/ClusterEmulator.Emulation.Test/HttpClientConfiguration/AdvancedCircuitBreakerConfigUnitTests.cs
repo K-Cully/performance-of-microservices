@@ -1,4 +1,4 @@
-﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -8,7 +8,7 @@ using Polly.CircuitBreaker;
 using System;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Test.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.Test.HttpClientConfiguration
 {
     [TestClass]
     public class AdvancedCircuitBreakerConfigUnitTests

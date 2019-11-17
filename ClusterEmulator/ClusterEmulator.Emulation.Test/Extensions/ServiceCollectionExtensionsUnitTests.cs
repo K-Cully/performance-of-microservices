@@ -1,6 +1,6 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.Extensions;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Extensions;
+using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Test.Processors
+namespace ClusterEmulator.Emulation.Test.Processors
 {
     [TestClass]
     public class ServiceCollectionExtensionsUnitTests

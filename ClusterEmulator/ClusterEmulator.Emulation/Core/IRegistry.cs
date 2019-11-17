@@ -1,12 +1,12 @@
-﻿using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.Processors;
+using ClusterEmulator.Emulation.Steps;
+using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Polly;
 using Polly.Registry;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Core
+namespace ClusterEmulator.Emulation.Core
 {
     /// <summary>
     /// Interface for handling retrieval of simulation configuration for a service.

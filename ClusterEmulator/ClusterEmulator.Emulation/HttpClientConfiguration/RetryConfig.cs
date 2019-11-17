@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
-using Policy = ClusterEmulator.Service.Simulation.HttpClientConfiguration.PolicyExtensions;
+using Policy = ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions;
 
-namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a retry policy.

@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Fallback;
-using Policy = ClusterEmulator.Service.Simulation.HttpClientConfiguration.PolicyExtensions;
+using Policy = ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions;
 
-namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.HttpClientConfiguration
 {
     /// <summary>
     /// Configurable components of a fallback policy.

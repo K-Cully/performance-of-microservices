@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ClusterEmulator.Service.Simulation.Steps
+namespace ClusterEmulator.Emulation.Steps
 {
     /// <summary>
     /// An enumeration of group clause conditions.

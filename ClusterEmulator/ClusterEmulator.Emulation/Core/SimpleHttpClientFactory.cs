@@ -1,10 +1,10 @@
-﻿using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
+﻿using ClusterEmulator.Emulation.HttpClientConfiguration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Core
+namespace ClusterEmulator.Emulation.Core
 {
     /// <summary>
     /// A simple factory for creating clients from client configurations.

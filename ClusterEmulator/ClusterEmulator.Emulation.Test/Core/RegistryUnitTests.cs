@@ -1,7 +1,7 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
-using ClusterEmulator.Service.Simulation.HttpClientConfiguration;
-using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
+﻿using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.HttpClientConfiguration;
+using ClusterEmulator.Emulation.Processors;
+using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.Test.Core
+namespace ClusterEmulator.Emulation.Test.Core
 {
     [TestClass]
     public class RegistryUnitTests

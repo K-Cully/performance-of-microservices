@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ClusterEmulator.Service.Simulation.Processors
+namespace ClusterEmulator.Emulation.Processors
 {
     /// <summary>
     /// Defines request processing configuration.

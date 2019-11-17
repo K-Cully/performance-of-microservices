@@ -1,5 +1,5 @@
-﻿using ClusterEmulator.Service.Simulation.Processors;
-using ClusterEmulator.Service.Simulation.Steps;
+﻿using ClusterEmulator.Emulation.Processors;
+using ClusterEmulator.Emulation.Steps;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ClusterEmulator.Service.Simulation.Core
+namespace ClusterEmulator.Emulation.Core
 {
     /// <summary>
     /// Loads and executes emulated and simulated components.

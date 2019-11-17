@@ -1,7 +1,7 @@
-﻿using ClusterEmulator.Service.Simulation.Core;
+﻿using ClusterEmulator.Emulation.Core;
 using System.Collections.Generic;
 
-namespace ClusterEmulator.Service.Simulation.Processors
+namespace ClusterEmulator.Emulation.Processors
 {
     /// <summary>
     /// A generic interface for all processor types.

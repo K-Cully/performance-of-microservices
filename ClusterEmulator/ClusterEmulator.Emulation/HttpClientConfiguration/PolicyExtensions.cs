@@ -2,7 +2,7 @@
 using Polly.Timeout;
 using System.Net.Http;
 
-namespace ClusterEmulator.Service.Simulation.HttpClientConfiguration
+namespace ClusterEmulator.Emulation.HttpClientConfiguration
 {
     /// <summary>
     /// Extensions for the <see cref="Policy"/> class.

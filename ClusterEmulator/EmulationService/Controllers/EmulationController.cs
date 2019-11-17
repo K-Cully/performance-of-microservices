@@ -1,5 +1,5 @@
 using ClusterEmulator.Service.Shared;
-using ClusterEmulator.Service.Simulation.Core;
+using ClusterEmulator.Emulation.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

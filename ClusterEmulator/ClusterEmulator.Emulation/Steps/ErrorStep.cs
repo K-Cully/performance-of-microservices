@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace ClusterEmulator.Service.Simulation.Steps
+namespace ClusterEmulator.Emulation.Steps
 {
     /// <summary>
     /// A step that simulates errors with a set probability.

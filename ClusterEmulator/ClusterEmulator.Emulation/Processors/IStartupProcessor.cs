@@ -1,4 +1,4 @@
-﻿namespace ClusterEmulator.Service.Simulation.Processors
+﻿namespace ClusterEmulator.Emulation.Processors
 {
     /// <summary>
     /// An interface to define startup processing configuration.
