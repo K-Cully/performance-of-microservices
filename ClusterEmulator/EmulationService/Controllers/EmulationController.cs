@@ -1,6 +1,6 @@
-using ClusterEmulator.Service.Shared;
-using ClusterEmulator.Service.Shared.Telemetry;
+using ClusterEmulator.Emulation.Controllers;
 using ClusterEmulator.Emulation.Core;
+using ClusterEmulator.Emulation.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
