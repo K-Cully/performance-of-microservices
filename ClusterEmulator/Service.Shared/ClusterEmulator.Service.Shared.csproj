@@ -10,14 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.ServiceFabric" Version="6.5.658" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.4" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ClusterEmulator.Emulation\ClusterEmulator.Emulation.csproj" />
-    <ProjectReference Include="..\ClusterEmulator.Models\ClusterEmulator.Models.csproj" />
   </ItemGroup>
 
 </Project>
