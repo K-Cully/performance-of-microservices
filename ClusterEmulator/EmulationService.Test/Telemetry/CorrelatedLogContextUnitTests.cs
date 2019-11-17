@@ -1,11 +1,11 @@
-﻿using ClusterEmulator.Service.Shared.Telemetry;
+﻿using EmulationService.Telemetry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 
-namespace ClusterEmulator.Service.Shared.Test.Telemetry
+namespace EmulationService.Test.Telemetry
 {
     [TestClass]
     public class CorrelatedLogContextUnitTests
