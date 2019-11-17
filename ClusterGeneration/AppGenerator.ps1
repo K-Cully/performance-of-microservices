@@ -50,9 +50,11 @@ if (Test-Path -Path $OutputDirectory) {
 }
 
 Write-Host -Message "Copying project dependencies to $OutputDirectory\projects"
-Copy-Item -Path "$EmulatorDirectory\Service.Models" -Destination "$OutputDirectory\projects\Service.Models" -Recurse -Force
-Copy-Item -Path "$EmulatorDirectory\Service.Shared" -Destination "$OutputDirectory\projects\" -Recurse -Force
-Copy-Item -Path "$EmulatorDirectory\Service.Simulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.Models" -Destination "$OutputDirectory\projects\ClusterEmulator.Models" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.ApplicationInsights" -Destination "$OutputDirectory\projects\" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.Emulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.ServiceFabric" -Destination "$OutputDirectory\projects\" -Recurse -Force
+Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.Emulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
 
 # Ensure service template is installed and suppress console output
 $junk = dotnet new -i "$EmulatorDirectory\EmulationService"
