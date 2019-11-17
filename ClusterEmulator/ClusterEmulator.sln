@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Service.Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Service.Models", "Service.Models\ClusterEmulator.Service.Models.csproj", "{85049E10-A5EE-4C54-8255-5353DB1507D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Emulation", "Service.Simulation\ClusterEmulator.Emulation.csproj", "{BF133C86-BE95-42A2-B467-6B193EBEB606}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Emulation", "ClusterEmulator.Emulation\ClusterEmulator.Emulation.csproj", "{BF133C86-BE95-42A2-B467-6B193EBEB606}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Emulation.Test", "Service.Simulation.Test\ClusterEmulator.Emulation.Test.csproj", "{25E32939-26AA-4402-973E-AA93A7E9A0F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Emulation.Test", "ClusterEmulator.Emulation.Test\ClusterEmulator.Emulation.Test.csproj", "{25E32939-26AA-4402-973E-AA93A7E9A0F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.Service.Shared", "Service.Shared\ClusterEmulator.Service.Shared.csproj", "{FEFDFB4E-AC5C-41D4-87F6-7F20B4ED0D76}"
 EndProject
