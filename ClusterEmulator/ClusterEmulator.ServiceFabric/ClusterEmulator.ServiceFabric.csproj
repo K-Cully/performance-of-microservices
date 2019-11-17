@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.ServiceFabric" Version="6.5.658" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

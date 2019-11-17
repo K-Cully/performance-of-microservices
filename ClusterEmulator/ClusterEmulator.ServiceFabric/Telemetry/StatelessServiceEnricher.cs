@@ -3,7 +3,7 @@ using Serilog.Events;
 using System;
 using System.Fabric;
 
-namespace ClusterEmulator.Service.Shared.Telemetry
+namespace ClusterEmulator.ServiceFabric.Telemetry
 {
     /// <summary>
     /// Enriches a log event with stateless service context information.
