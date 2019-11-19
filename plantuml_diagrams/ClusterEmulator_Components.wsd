@@ -1,0 +1,67 @@
+@startuml
+title Cluster Emulator Components
+
+package "Project Specific" {
+  [ClusterEmulator.ApplicationInsights]
+  [ClusterEmulator.ServiceFabric]
+  [Emulation Service]
+
+  frame "Serilog" {
+    [Serilog.AspNetCore]
+    [Serilog.Settings.Configuration]
+    [Serilog.Sinks.ApplicationInsights]
+  }
+
+  frame "Service Fabric" {
+    [Microsoft.ServiceFabric]
+    [Microsoft.ServiceFabric.AspNetCore.Kestrel]
+  }
+}
+
+package "Fully Portable" {
+  [ClusterEmulator.Emulation]
+  [ClusterEmulator.Models]
+
+  frame ".NET Core" {
+    [Microsoft.AspNetCore.App]
+    [Microsoft.Extensions.Logging]
+  }
+
+  frame "Newtonsoft" {
+    [Newtonsoft.Json]
+  }
+
+  frame "Polly Packages" {
+    [Microsoft.Extensions.Http.Polly]
+    [Polly]
+    [Polly.Caching.Memory]
+  }
+}
+
+[Emulation Service] --> [ClusterEmulator.ApplicationInsights]
+[Emulation Service] --> [ClusterEmulator.Emulation]
+[Emulation Service] --> [ClusterEmulator.ServiceFabric]
+[Emulation Service] --> [Microsoft.AspNetCore.App]
+[Emulation Service] --> [Microsoft.Extensions.Logging]
+[Emulation Service] --> [Microsoft.ServiceFabric.AspNetCore.Kestrel]
+[Emulation Service] --> [Serilog.Settings.Configuration]
+[Emulation Service] --> [Serilog.Sinks.ApplicationInsights]
+
+[ClusterEmulator.ApplicationInsights] --> [Microsoft.AspNetCore.App]
+[ClusterEmulator.ApplicationInsights] --> [Serilog.Sinks.ApplicationInsights]
+
+[ClusterEmulator.Emulation] --> [ClusterEmulator.Models]
+[ClusterEmulator.Emulation] --> [Microsoft.AspNetCore.App]
+[ClusterEmulator.Emulation] --> [Microsoft.Extensions.Http.Polly]
+[ClusterEmulator.Emulation] --> [Microsoft.Extensions.Logging]
+[ClusterEmulator.Emulation] --> [Newtonsoft.Json]
+[ClusterEmulator.Emulation] --> [Polly]
+[ClusterEmulator.Emulation] --> [Polly.Caching.Memory]
+
+[ClusterEmulator.Models] --> [Newtonsoft.Json]
+
+[ClusterEmulator.ServiceFabric] --> [Microsoft.AspNetCore.App]
+[ClusterEmulator.ServiceFabric] --> [Microsoft.ServiceFabric]
+[ClusterEmulator.ServiceFabric] --> [Serilog.AspNetCore]
+
+@enduml
