@@ -21,9 +21,4 @@
     <ProjectReference Include="..\ClusterEmulator.Models\ClusterEmulator.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Logging\" />
-  </ItemGroup>
-
 </Project>

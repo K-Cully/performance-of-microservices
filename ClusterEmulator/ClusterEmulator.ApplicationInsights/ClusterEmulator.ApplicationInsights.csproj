@@ -13,8 +13,4 @@
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ClusterEmulator.Emulation\ClusterEmulator.Emulation.csproj" />
-  </ItemGroup>
-
 </Project>

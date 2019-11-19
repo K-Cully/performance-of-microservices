@@ -1,4 +1,6 @@
+using ClusterEmulator.Emulation.Extensions;
 using ClusterEmulator.ServiceFabric.Extensions;
+using ClusterEmulator.ServiceFabric.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
@@ -9,8 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
-using ClusterEmulator.Emulation.Extensions;
-using ClusterEmulator.ServiceFabric.Telemetry;
 
 namespace EmulationService
 {
