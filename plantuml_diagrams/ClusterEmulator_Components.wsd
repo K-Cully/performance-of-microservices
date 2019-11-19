@@ -1,4 +1,12 @@
 @startuml
+
+skinparam component {
+  FontName Arial
+  BorderColor black
+  BackgroundColor gold
+  ArrowColor #DD3333
+}
+
 title Cluster Emulator Components
 
 package "Project Specific" {
@@ -7,14 +15,14 @@ package "Project Specific" {
   [Emulation Service]
 
   frame "Serilog" {
-    [Serilog.AspNetCore]
-    [Serilog.Settings.Configuration]
-    [Serilog.Sinks.ApplicationInsights]
+    [Serilog.AspNetCore] #WhiteSmoke
+    [Serilog.Settings.Configuration] #WhiteSmoke
+    [Serilog.Sinks.ApplicationInsights] #WhiteSmoke
   }
 
   frame "Service Fabric" {
-    [Microsoft.ServiceFabric]
-    [Microsoft.ServiceFabric.AspNetCore.Kestrel]
+    [Microsoft.ServiceFabric] #WhiteSmoke
+    [Microsoft.ServiceFabric.AspNetCore.Kestrel] #WhiteSmoke
   }
 }
 
@@ -23,44 +31,44 @@ package "Fully Portable" {
   [ClusterEmulator.Models]
 
   frame ".NET Core" {
-    [Microsoft.AspNetCore.App]
-    [Microsoft.Extensions.Logging]
+    [Microsoft.AspNetCore.App] #WhiteSmoke
+    [Microsoft.Extensions.Logging] #WhiteSmoke
   }
 
   frame "Newtonsoft" {
-    [Newtonsoft.Json]
+    [Newtonsoft.Json] #WhiteSmoke
   }
 
   frame "Polly Packages" {
-    [Microsoft.Extensions.Http.Polly]
-    [Polly]
-    [Polly.Caching.Memory]
+    [Microsoft.Extensions.Http.Polly] #WhiteSmoke
+    [Polly] #WhiteSmoke
+    [Polly.Caching.Memory] #WhiteSmoke
   }
 }
 
 [Emulation Service] --> [ClusterEmulator.ApplicationInsights]
-[Emulation Service] --> [ClusterEmulator.Emulation]
+[Emulation Service] -up-> [ClusterEmulator.Emulation]
 [Emulation Service] --> [ClusterEmulator.ServiceFabric]
-[Emulation Service] --> [Microsoft.AspNetCore.App]
-[Emulation Service] --> [Microsoft.Extensions.Logging]
+[Emulation Service] -up-> [Microsoft.AspNetCore.App]
+[Emulation Service] -up-> [Microsoft.Extensions.Logging]
 [Emulation Service] --> [Microsoft.ServiceFabric.AspNetCore.Kestrel]
 [Emulation Service] --> [Serilog.Settings.Configuration]
 [Emulation Service] --> [Serilog.Sinks.ApplicationInsights]
 
-[ClusterEmulator.ApplicationInsights] --> [Microsoft.AspNetCore.App]
+[ClusterEmulator.ApplicationInsights] -up-> [Microsoft.AspNetCore.App]
 [ClusterEmulator.ApplicationInsights] --> [Serilog.Sinks.ApplicationInsights]
 
-[ClusterEmulator.Emulation] --> [ClusterEmulator.Models]
+[ClusterEmulator.Emulation] -up-> [ClusterEmulator.Models]
 [ClusterEmulator.Emulation] --> [Microsoft.AspNetCore.App]
-[ClusterEmulator.Emulation] --> [Microsoft.Extensions.Http.Polly]
+[ClusterEmulator.Emulation] -up-> [Microsoft.Extensions.Http.Polly]
 [ClusterEmulator.Emulation] --> [Microsoft.Extensions.Logging]
-[ClusterEmulator.Emulation] --> [Newtonsoft.Json]
-[ClusterEmulator.Emulation] --> [Polly]
-[ClusterEmulator.Emulation] --> [Polly.Caching.Memory]
+[ClusterEmulator.Emulation] -up-> [Newtonsoft.Json]
+[ClusterEmulator.Emulation] -up-> [Polly]
+[ClusterEmulator.Emulation] -up-> [Polly.Caching.Memory]
 
-[ClusterEmulator.Models] --> [Newtonsoft.Json]
+[ClusterEmulator.Models] -up-> [Newtonsoft.Json]
 
-[ClusterEmulator.ServiceFabric] --> [Microsoft.AspNetCore.App]
+[ClusterEmulator.ServiceFabric] -up-> [Microsoft.AspNetCore.App]
 [ClusterEmulator.ServiceFabric] --> [Microsoft.ServiceFabric]
 [ClusterEmulator.ServiceFabric] --> [Serilog.AspNetCore]
 
