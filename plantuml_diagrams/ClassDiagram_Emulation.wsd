@@ -25,7 +25,23 @@ namespace Controllers {
 }
 
 namespace Core {
-    interface IEngine {
+    interface IConfigFactory<TModel> {
+        + Create(string settingValue) : TModel
+    }
+
+    class ConfigFactory<TModel> implements IConfigFactory {
+        # Errors : List<string>
+        - serializerSettings : JsonSerializerSettings
+        ..getters..
+        # SerializerSettings : JsonSerializerSettings
+        ..readonly..
+        # log : ILogger
+        ----
+        + ConfigFactory(ILogger logger)
+        # DeserializeSettingWithErrorHandling(string settingValue) : TModel
+    }
+
+    interface IEngine {        
         + ProcessRequestAsync(name) : IActionResult
         + ProcessStartupActionsAsync()
     }
@@ -61,14 +77,7 @@ namespace Core {
         + ConfigureHttpClients(httpClientFactory)
     }
 
-    interface IConfigFactory<TModel> {
-        Create(string settingValue) : TModel
-    }
-
-    class ConfigFactory<TModel> implements IConfigFactory {
-        - errors : List<string>
-        - serializerSettings : JsonSerializerSettings
-    }
+    
 
     class SimpleHttpClientFactory implements IHttpClientFactory {
         - clients : IDictionary<string, ClientConfig>
