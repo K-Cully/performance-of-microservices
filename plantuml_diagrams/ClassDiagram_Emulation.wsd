@@ -7,7 +7,9 @@ skinparam class {
   ArrowColor black
 }
 
-title Emulation Service Class Diagram
+title ClusterEmulator.Emulation Class Diagram
+
+
 
 class AdaptableController {
     - engine : IEngine
