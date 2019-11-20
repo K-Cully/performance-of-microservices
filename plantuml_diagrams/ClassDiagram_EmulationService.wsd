@@ -1,5 +1,13 @@
 @startuml
-title Core Service Class Diagram
+
+skinparam class {
+  FontName Arial
+  BorderColor black
+  BackgroundColor whitesmoke
+  ArrowColor black
+}
+
+title Emulation Service Class Diagram
 
 class AdaptableController {
     - engine : IEngine
@@ -196,7 +204,7 @@ IHttpClientFactory <--o Registry
 Registry o--> "1..*" IStep
 Registry o--> "1..*" IProcessor
 Registry o--> "1..*" ClientConfig
-IAsyncPolicy<HttpResponseMessage> "1..*" <--o Registry
+IAsyncPolicy "1..*" <--o Registry
 Registry o--|> "1..*" IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
 
 Processor o--|> SuccessResponse
@@ -212,7 +220,7 @@ ConfigFactory --> ClientConfig : Creates
 StepFactory --> RequestStep : Creates
 StepFactory --> LoadStep : Creates
 StepFactory --> ErrorStep : Creates
-IPolicyFactory --> IAsyncPolicy<HttpResponseMessage> : Creates
+IPolicyFactory --> IAsyncPolicy : Creates
 
 PolicyFactory --> RetryConfig : Creates
 PolicyFactory --> TimeoutConfig : Creates
