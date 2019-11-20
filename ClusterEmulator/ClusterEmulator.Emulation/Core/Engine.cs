@@ -89,8 +89,6 @@ namespace ClusterEmulator.Emulation.Core
         /// </returns>
         public async Task ProcessStartupActionsAsync()
         {
-            // TODO: use this
-
             List<IStartupProcessor> processors = registry.GetStartupProcessors().ToList();
             foreach (var processor in processors)
             {

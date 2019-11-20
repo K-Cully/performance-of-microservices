@@ -26,28 +26,35 @@ namespace Controllers {
 
 namespace Core {
     interface IConfigFactory<TModel> {
-        + Create(string settingValue) : TModel
+        + Create(settingValue) : TModel
     }
 
     class ConfigFactory<TModel> implements IConfigFactory {
-        # Errors : List<string>
         - serializerSettings : JsonSerializerSettings
+        # log : ILogger
+        # Errors : List<string>
         ..getters..
         # SerializerSettings : JsonSerializerSettings
-        ..readonly..
-        # log : ILogger
         ----
+        # DeserializeSettingWithErrorHandling(settingValue) : TModel
         + ConfigFactory(ILogger logger)
-        # DeserializeSettingWithErrorHandling(string settingValue) : TModel
     }
 
-    interface IEngine {        
+    interface IEngine {
         + ProcessRequestAsync(name) : IActionResult
         + ProcessStartupActionsAsync()
     }
 
     class Engine implements IEngine {
-        - IRegistry registry
+        - registry : IRegistry
+        - log : ILogger
+        - RunStartupSteps(steps, processorName)
+        - ExcuteStepInParallel(name, stepName, step) : ExecutionStatus
+        + Engine(logger, registry)
+    }
+
+    interface IConfigModel<TModel> {
+        + AsTypeModel(logger) : TModel
     }
 
     interface IRegistry {
@@ -55,33 +62,48 @@ namespace Core {
         + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
         + ConfigureHttpClients(httpClientFactory)
         + GetClient(name) : ClientConfig
-        + GetPolicy(name) : IAsyncPolicy
-        + GetProcessor(name) : IProcessor
+        + GetPolicy(name) : IAsyncPolicy<HttpResponseMessage>
+        + GetRequestProcessor(name) : IRequestProcessor
+        + GetStartupProcessors() : IEnumerable<IStartupProcessor>
         + GetStep(name) : IStep
+    }
+
+    interface IRegistrySettings {
+        + TryGetSection(name, out section) : bool
     }
 
     class Registry implements IRegistry {
         - clients : IDictionary<string, ClientConfig>
-        - policies : IDictionary<string, IAsyncPolicy>
+        - policies : IDictionary<string, IAsyncPolicy<HttpResponseMessage>>
         - processors : IDictionary<string, IProcessor>
         - steps : IDictionary<string, IStep>
+        - log : ILogger
         - simpleClientFactory : IHttpClientFactory
         + {static} ClientsSection : string
         + {static} PoliciesSection : string
         + {static} ProcessorsSection : string
         + {static} StepsSection : string
+        ..getters..
+        + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
+        + PolicyRegistry : IPolicyRegistry<string>
+        ----
         - InitializeFromSettings<T>(settings, sectionName, registry, factory);
-        - GetRegisteredValue<T>(name, registry, typeName) : T
-        + Registry(configurationSettings, stepFactory,
-        processorFactory, policyFactory, clientFactory)
+        - GetRegisteredValue<T>(name, registry, registryName) : T
+        + Registry(settings, stepFactory, processorFactory, policyFactory,
+        clientFactory, logger, loggerFactory)
         + ConfigureHttpClients(httpClientFactory)
     }
 
-    
+    class NestedConfigFactory<TConfigModel, TModel> extends ConfigFactory {
+        - logFactory : ILoggerFactory
+        - configNamespace : string
+        + NestedConfigFactory(logger, loggerFactory)        
+    }
 
     class SimpleHttpClientFactory implements IHttpClientFactory {
         - clients : IDictionary<string, ClientConfig>
-        + SimpleHttpClientFactory(clientConfigs)
+        - log : ILogger
+        + SimpleHttpClientFactory(clientConfigs, logger)
     }
 }
 
