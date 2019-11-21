@@ -196,33 +196,36 @@ namespace HttpClientConfiguration {
     }
 }
 
+namespace Logging {
+    interface IScopedLogContextFactory {
+        + InitializeFrom(httpContext) : IDisposable
+    }
+}
 
 namespace Processors {
-    interface IProcessor {
+    interface IProcessor<extends IConfigModel<IProcessor>> extends Core.IConfigModel {
+        + Steps : IList<string>
+    }
+
+    interface IRequestProcessor extends IProcessor {        
         + ErrorPayload : ErrorResponse
         + ErrorPayloadSize : integer
         + IngressLatencyMilliseconds : integer
-        + Steps : IList<string>
         + SuccessPayload : SuccessResponse
         + SuccessPayloadSize : integer
     }
 
-    class Processor implements IProcessor {
+    interface IStartupProcessor extends IProcessor {
+        + Asynchronous : boolean
     }
-}
 
-Class SuccessResponse {
-    + Result : string
-}
+    abstract class Processor implements IProcessor {
+        # Log : ILogger
+    }
 
-Class ErrorResponse {
-    + Error : string
-}
+    class RequestProcessor extends Processor implements IRequestProcessor
 
-enum ExecutionStatus {
-    Unexpected : 0
-    Success : 1
-    Fail : 2
+    class StartupProcessor extends Processor implements IStartupProcessor
 }
 
 namespace Steps {
