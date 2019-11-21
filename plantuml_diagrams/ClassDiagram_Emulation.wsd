@@ -219,7 +219,7 @@ namespace Processors {
         + Asynchronous : boolean
     }
 
-    abstract class Processor implements IProcessor {
+    abstract Processor implements IProcessor {
         # Log : ILogger
     }
 
@@ -229,58 +229,85 @@ namespace Processors {
 }
 
 namespace Steps {
-    interface IStep {
-        + ExecuteAsync() : Task<ExecutionStatus>
+    interface IStep<extends IConfigModel<IStep>> extends Core.IConfigModel {
+        + ParallelCount : uint
+        + FailOnParallelFailures : GroupClause
+        + ExecuteAsync() : ExecutionStatus
     }
 
-    interface IRequestStep {
+    enum GroupClause {
+        + Undefined
+        + Any
+        + All
+        + None
+    }
+
+    enum ExecutionStatus {
+        + Fail
+        + Success
+        + SimulatedFail
+    }
+
+    interface IRequestStep extends IStep {
         + ClientName : string
         + ReuseHttpMessageHandler : boolean
         + Configure(httpClientFactory)
         + Configure(httpClientFactory, requestPolicy);
     }
 
-    class RequestStep implements IStep, IRequestStep {
-        - configured : boolean
-        - clientFactory : IHttpClientFactory
-        - policy : IAsyncPolicy<HttpResponseMessage>
-        - supportedMethods : IEnumerable<string>
-        + Configured : configured
-        - ExecuteRequestAsync(action, cancellationToken) : Task
-        - GetRequestAction(httpClient) : Func<CancellationToken, Task>
-        - SendRequest(requestTask)
+    abstract SimulationStep implements IStep {
+        # Logger : ILogger
+        + {abstract} ExecuteAsync : ExecutionStatus
     }
 
-    class LoadStep implements IStep {
-        + TimeInSeconds : integer
-        + CpuPercentage : integer
-        + MemoryInBytes : ulong
-        - GenerateLoad(seconds, percentage) : Task
+    class DelayStep implements SimulationStep {
+        + Time : double
+        - Delay : TimeSpan
     }
 
-    class ErrorStep implements IStep {
+    class ErrorStep implements SimulationStep {
         + Probability : double
     }
+
+    class LoadStep implements SimulationStep {
+        + TimeInSeconds : double
+        + CpuPercentage : integer
+        + MaxProcessors : integer
+        + MemoryInBytes : ulong
+        - ProcessorCount : integer
+        - GenerateLoad(seconds, percentage)
+    }
+
+    class RequestStep implements SimulationStep, IRequestStep {
+        - {static} ChunkChars : integer
+        - configured : boolean
+        - policy : IAsyncPolicy
+        - clientFactory : IHttpClientFactory
+        - random : Random
+        - pendingDisposals : IDictionary<Guid, IList<IDisposable>>
+        - supportedMethodNames : ISet<string>
+        - supportedMethods : ISet<HttpMethod>
+        + Asynchrounous : boolean
+        + CacheId : string
+        + CacheUniqueness : integer
+        + Method : string
+        + Path : string
+        + PayloadSize : string
+        .. getters ..
+        - {static} httpMethods : IEnumerable<HttpMethod>
+        - Context : Polly.Context
+        - CacheKeyNumber : integer
+        + Configured : configured
+        ----
+        - DisposePending(disposalKey)
+        - ExecuteRequestAsync(action, cancellationToken) : HttpResponseMessage
+        - GenerateRequest() : AdaptableRequest
+        - GetRequestAction(httpClient, disposalId) : Func<CancellationToken, Task<HttpResponseMessage>>
+        - HandleRequestAsync(request, disposalId)
+        - ScheduleDisposal(disposalKey, disposable)
+        - SendRequest(requestTask)
+    }
 }
-
-
-interface IStepFactory {
-    + Create(settingValue) : IStep
-}
-
-class StepFactory implements IStepFactory {
-    - errors : List<string>
-    - stepNamespace : string
-    - serializerSettings : JsonSerializerSettings
-}
-
-
-class AdaptableRequest {
-    + Payload : IEnumerable<string>
-}
-
-
-
 
 Controllers.AdaptableController --|> Core.IEngine : ProcessRequestAsync(name) >
 
