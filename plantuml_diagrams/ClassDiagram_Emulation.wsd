@@ -108,22 +108,71 @@ namespace Core {
 }
 
 
-interface IHttpClientFactory {
-    CreateClient(name) : HttpClient
+namespace Extensions {
+    class ServiceCollectionExtensions << (S,#DDAA00) static >> {
+        + {static} AddSimulationEngine(serviceCollection) : IServiceCollection
+        + {static} AddSimulationEngineClients(serviceCollection, registry)
+    }
 }
 
+
+namespace System.Net.Http {
+    interface IHttpClientFactory {
+        + CreateClient(name) : HttpClient
+    }
+}
 
 
 interface IAsyncPolicy
 
 namespace HttpClientConfiguration {
-    interface IPolicyConfiguration {
-        + AsPolicy() : IAsyncPolicy
+    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends Core.IConfigModel
+
+    class PolicyExtensions << (S,#DDAA00) static >> {
+        + {static} HandleHttpRequests() : PolicyBuilder<HttpResponseMessage>
     }
 
-    class TimeoutConfig implements IPolicyConfiguration {
-        + CancelDelegates : boolean
-        + TimeoutInSeconds : double
+    class AdvancedCircuitBreakerConfig implements IPolicyConfiguration {
+        + BreakDuration : double
+        + FailureThreshold : double
+        + SamplingDuration : double
+        + MinimumThroughput : integer
+    }
+
+    class BulkheadConfig implements IPolicyConfiguration {
+        + MaxParallelization : integer
+        + MaxQueuingActions : integer
+    }
+
+    class CacheConfig implements IPolicyConfiguration {
+        + Time : CacheTime
+        + Absolute : boolean
+        + Sliding : boolean
+        - cacheProvider : IAsyncCacheProvider
+        - strategy : ITtlStrategy
+        + CacheConfig()
+        + CacheConfig(cacheProvider)
+        - CacheOKResponse(pollyContext, httpResponseMessage) : Ttl
+        - CreateStrategy() : ITtlStrategy
+    }
+
+    class CacheTime {
+        + Days : integer
+        + Hours : integer
+        + Minutes : integer
+        + Seconds : integer
+        + AsTimeSpan() : TimeSpan
+    }
+
+    class CircuitBreakerConfig implements IPolicyConfiguration {
+        + BreakDuration : double
+        + FaultTolerance : integer        
+    }
+
+    class FallbackConfig implements IPolicyConfiguration { 
+        + Content : string
+        + Reason : string
+        + Status : integer        
     }
 
     class RetryConfig implements IPolicyConfiguration {
@@ -135,6 +184,11 @@ namespace HttpClientConfiguration {
         - DelayWithJitter(delay) : TimeSpan
     }
 
+    class TimeoutConfig implements IPolicyConfiguration {
+        + CancelDelegates : boolean
+        + TimeoutInSeconds : double
+    }
+
     class ClientConfig {
         + BaseAddress : string
         + Policies : IEnumerable<string>
@@ -142,17 +196,6 @@ namespace HttpClientConfiguration {
     }
 }
 
-
-
-interface IPolicyFactory {
-    Create(settingValue) : IAsyncPolicy
-}
-
-class PolicyFactory implements IPolicyFactory {
-    - errors : List<string>
-    - policyNamespace : string
-    - serializerSettings : JsonSerializerSettings
-}
 
 namespace Processors {
     interface IProcessor {
@@ -247,7 +290,7 @@ Core.Registry --> Core.IConfigFactory : Create(value)\n : Processor >
 Core.Registry --> Core.IConfigFactory : Create(value)\n : ClientConfig >
 Core.Registry --> IStepFactory : Create(value) >
 IPolicyFactory <-- Core.Registry : Create(value) <
-IHttpClientFactory <--o Core.Registry
+System.Net.Http.IHttpClientFactory <--o Core.Registry
 Core.Registry o--> "1..*" Steps.IStep
 Core.Registry o--> "1..*" Processors.IProcessor
 Core.Registry o--> "1..*" HttpClientConfiguration.ClientConfig
@@ -259,7 +302,7 @@ Processors.Processor o--|> ErrorResponse
 
 ExecutionStatus <-- Steps.IStep
 
-Steps.RequestStep --> IHttpClientFactory : CreateClient(name) >
+Steps.RequestStep --> System.Net.Http.IHttpClientFactory : CreateClient(name) >
 Steps.RequestStep o--|> "0..1" AdaptableRequest
 
 Core.ConfigFactory --> Processors.Processor : Creates
