@@ -120,10 +120,9 @@ namespace System.Net.Http {
     interface IHttpClientFactory {
         + CreateClient(name) : HttpClient
     }
+
+    IHttpClientFactory --> HttpClient : creates >
 }
-
-
-interface IAsyncPolicy
 
 namespace HttpClientConfiguration {
     interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends Core.IConfigModel
@@ -378,13 +377,14 @@ HttpClientConfiguration.TimeoutConfig --> Polly.Policy : TimeoutAsync() >
 Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
 Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
 
-
-
-ExecutionStatus <-- Steps.IStep
-
+Steps.GroupClause <--* Steps.SimulationStep
+Steps.ExecutionStatus <-- Steps.SimulationStep
+Steps.IStep <-- Steps.SimulationStep : creates <
 
 Steps.RequestStep --> System.Net.Http.IHttpClientFactory : CreateClient(name) >
-Steps.RequestStep o--|> "0..1" AdaptableRequest
+Steps.RequestStep --> System.Net.Http.HttpClient : TODO
+
+Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : create
 
 
 @enduml
