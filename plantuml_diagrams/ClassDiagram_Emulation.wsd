@@ -381,8 +381,11 @@ Steps.GroupClause <--* Steps.SimulationStep
 Steps.ExecutionStatus <-- Steps.SimulationStep
 Steps.IStep <-- Steps.SimulationStep : creates <
 
-Steps.RequestStep --> System.Net.Http.IHttpClientFactory : CreateClient(name) >
-Steps.RequestStep --> System.Net.Http.HttpClient : TODO
+Steps.RequestStep o--> Polly.Context : new() >
+Steps.RequestStep o--> System.Net.Http.IHttpClientFactory : CreateClient(name) >
+Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
+
+Steps.RequestStep --> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
 
 Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : create
 
