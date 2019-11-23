@@ -121,7 +121,7 @@ namespace System.Net.Http {
         + CreateClient(name) : HttpClient
     }
 
-    IHttpClientFactory --> HttpClient : creates >
+    IHttpClientFactory -left-> HttpClient : creates >
 }
 
 namespace HttpClientConfiguration {
@@ -141,26 +141,6 @@ namespace HttpClientConfiguration {
     class BulkheadConfig implements IPolicyConfiguration {
         + MaxParallelization : integer
         + MaxQueuingActions : integer
-    }
-
-    class CacheConfig implements IPolicyConfiguration {
-        + Time : CacheTime
-        + Absolute : boolean
-        + Sliding : boolean
-        - cacheProvider : IAsyncCacheProvider
-        - strategy : ITtlStrategy
-        + CacheConfig()
-        + CacheConfig(cacheProvider)
-        - CacheOKResponse(pollyContext, httpResponseMessage) : Ttl
-        - CreateStrategy() : ITtlStrategy
-    }
-
-    class CacheTime {
-        + Days : integer
-        + Hours : integer
-        + Minutes : integer
-        + Seconds : integer
-        + AsTimeSpan() : TimeSpan
     }
 
     class CircuitBreakerConfig implements IPolicyConfiguration {
@@ -192,6 +172,26 @@ namespace HttpClientConfiguration {
         + BaseAddress : string
         + Policies : IEnumerable<string>
         + RequestHeaders : IDictionary<string, string>
+    }    
+
+    class CacheConfig implements IPolicyConfiguration {
+        + Time : CacheTime
+        + Absolute : boolean
+        + Sliding : boolean
+        - cacheProvider : IAsyncCacheProvider
+        - strategy : ITtlStrategy
+        + CacheConfig()
+        + CacheConfig(cacheProvider)
+        - CacheOKResponse(pollyContext, httpResponseMessage) : Ttl
+        - CreateStrategy() : ITtlStrategy
+    }
+
+    class CacheTime {
+        + Days : integer
+        + Hours : integer
+        + Minutes : integer
+        + Seconds : integer
+        + AsTimeSpan() : TimeSpan
     }
 }
 
@@ -308,13 +308,23 @@ namespace Steps {
     }
 }
 
+namespace Polly {
+    class Context
+    interface IAsyncPolicy
+    class PolicyRegistry
+}
+
+namespace Polly.Caching {
+    interface ITtlStrategy
+}
+
 Controllers.AdaptableController o--> Core.IEngine : ProcessRequestAsync(name) >
 Controllers.AdaptableController o--> Logging.IScopedLogContextFactory : InitializeFrom(httpContext)
 
-Core.Engine o--> Core.IRegistry : GetStep(name)\nGetStartupProcessors()\nGetRequestProcessor(name) >
+Core.Engine o-right-> Core.IRegistry : GetStep(name)\nGetStartupProcessors()\nGetRequestProcessor(name) >
 Core.Engine --> Processors.IRequestProcessor
 Core.Engine --> Processors.IStartupProcessor
-Core.Engine --> Steps.IStep : ExecuteAsync()
+Core.Engine --> Steps.IStep : ExecuteAsync() >
 
 Core.NestedConfigFactory --> Core.IConfigModel : AsTypeModel(logger)\nTConfigModel implements >
 
@@ -343,12 +353,12 @@ Extensions.ServiceCollectionExtensions --> Core.Registry : registers implementat
 Extensions.ServiceCollectionExtensions --> Core.IEngine : registers type >
 Extensions.ServiceCollectionExtensions --> Core.Engine : registers implementation of IEngine >
 
-HttpClientConfiguration.IPolicyConfiguration --> Polly.IAsyncPolicy : creates >
+HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates >
 
 HttpClientConfiguration.AdvancedCircuitBreakerConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests()
-HttpClientConfiguration.AdvancedCircuitBreakerConfig --> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
+HttpClientConfiguration.AdvancedCircuitBreakerConfig -up-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
 
-HttpClientConfiguration.BulkheadConfig --> Polly.Policy : BulkheadAsync() >
+HttpClientConfiguration.BulkheadConfig -up-> Polly.Policy : BulkheadAsync() >
 
 HttpClientConfiguration.CacheConfig *--> HttpClientConfiguration.CacheTime
 HttpClientConfiguration.CacheConfig o--> Polly.Caching.IAsyncCacheProvider
@@ -361,32 +371,33 @@ HttpClientConfiguration.CacheConfig --> Polly.Policy : CacheAsync() >
 HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache : new() >
 
 HttpClientConfiguration.CircuitBreakerConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.CircuitBreakerConfig --> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
+HttpClientConfiguration.CircuitBreakerConfig -up-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
 
 HttpClientConfiguration.FallbackConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.FallbackConfig --> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
+HttpClientConfiguration.FallbackConfig -up-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
 
-HttpClientConfiguration.PolicyExtensions --> Polly.Policy : Handle<HttpRequestException>() >
-HttpClientConfiguration.PolicyExtensions --> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
+HttpClientConfiguration.PolicyExtensions -up-> Polly.Policy : Handle<HttpRequestException>() >
+HttpClientConfiguration.PolicyExtensions -up-> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
 
 HttpClientConfiguration.RetryConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.RetryConfig --> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
+HttpClientConfiguration.RetryConfig -up-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
 
-HttpClientConfiguration.TimeoutConfig --> Polly.Policy : TimeoutAsync() >
+HttpClientConfiguration.TimeoutConfig -up-> Polly.Policy : TimeoutAsync() >
 
 Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
 Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
 
-Steps.GroupClause <--* Steps.SimulationStep
-Steps.ExecutionStatus <-- Steps.SimulationStep
-Steps.IStep <-- Steps.SimulationStep : creates <
+Steps.SimulationStep *-left-> Steps.GroupClause
+Steps.SimulationStep -left-> Steps.ExecutionStatus
+Steps.SimulationStep -up-> Steps.IStep : creates >
 
 Steps.RequestStep o--> Polly.Context : new() >
 Steps.RequestStep o--> System.Net.Http.IHttpClientFactory : CreateClient(name) >
-Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
 Steps.RequestStep --> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
+Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
 
-Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : create
+
+Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : creates >
 
 
 @enduml
