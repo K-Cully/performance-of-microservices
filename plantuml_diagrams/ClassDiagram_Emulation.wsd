@@ -122,7 +122,7 @@ namespace Extensions {
 }
 
 
-namespace System.Net.Http {
+namespace System.Net.Http #whitesmoke {
     interface IHttpClientFactory {
         + CreateClient(name) : HttpClient
     }
@@ -212,8 +212,8 @@ namespace HttpClientConfiguration {
     TimeoutConfig -[hidden]> RetryConfig
     RetryConfig -[hidden]--> CircuitBreakerConfig
     
-    CircuitBreakerConfig -[hidden]> AdvancedCircuitBreakerConfig
-    AdvancedCircuitBreakerConfig -[hidden]> FallbackConfig
+    AdvancedCircuitBreakerConfig -[hidden]-> CircuitBreakerConfig
+    CircuitBreakerConfig -[hidden]-> FallbackConfig
     
     FallbackConfig -[hidden]--> CacheConfig
 }
@@ -336,19 +336,41 @@ namespace Steps {
     SimulationStep -up-> IStep : creates >
 }
 
+
+namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+    interface IServiceCollection
+}
+
+namespace Microsoft.Extensions.Caching.Memory #whitesmoke {
+    interface IMemoryCache
+}
+
 'Polly namespaces'
-namespace Polly {
-    class Context
+namespace Polly #whitesmoke {
     interface IAsyncPolicy
-    class PolicyRegistry
+    PolicyRegistry -[hidden]> Context
+    PolicyRegistry -[hidden]-> IAsyncPolicy
+
+    IAsyncPolicy -[hidden]-> Policy
+    Policy -[hidden]> PolicyBuilder
+
+    PolicyBuilder -[hidden]-> AsyncAdvancedCircuitBreakerTResultSyntax
+    AsyncAdvancedCircuitBreakerTResultSyntax -[hidden]-> AsyncCircuitBreakerTResultSyntax
+    AsyncCircuitBreakerTResultSyntax -[hidden]-> AsyncFallbackTResultSyntax
 }
 
-namespace Polly.Caching {
+namespace Polly.Caching #whitesmoke {
+    interface IAsyncCacheProvider
     interface ITtlStrategy
+    IAsyncCacheProvider -[hidden]> ITtlStrategy
+    ITtlStrategy -[hidden]> ResultTtl
+
+    ResultTtl -[hidden]-> SlidingTtl
+    SlidingTtl -[hidden]> RelativeTtl
+    RelativeTtl -[hidden]> AbsoluteTtl 
 }
 
-Polly.Context -[hidden]--> Polly.Caching.ITtlStrategy
-
+Polly.AsyncFallbackTResultSyntax -[hidden]--> Polly.Caching.ITtlStrategy
 
 Controllers.AdaptableController o--> Core.IEngine : ProcessRequestAsync(name) >
 Controllers.AdaptableController o-up-> Logging.IScopedLogContextFactory : InitializeFrom(httpContext)
@@ -371,33 +393,35 @@ Core.Registry --> Steps.IRequestStep : Configure(httpClientFactory),\nConfigure(
 Core.SimpleHttpClientFactory o--> "0..*" HttpClientConfiguration.ClientConfig
 
 Extensions.ServiceCollectionExtensions -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
-Extensions.ServiceCollectionExtensions --> Core.IConfigFactory : registers IAsyncPolicy, IStep, IProcessor\n& ClientConfig factory types >
-Extensions.ServiceCollectionExtensions --> Core.NestedConfigFactory : registers IAsyncPolicy, IStep &\nIProcessor factory implementations >
-Extensions.ServiceCollectionExtensions --> Core.ConfigFactory : registers ClientConfig factory implementation >
-Extensions.ServiceCollectionExtensions --> Core.IRegistry : registers type >
-Extensions.ServiceCollectionExtensions --> Core.Registry : registers implementation of IRegistry >
-Extensions.ServiceCollectionExtensions -up-> Core.IEngine : registers type >
-Extensions.ServiceCollectionExtensions --> Core.Engine : registers implementation of IEngine >
+Extensions.ServiceCollectionExtensions .[#888888].> Core.IConfigFactory : registers IAsyncPolicy, IStep, IProcessor\n& ClientConfig factory types
+Extensions.ServiceCollectionExtensions .[#888888].> Core.NestedConfigFactory : registers IAsyncPolicy, IStep &\nIProcessor factory implementations
+Extensions.ServiceCollectionExtensions .[#888888].> Core.ConfigFactory : registers ClientConfig factory implementation
+Extensions.ServiceCollectionExtensions .[#888888].> Core.IRegistry : registers type
+Extensions.ServiceCollectionExtensions .[#888888].> Core.Registry : registers implementation of IRegistry
+Extensions.ServiceCollectionExtensions .[#888888]up..> Core.IEngine : registers type
+Extensions.ServiceCollectionExtensions .[#888888].> Core.Engine : registers implementation of IEngine
 
-HttpClientConfiguration.PolicyExtensions -up-> Polly.Policy : Handle<HttpRequestException>() >
-HttpClientConfiguration.PolicyExtensions -up-> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
 
 HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates >
 
-HttpClientConfiguration.AdvancedCircuitBreakerConfig -up-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
-HttpClientConfiguration.BulkheadConfig -up-> Polly.Policy : BulkheadAsync() >
-HttpClientConfiguration.CircuitBreakerConfig -up-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
-HttpClientConfiguration.FallbackConfig -up-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
-HttpClientConfiguration.RetryConfig -up-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
-HttpClientConfiguration.TimeoutConfig -up-> Polly.Policy : TimeoutAsync() >
+HttpClientConfiguration.PolicyExtensions -up--> Polly.Policy : Handle<HttpRequestException>() >
+HttpClientConfiguration.PolicyExtensions -up--> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
 
-HttpClientConfiguration.CacheConfig o--> Polly.Caching.IAsyncCacheProvider
-HttpClientConfiguration.CacheConfig o--> Polly.Caching.ITtlStrategy
+HttpClientConfiguration.RetryConfig -right-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
+HttpClientConfiguration.TimeoutConfig -right-> Polly.Policy : TimeoutAsync() >
+HttpClientConfiguration.BulkheadConfig -right-> Polly.Policy : BulkheadAsync() >
+
+HttpClientConfiguration.AdvancedCircuitBreakerConfig -right-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
+HttpClientConfiguration.CircuitBreakerConfig -right-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
+HttpClientConfiguration.FallbackConfig -right-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
+
+HttpClientConfiguration.CacheConfig -up-> Polly.Policy : CacheAsync() >
+HttpClientConfiguration.CacheConfig o-right-> Polly.Caching.IAsyncCacheProvider
+HttpClientConfiguration.CacheConfig o-right-> Polly.Caching.ITtlStrategy
 HttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl : new() >
 HttpClientConfiguration.CacheConfig --> Polly.Caching.SlidingTtl : new() >
 HttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl : new() >
-HttpClientConfiguration.CacheConfig --> Polly.Caching.ResultTtl : new() >
-HttpClientConfiguration.CacheConfig --> Polly.Policy : CacheAsync() >
+HttpClientConfiguration.CacheConfig -right-> Polly.Caching.ResultTtl : new() >
 HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache : new() >
 
 Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
