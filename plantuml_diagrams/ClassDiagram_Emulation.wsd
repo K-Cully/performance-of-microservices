@@ -348,13 +348,13 @@ Core.Registry --> Steps.IRequestStep : Configure(httpClientFactory),\nConfigure(
 
 Core.SimpleHttpClientFactory o--> "0..*" HttpClientConfiguration.ClientConfig
 
-Microsoft.Extensions.DependencyInjection.IServiceCollection <-- Extensions.ServiceCollectionExtensions : < extends
-Extensions.ServiceCollectionExtensions --> Core.IConfigFactory : registers IAsyncPolicy factory type\nregisters IStep factory type\nregisters IProcessor factory type\nregisters ClientConfig factory type >
-Extensions.ServiceCollectionExtensions --> Core.NestedConfigFactory : registers IAsyncPolicy factory implementation\nregisters IStep factory implementation\nregisters IProcessor factory implementation >
-Extensions.ServiceCollectionExtensions --> Core.ConfigFactory : registers ClientConfig factory type >
+Extensions.ServiceCollectionExtensions -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
+Extensions.ServiceCollectionExtensions --> Core.IConfigFactory : registers IAsyncPolicy, IStep, IProcessor\n& ClientConfig factory types >
+Extensions.ServiceCollectionExtensions --> Core.NestedConfigFactory : registers IAsyncPolicy, IStep &\nIProcessor factory implementations >
+Extensions.ServiceCollectionExtensions --> Core.ConfigFactory : registers ClientConfig factory implementation >
 Extensions.ServiceCollectionExtensions --> Core.IRegistry : registers type >
 Extensions.ServiceCollectionExtensions --> Core.Registry : registers implementation of IRegistry >
-Extensions.ServiceCollectionExtensions --> Core.IEngine : registers type >
+Extensions.ServiceCollectionExtensions -up-> Core.IEngine : registers type >
 Extensions.ServiceCollectionExtensions --> Core.Engine : registers implementation of IEngine >
 
 HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates >
