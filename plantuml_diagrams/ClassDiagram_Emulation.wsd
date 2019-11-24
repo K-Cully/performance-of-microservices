@@ -312,6 +312,10 @@ namespace Steps {
         - ScheduleDisposal(disposalKey, disposable)
         - SendRequest(requestTask)
     }
+
+    SimulationStep *-right-> GroupClause
+    SimulationStep -up-> ExecutionStatus
+    SimulationStep -up-> IStep : creates >
 }
 
 'Polly namespaces'
@@ -391,16 +395,10 @@ HttpClientConfiguration.TimeoutConfig -up-> Polly.Policy : TimeoutAsync() >
 Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
 Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
 
-Steps.SimulationStep *-left-> Steps.GroupClause
-Steps.SimulationStep -left-> Steps.ExecutionStatus
-Steps.SimulationStep -up-> Steps.IStep : creates >
-
 Steps.RequestStep o--> Polly.Context : new() >
 Steps.RequestStep o--> System.Net.Http.IHttpClientFactory : CreateClient(name) >
 Steps.RequestStep --> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
 Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
-
-
 Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : creates >
 
 
