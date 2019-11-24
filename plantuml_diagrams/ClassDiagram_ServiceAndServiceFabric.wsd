@@ -9,29 +9,37 @@ skinparam class {
     ArrowColor black
 }
 
-namespace ClusterEmulator.ServiceFabric
-namespace ClusterEmulator.ServiceFabric.Configuration {
+namespace ClusterEmulator.ServiceFabric {
+    namespace Configuration {
 
+    }
+
+    namespace Extensions {
+
+    }
+
+    namespace Telemetry {
+    }
 }
 
-namespace ClusterEmulator.ServiceFabric.Extensions {
 
-}
-
-namespace ClusterEmulator.ServiceFabric.Telemetry {
-
-}
 
 namespace EmulationService {
 
+    namespace Controllers {
+
+    }
+    namespace Telemetry {
+
+    }
 }
 
-namespace EmulationService.Controllers {
 
-}
-
-namespace EmulationService.Telemetry {
-    
+namespace Serilog #whitesmoke {
+    namespace Core {
+        interface ILogEventEnricher
+        interface ILogEventPropertyFactory
+    }
 }
 
 @enduml
