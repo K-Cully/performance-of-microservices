@@ -10,16 +10,16 @@ skinparam class {
 }
 
 namespace ClusterEmulator.ServiceFabric {
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >> {
+            {static} + AddSimulationSettings(serviceCollection, serviceContext) : IServiceCollection
+        }
+    }
+
     namespace Configuration {
         class FabricConfigurationSettings {
             - settings : ConfigurationSettings
             + TryGetSection(name, settingKeyValuePairs) : boolean
-        }
-    }
-
-    namespace Extensions {
-        class ServiceCollectionExtensions << (S,#DDAA00) static >> {
-            {static} + AddSimulationSettings(serviceCollection, serviceContext) : IServiceCollection
         }
     }
 
@@ -52,6 +52,20 @@ namespace EmulationService {
         - Log : Serilog.ILogger
         # CreateServiceInstanceListeners() : IEnumerable<ServiceInstanceListener>
     }
+
+    class Program << (S,#DDAA00) static >> {
+        - ServiceTypeName : string
+        {static} - Configuration : IConfiguration
+        {static} - Main()
+    }
+
+    Program -up-> EmulationService
+
+    class Startup {
+        - Registry : IRegistry
+        + ConfigureServices(serviceCollection)
+        + Configure(applicationBuilder, hostingEnvironment,\n       httpClientFactory, emulationRegistry, emulationEngine)
+    }
 }
 
 namespace System.Fabric #whitesmoke {
@@ -67,6 +81,7 @@ namespace Serilog #whitesmoke {
     namespace Core {
         interface ILogEventEnricher
         interface ILogEventPropertyFactory
+        class Logger
     }
 
     namespace Events {
@@ -78,12 +93,20 @@ namespace Serilog #whitesmoke {
         class LogContext << (S,#DDAA00) static >>
     }
 
+    namespace Configuration {
+        class LoggerSettingsConfiguration
+    }
+
     interface ILogger
     class SerilogWebHostBuilderExtensions << (S,#DDAA00) static >>
+    class ConfigurationLoggerConfigurationExtensions << (S,#DDAA00) static >>
+    class LoggerConfiguration
+    class Log << (S,#DDAA00) static >>
 }
 
 namespace ClusterEmulator.Emulation #whitesmoke {
     namespace Core {
+        interface IRegistry
         interface IRegistrySettings
     }
 
@@ -101,6 +124,26 @@ namespace ClusterEmulator.Emulation #whitesmoke {
 }
 
 namespace Microsoft #whitesmoke {
+    namespace Extensions {
+        namespace DependencyInjection {
+            interface IServiceCollection
+            class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
+            class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
+        }
+        
+        namespace Configuration {
+            interface IConfiguration
+            class ConfigurationBuilder
+            class FileConfigurationExtensions << (S,#DDAA00) static >>
+            class JsonConfigurationExtensions << (S,#DDAA00) static >>
+            class EnvironmentVariablesExtensions << (S,#DDAA00) static >>
+        }
+
+        namespace Primitives {
+            class StringValues
+        }
+    }
+
     namespace AspNetCore {
         namespace Hosting {
             class WebHostBuilder
@@ -114,6 +157,7 @@ namespace Microsoft #whitesmoke {
         namespace Services {
             namespace Runtime {
                 abstract StatelessService
+                class ServiceRuntime << (S,#DDAA00) static >>
             }
 
             namespace Communication {
@@ -127,18 +171,6 @@ namespace Microsoft #whitesmoke {
                     enum ServiceFabricIntegrationOptions
                 }
             }
-        }
-    }
-
-    namespace Extensions {
-        namespace Primitives {
-            class StringValues
-        }
-
-        namespace DependencyInjection {
-            interface IServiceCollection
-            class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
-            class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
         }
     }
 }
@@ -184,6 +216,17 @@ EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Extensions.S
 EmulationService.EmulationService --> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
 EmulationService.EmulationService --> Serilog.SerilogWebHostBuilderExtensions
 
+EmulationService.Program o--> Microsoft.Extensions.Configuration.IConfiguration
+EmulationService.Program --> Microsoft.Extensions.Configuration.ConfigurationBuilder
+EmulationService.Program --> Microsoft.Extensions.Configuration.FileConfigurationExtensions
+EmulationService.Program --> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
+EmulationService.Program --> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
+EmulationService.Program --> Serilog.Log
+EmulationService.Program --> Serilog.LoggerConfiguration
+EmulationService.Program --> Serilog.Core.Logger
+EmulationService.Program --> Serilog.Configuration.LoggerSettingsConfiguration
+EmulationService.Program --> Serilog.ConfigurationLoggerConfigurationExtensions
 
+EmulationService.Startup o--> ClusterEmulator.Emulation.Core.IRegistry
 
 @enduml
