@@ -105,6 +105,12 @@ namespace Core {
         - log : ILogger
         + SimpleHttpClientFactory(clientConfigs, logger)
     }
+
+    Engine o-right-> IRegistry : GetStep(name)\nGetStartupProcessors()\nGetRequestProcessor(name) >
+    NestedConfigFactory --> IConfigModel : AsTypeModel(logger)\nTConfigModel implements >
+    Registry -up-> IRegistrySettings : TryGetSection(name, out section) >
+    Registry -right-> IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
+    Registry -right-> SimpleHttpClientFactory : new(clients, logger) >
 }
 
 
@@ -308,6 +314,7 @@ namespace Steps {
     }
 }
 
+'Polly namespaces'
 namespace Polly {
     class Context
     interface IAsyncPolicy
@@ -318,15 +325,15 @@ namespace Polly.Caching {
     interface ITtlStrategy
 }
 
-Controllers.AdaptableController o--> Core.IEngine : ProcessRequestAsync(name) >
-Controllers.AdaptableController o--> Logging.IScopedLogContextFactory : InitializeFrom(httpContext)
+Polly.Context -[hidden]--> Polly.Caching.ITtlStrategy
 
-Core.Engine o-right-> Core.IRegistry : GetStep(name)\nGetStartupProcessors()\nGetRequestProcessor(name) >
+
+Controllers.AdaptableController o--> Core.IEngine : ProcessRequestAsync(name) >
+Controllers.AdaptableController o-up-> Logging.IScopedLogContextFactory : InitializeFrom(httpContext)
+
 Core.Engine --> Processors.IRequestProcessor
 Core.Engine --> Processors.IStartupProcessor
 Core.Engine --> Steps.IStep : ExecuteAsync() >
-
-Core.NestedConfigFactory --> Core.IConfigModel : AsTypeModel(logger)\nTConfigModel implements >
 
 Core.Registry o--> "0..*" HttpClientConfiguration.ClientConfig
 Core.Registry o--> "1..*" Processors.IProcessor
@@ -336,9 +343,6 @@ Core.Registry o--> Polly.PolicyRegistry
 Core.Registry o--> "0..*" Polly.IAsyncPolicy
 Core.Registry o--> System.Net.Http.IHttpClientFactory
 
-Core.Registry --> Core.IRegistrySettings : TryGetSection(name, out section) >
-Core.Registry --> Core.IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
-Core.Registry --> Core.SimpleHttpClientFactory : new(clients, logger) >
 Core.Registry --> Polly.PolicyRegistry : Add(policyKey, policy)
 Core.Registry --> Steps.IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
 
