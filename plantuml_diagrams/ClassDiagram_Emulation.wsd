@@ -97,7 +97,7 @@ namespace Core {
     class NestedConfigFactory<TConfigModel, TModel> extends ConfigFactory {
         - logFactory : ILoggerFactory
         - configNamespace : string
-        + NestedConfigFactory(logger, loggerFactory)        
+        + NestedConfigFactory(logger, loggerFactory)
     }
 
     class SimpleHttpClientFactory implements System.Net.Http.IHttpClientFactory {
@@ -151,13 +151,14 @@ namespace HttpClientConfiguration {
 
     class CircuitBreakerConfig implements IPolicyConfiguration {
         + BreakDuration : double
-        + FaultTolerance : integer        
+        + FaultTolerance : integer
     }
 
-    class FallbackConfig implements IPolicyConfiguration { 
+    class FallbackConfig implements IPolicyConfiguration {
+
         + Content : string
         + Reason : string
-        + Status : integer        
+        + Status : integer
     }
 
     class RetryConfig implements IPolicyConfiguration {
@@ -178,7 +179,8 @@ namespace HttpClientConfiguration {
         + BaseAddress : string
         + Policies : IEnumerable<string>
         + RequestHeaders : IDictionary<string, string>
-    }    
+    }
+
 
     class CacheConfig implements IPolicyConfiguration {
         + Time : CacheTime
@@ -199,6 +201,21 @@ namespace HttpClientConfiguration {
         + Seconds : integer
         + AsTimeSpan() : TimeSpan
     }
+
+    CacheConfig *-left-> CacheTime
+    AdvancedCircuitBreakerConfig -up-> PolicyExtensions : HandleHttpRequests()
+    CircuitBreakerConfig -up-> PolicyExtensions : HandleHttpRequests() >
+    FallbackConfig -up-> PolicyExtensions : HandleHttpRequests() >
+    RetryConfig --> PolicyExtensions : HandleHttpRequests() >
+
+    TimeoutConfig -[hidden]> BulkheadConfig
+    TimeoutConfig -[hidden]> RetryConfig
+    RetryConfig -[hidden]--> CircuitBreakerConfig
+    
+    CircuitBreakerConfig -[hidden]> AdvancedCircuitBreakerConfig
+    AdvancedCircuitBreakerConfig -[hidden]> FallbackConfig
+    
+    FallbackConfig -[hidden]--> CacheConfig
 }
 
 namespace Logging {
@@ -212,7 +229,8 @@ namespace Processors {
         + Steps : IList<string>
     }
 
-    interface IRequestProcessor extends IProcessor {        
+    interface IRequestProcessor extends IProcessor {
+
         + ErrorPayload : ErrorResponse
         + ErrorPayloadSize : integer
         + IngressLatencyMilliseconds : integer
@@ -361,14 +379,18 @@ Extensions.ServiceCollectionExtensions --> Core.Registry : registers implementat
 Extensions.ServiceCollectionExtensions -up-> Core.IEngine : registers type >
 Extensions.ServiceCollectionExtensions --> Core.Engine : registers implementation of IEngine >
 
+HttpClientConfiguration.PolicyExtensions -up-> Polly.Policy : Handle<HttpRequestException>() >
+HttpClientConfiguration.PolicyExtensions -up-> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
+
 HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates >
 
-HttpClientConfiguration.AdvancedCircuitBreakerConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests()
 HttpClientConfiguration.AdvancedCircuitBreakerConfig -up-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
-
 HttpClientConfiguration.BulkheadConfig -up-> Polly.Policy : BulkheadAsync() >
+HttpClientConfiguration.CircuitBreakerConfig -up-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
+HttpClientConfiguration.FallbackConfig -up-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
+HttpClientConfiguration.RetryConfig -up-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
+HttpClientConfiguration.TimeoutConfig -up-> Polly.Policy : TimeoutAsync() >
 
-HttpClientConfiguration.CacheConfig *--> HttpClientConfiguration.CacheTime
 HttpClientConfiguration.CacheConfig o--> Polly.Caching.IAsyncCacheProvider
 HttpClientConfiguration.CacheConfig o--> Polly.Caching.ITtlStrategy
 HttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl : new() >
@@ -377,20 +399,6 @@ HttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl : new() >
 HttpClientConfiguration.CacheConfig --> Polly.Caching.ResultTtl : new() >
 HttpClientConfiguration.CacheConfig --> Polly.Policy : CacheAsync() >
 HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache : new() >
-
-HttpClientConfiguration.CircuitBreakerConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.CircuitBreakerConfig -up-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
-
-HttpClientConfiguration.FallbackConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.FallbackConfig -up-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
-
-HttpClientConfiguration.PolicyExtensions -up-> Polly.Policy : Handle<HttpRequestException>() >
-HttpClientConfiguration.PolicyExtensions -up-> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
-
-HttpClientConfiguration.RetryConfig --> HttpClientConfiguration.PolicyExtensions : HandleHttpRequests() >
-HttpClientConfiguration.RetryConfig -up-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
-
-HttpClientConfiguration.TimeoutConfig -up-> Polly.Policy : TimeoutAsync() >
 
 Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
 Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
