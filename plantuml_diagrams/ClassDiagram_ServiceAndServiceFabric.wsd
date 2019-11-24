@@ -160,6 +160,8 @@ namespace Microsoft #whitesmoke {
 
         namespace Mvc {
             enum CompatibilityVersion
+            class ApiControllerAttribute
+            class RouteAttribute
         }
 
         namespace Builder {
@@ -237,6 +239,8 @@ ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings --> Syst
 
 
 'Emulation Service Connections'
+EmulationService.Controllers.EmulationController o-up-> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+EmulationService.Controllers.EmulationController o-up-> Microsoft.AspNetCore.Mvc.RouteAttribute
 EmulationService.Controllers.EmulationController --|> ClusterEmulator.Emulation.Controllers.AdaptableController
 
 EmulationService.Telemetry.CorrelatedLogContext ..|> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
