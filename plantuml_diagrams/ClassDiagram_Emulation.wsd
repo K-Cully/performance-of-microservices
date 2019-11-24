@@ -127,7 +127,7 @@ namespace System.Net.Http {
         + CreateClient(name) : HttpClient
     }
 
-    IHttpClientFactory -left-> HttpClient : creates >
+    IHttpClientFactory --> HttpClient : creates >
 }
 
 namespace HttpClientConfiguration {
@@ -396,8 +396,8 @@ Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
 Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
 
 Steps.RequestStep o--> Polly.Context : new() >
-Steps.RequestStep o--> System.Net.Http.IHttpClientFactory : CreateClient(name) >
-Steps.RequestStep --> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
+Steps.RequestStep o-up-> System.Net.Http.IHttpClientFactory : CreateClient(name) >
+Steps.RequestStep -up-> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
 Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
 Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : creates >
 
