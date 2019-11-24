@@ -49,7 +49,8 @@ namespace EmulationService {
     }
 
     class EmulationService {
-        - Log : Serilog.ILogger 
+        - Log : Serilog.ILogger
+        # CreateServiceInstanceListeners() : IEnumerable<ServiceInstanceListener>
     }
 }
 
@@ -77,7 +78,8 @@ namespace Serilog #whitesmoke {
         class LogContext << (S,#DDAA00) static >>
     }
 
-    interface ILogger 
+    interface ILogger
+    class SerilogWebHostBuilderExtensions << (S,#DDAA00) static >>
 }
 
 namespace ClusterEmulator.Emulation #whitesmoke {
@@ -92,13 +94,38 @@ namespace ClusterEmulator.Emulation #whitesmoke {
     namespace Logging {
         interface IScopedLogContextFactory
     }
+
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >>
+    }
 }
 
 namespace Microsoft #whitesmoke {
+    namespace AspNetCore {
+        namespace Hosting {
+            class WebHostBuilder
+            class WebHostBuilderExtensions << (S,#DDAA00) static >>
+            class WebHostBuilderKestrelExtensions << (S,#DDAA00) static >>
+            class HostingAbstractionsWebHostBuilderExtensions << (S,#DDAA00) static >>
+        }
+    }
+
     namespace ServiceFabric {
         namespace Services {
             namespace Runtime {
                 abstract StatelessService
+            }
+
+            namespace Communication {
+                namespace Runtime {
+                    class ServiceInstanceListener
+                }
+
+                namespace AspNetCore {
+                    class KestrelCommunicationListener
+                    class WebHostBuilderServiceFabricExtension << (S,#DDAA00) static >>
+                    enum ServiceFabricIntegrationOptions
+                }
             }
         }
     }
@@ -110,6 +137,8 @@ namespace Microsoft #whitesmoke {
 
         namespace DependencyInjection {
             interface IServiceCollection
+            class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
+            class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
         }
     }
 }
@@ -138,5 +167,23 @@ EmulationService.Telemetry.CorrelatedLogContext --> Microsoft.Extensions.Primiti
 EmulationService.Telemetry.CorrelatedLogContext --> Serilog.Context.LogContext
 
 EmulationService.EmulationService --|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
+EmulationService.EmulationService o--> Serilog.ILogger
+EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher
+EmulationService.EmulationService --> System.Fabric.StatelessServiceContext
+EmulationService.EmulationService -up-> Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener
+EmulationService.EmulationService -up-> Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
+EmulationService.EmulationService -up-> Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
+EmulationService.EmulationService -up-> Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension
+EmulationService.EmulationService -up-> Microsoft.AspNetCore.Hosting.WebHostBuilder
+EmulationService.EmulationService -up-> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
+EmulationService.EmulationService -up-> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
+EmulationService.EmulationService -up-> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
+EmulationService.EmulationService -up-> Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions
+EmulationService.EmulationService -up-> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
+EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions
+EmulationService.EmulationService --> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+EmulationService.EmulationService --> Serilog.SerilogWebHostBuilderExtensions
+
+
 
 @enduml
