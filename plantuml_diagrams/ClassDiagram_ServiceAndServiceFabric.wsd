@@ -66,6 +66,8 @@ namespace EmulationService {
         + ConfigureServices(serviceCollection)
         + Configure(applicationBuilder, hostingEnvironment,\n       httpClientFactory, emulationRegistry, emulationEngine)
     }
+
+    Startup --> EmulationService.Telemetry.CorrelatedLogContext
 }
 
 namespace System.Fabric #whitesmoke {
@@ -106,6 +108,7 @@ namespace Serilog #whitesmoke {
 
 namespace ClusterEmulator.Emulation #whitesmoke {
     namespace Core {
+        interface IEngine
         interface IRegistry
         interface IRegistrySettings
     }
@@ -129,6 +132,9 @@ namespace Microsoft #whitesmoke {
             interface IServiceCollection
             class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
             class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
+            class MvcServiceCollectionExtensions << (S,#DDAA00) static >>
+            class MvcCoreMvcBuilderExtensions << (S,#DDAA00) static >>
+            class HealthCheckServiceCollectionExtensions << (S,#DDAA00) static >>
         }
         
         namespace Configuration {
@@ -150,6 +156,16 @@ namespace Microsoft #whitesmoke {
             class WebHostBuilderExtensions << (S,#DDAA00) static >>
             class WebHostBuilderKestrelExtensions << (S,#DDAA00) static >>
             class HostingAbstractionsWebHostBuilderExtensions << (S,#DDAA00) static >>
+        }
+
+        namespace Mvc {
+            enum CompatibilityVersion
+        }
+
+        namespace Builder {
+            interface IApplicationBuilder
+            class MvcApplicationBuilderExtensions << (S,#DDAA00) static >>
+            class HealthCheckApplicationBuilderExtensions << (S,#DDAA00) static >>
         }
     }
 
@@ -174,6 +190,11 @@ namespace Microsoft #whitesmoke {
         }
     }
 }
+
+namespace System.Net.Http #whitesmoke {
+    interface IHttpClientFactory
+}
+
 
 'ClusterEmulator.ServiceFabric connections'
 ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> Serilog.Events.LogEventProperty
@@ -216,11 +237,12 @@ EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Extensions.S
 EmulationService.EmulationService --> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
 EmulationService.EmulationService --> Serilog.SerilogWebHostBuilderExtensions
 
-EmulationService.Program o--> Microsoft.Extensions.Configuration.IConfiguration
-EmulationService.Program --> Microsoft.Extensions.Configuration.ConfigurationBuilder
-EmulationService.Program --> Microsoft.Extensions.Configuration.FileConfigurationExtensions
-EmulationService.Program --> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
-EmulationService.Program --> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
+EmulationService.Program o-up-> Microsoft.Extensions.Configuration.IConfiguration
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.ConfigurationBuilder
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.FileConfigurationExtensions
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
+EmulationService.Program -up-> Microsoft.ServiceFabric.Services.Runtime.ServiceRuntime
 EmulationService.Program --> Serilog.Log
 EmulationService.Program --> Serilog.LoggerConfiguration
 EmulationService.Program --> Serilog.Core.Logger
@@ -228,5 +250,18 @@ EmulationService.Program --> Serilog.Configuration.LoggerSettingsConfiguration
 EmulationService.Program --> Serilog.ConfigurationLoggerConfigurationExtensions
 
 EmulationService.Startup o--> ClusterEmulator.Emulation.Core.IRegistry
+EmulationService.Startup --> ClusterEmulator.Emulation.Core.IEngine
+EmulationService.Startup -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection
+EmulationService.Startup -up-> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+EmulationService.Startup -up-> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
+EmulationService.Startup -up-> Microsoft.Extensions.DependencyInjection.MvcCoreMvcBuilderExtensions
+EmulationService.Startup -up-> Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions
+EmulationService.Startup -up-> Microsoft.AspNetCore.Mvc.CompatibilityVersion
+EmulationService.Startup -up-> Microsoft.AspNetCore.Builder.IApplicationBuilder
+EmulationService.Startup -up-> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
+EmulationService.Startup -up-> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
+EmulationService.Startup -up-> System.Net.Http.IHttpClientFactory
+EmulationService.Startup --> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+EmulationService.Startup --> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
 
 @enduml
