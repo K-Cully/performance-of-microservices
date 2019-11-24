@@ -1,0 +1,37 @@
+@startuml
+
+title ClusterEmulator.ServiceFabric Class Diagram
+
+skinparam class {
+    FontName Arial
+    BorderColor black
+    BackgroundColor whitesmoke
+    ArrowColor black
+}
+
+namespace ClusterEmulator.ServiceFabric
+namespace ClusterEmulator.ServiceFabric.Configuration {
+
+}
+
+namespace ClusterEmulator.ServiceFabric.Extensions {
+
+}
+
+namespace ClusterEmulator.ServiceFabric.Telemetry {
+
+}
+
+namespace EmulationService {
+
+}
+
+namespace EmulationService.Controllers {
+
+}
+
+namespace EmulationService.Telemetry {
+    
+}
+
+@enduml
