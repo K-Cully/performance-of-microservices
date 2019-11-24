@@ -11,12 +11,12 @@ skinparam class {
 
 namespace ClusterEmulator.ApplicationInsights.Telemetry {
     class AppInsightsTelemetryConverter extends Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter {
-        + Convert(logEvent, formatProvider)
-        - TryGetScalarProperty(logEvent, propertyName, out scalarValue)
+        + Convert(logEvent, formatProvider) : IEnumerable<ITelemetry>
+        - TryGetScalarProperty(logEvent, propertyName, out scalarValue) : boolean
     }
 
     class LoggerExtensions << (S,#DDAA00) static >> {
-        {static} + WithOperationId(loggerEnrichmentConfiguration)
+        {static} + WithOperationId(loggerEnrichmentConfiguration) : LoggerConfiguration
     }
 
     class OperationIdEnricher {

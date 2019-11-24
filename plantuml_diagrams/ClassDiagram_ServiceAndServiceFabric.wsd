@@ -11,35 +11,132 @@ skinparam class {
 
 namespace ClusterEmulator.ServiceFabric {
     namespace Configuration {
-
+        class FabricConfigurationSettings {
+            - settings : ConfigurationSettings
+            + TryGetSection(name, settingKeyValuePairs) : boolean
+        }
     }
 
     namespace Extensions {
-
+        class ServiceCollectionExtensions << (S,#DDAA00) static >> {
+            {static} + AddSimulationSettings(serviceCollection, serviceContext) : IServiceCollection
+        }
     }
 
     namespace Telemetry {
+        class StatelessServiceEnricher {
+            - Context : StatelessServiceContext
+            - serviceTypeName : LogEventProperty
+            - serviceName : LogEventProperty
+            - partitionId : LogEventProperty
+            - instanceId : LogEventProperty
+            - nodeName : LogEventProperty
+            + Enrich(logEvent, logEventPropertyFactory)
+        }
     }
-}
 
+    ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher -> ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings
+}
 
 
 namespace EmulationService {
-
     namespace Controllers {
-
+        class EmulationController
     }
-    namespace Telemetry {
 
+    namespace Telemetry {
+        class CorrelatedLogContext
+    }
+
+    class EmulationService {
+        - Log : Serilog.ILogger 
     }
 }
 
+namespace System.Fabric #whitesmoke {
+    class StatelessServiceContext
+
+    namespace Description {
+        class ConfigurationSettings
+        class ConfigurationSection
+    }
+}
 
 namespace Serilog #whitesmoke {
     namespace Core {
         interface ILogEventEnricher
         interface ILogEventPropertyFactory
     }
+
+    namespace Events {
+        class LogEvent
+        class LogEventProperty
+    }
+
+    namespace Context {
+        class LogContext << (S,#DDAA00) static >>
+    }
+
+    interface ILogger 
 }
+
+namespace ClusterEmulator.Emulation #whitesmoke {
+    namespace Core {
+        interface IRegistrySettings
+    }
+
+    namespace Controllers {
+        class AdaptableController
+    }
+
+    namespace Logging {
+        interface IScopedLogContextFactory
+    }
+}
+
+namespace Microsoft #whitesmoke {
+    namespace ServiceFabric {
+        namespace Services {
+            namespace Runtime {
+                abstract StatelessService
+            }
+        }
+    }
+
+    namespace Extensions {
+        namespace Primitives {
+            class StringValues
+        }
+
+        namespace DependencyInjection {
+            interface IServiceCollection
+        }
+    }
+}
+
+'ClusterEmulator.ServiceFabric connections'
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> Serilog.Events.LogEventProperty
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> System.Fabric.StatelessServiceContext
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Events.LogEvent
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Core.ILogEventPropertyFactory
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher ..|> Serilog.Core.ILogEventEnricher
+
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions ..> Microsoft.Extensions.DependencyInjection.IServiceCollection : extends
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> System.Fabric.ServiceContext
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> ClusterEmulator.Emulation.Core.IRegistrySettings
+
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings ..|> ClusterEmulator.Emulation.Core.IRegistrySettings
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings o--> System.Fabric.Description.ConfigurationSettings
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings --> System.Fabric.Description.ConfigurationSection
+
+
+'Emulation Service Connections'
+EmulationService.Controllers.EmulationController --|> ClusterEmulator.Emulation.Controllers.AdaptableController
+
+EmulationService.Telemetry.CorrelatedLogContext ..|> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
+EmulationService.Telemetry.CorrelatedLogContext --> Microsoft.Extensions.Primitives.StringValues
+EmulationService.Telemetry.CorrelatedLogContext --> Serilog.Context.LogContext
+
+EmulationService.EmulationService --|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
 
 @enduml
