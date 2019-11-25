@@ -1,0 +1,85 @@
+@startuml
+
+title ClusterEmulator.ServiceFabric Class Diagram
+
+skinparam class {
+    FontName Arial
+    BorderColor black
+    BackgroundColor whitesmoke
+    ArrowColor black
+}
+
+namespace ClusterEmulator.ServiceFabric {
+    namespace Configuration {
+        class FabricConfigurationSettings {
+            - settings : ConfigurationSettings
+            + TryGetSection(name, settingKeyValuePairs) : boolean
+        }
+    }
+
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >> {
+            {static} + AddSimulationSettings(serviceCollection, serviceContext) : IServiceCollection
+        }
+    }
+
+    namespace Telemetry {
+        class StatelessServiceEnricher {
+            - Context : StatelessServiceContext
+            - serviceTypeName : LogEventProperty
+            - serviceName : LogEventProperty
+            - partitionId : LogEventProperty
+            - instanceId : LogEventProperty
+            - nodeName : LogEventProperty
+            + Enrich(logEvent, logEventPropertyFactory)
+        }
+    }
+
+    ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher -> ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings
+}
+
+namespace System.Fabric #whitesmoke {
+    class StatelessServiceContext
+
+    namespace Description {
+        class ConfigurationSettings
+        class ConfigurationSection
+    }
+}
+
+namespace Serilog #whitesmoke {
+    namespace Core {
+        interface ILogEventEnricher
+        interface ILogEventPropertyFactory
+    }
+
+    namespace Events {
+        class LogEvent
+        class LogEventProperty
+    }
+}
+
+namespace ClusterEmulator.Emulation.Core #whitesmoke {
+    interface IRegistrySettings
+}
+
+namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+    interface IServiceCollection
+}
+
+'ClusterEmulator.ServiceFabric connections'
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> Serilog.Events.LogEventProperty
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> System.Fabric.StatelessServiceContext
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Events.LogEvent
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Core.ILogEventPropertyFactory
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher ..|> Serilog.Core.ILogEventEnricher
+
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions ..> Microsoft.Extensions.DependencyInjection.IServiceCollection : extends
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> System.Fabric.ServiceContext
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> ClusterEmulator.Emulation.Core.IRegistrySettings
+
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings ..|> ClusterEmulator.Emulation.Core.IRegistrySettings
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings o--> System.Fabric.Description.ConfigurationSettings
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings --> System.Fabric.Description.ConfigurationSection
+
+@enduml
