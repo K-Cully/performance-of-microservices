@@ -166,7 +166,12 @@ Microsoft.AspNetCore -[hidden]---> Microsoft.ServiceFabric
 
 'layout Microsoft.Extensions namespaces'
 Microsoft.Extensions.Configuration -[hidden]-> Microsoft.Extensions.DependencyInjection
-Microsoft.Extensions.DependencyInjection -[hidden]--> Microsoft.Extensions.Primitives
+'Microsoft.Extensions.DependencyInjection -[hidden]--> Microsoft.Extensions.Primitives'
+
+Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions -[hidden]-> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
+
+Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions -[hidden]> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+
 
 'layout Microsoft.AspNetCore namespaces'
 Microsoft.AspNetCore.Builder -[hidden]-> Microsoft.AspNetCore.Hosting
