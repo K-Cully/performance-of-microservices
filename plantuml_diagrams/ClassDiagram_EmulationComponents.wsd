@@ -7,117 +7,11 @@ skinparam class {
     ArrowColor black
 }
 
-title ClusterEmulator.Emulation Class Diagram
+title ClusterEmulator.Emulation Components Class Diagram
 
-
-namespace ClusterEmulator.Controllers {
-    class AdaptableController {
-        - engine : IEngine
-        - log : ILogger<AdaptableController>
-        - correlatedLog : IScopedLogContextFactory
-        - ProcessRequestAsync(name, caller) : IActionResult
-        + Get(name, caller) : IActionResult
-        + Delete(name, caller) : IActionResult
-        + Options(name, caller) : IActionResult
-        + Post(name, request, caller) : IActionResult
-        + Put(name, request, caller) : IActionResult
-    }
-}
-
-namespace ClusterEmulator.Core {
-    interface IConfigFactory<TModel> {
-        + Create(settingValue) : TModel
-    }
-
-    class ConfigFactory<TModel> implements IConfigFactory {
-        - serializerSettings : JsonSerializerSettings
-        # log : ILogger
-        # Errors : List<string>
-        ..getters..
-        # SerializerSettings : JsonSerializerSettings
-        ----
-        # DeserializeSettingWithErrorHandling(settingValue) : TModel
-        + ConfigFactory(ILogger logger)
-    }
-
-    interface IEngine {
-        + ProcessRequestAsync(name) : IActionResult
-        + ProcessStartupActionsAsync()
-    }
-
-    class Engine implements IEngine {
-        - registry : IRegistry
-        - log : ILogger
-        - RunStartupSteps(steps, processorName)
-        - ExcuteStepInParallel(name, stepName, step) : ExecutionStatus
-        + Engine(logger, registry)
-    }
-
+namespace ClusterEmulator.EmulationCore {
     interface IConfigModel<TModel> {
         + AsTypeModel(logger) : TModel
-    }
-
-    interface IRegistry {
-        + PolicyRegistry : IPolicyRegistry<string>
-        + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
-        + ConfigureHttpClients(httpClientFactory)
-        + GetClient(name) : ClientConfig
-        + GetPolicy(name) : IAsyncPolicy<HttpResponseMessage>
-        + GetRequestProcessor(name) : IRequestProcessor
-        + GetStartupProcessors() : IEnumerable<IStartupProcessor>
-        + GetStep(name) : IStep
-    }
-
-    interface IRegistrySettings {
-        + TryGetSection(name, out section) : bool
-    }
-
-    class Registry implements IRegistry {
-        - clients : IDictionary<string, ClientConfig>
-        - policies : IDictionary<string, IAsyncPolicy<HttpResponseMessage>>
-        - processors : IDictionary<string, IProcessor>
-        - steps : IDictionary<string, IStep>
-        - log : ILogger
-        - simpleClientFactory : IHttpClientFactory
-        + {static} ClientsSection : string
-        + {static} PoliciesSection : string
-        + {static} ProcessorsSection : string
-        + {static} StepsSection : string
-        ..getters..
-        + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
-        + PolicyRegistry : IPolicyRegistry<string>
-        ----
-        - InitializeFromSettings<T>(settings, sectionName, registry, factory);
-        - GetRegisteredValue<T>(name, registry, registryName) : T
-        + Registry(settings, stepFactory, processorFactory, policyFactory,
-        clientFactory, logger, loggerFactory)
-        + ConfigureHttpClients(httpClientFactory)
-    }
-
-    class NestedConfigFactory<TConfigModel, TModel> extends ConfigFactory {
-        - logFactory : ILoggerFactory
-        - configNamespace : string
-        + NestedConfigFactory(logger, loggerFactory)
-    }
-
-    class SimpleHttpClientFactory implements System.Net.Http.IHttpClientFactory {
-        - clients : IDictionary<string, ClientConfig>
-        - log : ILogger
-        + SimpleHttpClientFactory(clientConfigs, logger)
-    }
-
-    Engine o-right-> IRegistry : GetStep(name)\nGetStartupProcessors()\nGetRequestProcessor(name) >
-    NestedConfigFactory --> IConfigModel : AsTypeModel(logger)\nTConfigModel implements >
-    Registry -up-> IRegistrySettings : TryGetSection(name, out section) >
-    Registry -right-> IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
-    Registry -right-> SimpleHttpClientFactory : new(clients, logger) >
-}
-
-
-namespace ClusterEmulator.Extensions {
-    class ServiceCollectionExtensions << (S,#DDAA00) static >> {
-        + {static} AddSimulationEngine(serviceCollection) : IServiceCollection
-        + {static} AddSimulationEngineClients(serviceCollection, registry)
     }
 }
 
@@ -127,11 +21,11 @@ namespace System.Net.Http #whitesmoke {
         + CreateClient(name) : HttpClient
     }
 
-    IHttpClientFactory --> HttpClient : creates >
+    IHttpClientFactory --> HttpClient : creates
 }
 
-namespace ClusterEmulator.HttpClientConfiguration {
-    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends ClusterEmulator.Core.IConfigModel
+namespace ClusterEmulator.EmulationHttpClientConfiguration {
+    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends ClusterEmulator.EmulationCore.IConfigModel
 
     class PolicyExtensions << (S,#DDAA00) static >> {
         + {static} HandleHttpRequests() : PolicyBuilder<HttpResponseMessage>
@@ -203,10 +97,10 @@ namespace ClusterEmulator.HttpClientConfiguration {
     }
 
     CacheConfig *-left-> CacheTime
-    AdvancedCircuitBreakerConfig -up-> PolicyExtensions : HandleHttpRequests()
-    CircuitBreakerConfig -up-> PolicyExtensions : HandleHttpRequests() >
-    FallbackConfig -up-> PolicyExtensions : HandleHttpRequests() >
-    RetryConfig --> PolicyExtensions : HandleHttpRequests() >
+    AdvancedCircuitBreakerConfig -up-> PolicyExtensions
+    CircuitBreakerConfig -up-> PolicyExtensions
+    FallbackConfig -up-> PolicyExtensions
+    RetryConfig --> PolicyExtensions
 
     TimeoutConfig -[hidden]> BulkheadConfig
     TimeoutConfig -[hidden]> RetryConfig
@@ -218,15 +112,9 @@ namespace ClusterEmulator.HttpClientConfiguration {
     FallbackConfig -[hidden]--> CacheConfig
 }
 
-namespace Logging {
-    interface IScopedLogContextFactory {
-        + InitializeFrom(httpContext) : IDisposable
-    }
-}
-
-namespace ClusterEmulator.Processors {
-    interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.Core.IConfigModel {
-        + ClusterEmulator.Steps : IList<string>
+namespace ClusterEmulator.EmulationProcessors {
+    interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.EmulationCore.IConfigModel {
+        + ClusterEmulator.EmulationSteps : IList<string>
     }
 
     interface IRequestProcessor extends IProcessor {
@@ -251,8 +139,8 @@ namespace ClusterEmulator.Processors {
     class StartupProcessor extends Processor implements IStartupProcessor
 }
 
-namespace ClusterEmulator.Steps {
-    interface IStep<extends IConfigModel<IStep>> extends ClusterEmulator.Core.IConfigModel {
+namespace ClusterEmulator.EmulationSteps {
+    interface IStep<extends IConfigModel<IStep>> extends ClusterEmulator.EmulationCore.IConfigModel {
         + ParallelCount : uint
         + FailOnParallelFailures : GroupClause
         + ExecuteAsync() : ExecutionStatus
@@ -333,13 +221,9 @@ namespace ClusterEmulator.Steps {
 
     SimulationStep *-right-> GroupClause
     SimulationStep -up-> ExecutionStatus
-    SimulationStep -up-> IStep : creates >
+    SimulationStep -up-> IStep : creates
 }
 
-
-namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
-    interface IServiceCollection
-}
 
 namespace Microsoft.Extensions.Caching.Memory #whitesmoke {
     interface IMemoryCache
@@ -372,66 +256,36 @@ namespace Polly.Caching #whitesmoke {
 
 Polly.AsyncFallbackTResultSyntax -[hidden]--> Polly.Caching.ITtlStrategy
 
-ClusterEmulator.Controllers.AdaptableController o--> ClusterEmulator.Core.IEngine : ProcessRequestAsync(name) >
-ClusterEmulator.Controllers.AdaptableController o-up-> Logging.IScopedLogContextFactory : InitializeFrom(httpContext)
+ClusterEmulator.EmulationHttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates
 
-ClusterEmulator.Core.Engine --> ClusterEmulator.Processors.IRequestProcessor
-ClusterEmulator.Core.Engine --> ClusterEmulator.Processors.IStartupProcessor
-ClusterEmulator.Core.Engine --> ClusterEmulator.Steps.IStep : ExecuteAsync() >
+ClusterEmulator.EmulationHttpClientConfiguration.PolicyExtensions -up--> Polly.Policy
+ClusterEmulator.EmulationHttpClientConfiguration.PolicyExtensions -up--> Polly.PolicyBuilder
 
-ClusterEmulator.Core.Registry o--> "0..*" ClusterEmulator.HttpClientConfiguration.ClientConfig
-ClusterEmulator.Core.Registry o--> "1..*" ClusterEmulator.Processors.IProcessor
-ClusterEmulator.Core.Registry o--> "1..*" ClusterEmulator.Steps.IStep
+ClusterEmulator.EmulationHttpClientConfiguration.RetryConfig -right-> Polly.PolicyBuilder
+ClusterEmulator.EmulationHttpClientConfiguration.TimeoutConfig -right-> Polly.Policy
+ClusterEmulator.EmulationHttpClientConfiguration.BulkheadConfig -right-> Polly.Policy
 
-ClusterEmulator.Core.Registry o--> Polly.PolicyRegistry
-ClusterEmulator.Core.Registry o--> "0..*" Polly.IAsyncPolicy
-ClusterEmulator.Core.Registry o--> System.Net.Http.IHttpClientFactory
+ClusterEmulator.EmulationHttpClientConfiguration.AdvancedCircuitBreakerConfig -right-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax
+ClusterEmulator.EmulationHttpClientConfiguration.CircuitBreakerConfig -right-> Polly.AsyncCircuitBreakerTResultSyntax
+ClusterEmulator.EmulationHttpClientConfiguration.FallbackConfig -right-> Polly.AsyncFallbackTResultSyntax
 
-ClusterEmulator.Core.Registry --> Polly.PolicyRegistry : Add(policyKey, policy)
-ClusterEmulator.Core.Registry --> ClusterEmulator.Steps.IRequestStep : Configure(httpClientFactory),\nConfigure(httpClientFactory, requestPolicy)  >
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig -up-> Polly.Policy
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig o-right-> Polly.Caching.IAsyncCacheProvider
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig o-right-> Polly.Caching.ITtlStrategy
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.SlidingTtl
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig -right-> Polly.Caching.ResultTtl
+ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache
 
-ClusterEmulator.Core.SimpleHttpClientFactory o--> "0..*" ClusterEmulator.HttpClientConfiguration.ClientConfig
+ClusterEmulator.EmulationProcessors.RequestProcessor *--> ClusterEmulator.EmulationModels.ErrorResponse
+ClusterEmulator.EmulationProcessors.RequestProcessor *--> ClusterEmulator.EmulationModels.SuccessResponse
 
-ClusterEmulator.Extensions.ServiceCollectionExtensions -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.IConfigFactory : registers IAsyncPolicy, IStep, IProcessor\n& ClientConfig factory types
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.NestedConfigFactory : registers IAsyncPolicy, IStep &\nIProcessor factory implementations
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.ConfigFactory : registers ClientConfig factory implementation
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.IRegistry : registers type
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.Registry : registers implementation of IRegistry
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888]up..> ClusterEmulator.Core.IEngine : registers type
-ClusterEmulator.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Core.Engine : registers implementation of IEngine
-
-
-ClusterEmulator.HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates >
-
-ClusterEmulator.HttpClientConfiguration.PolicyExtensions -up--> Polly.Policy : Handle<HttpRequestException>() >
-ClusterEmulator.HttpClientConfiguration.PolicyExtensions -up--> Polly.PolicyBuilder : Or<TimeoutRejectedException>()\n.OrResult<HttpResponseMessage>(errorMessage) >
-
-ClusterEmulator.HttpClientConfiguration.RetryConfig -right-> Polly.PolicyBuilder : RetryForeverAsync()\nRetryAsync()\nWaitAndRetryForeverAsync()\nWaitAndRetryAsync() >
-ClusterEmulator.HttpClientConfiguration.TimeoutConfig -right-> Polly.Policy : TimeoutAsync() >
-ClusterEmulator.HttpClientConfiguration.BulkheadConfig -right-> Polly.Policy : BulkheadAsync() >
-
-ClusterEmulator.HttpClientConfiguration.AdvancedCircuitBreakerConfig -right-> Polly.AsyncAdvancedCircuitBreakerTResultSyntax : AdvancedCircuitBreakerAsync()
-ClusterEmulator.HttpClientConfiguration.CircuitBreakerConfig -right-> Polly.AsyncCircuitBreakerTResultSyntax : CircuitBreakerAsync()
-ClusterEmulator.HttpClientConfiguration.FallbackConfig -right-> Polly.AsyncFallbackTResultSyntax : FallbackAsync() >
-
-ClusterEmulator.HttpClientConfiguration.CacheConfig -up-> Polly.Policy : CacheAsync() >
-ClusterEmulator.HttpClientConfiguration.CacheConfig o-right-> Polly.Caching.IAsyncCacheProvider
-ClusterEmulator.HttpClientConfiguration.CacheConfig o-right-> Polly.Caching.ITtlStrategy
-ClusterEmulator.HttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl : new() >
-ClusterEmulator.HttpClientConfiguration.CacheConfig --> Polly.Caching.SlidingTtl : new() >
-ClusterEmulator.HttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl : new() >
-ClusterEmulator.HttpClientConfiguration.CacheConfig -right-> Polly.Caching.ResultTtl : new() >
-ClusterEmulator.HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache : new() >
-
-ClusterEmulator.Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
-ClusterEmulator.Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
-
-ClusterEmulator.Steps.RequestStep o--> Polly.Context : new() >
-ClusterEmulator.Steps.RequestStep o-up-> System.Net.Http.IHttpClientFactory : CreateClient(name) >
-ClusterEmulator.Steps.RequestStep -up-> System.Net.Http.HttpClient : DefaultRequestHeaders.Add()\nSendAsync(request, cancellationToken) >
-ClusterEmulator.Steps.RequestStep --> Polly.IAsyncPolicy : ExecuteAsync() >
-ClusterEmulator.Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : creates >
+ClusterEmulator.EmulationSteps.RequestStep o--> Polly.Context
+ClusterEmulator.EmulationSteps.RequestStep o-up-> System.Net.Http.IHttpClientFactory
+ClusterEmulator.EmulationSteps.RequestStep -up-> System.Net.Http.HttpClient
+ClusterEmulator.EmulationSteps.RequestStep --> Polly.IAsyncPolicy
+ClusterEmulator.EmulationSteps.RequestStep --> ClusterEmulator.EmulationModels.AdaptableRequest : creates
 
 
 @enduml
