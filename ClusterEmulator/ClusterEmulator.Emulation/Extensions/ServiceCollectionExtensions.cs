@@ -3,7 +3,7 @@ using ClusterEmulator.Emulation.HttpClientConfiguration;
 using ClusterEmulator.Emulation.Processors;
 using ClusterEmulator.Emulation.Steps;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
+//using Polly;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

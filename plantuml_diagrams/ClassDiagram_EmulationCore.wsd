@@ -9,8 +9,6 @@ skinparam class {
 
 title ClusterEmulator.Emulation Core Class Diagram
 
-'TODO: Add MVC and Newtonsoft refs'
-
 namespace ClusterEmulator.Emulation.Controllers {
     class AdaptableController {
         - engine : IEngine
@@ -178,6 +176,9 @@ namespace ClusterEmulator.Emulation.Steps {
         + Configure(httpClientFactory)
         + Configure(httpClientFactory, requestPolicy);
     }
+
+    enum GroupClause
+    enum ExecutionStatus
 }
 
 
@@ -224,6 +225,9 @@ ClusterEmulator.Emulation.Controllers.AdaptableController -> Microsoft.AspNetCor
 ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Processors.IRequestProcessor
 ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Processors.IStartupProcessor
 ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.IStep
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.ExecutionStatus
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.GroupClause
+ClusterEmulator.Emulation.Core.Engine -up-> Microsoft.AspNetCore.Mvc.IActionResult
 
 ClusterEmulator.Emulation.Core.Registry o--> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
 ClusterEmulator.Emulation.Core.Registry o--> "1..*" ClusterEmulator.Emulation.Processors.IProcessor
