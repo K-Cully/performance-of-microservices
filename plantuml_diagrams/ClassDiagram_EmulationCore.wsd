@@ -237,6 +237,13 @@ ClusterEmulator.Emulation.Core.Registry --> ClusterEmulator.Emulation.Steps.IReq
 
 ClusterEmulator.Emulation.Core.SimpleHttpClientFactory o--> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
 
+ClusterEmulator.Emulation.Core.ConfigFactory o-> Newtonsoft.Json.JsonSerializerSettings
+ClusterEmulator.Emulation.Core.ConfigFactory -> Newtonsoft.Json.JsonConvert
+
+ClusterEmulator.Emulation.Core.NestedConfigFactory -> Newtonsoft.Json.JsonSerializer
+ClusterEmulator.Emulation.Core.NestedConfigFactory -> Newtonsoft.Json.Linq.JObject
+
+
 ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
 ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IConfigFactory : registers IAsyncPolicy, IStep, IProcessor\n& ClientConfig factory types
 ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.NestedConfigFactory : registers IAsyncPolicy, IStep &\nIProcessor factory implementations
