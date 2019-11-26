@@ -7,7 +7,7 @@ skinparam class {
     ArrowColor black
 }
 
-title ClusterEmulator.Emulation.Emulation Class Diagram
+title ClusterEmulator.Emulation Core Class Diagram
 
 'TODO: Add MVC and Newtonsoft refs'
 
