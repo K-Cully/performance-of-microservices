@@ -29,11 +29,10 @@ interface "dotnet new" as dotnetNew
 interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
 interface "EmulationService\nTemplate" as ServiceTemplate
 
-folder Generated {
+folder "Generated Application" {
     file "ports.json" as ports
     file "Emulation Library Projects" as libraries
     file "Templated Service Projects" as projects
-    file "Packaged Application" as appPackage
 }
 
 projects .. libraries
@@ -59,6 +58,10 @@ ServiceTemplate --> AppGenerator
 ClusterLibraries --> AppGenerator
 
 interface "dotnet publish" as dotnetPub
+
+folder "Generated Package" {    
+    file "Packaged Application" as appPackage
+}
 
 package "Package Generation" {
     agent AppPacker
