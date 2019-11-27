@@ -1,0 +1,54 @@
+@startuml
+
+title Application Generation and Deployment
+
+
+skinparam component {
+  FontName Arial
+  BorderColor black
+  BackgroundColor whitesmoke
+  ArrowColor black
+}
+
+skinparam interface {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
+skinparam file {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
+skinparam agent {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
+
+file fileThing
+
+package "Build" {
+    agent thing
+
+    thing -> fileThing
+}
+
+package "Generate Package" {
+    [Blah2]
+}
+
+package "Infrastructure Provisioning" {
+    [Blah3]
+}
+
+package "Application Deployment" {
+    [Blah4]
+}
+
+cloud {
+    [Cluster]
+}
+
+
+@enduml
