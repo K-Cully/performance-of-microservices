@@ -25,12 +25,16 @@ skinparam agent {
   BackgroundColor whitesmoke
 }
 
+interface dotnet
 
-file "generated\config\ports.json" as ports
-file "generated\projects\dependencies" as libraries
-file "generated\projects\service1..n" as projects
+interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
+interface "EmulationService\nTemplate" as ServiceTemplate
 
-projects -[hidden]-> libraries
+file "ports.json" as ports
+file "Emulation Library Projects" as libraries
+file "Templated Service Projects" as projects
+
+projects .. libraries
 libraries -[hidden]-> ports
 
 package "Application Generation" {
@@ -42,18 +46,26 @@ package "Application Generation" {
     appConfig .. appSettings : optional reference
     appConfig -> AppGenerator
 
-    AppGenerator -> projects
-    AppGenerator -> libraries
-    AppGenerator -> ports
+    AppGenerator ..> dotnet : ndotnet new
+
+    AppGenerator -> projects : output
+    AppGenerator -> libraries : output
+    AppGenerator -> ports : output
 }
 
-interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
-interface "EmulationService\nTemplate" as ServiceTemplate
 ServiceTemplate --> AppGenerator
 ClusterLibraries --> AppGenerator
 
+file "Packaged Application" as servicePackages
+
 package "Package Generation" {
-    [Blah2]
+    agent AppPacker
+
+    ports -> AppPacker
+    projects -> AppPacker
+
+    AppPacker ..> dotnet : dotnet publish
+    AppPacker -> servicePackages : output
 }
 
 package "Infrastructure Provisioning" {
