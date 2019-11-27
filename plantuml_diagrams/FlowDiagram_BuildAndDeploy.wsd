@@ -26,15 +26,33 @@ skinparam agent {
 }
 
 
-file fileThing
+file "generated\config\ports.json" as ports
+file "generated\projects\dependencies" as libraries
+file "generated\projects\service1..n" as projects
 
-package "Build" {
-    agent thing
+projects -[hidden]-> libraries
+libraries -[hidden]-> ports
 
-    thing -> fileThing
+package "Application Generation" {
+    agent AppGenerator
+
+    file "appsettings.json" as appSettings
+    file "App Configuration.json" as appConfig
+
+    appConfig .. appSettings : optional reference
+    appConfig -> AppGenerator
+
+    AppGenerator -> projects
+    AppGenerator -> libraries
+    AppGenerator -> ports
 }
 
-package "Generate Package" {
+interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
+interface "EmulationService\nTemplate" as ServiceTemplate
+ServiceTemplate --> AppGenerator
+ClusterLibraries --> AppGenerator
+
+package "Package Generation" {
     [Blah2]
 }
 
