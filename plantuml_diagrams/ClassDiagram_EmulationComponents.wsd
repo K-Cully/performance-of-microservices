@@ -101,12 +101,9 @@ namespace ClusterEmulator.EmulationHttpClientConfiguration {
     CircuitBreakerConfig -up-> PolicyExtensions
     FallbackConfig -up-> PolicyExtensions
     RetryConfig --> PolicyExtensions
-
+    
     TimeoutConfig -[hidden]> BulkheadConfig
     TimeoutConfig -[hidden]> RetryConfig
-    'RetryConfig -[hidden]--> CircuitBreakerConfig'
-    'AdvancedCircuitBreakerConfig -[hidden]-> CircuitBreakerConfig'
-    'CircuitBreakerConfig -[hidden]-> FallbackConfig'
 
     FallbackConfig -[hidden]--> CacheConfig
 }
