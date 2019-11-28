@@ -1,13 +1,26 @@
 @startuml
 
-title Application Generation and Deployment
+'Import Azure Sympols (MIT License)'
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/master/dist
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/Compute/AzureServiceFabric.puml
+!includeurl AzurePuml/Compute/AzureVirtualMachineScaleSet.puml
+!includeurl AzurePuml/DevOps/AzureApplicationInsights.puml
+!includeurl AzurePuml/Management/AzureLogAnalytics.puml
+!includeurl AzurePuml/Networking/AzureLoadBalancer.puml
+!includeurl AzurePuml/Security/AzureKeyVault.puml
 
+
+title Application Generation and Deployment
 
 skinparam component {
   FontName Arial
-  BorderColor black
-  BackgroundColor whitesmoke
   ArrowColor black
+}
+
+skinparam database {
+  BorderColor CornflowerBlue
+  BackgroundColor white
 }
 
 skinparam interface {
@@ -21,8 +34,8 @@ skinparam file {
 }
 
 skinparam agent {
-  BorderColor black
-  BackgroundColor whitesmoke
+  BorderColor CornflowerBlue
+  BackgroundColor LightSkyBlue
 }
 
 interface "dotnet new" as dotnetNew
@@ -73,17 +86,50 @@ package "Package Generation" {
     AppPacker -> appPackage : output
 }
 
-package "Infrastructure Provisioning" {
-    [Blah3]
+
+package "Cluster Provisioning" {
+    file "ARM Template" as armTemplate
+    file "Certificate" as cert
+    agent "Azure Service Fabric\nProvisioner" as provisioner
+
+    'note: significant layout change can be made by altering this connection'
+    ports -> provisioner
+    cert -up-> provisioner
+    armTemplate -> provisioner
+    provisioner -> Azure : provision\ncomponents
+    
+    agent "Deploy Application" as deployApp
+    cert --> deployApp
 }
 
-package "Application Deployment" {
-    [Blah4]
+appPackage -> deployApp
+
+
+cloud Azure {
+    AzureLoadBalancer(loadBalancer, "Load Balancer", "ingress controller", "Handles service ingress and liveness")
+    AzureKeyVault(keyVault, "Key Vault", "secret storage")
+    database "Platform Telemetry\nStorage" as storage
+
+    frame "Secure Virtual Network" {      
+      AzureServiceFabric(sfCluster, "Service Fabric Cluster", "N Node cluster")
+      AzureVirtualMachineScaleSet(scaleSet, "VM Scale Set", "N VMs", "Service hosting")
+
+      sfCluster -> scaleSet
+    }
+
+    loadBalancer --> sfCluster
+    sfCluster -> keyVault
+    sfCluster --> storage
+
+    AzureApplicationInsights(appInsights, "Application Insights", "App telemetry")
+    AzureLogAnalytics(logAnalytics, "Log Analytics", "Platform telemetry")
+
+    scaleSet --> appInsights
+    scaleSet --> logAnalytics
+    storage -> logAnalytics
 }
 
-cloud {
-    [Cluster]
-}
-
+provisioner --> keyVault : add cluster\ncertificate
+deployApp -up-> sfCluster : deploy application
 
 @enduml
