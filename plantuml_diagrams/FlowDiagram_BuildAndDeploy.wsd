@@ -63,8 +63,8 @@ package "Application Generation" {
     AppGenerator .up.> dotnetNew
 
     AppGenerator -> projects : output
-    AppGenerator -> libraries : output
-    AppGenerator -> ports : output
+    AppGenerator --> libraries : output
+    AppGenerator --> ports : output
 }
 
 ServiceTemplate --> AppGenerator
