@@ -1,0 +1,24 @@
+@startuml
+
+title System Components
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+agent "Core Configurable System" as core
+agent "Platform Libraries" as platform
+agent "Template Service" as template
+
+template -up-> core
+template -up-> platform
+
+agent "Cluster Generation" as generation
+agent "Infrastructure Provisioning" as infra
+agent "Cluster Deployment" as deployment
+
+generation -left-> template
+deployment .up. infra
+deployment .left. generation
+
+
+@enduml
