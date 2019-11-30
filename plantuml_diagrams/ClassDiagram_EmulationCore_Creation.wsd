@@ -77,8 +77,8 @@ namespace ClusterEmulator.Emulation.Core {
     NestedConfigFactory --> IConfigModel : TConfigModel implements
     NestedConfigFactory -[hidden]> ConfigFactory
     Registry -> IRegistrySettings
-    Registry --> IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
-    Registry --> SimpleHttpClientFactory
+    Registry -> IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
+    Registry -> SimpleHttpClientFactory
 
     IRegistry -[hidden]> Registry
 }
