@@ -43,16 +43,14 @@ namespace System.Fabric #whitesmoke {
     }
 }
 
-namespace Serilog #whitesmoke {
-    namespace Core {
-        interface ILogEventEnricher
-        interface ILogEventPropertyFactory
-    }
+namespace Serilog.Core #whitesmoke {
+    interface ILogEventEnricher
+    interface ILogEventPropertyFactory
+}
 
-    namespace Events {
-        class LogEvent
-        class LogEventProperty
-    }
+namespace Serilog.Events  #whitesmoke{
+    class LogEvent
+    class LogEventProperty
 }
 
 namespace ClusterEmulator.Emulation.Core #whitesmoke {
@@ -63,18 +61,21 @@ namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
     interface IServiceCollection
 }
 
+'Fix layout'
+Microsoft.Extensions.DependencyInjection.IServiceCollection -[hidden]right-> ClusterEmulator.Emulation.Core.IRegistrySettings
+
 'ClusterEmulator.ServiceFabric connections'
 ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> Serilog.Events.LogEventProperty
 ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher o--> System.Fabric.StatelessServiceContext
 ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Events.LogEvent
-ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher --> Serilog.Core.ILogEventPropertyFactory
-ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher ..|> Serilog.Core.ILogEventEnricher
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher -up-> Serilog.Core.ILogEventPropertyFactory
+ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher .up.|> Serilog.Core.ILogEventEnricher
 
-ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions ..> Microsoft.Extensions.DependencyInjection.IServiceCollection : extends
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions .up.> Microsoft.Extensions.DependencyInjection.IServiceCollection : extends
 ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> System.Fabric.ServiceContext
-ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions --> ClusterEmulator.Emulation.Core.IRegistrySettings
+ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions -up-> ClusterEmulator.Emulation.Core.IRegistrySettings
 
-ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings ..|> ClusterEmulator.Emulation.Core.IRegistrySettings
+ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings .up.|> ClusterEmulator.Emulation.Core.IRegistrySettings
 ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings o--> System.Fabric.Description.ConfigurationSettings
 ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings --> System.Fabric.Description.ConfigurationSection
 
