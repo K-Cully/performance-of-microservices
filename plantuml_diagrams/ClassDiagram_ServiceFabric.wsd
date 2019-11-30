@@ -31,7 +31,7 @@ namespace ClusterEmulator.ServiceFabric {
         }
     }
 
-    ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher -> ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings
+    ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions -> ClusterEmulator.ServiceFabric.Configuration.FabricConfigurationSettings
 }
 
 namespace System.Fabric #whitesmoke {
