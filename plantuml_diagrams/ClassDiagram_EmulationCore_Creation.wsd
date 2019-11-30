@@ -76,7 +76,7 @@ namespace ClusterEmulator.Emulation.Core {
 
     NestedConfigFactory --> IConfigModel : TConfigModel implements
     NestedConfigFactory -[hidden]> ConfigFactory
-    Registry -> IRegistrySettings
+    Registry -up-> IRegistrySettings
     Registry -> IConfigFactory : Create(settingValue)\nTModel:\n1. <IStep>\n2. <IProcessor>\n3. <IAsyncPolicy>\n4. <ClientConfig> >
     Registry -> SimpleHttpClientFactory
 
@@ -106,23 +106,13 @@ namespace ClusterEmulator.Emulation.HttpClientConfiguration {
         + Policies : IEnumerable<string>
         + RequestHeaders : IDictionary<string, string>
     }
+
+    ClientConfig -[hidden]-> IPolicyConfiguration
 }
 
 namespace ClusterEmulator.Emulation.Processors {
     interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.Emulation.Core.IConfigModel {
         + ClusterEmulator.Emulation.Steps : IList<string>
-    }
-
-    interface IRequestProcessor extends IProcessor {
-        + ErrorPayload : ErrorResponse
-        + ErrorPayloadSize : integer
-        + IngressLatencyMilliseconds : integer
-        + SuccessPayload : SuccessResponse
-        + SuccessPayloadSize : integer
-    }
-
-    interface IStartupProcessor extends IProcessor {
-        + Asynchronous : boolean
     }
 }
 
@@ -170,32 +160,32 @@ namespace Polly #whitesmoke {
 }
 
 'Fix Layout'
-
+ClusterEmulator.Emulation.Core.IConfigModel -[hidden]-- ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration
 
 'ClusterEmulator.Emulation connections'
-ClusterEmulator.Emulation.Core.Registry o--> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
+ClusterEmulator.Emulation.Core.Registry o---> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
 ClusterEmulator.Emulation.Core.Registry o--> "1..*" ClusterEmulator.Emulation.Processors.IProcessor
 ClusterEmulator.Emulation.Core.Registry o--> "1..*" ClusterEmulator.Emulation.Steps.IStep
 
-ClusterEmulator.Emulation.Core.Registry o-up-> Polly.PolicyRegistry
-ClusterEmulator.Emulation.Core.Registry o-up-> "0..*" Polly.IAsyncPolicy
-ClusterEmulator.Emulation.Core.Registry o-> System.Net.Http.IHttpClientFactory
+ClusterEmulator.Emulation.Core.Registry o-up--> Polly.PolicyRegistry
+ClusterEmulator.Emulation.Core.Registry o-up--> "0..*" Polly.IAsyncPolicy
+ClusterEmulator.Emulation.Core.Registry o-up--> System.Net.Http.IHttpClientFactory
 
 ClusterEmulator.Emulation.Core.Registry --> ClusterEmulator.Emulation.Steps.IRequestStep
 
-ClusterEmulator.Emulation.Core.SimpleHttpClientFactory o--> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
+ClusterEmulator.Emulation.Core.SimpleHttpClientFactory o---> "0..*" ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
 
-ClusterEmulator.Emulation.Core.ConfigFactory o--> Newtonsoft.Json.JsonSerializerSettings
-ClusterEmulator.Emulation.Core.ConfigFactory --> Newtonsoft.Json.JsonConvert
+ClusterEmulator.Emulation.Core.ConfigFactory o---> Newtonsoft.Json.JsonSerializerSettings
+ClusterEmulator.Emulation.Core.ConfigFactory ---> Newtonsoft.Json.JsonConvert
 
-ClusterEmulator.Emulation.Core.NestedConfigFactory --> Newtonsoft.Json.JsonSerializer
-ClusterEmulator.Emulation.Core.NestedConfigFactory --> Newtonsoft.Json.Linq.JObject
+ClusterEmulator.Emulation.Core.NestedConfigFactory ---> Newtonsoft.Json.JsonSerializer
+ClusterEmulator.Emulation.Core.NestedConfigFactory ---> Newtonsoft.Json.Linq.JObject
 
 ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions -> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IConfigFactory : registers IAsyncPolicy, IStep,\nIProcessor & ClientConfig\nfactory types
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.NestedConfigFactory : registers IAsyncPolicy,\nIStep & IProcessor\nfactory implementations
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.ConfigFactory : registers ClientConfig\nfactory implementation
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IRegistry : registers type
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.Registry : registers implementation\nof IRegistry
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.IConfigFactory : registers IAsyncPolicy, IStep,\nIProcessor & ClientConfig\nfactory types
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.NestedConfigFactory : registers IAsyncPolicy,\nIStep & IProcessor\nfactory implementations
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.ConfigFactory : registers ClientConfig\nfactory implementation
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.IRegistry : registers type
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.Registry : registers implementation\nof IRegistry
 
 @enduml
