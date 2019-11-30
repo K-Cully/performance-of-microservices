@@ -42,6 +42,8 @@ package "Fully Portable" {
   }
 }
 
+[Microsoft.ServiceFabric.AspNetCore.Kestrel] -[hidden]-> [Microsoft.ServiceFabric]
+
 [Emulation Service] --> [ClusterEmulator.ApplicationInsights]
 [Emulation Service] -up-> [ClusterEmulator.Emulation]
 [Emulation Service] --> [ClusterEmulator.ServiceFabric]
@@ -49,7 +51,6 @@ package "Fully Portable" {
 [Emulation Service] -up-> [Microsoft.Extensions.Logging]
 [Emulation Service] --> [Microsoft.ServiceFabric.AspNetCore.Kestrel]
 [Emulation Service] --> [Serilog.Settings.Configuration]
-[Emulation Service] --> [Serilog.Sinks.ApplicationInsights]
 
 [ClusterEmulator.ApplicationInsights] -up-> [Microsoft.AspNetCore.App]
 [ClusterEmulator.ApplicationInsights] --> [Serilog.Sinks.ApplicationInsights]
