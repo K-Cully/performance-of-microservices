@@ -1,0 +1,122 @@
+@startuml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title ClusterEmulator.Emulation Processing
+
+namespace ClusterEmulator.Emulation.Controllers {
+    class AdaptableController {
+        - engine : IEngine
+        - log : ILogger<AdaptableController>
+        - correlatedLog : IScopedLogContextFactory
+        - ProcessRequestAsync(name, caller) : IActionResult
+        + Get(name, caller) : IActionResult
+        + Delete(name, caller) : IActionResult
+        + Options(name, caller) : IActionResult
+        + Post(name, request, caller) : IActionResult
+        + Put(name, request, caller) : IActionResult
+    }
+}
+
+namespace ClusterEmulator.Emulation.Core {
+    interface IEngine {
+        + ProcessRequestAsync(name) : IActionResult
+        + ProcessStartupActionsAsync()
+    }
+
+    class Engine implements IEngine {
+        - registry : IRegistry
+        - log : ILogger
+        - RunStartupSteps(steps, processorName)
+        - ExcuteStepInParallel(name, stepName, step) : ExecutionStatus
+        + Engine(logger, registry)
+    }
+
+    interface IRegistry {
+        + PolicyRegistry : IPolicyRegistry<string>
+        + Clients : IEnumerable<KeyValuePair<string, ClientConfig>>
+        + ConfigureHttpClients(httpClientFactory)
+        + GetClient(name) : ClientConfig
+        + GetPolicy(name) : IAsyncPolicy<HttpResponseMessage>
+        + GetRequestProcessor(name) : IRequestProcessor
+        + GetStartupProcessors() : IEnumerable<IStartupProcessor>
+        + GetStep(name) : IStep
+    }
+
+    Engine o-> IRegistry
+}
+
+
+namespace ClusterEmulator.Emulation.Extensions {
+    class ServiceCollectionExtensions << (S,#DDAA00) static >> {
+        + {static} AddSimulationEngine(serviceCollection) : IServiceCollection
+        + {static} AddSimulationEngineClients(serviceCollection, registry)
+    }
+}
+
+namespace ClusterEmulator.Emulation.Logging {
+    interface IScopedLogContextFactory {
+        + InitializeFrom(httpContext) : IDisposable
+    }
+}
+
+namespace ClusterEmulator.Emulation.Processors {
+    interface IRequestProcessor<extends IProcessor> {
+        + ErrorPayload : ErrorResponse
+        + ErrorPayloadSize : integer
+        + IngressLatencyMilliseconds : integer
+        + SuccessPayload : SuccessResponse
+        + SuccessPayloadSize : integer
+    }
+
+    interface IStartupProcessor<extends IProcessor> {
+        + Asynchronous : boolean
+    }
+
+    IRequestProcessor -[hidden]-> IStartupProcessor
+}
+
+
+namespace ClusterEmulator.Emulation.Steps {
+    interface IStep<extends IConfigModel<IStep>> {
+        + ParallelCount : uint
+        + FailOnParallelFailures : GroupClause
+        + ExecuteAsync() : ExecutionStatus
+    }
+
+    enum GroupClause
+    enum ExecutionStatus
+}
+
+
+'Microsoft namespaces'
+namespace Microsoft.AspNetCore.Mvc #whitesmoke {
+    interface IActionResult
+    class ProducesAttribute
+}
+
+namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+    interface IServiceCollection
+}
+
+'ClusterEmulator.Emulation.Controllers connections'
+ClusterEmulator.Emulation.Controllers.AdaptableController o--> ClusterEmulator.Emulation.Core.IEngine
+ClusterEmulator.Emulation.Controllers.AdaptableController o-> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
+ClusterEmulator.Emulation.Controllers.AdaptableController -> Microsoft.AspNetCore.Mvc.IActionResult
+ClusterEmulator.Emulation.Controllers.AdaptableController -> Microsoft.AspNetCore.Mvc.ProducesAttribute
+
+'ClusterEmulator.Emulation.Core connections'
+ClusterEmulator.Emulation.Core.Engine -> ClusterEmulator.Emulation.Processors.IRequestProcessor
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Processors.IStartupProcessor
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.IStep
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.ExecutionStatus
+ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.GroupClause
+ClusterEmulator.Emulation.Core.Engine -up-> Microsoft.AspNetCore.Mvc.IActionResult
+
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions --> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IRegistry : registers type
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]> ClusterEmulator.Emulation.Core.IEngine : registers type
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.Engine : registers implementation of IEngine
+
+@enduml
