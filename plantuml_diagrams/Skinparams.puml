@@ -1,6 +1,5 @@
 @startuml
 
-
 skinparam class {
     FontName Arial
     BorderColor black
@@ -10,7 +9,7 @@ skinparam class {
 
 skinparam component {
   FontName Arial
-  BorderColor CornflowerBlue
+  BorderColor black
   BackgroundColor LightSkyBlue
   ArrowColor black
 }
