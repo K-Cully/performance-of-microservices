@@ -1,26 +1,22 @@
 @startuml
 
-skinparam component {
-  FontName Arial
-  BorderColor black
-  BackgroundColor gold
-  ArrowColor #DD3333
-}
+'Import skinparams'
+!include .\Skinparams.puml
 
 title Cluster Emulator Components
 
-package "Project Specific" {
+package "Platform Specific" {
   [ClusterEmulator.ApplicationInsights]
   [ClusterEmulator.ServiceFabric]
   [Emulation Service]
 
-  frame "Serilog" {
+  frame "Serilog" #WhiteSmoke {
     [Serilog.AspNetCore] #WhiteSmoke
     [Serilog.Settings.Configuration] #WhiteSmoke
     [Serilog.Sinks.ApplicationInsights] #WhiteSmoke
   }
 
-  frame "Service Fabric" {
+  frame "Service Fabric" #WhiteSmoke {
     [Microsoft.ServiceFabric] #WhiteSmoke
     [Microsoft.ServiceFabric.AspNetCore.Kestrel] #WhiteSmoke
   }
@@ -30,16 +26,16 @@ package "Fully Portable" {
   [ClusterEmulator.Emulation]
   [ClusterEmulator.Models]
 
-  frame ".NET Core" {
+  frame ".NET Core" #WhiteSmoke {
     [Microsoft.AspNetCore.App] #WhiteSmoke
     [Microsoft.Extensions.Logging] #WhiteSmoke
   }
 
-  frame "Newtonsoft" {
+  frame "Newtonsoft" #WhiteSmoke {
     [Newtonsoft.Json] #WhiteSmoke
   }
 
-  frame "Polly Packages" {
+  frame "Polly" as PollyPackage #WhiteSmoke {
     [Microsoft.Extensions.Http.Polly] #WhiteSmoke
     [Polly] #WhiteSmoke
     [Polly.Caching.Memory] #WhiteSmoke

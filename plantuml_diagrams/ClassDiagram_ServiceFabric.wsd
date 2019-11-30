@@ -1,13 +1,9 @@
 @startuml
 
-title ClusterEmulator.ServiceFabric Class Diagram
+'Import skinparams'
+!include .\Skinparams.puml
 
-skinparam class {
-    FontName Arial
-    BorderColor black
-    BackgroundColor whitesmoke
-    ArrowColor black
-}
+title ClusterEmulator.ServiceFabric Class Diagram
 
 namespace ClusterEmulator.ServiceFabric {
     namespace Configuration {

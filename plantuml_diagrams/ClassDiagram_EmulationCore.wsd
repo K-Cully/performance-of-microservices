@@ -1,11 +1,7 @@
 @startuml
 
-skinparam class {
-    FontName Arial
-    BorderColor black
-    BackgroundColor whitesmoke
-    ArrowColor black
-}
+'Import skinparams'
+!include .\Skinparams.puml
 
 title ClusterEmulator.Emulation Core Class Diagram
 

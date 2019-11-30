@@ -1,0 +1,38 @@
+@startuml
+
+
+skinparam class {
+    FontName Arial
+    BorderColor black
+    BackgroundColor whitesmoke
+    ArrowColor black
+}
+
+skinparam component {
+  FontName Arial
+  BorderColor CornflowerBlue
+  BackgroundColor LightSkyBlue
+  ArrowColor black
+}
+
+skinparam database {
+  BorderColor CornflowerBlue
+  BackgroundColor white
+}
+
+skinparam interface {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
+skinparam file {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
+skinparam agent {
+  BorderColor CornflowerBlue
+  BackgroundColor LightSkyBlue
+}
+
+@enduml

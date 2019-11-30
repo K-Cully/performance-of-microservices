@@ -2,41 +2,18 @@
 
 'Import Azure Sympols (MIT License)'
 !define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/master/dist
-!includeurl AzurePuml/AzureCommon.puml
-!includeurl AzurePuml/Compute/AzureServiceFabric.puml
-!includeurl AzurePuml/Compute/AzureVirtualMachineScaleSet.puml
-!includeurl AzurePuml/DevOps/AzureApplicationInsights.puml
-!includeurl AzurePuml/Management/AzureLogAnalytics.puml
-!includeurl AzurePuml/Networking/AzureLoadBalancer.puml
-!includeurl AzurePuml/Security/AzureKeyVault.puml
+!include AzurePuml/AzureCommon.puml
+!include AzurePuml/Compute/AzureServiceFabric.puml
+!include AzurePuml/Compute/AzureVirtualMachineScaleSet.puml
+!include AzurePuml/DevOps/AzureApplicationInsights.puml
+!include AzurePuml/Management/AzureLogAnalytics.puml
+!include AzurePuml/Networking/AzureLoadBalancer.puml
+!include AzurePuml/Security/AzureKeyVault.puml
 
+'Import skinparams'
+!include .\Skinparams.puml
 
 title Application Generation and Deployment
-
-skinparam component {
-  FontName Arial
-  ArrowColor black
-}
-
-skinparam database {
-  BorderColor CornflowerBlue
-  BackgroundColor white
-}
-
-skinparam interface {
-  BorderColor black
-  BackgroundColor whitesmoke
-}
-
-skinparam file {
-  BorderColor black
-  BackgroundColor whitesmoke
-}
-
-skinparam agent {
-  BorderColor CornflowerBlue
-  BackgroundColor LightSkyBlue
-}
 
 interface "dotnet new" as dotnetNew
 interface "Cluster\nEmulator\nLibraries" as ClusterLibraries

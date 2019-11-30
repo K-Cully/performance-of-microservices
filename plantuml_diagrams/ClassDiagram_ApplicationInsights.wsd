@@ -1,13 +1,9 @@
 @startuml
 
-title ClusterEmulator.ApplicationInsights Class Diagram
+'Import skinparams'
+!include .\Skinparams.puml
 
-skinparam class {
-    FontName Arial
-    BorderColor black
-    BackgroundColor whitesmoke
-    ArrowColor black
-}
+title ClusterEmulator.ApplicationInsights Class Diagram
 
 namespace ClusterEmulator.ApplicationInsights.Telemetry {
     class AppInsightsTelemetryConverter extends Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter {
