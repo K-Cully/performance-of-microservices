@@ -6,7 +6,7 @@
 title ClusterEmulator.ApplicationInsights Class Diagram
 
 namespace ClusterEmulator.ApplicationInsights.Telemetry {
-    class AppInsightsTelemetryConverter extends Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter {
+    class AppInsightsTelemetryConverter extends Serilog.Sinks.ApplicationInsights.Sinks.TraceTelemetryConverter {
         + Convert(logEvent, formatProvider) : IEnumerable<ITelemetry>
         - TryGetScalarProperty(logEvent, propertyName, out scalarValue) : boolean
     }
@@ -32,29 +32,33 @@ namespace Microsoft.ApplicationInsights.Channel #whitesmoke {
     interface ITelemetry
 }
 
+namespace Serilog.Core #whitesmoke {
+    interface ILogEventEnricher
+    interface ILogEventPropertyFactory
+}
+
 namespace Serilog #whitesmoke {
     class LoggerConfiguration
 
-    namespace Core #whitesmoke {
-        interface ILogEventEnricher
-        interface ILogEventPropertyFactory
-    }
-
-    namespace Configuration #whitesmoke {
+    namespace Configuration {
         class LoggerEnrichmentConfiguration
     }
 
-    namespace Events #whitesmoke {
+    namespace Events {
         class LogEvent
         class ScalarValue
         class LogEventProperty
     }
 }
 
-namespace Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters #whitesmoke {
+namespace Serilog.Sinks.ApplicationInsights.Sinks #whitesmoke {
     class TraceTelemetryConverter
 }
 
+'Fix layout'
+Serilog.Core.ILogEventEnricher -[hidden]right-> Serilog.Sinks.ApplicationInsights.Sinks.TraceTelemetryConverter
+
+'ClusterEmulator.ApplicationInsights connections'
 ClusterEmulator.ApplicationInsights.Telemetry.AppInsightsTelemetryConverter --> Microsoft.ApplicationInsights.Channel.ITelemetry
 ClusterEmulator.ApplicationInsights.Telemetry.AppInsightsTelemetryConverter --> Serilog.Events.LogEvent
 ClusterEmulator.ApplicationInsights.Telemetry.AppInsightsTelemetryConverter --> Serilog.Events.ScalarValue
@@ -62,8 +66,8 @@ ClusterEmulator.ApplicationInsights.Telemetry.AppInsightsTelemetryConverter --> 
 ClusterEmulator.ApplicationInsights.Telemetry.LoggerExtensions --> Serilog.LoggerConfiguration
 ClusterEmulator.ApplicationInsights.Telemetry.LoggerExtensions --> Serilog.Configuration.LoggerEnrichmentConfiguration
 
-ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher --> Serilog.Core.ILogEventPropertyFactory
-ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher ..|> Serilog.Core.ILogEventEnricher
+ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher -up-> Serilog.Core.ILogEventPropertyFactory
+ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher .up.|> Serilog.Core.ILogEventEnricher
 ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher --> Serilog.Events.LogEvent
 ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher --> Serilog.Events.LogEventProperty
 ClusterEmulator.ApplicationInsights.Telemetry.OperationIdEnricher --> Serilog.Events.ScalarValue
