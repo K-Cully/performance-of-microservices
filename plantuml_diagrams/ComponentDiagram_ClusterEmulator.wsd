@@ -55,7 +55,7 @@ package "Fully Portable" {
 [ClusterEmulator.ApplicationInsights] -up-> [Microsoft.AspNetCore.App]
 [ClusterEmulator.ApplicationInsights] --> [Serilog.Sinks.ApplicationInsights]
 
-[ClusterEmulator.Emulation] -up-> [ClusterEmulator.Models]
+[ClusterEmulator.Emulation] -> [ClusterEmulator.Models]
 [ClusterEmulator.Emulation] --> [Microsoft.AspNetCore.App]
 [ClusterEmulator.Emulation] -up-> [Microsoft.Extensions.Http.Polly]
 [ClusterEmulator.Emulation] --> [Microsoft.Extensions.Logging]
