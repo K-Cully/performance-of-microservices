@@ -112,7 +112,7 @@ namespace ClusterEmulator.Emulation.HttpClientConfiguration {
 
 namespace ClusterEmulator.Emulation.Processors {
     interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.Emulation.Core.IConfigModel {
-        + ClusterEmulator.Emulation.Steps : IList<string>
+        + Steps : IList<string>
     }
 }
 
