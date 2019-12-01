@@ -84,15 +84,12 @@ namespace ClusterEmulator.Emulation.HttpClientConfiguration {
     }
 
     CacheConfig *-left-> CacheTime
+    CacheConfig -[hidden]> IPolicyConfiguration
+
     AdvancedCircuitBreakerConfig -up-> PolicyExtensions
     CircuitBreakerConfig -up-> PolicyExtensions
     FallbackConfig -up-> PolicyExtensions
     RetryConfig --> PolicyExtensions
-    
-    TimeoutConfig -[hidden]> BulkheadConfig
-    TimeoutConfig -[hidden]> RetryConfig
-
-    FallbackConfig -[hidden]--> CacheConfig
 }
 
 
@@ -131,9 +128,14 @@ namespace Polly #whitesmoke {
     AsyncCircuitBreakerTResultSyntax -[hidden]> AsyncFallbackTResultSyntax
 }
 
-Polly.AsyncFallbackTResultSyntax -[hidden]-> Polly.Caching.ITtlStrategy
+'layout fix'
+ClusterEmulator.Emulation.Core.IConfigModel -[hidden]-> ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -[hidden]left-> ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
+Microsoft.Extensions.Caching.Memory -[hidden]right-> ClusterEmulator.Emulation.Core
+Microsoft.Extensions.Caching.Memory.IMemoryCache -[hidden]> Polly.Caching.SlidingTtl
 
-ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates
+'connections'
+ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration -----> Polly.IAsyncPolicy : creates
 
 ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions --> Polly.Policy
 ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions --> Polly.PolicyBuilder
@@ -146,13 +148,13 @@ ClusterEmulator.Emulation.HttpClientConfiguration.AdvancedCircuitBreakerConfig -
 ClusterEmulator.Emulation.HttpClientConfiguration.CircuitBreakerConfig --> Polly.AsyncCircuitBreakerTResultSyntax
 ClusterEmulator.Emulation.HttpClientConfiguration.FallbackConfig --> Polly.AsyncFallbackTResultSyntax
 
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Policy
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig o--> Polly.Caching.IAsyncCacheProvider
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig o--> Polly.Caching.ITtlStrategy
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.SlidingTtl
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.ResultTtl
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig ------> Polly.Policy
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig o-up--> Polly.Caching.IAsyncCacheProvider
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig o-up--> Polly.Caching.ITtlStrategy
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -up--> Polly.Caching.ResultTtl
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -up-> Polly.Caching.AbsoluteTtl
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -up-> Polly.Caching.SlidingTtl
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -up-> Polly.Caching.RelativeTtl
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -up-> Microsoft.Extensions.Caching.Memory.IMemoryCache
 
 @enduml
