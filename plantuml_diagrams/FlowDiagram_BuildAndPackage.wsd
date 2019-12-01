@@ -1,0 +1,56 @@
+@startuml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title Application Packaging
+
+interface "dotnet new" as dotnetNew
+interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
+interface "EmulationService\nTemplate" as ServiceTemplate
+
+folder "Generated Application" {
+    file "ports.json" as ports
+    file "Emulation Library Projects" as libraries
+    file "Templated Service Projects" as projects
+}
+
+projects .. libraries
+libraries -[hidden]-> ports
+
+package "Application Generation" {
+    agent AppGenerator
+
+    file "appsettings.json" as appSettings
+    file "App Configuration.json" as appConfig
+
+    appConfig .. appSettings : optional reference
+    appConfig -> AppGenerator
+
+    AppGenerator .up.> dotnetNew
+
+    AppGenerator -> projects : output
+    AppGenerator --> libraries : output
+    AppGenerator --> ports : output
+}
+
+ServiceTemplate --> AppGenerator
+ClusterLibraries --> AppGenerator
+
+interface "dotnet publish" as dotnetPub
+
+folder "Generated Package" {    
+    file "Packaged Application" as appPackage
+}
+
+package "Package Generation" {
+    agent AppPacker
+
+    ports -> AppPacker
+    projects -> AppPacker
+
+    AppPacker ..> dotnetPub
+    AppPacker -> appPackage : output
+}
+
+@enduml
