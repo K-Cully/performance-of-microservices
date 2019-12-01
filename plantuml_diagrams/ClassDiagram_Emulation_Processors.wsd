@@ -3,7 +3,7 @@
 'Import skinparams'
 !include .\Skinparams.puml
 
-title ClusterEmulator.Emulation Components Class Diagram
+title ClusterEmulator.Emulation.Processors Class Diagram
 
 namespace ClusterEmulator.Emulation.Core {
     interface IConfigModel<TModel> {
