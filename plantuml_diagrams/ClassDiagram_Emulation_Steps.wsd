@@ -5,7 +5,7 @@
 
 title ClusterEmulator.Emulation Components Class Diagram
 
-namespace ClusterEmulator.EmulationCore {
+namespace ClusterEmulator.Emulation.Core {
     interface IConfigModel<TModel> {
         + AsTypeModel(logger) : TModel
     }
@@ -21,7 +21,7 @@ namespace System.Net.Http #whitesmoke {
 }
 
 namespace ClusterEmulator.EmulationHttpClientConfiguration {
-    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends ClusterEmulator.EmulationCore.IConfigModel
+    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends ClusterEmulator.Emulation.Core.IConfigModel
 
     class PolicyExtensions << (S,#DDAA00) static >> {
         + {static} HandleHttpRequests() : PolicyBuilder<HttpResponseMessage>
@@ -105,7 +105,7 @@ namespace ClusterEmulator.EmulationHttpClientConfiguration {
 }
 
 namespace ClusterEmulator.EmulationProcessors {
-    interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.EmulationCore.IConfigModel {
+    interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.Emulation.Core.IConfigModel {
         + ClusterEmulator.EmulationSteps : IList<string>
     }
 
@@ -132,7 +132,7 @@ namespace ClusterEmulator.EmulationProcessors {
 }
 
 namespace ClusterEmulator.EmulationSteps {
-    interface IStep<extends IConfigModel<IStep>> extends ClusterEmulator.EmulationCore.IConfigModel {
+    interface IStep<extends IConfigModel<IStep>> extends ClusterEmulator.Emulation.Core.IConfigModel {
         + ParallelCount : uint
         + FailOnParallelFailures : GroupClause
         + ExecuteAsync() : ExecutionStatus
