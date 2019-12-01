@@ -36,7 +36,7 @@ namespace EmulationService {
     'Startup -> EmulationService.Telemetry.CorrelatedLogContext'
 }
 
-namespace ClusterEmulator.ServiceFabric #whitesmoke {
+namespace ClusterEmulator.ServiceFabric {
     namespace Extensions {
         class ServiceCollectionExtensions << (S,#DDAA00) static >>
     }
@@ -70,7 +70,7 @@ namespace Serilog #whitesmoke {
     class Log << (S,#DDAA00) static >>
 }
 
-namespace ClusterEmulator.Emulation #whitesmoke {
+namespace ClusterEmulator.Emulation {
     namespace Core {
         interface IEngine
         interface IRegistry

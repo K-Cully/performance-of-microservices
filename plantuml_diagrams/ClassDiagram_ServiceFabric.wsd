@@ -48,16 +48,16 @@ namespace Serilog.Core #whitesmoke {
     interface ILogEventPropertyFactory
 }
 
-namespace Serilog.Events  #whitesmoke{
+namespace Serilog.Events #whitesmoke{
     class LogEvent
     class LogEventProperty
 }
 
-namespace ClusterEmulator.Emulation.Core #whitesmoke {
+namespace ClusterEmulator.Emulation.Core {
     interface IRegistrySettings
 }
 
-namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+namespace Microsoft.Extensions.DependencyInjection {
     interface IServiceCollection
 }
 
