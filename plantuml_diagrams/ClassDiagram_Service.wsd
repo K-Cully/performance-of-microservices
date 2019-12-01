@@ -5,6 +5,10 @@
 
 title EmulationService Class Diagram
 
+namespace System.Net.Http #whitesmoke {
+    interface IHttpClientFactory
+}
+
 namespace EmulationService {
     namespace Controllers {
         class EmulationController
@@ -93,6 +97,9 @@ namespace Microsoft.Extensions.Configuration #whitesmoke {
     class FileConfigurationExtensions << (S,#DDAA00) static >>
     class JsonConfigurationExtensions << (S,#DDAA00) static >>
     class EnvironmentVariablesExtensions << (S,#DDAA00) static >>
+
+    IConfiguration -[hidden]-> EnvironmentVariablesExtensions
+    EnvironmentVariablesExtensions -[hidden]> JsonConfigurationExtensions
 }
 
 namespace Microsoft.Extensions.Primitives #whitesmoke {
@@ -161,10 +168,6 @@ Microsoft.AspNetCore.Builder -[hidden]-> Microsoft.AspNetCore.Mvc
 'layout Microsoft.ServiceFabric namespaces'
 Microsoft.ServiceFabric.Services.Communication.AspNetCore -[hidden]-> Microsoft.ServiceFabric.Services.Runtime
 
-namespace System.Net.Http #whitesmoke {
-    interface IHttpClientFactory
-}
-
 'layout Serilog namespaces'
 Serilog.Log -[hidden]-> Serilog.Configuration
 Serilog.Configuration -[hidden]> Serilog.Core
@@ -181,16 +184,16 @@ EmulationService.Telemetry.CorrelatedLogContext -up-> Serilog.Context.LogContext
 EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher
 EmulationService.EmulationService --> ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions
 EmulationService.EmulationService o-up----> Serilog.ILogger
-EmulationService.EmulationService -> System.Fabric.StatelessServiceContext
+EmulationService.EmulationService -up-> System.Fabric.StatelessServiceContext
 EmulationService.EmulationService ----|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
 EmulationService.EmulationService ---> Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener
 EmulationService.EmulationService ---> Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
 EmulationService.EmulationService ---> Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
 EmulationService.EmulationService ---> Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension
-EmulationService.EmulationService -----> Microsoft.AspNetCore.Hosting.WebHostBuilder
-EmulationService.EmulationService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
-EmulationService.EmulationService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
-EmulationService.EmulationService -----> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
+EmulationService.EmulationService ---> Microsoft.AspNetCore.Hosting.WebHostBuilder
+EmulationService.EmulationService ---> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
+EmulationService.EmulationService ---> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
+EmulationService.EmulationService ---> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
 EmulationService.EmulationService ---> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
 EmulationService.EmulationService ---> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
 
@@ -200,8 +203,8 @@ EmulationService.EmulationService -up---> Serilog.SerilogWebHostBuilderExtension
 EmulationService.Program o-up--> Microsoft.Extensions.Configuration.IConfiguration
 EmulationService.Program -up--> Microsoft.Extensions.Configuration.ConfigurationBuilder
 EmulationService.Program -up--> Microsoft.Extensions.Configuration.FileConfigurationExtensions
-EmulationService.Program -up--> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
-EmulationService.Program -up--> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
+EmulationService.Program -up-> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
 EmulationService.Program -----> Microsoft.ServiceFabric.Services.Runtime.ServiceRuntime
 EmulationService.Program -up---> Serilog.Log
 EmulationService.Program -up---> Serilog.LoggerConfiguration
