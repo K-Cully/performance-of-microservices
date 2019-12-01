@@ -120,12 +120,6 @@ namespace Polly #whitesmoke {
     class AsyncAdvancedCircuitBreakerTResultSyntax
     class AsyncCircuitBreakerTResultSyntax
     class AsyncFallbackTResultSyntax
-
-    IAsyncPolicy -[hidden]-> Policy
-    Policy -[hidden]> PolicyBuilder
-    PolicyBuilder -[hidden]-> AsyncAdvancedCircuitBreakerTResultSyntax
-    AsyncAdvancedCircuitBreakerTResultSyntax -[hidden]> AsyncCircuitBreakerTResultSyntax
-    AsyncCircuitBreakerTResultSyntax -[hidden]> AsyncFallbackTResultSyntax
 }
 
 'layout fix'
