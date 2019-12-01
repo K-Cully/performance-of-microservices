@@ -3,7 +3,7 @@
 'Import skinparams'
 !include .\Skinparams.puml
 
-title ClusterEmulator.Emulation Components Class Diagram
+title ClusterEmulator.Emulation.Steps Class Diagram
 
 namespace ClusterEmulator.Emulation.Core {
     interface IConfigModel<TModel> {
@@ -11,127 +11,21 @@ namespace ClusterEmulator.Emulation.Core {
     }
 }
 
+namespace ClusterEmulator.Models {
+    class AdaptableRequest {
+        + Payload : IEnumerable<string>
+    }
+}
 
 namespace System.Net.Http #whitesmoke {
     interface IHttpClientFactory {
         + CreateClient(name) : HttpClient
     }
 
-    IHttpClientFactory --> HttpClient : creates
+    IHttpClientFactory -> HttpClient : creates
 }
 
-namespace ClusterEmulator.EmulationHttpClientConfiguration {
-    interface IPolicyConfiguration<extends IConfigModel<IAsyncPolicy>> extends ClusterEmulator.Emulation.Core.IConfigModel
-
-    class PolicyExtensions << (S,#DDAA00) static >> {
-        + {static} HandleHttpRequests() : PolicyBuilder<HttpResponseMessage>
-    }
-
-    class AdvancedCircuitBreakerConfig implements IPolicyConfiguration {
-        + BreakDuration : double
-        + FailureThreshold : double
-        + SamplingDuration : double
-        + MinimumThroughput : integer
-    }
-
-    class BulkheadConfig implements IPolicyConfiguration {
-        + MaxParallelization : integer
-        + MaxQueuingActions : integer
-    }
-
-    class CircuitBreakerConfig implements IPolicyConfiguration {
-        + BreakDuration : double
-        + FaultTolerance : integer
-    }
-
-    class FallbackConfig implements IPolicyConfiguration {
-
-        + Content : string
-        + Reason : string
-        + Status : integer
-    }
-
-    class RetryConfig implements IPolicyConfiguration {
-        + Retries : integer
-        + DelaysInSeconds : IEnumerable<double>
-        + JitterMilliseconds : integer
-        - Delay(retryCount, exponential) : TimeSpan
-        - ExponentialDelay(retryCount) : TimeSpan
-        - DelayWithJitter(delay) : TimeSpan
-    }
-
-    class TimeoutConfig implements IPolicyConfiguration {
-        + CancelDelegates : boolean
-        + TimeoutInSeconds : double
-    }
-
-    class ClientConfig {
-        + BaseAddress : string
-        + Policies : IEnumerable<string>
-        + RequestHeaders : IDictionary<string, string>
-    }
-
-
-    class CacheConfig implements IPolicyConfiguration {
-        + Time : CacheTime
-        + Absolute : boolean
-        + Sliding : boolean
-        - cacheProvider : IAsyncCacheProvider
-        - strategy : ITtlStrategy
-        + CacheConfig()
-        + CacheConfig(cacheProvider)
-        - CacheOKResponse(pollyContext, httpResponseMessage) : Ttl
-        - CreateStrategy() : ITtlStrategy
-    }
-
-    class CacheTime {
-        + Days : integer
-        + Hours : integer
-        + Minutes : integer
-        + Seconds : integer
-        + AsTimeSpan() : TimeSpan
-    }
-
-    CacheConfig *-left-> CacheTime
-    AdvancedCircuitBreakerConfig -up-> PolicyExtensions
-    CircuitBreakerConfig -up-> PolicyExtensions
-    FallbackConfig -up-> PolicyExtensions
-    RetryConfig --> PolicyExtensions
-    
-    TimeoutConfig -[hidden]> BulkheadConfig
-    TimeoutConfig -[hidden]> RetryConfig
-
-    FallbackConfig -[hidden]--> CacheConfig
-}
-
-namespace ClusterEmulator.EmulationProcessors {
-    interface IProcessor<extends IConfigModel<IProcessor>> extends ClusterEmulator.Emulation.Core.IConfigModel {
-        + ClusterEmulator.EmulationSteps : IList<string>
-    }
-
-    interface IRequestProcessor extends IProcessor {
-
-        + ErrorPayload : ErrorResponse
-        + ErrorPayloadSize : integer
-        + IngressLatencyMilliseconds : integer
-        + SuccessPayload : SuccessResponse
-        + SuccessPayloadSize : integer
-    }
-
-    interface IStartupProcessor extends IProcessor {
-        + Asynchronous : boolean
-    }
-
-    abstract Processor implements IProcessor {
-        # Log : ILogger
-    }
-
-    class RequestProcessor extends Processor implements IRequestProcessor
-
-    class StartupProcessor extends Processor implements IStartupProcessor
-}
-
-namespace ClusterEmulator.EmulationSteps {
+namespace ClusterEmulator.Emulation.Steps {
     interface IStep<extends IConfigModel<IStep>> extends ClusterEmulator.Emulation.Core.IConfigModel {
         + ParallelCount : uint
         + FailOnParallelFailures : GroupClause
@@ -212,79 +106,18 @@ namespace ClusterEmulator.EmulationSteps {
     }
 
     SimulationStep *-right-> GroupClause
-    SimulationStep -up-> ExecutionStatus
-    SimulationStep -up-> IStep : creates
-}
-
-
-namespace Microsoft.Extensions.Caching.Memory #whitesmoke {
-    interface IMemoryCache
-}
-
-'Polly namespaces'
-namespace Polly.Caching #whitesmoke {
-    interface IAsyncCacheProvider
-    interface ITtlStrategy
-    class ResultTtl
-    class SlidingTtl
-    class RelativeTtl
-    class AbsoluteTtl
-
-    IAsyncCacheProvider -[hidden]> ITtlStrategy
-    ITtlStrategy -[hidden]> ResultTtl
-    ResultTtl -[hidden]-> SlidingTtl
-    SlidingTtl -[hidden]> RelativeTtl
-    RelativeTtl -[hidden]> AbsoluteTtl
+    SimulationStep -> ExecutionStatus
 }
 
 namespace Polly #whitesmoke {
     interface IAsyncPolicy
-    class Context
-    class Policy
-    class PolicyBuilder
-    class AsyncAdvancedCircuitBreakerTResultSyntax
-    class AsyncCircuitBreakerTResultSyntax
-    class AsyncFallbackTResultSyntax
-
-    Context -[hidden]> IAsyncPolicy
-    IAsyncPolicy -[hidden]-> Policy
-    Policy -[hidden]> PolicyBuilder
-    PolicyBuilder -[hidden]-> AsyncAdvancedCircuitBreakerTResultSyntax
-    AsyncAdvancedCircuitBreakerTResultSyntax -[hidden]> AsyncCircuitBreakerTResultSyntax
-    AsyncCircuitBreakerTResultSyntax -[hidden]> AsyncFallbackTResultSyntax
+    class Context    
 }
 
-Polly.AsyncFallbackTResultSyntax -[hidden]-> Polly.Caching.ITtlStrategy
-
-ClusterEmulator.EmulationHttpClientConfiguration.IPolicyConfiguration -up-> Polly.IAsyncPolicy : creates
-
-ClusterEmulator.EmulationHttpClientConfiguration.PolicyExtensions --> Polly.Policy
-ClusterEmulator.EmulationHttpClientConfiguration.PolicyExtensions --> Polly.PolicyBuilder
-
-ClusterEmulator.EmulationHttpClientConfiguration.RetryConfig --> Polly.PolicyBuilder
-ClusterEmulator.EmulationHttpClientConfiguration.TimeoutConfig --> Polly.Policy
-ClusterEmulator.EmulationHttpClientConfiguration.BulkheadConfig --> Polly.Policy
-
-ClusterEmulator.EmulationHttpClientConfiguration.AdvancedCircuitBreakerConfig --> Polly.AsyncAdvancedCircuitBreakerTResultSyntax
-ClusterEmulator.EmulationHttpClientConfiguration.CircuitBreakerConfig --> Polly.AsyncCircuitBreakerTResultSyntax
-ClusterEmulator.EmulationHttpClientConfiguration.FallbackConfig --> Polly.AsyncFallbackTResultSyntax
-
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Policy
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig o--> Polly.Caching.IAsyncCacheProvider
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig o--> Polly.Caching.ITtlStrategy
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.AbsoluteTtl
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.SlidingTtl
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.RelativeTtl
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Polly.Caching.ResultTtl
-ClusterEmulator.EmulationHttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache
-
-ClusterEmulator.EmulationProcessors.RequestProcessor *--> ClusterEmulator.EmulationModels.ErrorResponse
-ClusterEmulator.EmulationProcessors.RequestProcessor *--> ClusterEmulator.EmulationModels.SuccessResponse
-
-ClusterEmulator.EmulationSteps.RequestStep o--> Polly.Context
-ClusterEmulator.EmulationSteps.RequestStep o--> System.Net.Http.IHttpClientFactory
-ClusterEmulator.EmulationSteps.RequestStep --> System.Net.Http.HttpClient
-ClusterEmulator.EmulationSteps.RequestStep --> Polly.IAsyncPolicy
-ClusterEmulator.EmulationSteps.RequestStep --> ClusterEmulator.EmulationModels.AdaptableRequest : creates
+ClusterEmulator.Emulation.Steps.RequestStep o--> Polly.Context
+ClusterEmulator.Emulation.Steps.RequestStep o--> System.Net.Http.IHttpClientFactory
+ClusterEmulator.Emulation.Steps.RequestStep --> System.Net.Http.HttpClient
+ClusterEmulator.Emulation.Steps.RequestStep --> Polly.IAsyncPolicy
+ClusterEmulator.Emulation.Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest
 
 @enduml
