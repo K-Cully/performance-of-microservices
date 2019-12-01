@@ -170,8 +170,8 @@ Serilog.Log -[hidden]-> Serilog.Configuration
 Serilog.Configuration -[hidden]> Serilog.Core
 
 'Emulation Service Connections'
-EmulationService.Controllers.EmulationController o-------> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
-EmulationService.Controllers.EmulationController o-------> Microsoft.AspNetCore.Mvc.RouteAttribute
+EmulationService.Controllers.EmulationController o--> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+EmulationService.Controllers.EmulationController o--> Microsoft.AspNetCore.Mvc.RouteAttribute
 EmulationService.Controllers.EmulationController -up-|> ClusterEmulator.Emulation.Controllers.AdaptableController
 
 EmulationService.Telemetry.CorrelatedLogContext .up..|> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
@@ -216,11 +216,11 @@ EmulationService.Startup ---> Microsoft.Extensions.DependencyInjection.MvcCoreMv
 EmulationService.Startup ----> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
 EmulationService.Startup ----> Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions
 EmulationService.Startup -----> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
-EmulationService.Startup ------> Microsoft.AspNetCore.Builder.IApplicationBuilder
-EmulationService.Startup ------> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
-EmulationService.Startup ------> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
-EmulationService.Startup -------> Microsoft.AspNetCore.Mvc.CompatibilityVersion
-EmulationService.Startup -> System.Net.Http.IHttpClientFactory
+EmulationService.Startup -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+EmulationService.Startup -> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
+EmulationService.Startup -> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
+EmulationService.Startup --> Microsoft.AspNetCore.Mvc.CompatibilityVersion
+EmulationService.Startup -up-> System.Net.Http.IHttpClientFactory
 EmulationService.Startup -up-> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
 EmulationService.Startup -up-> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
 
