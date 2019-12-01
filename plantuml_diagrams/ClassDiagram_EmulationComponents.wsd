@@ -278,13 +278,13 @@ ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.
 ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Polly.Caching.ResultTtl
 ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig --> Microsoft.Extensions.Caching.Memory.IMemoryCache
 
-ClusterEmulator.Emulation.Processors.RequestProcessor *--> ClusterEmulator.EmulationModels.ErrorResponse
-ClusterEmulator.Emulation.Processors.RequestProcessor *--> ClusterEmulator.EmulationModels.SuccessResponse
+ClusterEmulator.Emulation.Processors.RequestProcessor *--> ClusterEmulator.Models.ErrorResponse
+ClusterEmulator.Emulation.Processors.RequestProcessor *--> ClusterEmulator.Models.SuccessResponse
 
 ClusterEmulator.Emulation.Steps.RequestStep o--> Polly.Context
 ClusterEmulator.Emulation.Steps.RequestStep o--> System.Net.Http.IHttpClientFactory
 ClusterEmulator.Emulation.Steps.RequestStep --> System.Net.Http.HttpClient
 ClusterEmulator.Emulation.Steps.RequestStep --> Polly.IAsyncPolicy
-ClusterEmulator.Emulation.Steps.RequestStep --> ClusterEmulator.EmulationModels.AdaptableRequest : creates
+ClusterEmulator.Emulation.Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest : creates
 
 @enduml
