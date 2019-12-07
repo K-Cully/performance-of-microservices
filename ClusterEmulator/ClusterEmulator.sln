@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ClusterEmulator", "ClusterEmulator\ClusterEmulator.sfproj", "{F097A1A3-4AE0-4B2B-B7A8-47F92BFCBE1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmulationService", "EmulationService\EmulationService.csproj", "{6F6A7A52-F4E3-4279-80FB-75D571E249D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateService", "TemplateService\TemplateService.csproj", "{6F6A7A52-F4E3-4279-80FB-75D571E249D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.ApplicationInsights.Test", "ClusterEmulator.ApplicationInsights.Test\ClusterEmulator.ApplicationInsights.Test.csproj", "{AC8B3C0E-E00F-4DC2-9FF5-32DBCF2CFFC3}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClusterEmulator.ServiceFabr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterEmulator.ServiceFabric.Test", "ClusterEmulator.ServiceFabric.Test\ClusterEmulator.ServiceFabric.Test.csproj", "{8AB70F9C-6D91-4345-866D-8427C7CEA114}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmulationService.Test", "EmulationService.Test\EmulationService.Test.csproj", "{6215B4A0-5343-41E1-B63B-5454F6359AA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateService.Test", "TemplateService.Test\TemplateService.Test.csproj", "{6215B4A0-5343-41E1-B63B-5454F6359AA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

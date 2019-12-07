@@ -8,7 +8,7 @@ title Cluster Emulator Components
 package "Platform Specific" {
   [ClusterEmulator.ApplicationInsights]
   [ClusterEmulator.ServiceFabric]
-  [Emulation Service]
+  [Template Service]
 
   frame "Serilog" #WhiteSmoke {
     [Serilog.AspNetCore] #WhiteSmoke
@@ -44,13 +44,13 @@ package "Fully Portable" {
 
 [Microsoft.ServiceFabric.AspNetCore.Kestrel] -[hidden]-> [Microsoft.ServiceFabric]
 
-[Emulation Service] --> [ClusterEmulator.ApplicationInsights]
-[Emulation Service] -up-> [ClusterEmulator.Emulation]
-[Emulation Service] --> [ClusterEmulator.ServiceFabric]
-[Emulation Service] -up-> [Microsoft.AspNetCore.App]
-[Emulation Service] -up-> [Microsoft.Extensions.Logging]
-[Emulation Service] --> [Microsoft.ServiceFabric.AspNetCore.Kestrel]
-[Emulation Service] --> [Serilog.Settings.Configuration]
+[Template Service] --> [ClusterEmulator.ApplicationInsights]
+[Template Service] -up-> [ClusterEmulator.Emulation]
+[Template Service] --> [ClusterEmulator.ServiceFabric]
+[Template Service] -up-> [Microsoft.AspNetCore.App]
+[Template Service] -up-> [Microsoft.Extensions.Logging]
+[Template Service] --> [Microsoft.ServiceFabric.AspNetCore.Kestrel]
+[Template Service] --> [Serilog.Settings.Configuration]
 
 [ClusterEmulator.ApplicationInsights] -up-> [Microsoft.AspNetCore.App]
 [ClusterEmulator.ApplicationInsights] --> [Serilog.Sinks.ApplicationInsights]

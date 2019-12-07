@@ -12,22 +12,22 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
 
-namespace EmulationService
+namespace TemplateService
 {
     /// <summary>
     /// The FabricRuntime creates an instance of this class for each service type instance. 
     /// </summary>
-    internal sealed class EmulationService : StatelessService
+    internal sealed class TemplateService : StatelessService
     {
         private ILogger Log { get; }
 
 
         /// <summary>
-        /// Creates a new instance of <see cref="EmulationService"/>
+        /// Creates a new instance of <see cref="TemplateService"/>
         /// </summary>
         /// <param name="context">The stateless service context to initialize the service with.</param>
         /// <param name="logger">The <see cref="ILogger"/> instance to register with the ASP.Net Core logging pipeline</param>
-        public EmulationService(StatelessServiceContext context, ILogger logger)
+        public TemplateService(StatelessServiceContext context, ILogger logger)
             : base(context)
         {
             _ = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EmulationService\EmulationService.csproj" />
+    <ProjectReference Include="..\TemplateService\TemplateService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

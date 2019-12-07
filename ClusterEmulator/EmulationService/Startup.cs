@@ -1,7 +1,7 @@
 ﻿using ClusterEmulator.Emulation.Core;
 using ClusterEmulator.Emulation.Extensions;
 using ClusterEmulator.Emulation.Logging;
-using EmulationService.Telemetry;
+using TemplateService.Telemetry;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 
-namespace EmulationService
+namespace TemplateService
 {
     /// <summary>
     /// Provides an ease-of-use abstraction for instance container managment and http pipeline configuration.

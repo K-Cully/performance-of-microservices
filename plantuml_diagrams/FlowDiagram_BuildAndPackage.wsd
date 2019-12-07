@@ -7,7 +7,7 @@ title Application Packaging
 
 interface "dotnet new" as dotnetNew
 interface "Cluster\nEmulator\nLibraries" as ClusterLibraries
-interface "EmulationService\nTemplate" as ServiceTemplate
+interface "TemplateService\nTemplate" as ServiceTemplate
 
 folder "Generated Application" {
     file "ports.json" as ports

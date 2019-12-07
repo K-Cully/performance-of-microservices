@@ -57,7 +57,7 @@ Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.ServiceFabric" -Destination 
 Copy-Item -Path "$EmulatorDirectory\ClusterEmulator.Emulation" -Destination "$OutputDirectory\projects\" -Recurse -Force
 
 # Ensure service template is installed and suppress console output
-$junk = dotnet new -i "$EmulatorDirectory\EmulationService"
+$junk = dotnet new -i "$EmulatorDirectory\TemplateService"
 
 Write-Host -Message "Generating services under $OutputDirectory\projects"
 foreach ($serviceName in $AppConfig.services.Keys) {

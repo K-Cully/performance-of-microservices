@@ -1,11 +1,11 @@
-﻿using EmulationService.Telemetry;
+﻿using TemplateService.Telemetry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 
-namespace EmulationService.Test.Telemetry
+namespace TemplateService.Test.Telemetry
 {
     [TestClass]
     public class CorrelatedLogContextUnitTests

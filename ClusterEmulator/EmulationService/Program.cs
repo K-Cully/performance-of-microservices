@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace EmulationService
+namespace TemplateService
 {
     internal static class Program
     {
-        private const string ServiceTypeName = "EmulationServiceType";
+        private const string ServiceTypeName = "TemplateServiceType";
 
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace EmulationService
 
                 // Create service instance
                 ServiceRuntime.RegisterServiceAsync(ServiceTypeName,
-                    context => new EmulationService(context, log)).GetAwaiter().GetResult();
+                    context => new TemplateService(context, log)).GetAwaiter().GetResult();
 
                 Log.Information("Service registered - {ProcessId}, {ServiceId}",
                     Process.GetCurrentProcess().Id, ServiceTypeName);

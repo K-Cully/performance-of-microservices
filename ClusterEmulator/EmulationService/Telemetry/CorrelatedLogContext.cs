@@ -5,7 +5,7 @@ using Serilog.Context;
 using System;
 using System.Linq;
 
-namespace EmulationService.Telemetry
+namespace TemplateService.Telemetry
 {
     /// <summary>
     /// Creates a log context with a correlation id.
