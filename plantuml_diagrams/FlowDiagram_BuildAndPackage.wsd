@@ -21,9 +21,11 @@ libraries -[hidden]-> ports
 package "Application Generation" {
     agent AppGenerator
 
+    file "app.schema.json" as appSchema
     file "appsettings.json" as appSettings
     file "App Configuration.json" as appConfig
 
+    appSchema . appConfig
     appConfig .. appSettings : optional reference
     appConfig -> AppGenerator
 
