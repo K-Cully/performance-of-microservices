@@ -1,0 +1,124 @@
+@startuml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title TemplateService Class Diagram (TemplateService)
+
+namespace TemplateService {
+    namespace Controllers {
+        class TemplateController
+    }
+
+    namespace Telemetry {
+        class CorrelatedLogContext
+    }
+
+    class TemplateService {
+        - Log : Serilog.ILogger
+        # CreateServiceInstanceListeners() : IEnumerable<ServiceInstanceListener>
+    }
+
+    class Program << (S,#DDAA00) static >> {
+        - ServiceTypeName : string
+        {static} - Configuration : IConfiguration
+        {static} - Main()
+    }
+
+    class Startup {
+        - Registry : IRegistry
+        + ConfigureServices(serviceCollection)
+        + Configure(applicationBuilder, hostingEnvironment,\n       httpClientFactory, emulationRegistry, emulationEngine)
+    }
+
+    Program -> TemplateService
+    Startup --> TemplateService.Telemetry.CorrelatedLogContext
+}
+
+namespace ClusterEmulator.ServiceFabric {
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >>
+    }
+
+    namespace Telemetry {
+        class StatelessServiceEnricher
+    }
+}
+
+namespace System.Fabric #whitesmoke {
+    class StatelessServiceContext
+}
+
+namespace Serilog #whitesmoke {
+    interface ILogger
+    class SerilogWebHostBuilderExtensions << (S,#DDAA00) static >>
+}
+
+namespace ClusterEmulator.Emulation {
+    namespace Controllers {
+        class AdaptableController
+    }
+
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >>
+    }
+}
+
+namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+    class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
+    class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
+}
+
+namespace Microsoft.AspNetCore.Hosting #whitesmoke {
+    class WebHostBuilder
+    class WebHostBuilderExtensions << (S,#DDAA00) static >>
+    class WebHostBuilderKestrelExtensions << (S,#DDAA00) static >>
+    class HostingAbstractionsWebHostBuilderExtensions << (S,#DDAA00) static >>
+}
+
+namespace Microsoft.AspNetCore.Mvc #whitesmoke {
+    class ApiControllerAttribute
+    class RouteAttribute
+}
+
+namespace Microsoft.ServiceFabric.Services.Runtime #whitesmoke {
+    abstract StatelessService
+}
+
+namespace Microsoft.ServiceFabric.Services.Communication #whitesmoke {
+    namespace Runtime {
+        class ServiceInstanceListener
+    }
+
+    namespace AspNetCore {
+        class KestrelCommunicationListener
+        class WebHostBuilderServiceFabricExtension << (S,#DDAA00) static >>
+        enum ServiceFabricIntegrationOptions
+    }
+}
+
+'Template Service Connections'
+TemplateService.Controllers.TemplateController o-right-> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+TemplateService.Controllers.TemplateController o-right-> Microsoft.AspNetCore.Mvc.RouteAttribute
+TemplateService.Controllers.TemplateController -up-|> ClusterEmulator.Emulation.Controllers.AdaptableController
+
+TemplateService.TemplateService -up-> ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher
+TemplateService.TemplateService -up-> ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions
+TemplateService.TemplateService o-up-> Serilog.ILogger
+TemplateService.TemplateService -up-> System.Fabric.StatelessServiceContext
+TemplateService.TemplateService ---|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
+TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener
+TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
+TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
+TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension
+TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilder
+TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
+TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
+TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
+TemplateService.TemplateService ----> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+TemplateService.TemplateService ----> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
+
+TemplateService.TemplateService -up-> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+TemplateService.TemplateService -up-> Serilog.SerilogWebHostBuilderExtensions
+
+@enduml

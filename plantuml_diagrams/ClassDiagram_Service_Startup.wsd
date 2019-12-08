@@ -1,0 +1,113 @@
+@startuml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title TemplateService Class Diagram (Startup)
+
+namespace System.Net.Http #whitesmoke {
+    interface IHttpClientFactory
+}
+
+namespace TemplateService {
+    class Startup {
+        - Registry : IRegistry
+        + ConfigureServices(serviceCollection)
+        + Configure(applicationBuilder, hostingEnvironment,\n       httpClientFactory, emulationRegistry, emulationEngine)
+    }
+
+    namespace Controllers {
+        class TemplateController
+    }
+
+    namespace Telemetry {
+        class CorrelatedLogContext
+    }
+
+    class TemplateService {
+        - Log : Serilog.ILogger
+        # CreateServiceInstanceListeners()
+    }
+
+    class Program << (S,#DDAA00) static >> {
+        - ServiceTypeName : string
+        {static} - Configuration : IConfiguration
+        {static} - Main()
+    }
+
+    Program --> TemplateService
+    Startup --> TemplateService.Telemetry.CorrelatedLogContext
+}
+
+namespace Serilog.Context #whitesmoke {
+    class LogContext << (S,#DDAA00) static >>
+}
+
+namespace ClusterEmulator.Emulation {
+    namespace Core {
+        interface IEngine
+        interface IRegistry
+    }
+
+    namespace Logging {
+        interface IScopedLogContextFactory
+    }
+
+    namespace Extensions {
+        class ServiceCollectionExtensions << (S,#DDAA00) static >>
+    }
+}
+
+namespace Microsoft.Extensions.Primitives #whitesmoke {
+    class StringValues
+}
+
+namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
+    interface IServiceCollection
+    class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
+    class MvcServiceCollectionExtensions << (S,#DDAA00) static >>
+    class MvcCoreMvcBuilderExtensions << (S,#DDAA00) static >>
+    class HealthCheckServiceCollectionExtensions << (S,#DDAA00) static >>
+}
+
+namespace Microsoft.AspNetCore #whitesmoke {
+    namespace Mvc {
+        enum CompatibilityVersion
+    }
+
+    namespace Builder {
+        interface IApplicationBuilder
+        class MvcApplicationBuilderExtensions << (S,#DDAA00) static >>
+        class HealthCheckApplicationBuilderExtensions << (S,#DDAA00) static >>
+    }
+}
+
+'layout Microsoft.Extensions namespaces'
+Microsoft.Extensions.DependencyInjection.IServiceCollection -[hidden]-> Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions
+Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions -[hidden]> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
+Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions -[hidden]-> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+
+'layout Microsoft.AspNetCore namespaces'
+Microsoft.AspNetCore.Builder -[hidden]-> Microsoft.AspNetCore.Mvc
+
+'Template Service Connections'
+TemplateService.Telemetry.CorrelatedLogContext .up..|> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
+TemplateService.Telemetry.CorrelatedLogContext -> Microsoft.Extensions.Primitives.StringValues
+TemplateService.Telemetry.CorrelatedLogContext --> Serilog.Context.LogContext
+
+TemplateService.Startup o-up-> ClusterEmulator.Emulation.Core.IRegistry
+TemplateService.Startup -up-> ClusterEmulator.Emulation.Core.IEngine
+TemplateService.Startup -up-> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+TemplateService.Startup -up-> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
+TemplateService.Startup -up---> Microsoft.Extensions.DependencyInjection.IServiceCollection
+TemplateService.Startup -up---> Microsoft.Extensions.DependencyInjection.MvcCoreMvcBuilderExtensions
+TemplateService.Startup -up--> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
+TemplateService.Startup -up--> Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions
+TemplateService.Startup -up-> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+TemplateService.Startup ---> Microsoft.AspNetCore.Builder.IApplicationBuilder
+TemplateService.Startup ---> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
+TemplateService.Startup ---> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
+TemplateService.Startup ----> Microsoft.AspNetCore.Mvc.CompatibilityVersion
+TemplateService.Startup -> System.Net.Http.IHttpClientFactory
+
+@enduml

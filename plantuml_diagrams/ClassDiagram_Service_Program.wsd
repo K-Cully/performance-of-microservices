@@ -1,0 +1,84 @@
+@startuml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title TemplateService Class Diagram (Program)
+
+namespace TemplateService {
+    namespace Controllers {
+        class TemplateController
+    }
+
+    namespace Telemetry {
+        class CorrelatedLogContext
+    }
+
+    class TemplateService {
+        - Log : Serilog.ILogger
+        # CreateServiceInstanceListeners()
+    }
+
+    class Program << (S,#DDAA00) static >> {
+        - ServiceTypeName : string
+        {static} - Configuration : IConfiguration
+        {static} - Main()
+    }
+
+    class Startup {
+        - Registry : IRegistry
+        + ConfigureServices(serviceCollection)
+        + Configure(applicationBuilder, hostingEnvironment,\n       httpClientFactory, emulationRegistry, emulationEngine)
+    }
+
+    Program --> TemplateService
+    Startup --> TemplateService.Telemetry.CorrelatedLogContext
+}
+
+namespace Serilog #whitesmoke {
+    namespace Core {
+        class Logger
+    }
+    namespace Configuration {
+        class LoggerSettingsConfiguration
+    }
+
+    class ConfigurationLoggerConfigurationExtensions << (S,#DDAA00) static >>
+    class LoggerConfiguration
+    class Log << (S,#DDAA00) static >>
+}
+
+namespace Microsoft.Extensions.Configuration #whitesmoke {
+    interface IConfiguration
+    class ConfigurationBuilder
+    class FileConfigurationExtensions << (S,#DDAA00) static >>
+    class JsonConfigurationExtensions << (S,#DDAA00) static >>
+    class EnvironmentVariablesExtensions << (S,#DDAA00) static >>
+
+    IConfiguration -[hidden]-> EnvironmentVariablesExtensions
+    EnvironmentVariablesExtensions -[hidden]> JsonConfigurationExtensions
+}
+
+
+namespace Microsoft.ServiceFabric.Services.Runtime #whitesmoke {
+    class ServiceRuntime << (S,#DDAA00) static >>
+}
+
+'layout Serilog namespaces'
+Serilog.Log -[hidden]-> Serilog.Configuration
+Serilog.Configuration -[hidden]> Serilog.Core
+
+'Template Service Connections'
+TemplateService.Program o-up--> Microsoft.Extensions.Configuration.IConfiguration
+TemplateService.Program -up--> Microsoft.Extensions.Configuration.ConfigurationBuilder
+TemplateService.Program -up--> Microsoft.Extensions.Configuration.FileConfigurationExtensions
+TemplateService.Program -up-> Microsoft.Extensions.Configuration.JsonConfigurationExtensions
+TemplateService.Program -up-> Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions
+TemplateService.Program ---> Microsoft.ServiceFabric.Services.Runtime.ServiceRuntime
+TemplateService.Program -up--> Serilog.Log
+TemplateService.Program -up--> Serilog.LoggerConfiguration
+TemplateService.Program -up--> Serilog.ConfigurationLoggerConfigurationExtensions
+TemplateService.Program -up-> Serilog.Core.Logger
+TemplateService.Program -up-> Serilog.Configuration.LoggerSettingsConfiguration
+
+@enduml
