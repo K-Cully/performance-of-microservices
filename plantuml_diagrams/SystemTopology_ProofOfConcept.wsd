@@ -5,7 +5,7 @@ title Proof-of-Concept System
 'Import skinparams'
 !include .\Skinparams.puml
 
-actor User
+actor "Client" as User
 
 cloud Cluster {
     agent "Name Generator" as NameGen
