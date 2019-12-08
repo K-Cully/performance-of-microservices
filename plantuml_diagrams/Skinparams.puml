@@ -24,6 +24,11 @@ skinparam interface {
   BackgroundColor whitesmoke
 }
 
+skinparam actor {
+  BorderColor black
+  BackgroundColor whitesmoke
+}
+
 skinparam file {
   BorderColor black
   BackgroundColor whitesmoke

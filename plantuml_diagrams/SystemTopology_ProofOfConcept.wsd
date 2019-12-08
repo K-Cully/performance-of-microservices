@@ -1,0 +1,27 @@
+@startuml
+
+title Proof-of-Concept System
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+actor User
+
+cloud Cluster {
+    agent "Name Generator" as NameGen
+    agent "Random Generator" as Random
+    agent "Name Lookup" as NameLook
+}
+
+User -> NameGen : [1] generate name
+User <- NameGen : [6] response
+
+NameGen -> Random : [2] get random
+NameGen <- Random : [3] response
+
+NameGen -> NameLook : [4] get name
+NameGen <- NameLook : [5] response
+
+Random -[hidden]-- NameLook
+
+@enduml
