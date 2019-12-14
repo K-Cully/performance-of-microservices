@@ -1,0 +1,36 @@
+@startuml
+
+'Import Azure Sympols (MIT License)'
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/master/dist
+!include AzurePuml/AzureCommon.puml
+!include AzurePuml/Compute/AzureServiceFabric.puml
+!include AzurePuml/Compute/AzureVirtualMachineScaleSet.puml
+!include AzurePuml/DevOps/AzureApplicationInsights.puml
+!include AzurePuml/Networking/AzureLoadBalancer.puml
+!include AzurePuml/Security/AzureKeyVault.puml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title Initial Infrastructure
+
+interface request
+
+cloud az as "Azure" {
+  request -[hidden]> az
+  
+  AzureServiceFabric(sfCluster, "Service Fabric Cluster", "3 Node cluster")
+  AzureVirtualMachineScaleSet(scaleSet, "VM Scale Set", "3 VMs", "Service hosting")
+
+  sfCluster -> scaleSet
+
+  AzureKeyVault(keyVault, "Key Vault", "secret storage")
+  sfCluster --> keyVault
+
+  AzureApplicationInsights(appInsights, "Application Insights", "App and simple node telemetry")
+  scaleSet -> appInsights
+}
+
+request -> sfCluster
+
+@enduml

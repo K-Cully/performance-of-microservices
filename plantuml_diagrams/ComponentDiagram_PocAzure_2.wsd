@@ -1,0 +1,42 @@
+@startuml
+
+'Import Azure Sympols (MIT License)'
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/master/dist
+!include AzurePuml/AzureCommon.puml
+!include AzurePuml/Compute/AzureServiceFabric.puml
+!include AzurePuml/Compute/AzureVirtualMachineScaleSet.puml
+!include AzurePuml/DevOps/AzureApplicationInsights.puml
+!include AzurePuml/Networking/AzureLoadBalancer.puml
+!include AzurePuml/Security/AzureKeyVault.puml
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+title Final Infrastructure
+
+interface request
+
+cloud az as "Azure" {
+  request -[hidden]> az
+
+  AzureLoadBalancer(loadBalancer, "Load Balancer", "ingress controller", "Handles service ingress and liveness")
+  
+  frame "Secure Virtual Network" {      
+    AzureServiceFabric(sfCluster, "Service Fabric Cluster", "3 Node cluster")
+    AzureVirtualMachineScaleSet(scaleSet, "VM Scale Set", "3 VMs", "Service hosting")
+
+    sfCluster -> scaleSet
+  }
+
+  loadBalancer -> sfCluster
+
+  AzureKeyVault(keyVault, "Key Vault", "secret storage")
+  sfCluster --> keyVault
+
+  AzureApplicationInsights(appInsights, "Application Insights", "App and simple node telemetry")
+  scaleSet --> appInsights
+}
+
+request -> loadBalancer
+
+@enduml
