@@ -12,14 +12,14 @@
 'Import skinparams'
 !include .\Skinparams.puml
 
-title Final Infrastructure
+title Test Infrastructure
 
 interface request
 
 cloud az as "Azure" {
   request -[hidden]> az
 
-  AzureLoadBalancer(loadBalancer, "Load Balancer", "ingress controller", "Handles service ingress and liveness")
+  AzureLoadBalancer(loadBalancer, "Load Balancer", "ingress controller", "Handles service ingress with liveness tests")
   
   frame "Secure Virtual Network" {      
     AzureServiceFabric(sfCluster, "Service Fabric Cluster", "3 Node cluster")
