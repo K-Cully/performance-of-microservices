@@ -9,23 +9,23 @@ actor "Single Page\nApplication" as User
 actor "Business\nIntelligence\nAutomation" as Auto
 User -[hidden]-- Auto
 
-cloud Cluster {
+cloud " " as Cluster {
     agent "Checkout API" as Checkout
     agent "Browse API" as Browse
-    agent "BI API" as BI
+    agent "BusinessIntelligence API" as BI
 
     agent "Cart" as Cart
     agent "Payments" as Payments
     agent "Accounts" as Accounts
 
-    agent "Catlaogue" as Catalogue
+    agent "Catalogue" as Catalogue
     agent "Search" as Search
 }
 
 'Set client positions'
-User -right-> Checkout
-User -right-> Browse
-Auto -right-> BI
+User -right-> Checkout : Get Items,\nAdd Item,\nRemove Item,\nMake Payment
+User -right-> Browse : Login,\nGet Products,\nSearch
+Auto -right-> BI : Get Data
 
 'Create internal columns'
 Checkout -[hidden]- Browse
@@ -36,21 +36,21 @@ Payments -[hidden]- Accounts
 
 Catalogue -[hidden]- Search
 
-Checkout -> Cart
-Checkout --> Payments
+Checkout -> Cart : Get Items,\nAdd Item,\nRemove Item
+Checkout --> Payments : Process Payment
 
-Cart --> Catalogue
+Cart -> Catalogue : Get Product
 
-Browse -> Accounts
-Browse -right--> Search
+Browse -> Accounts : Get Account Id
+Browse -right-> Search : Get Batch,\nQuery
 
-BI -up-> Accounts
-BI -right--> Search
+BI -up-> Accounts : Get Purchases
+BI -up-> Catalogue : Get Products
 
-Payments -up-> Cart
-Payments --> Accounts
-Payments -> Catalogue
+Payments -up-> Cart : Get Items,\nEmpty Cart
+Payments --> Accounts : Get Payment Info,\nUpdate Purchases
+Payments -> Catalogue : Get Products,\nUpdate Product
 
-Search -up--> Catalogue
+Search -up--> Catalogue : Get Products
 
 @enduml
