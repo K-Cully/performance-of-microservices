@@ -1,6 +1,6 @@
 @startuml
 
-title eCommerce System
+title eCommerce Cluster
 
 'Import skinparams'
 !include .\Skinparams.puml
