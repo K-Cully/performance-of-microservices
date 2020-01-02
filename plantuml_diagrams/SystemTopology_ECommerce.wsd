@@ -1,0 +1,57 @@
+@startuml
+
+title eCommerce System
+
+'Import skinparams'
+!include .\Skinparams.puml
+
+actor "Single Page\nApplication" as User
+actor "Business\nIntelligence\nAutomation" as Auto
+User -[hidden]-- Auto
+
+cloud Cluster {
+    agent "Checkout API" as Checkout
+    agent "Browse API" as Browse
+    agent "BI API" as BI
+
+    agent "Cart" as Cart
+    agent "Payments" as Payments
+    agent "Accounts" as Accounts
+
+    agent "Catlaogue" as Catalogue
+    agent "Search" as Search
+}
+
+'Set client positions'
+User -right-> Checkout
+User -right-> Browse
+Auto -right-> BI
+
+'Create internal columns'
+Checkout -[hidden]- Browse
+Browse -[hidden]- BI
+
+Cart -[hidden]- Payments
+Payments -[hidden]- Accounts
+
+Catalogue -[hidden]- Search
+
+Checkout -> Cart
+Checkout -> Payments
+
+Cart -> Catalogue
+
+Browse -> Accounts
+Browse -right--> Search
+
+BI -up-> Accounts
+BI -right--> Search
+
+
+Payments -up-> Cart
+Payments --> Accounts
+Payments -> Catalogue
+
+Search -up--> Catalogue
+
+@enduml
