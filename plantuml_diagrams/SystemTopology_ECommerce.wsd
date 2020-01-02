@@ -37,16 +37,15 @@ Payments -[hidden]- Accounts
 Catalogue -[hidden]- Search
 
 Checkout -> Cart
-Checkout -> Payments
+Checkout --> Payments
 
-Cart -> Catalogue
+Cart --> Catalogue
 
 Browse -> Accounts
 Browse -right--> Search
 
 BI -up-> Accounts
 BI -right--> Search
-
 
 Payments -up-> Cart
 Payments --> Accounts
