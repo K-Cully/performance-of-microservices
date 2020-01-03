@@ -14,7 +14,7 @@ interface "Payment Provider" as Bank
 cloud "Cluster" as Cluster {
     agent "Checkout API" as Checkout
     agent "Browse API" as Browse
-    agent "BusinessIntelligence API" as BI
+    agent "Business Intelligence API" as BI
 
     agent "Cart" as Cart
     agent "Payments" as Payments
