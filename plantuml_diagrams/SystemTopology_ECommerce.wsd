@@ -1,6 +1,6 @@
 @startuml
 
-title eCommerce Cluster
+title eCommerce System
 
 'Import skinparams'
 !include .\Skinparams.puml
@@ -9,7 +9,9 @@ actor "Single Page\nApplication" as User
 actor "Business\nIntelligence\nAutomation" as Auto
 User -[hidden]-- Auto
 
-cloud " " as Cluster {
+interface "Payment Provider" as Bank
+
+cloud "Cluster" as Cluster {
     agent "Checkout API" as Checkout
     agent "Browse API" as Browse
     agent "BusinessIntelligence API" as BI
@@ -20,6 +22,9 @@ cloud " " as Cluster {
 
     agent "Catalogue" as Catalogue
     agent "Search" as Search
+
+    interface "Storage" as CatalogueDB
+    interface "Storage" as AccountDB 
 }
 
 'Set client positions'
@@ -37,7 +42,7 @@ Payments -[hidden]- Accounts
 Catalogue -[hidden]- Search
 
 Checkout -> Cart : Get Items,\nAdd Item,\nRemove Item
-Checkout --> Payments : Process Payment
+Checkout --> Payments : Process\nPayment
 
 Cart -> Catalogue : Get Product
 
@@ -52,5 +57,9 @@ Payments --> Accounts : Get Payment Info,\nUpdate Purchases
 Payments -> Catalogue : Get Products,\nUpdate Product
 
 Search -up--> Catalogue : Get Products
+
+Catalogue - CatalogueDB
+Accounts - AccountDB
+Payments --> Bank : Process\nPayment
 
 @enduml
