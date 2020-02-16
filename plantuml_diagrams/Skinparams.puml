@@ -5,6 +5,10 @@ skinparam class {
     BorderColor black
     BackgroundColor whitesmoke
     ArrowColor black
+    FontSize 18
+    FontStyle bold
+    AttributeFontSize 16
+    StereotypeFontSize 16
 }
 
 skinparam component {

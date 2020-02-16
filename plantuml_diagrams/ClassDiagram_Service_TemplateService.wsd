@@ -32,7 +32,8 @@ namespace TemplateService {
     }
 
     Program -> TemplateService
-    Startup --> TemplateService.Telemetry.CorrelatedLogContext
+    Program -[hidden]up- Startup
+    Startup -up-> TemplateService.Telemetry.CorrelatedLogContext
 }
 
 namespace ClusterEmulator.ServiceFabric {
@@ -67,6 +68,8 @@ namespace ClusterEmulator.Emulation {
 namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
     class ServiceCollectionServiceExtensions << (S,#DDAA00) static >>
     class HttpClientFactoryServiceCollectionExtensions << (S,#DDAA00) static >>
+
+    ServiceCollectionServiceExtensions -[hidden]- HttpClientFactoryServiceCollectionExtensions
 }
 
 namespace Microsoft.AspNetCore.Hosting #whitesmoke {
@@ -74,6 +77,9 @@ namespace Microsoft.AspNetCore.Hosting #whitesmoke {
     class WebHostBuilderExtensions << (S,#DDAA00) static >>
     class WebHostBuilderKestrelExtensions << (S,#DDAA00) static >>
     class HostingAbstractionsWebHostBuilderExtensions << (S,#DDAA00) static >>
+
+    WebHostBuilder -[hidden]- WebHostBuilderExtensions
+    WebHostBuilderExtensions -[hidden] WebHostBuilderKestrelExtensions
 }
 
 namespace Microsoft.AspNetCore.Mvc #whitesmoke {
@@ -95,30 +101,35 @@ namespace Microsoft.ServiceFabric.Services.Communication #whitesmoke {
         class WebHostBuilderServiceFabricExtension << (S,#DDAA00) static >>
         enum ServiceFabricIntegrationOptions
     }
+
+    Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener -[hidden]-- Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
+    Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension -[hidden]- Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
+    Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener -[hidden] Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
 }
 
 'Template Service Connections'
-TemplateService.Controllers.TemplateController o-right-> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
-TemplateService.Controllers.TemplateController o-right-> Microsoft.AspNetCore.Mvc.RouteAttribute
-TemplateService.Controllers.TemplateController -up-|> ClusterEmulator.Emulation.Controllers.AdaptableController
+TemplateService.Controllers.TemplateController o-up-> Microsoft.AspNetCore.Mvc.ApiControllerAttribute
+TemplateService.Controllers.TemplateController o-up-> Microsoft.AspNetCore.Mvc.RouteAttribute
+TemplateService.Controllers.TemplateController -up--|> ClusterEmulator.Emulation.Controllers.AdaptableController
 
-TemplateService.TemplateService -up-> ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher
-TemplateService.TemplateService -up-> ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions
+TemplateService.TemplateService -up---> ClusterEmulator.ServiceFabric.Telemetry.StatelessServiceEnricher
+TemplateService.TemplateService -up---> ClusterEmulator.ServiceFabric.Extensions.ServiceCollectionExtensions
 TemplateService.TemplateService o-up-> Serilog.ILogger
-TemplateService.TemplateService -up-> System.Fabric.StatelessServiceContext
-TemplateService.TemplateService ---|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
-TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener
-TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
-TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
-TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension
-TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilder
-TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
-TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
-TemplateService.TemplateService -----> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
-TemplateService.TemplateService ----> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
-TemplateService.TemplateService ----> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
-
-TemplateService.TemplateService -up-> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
 TemplateService.TemplateService -up-> Serilog.SerilogWebHostBuilderExtensions
+TemplateService.TemplateService -up--> System.Fabric.StatelessServiceContext
+TemplateService.TemplateService -|> Microsoft.ServiceFabric.Services.Runtime.StatelessService
+TemplateService.TemplateService ----> Microsoft.ServiceFabric.Services.Communication.Runtime.ServiceInstanceListener
+TemplateService.TemplateService ------> Microsoft.ServiceFabric.Services.Communication.AspNetCore.KestrelCommunicationListener
+TemplateService.TemplateService ------> Microsoft.ServiceFabric.Services.Communication.AspNetCore.ServiceFabricIntegrationOptions
+TemplateService.TemplateService -----> Microsoft.ServiceFabric.Services.Communication.AspNetCore.WebHostBuilderServiceFabricExtension
+TemplateService.TemplateService --> Microsoft.AspNetCore.Hosting.WebHostBuilder
+TemplateService.TemplateService --> Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions
+TemplateService.TemplateService ---> Microsoft.AspNetCore.Hosting.WebHostBuilderExtensions
+TemplateService.TemplateService ---> Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions
+TemplateService.TemplateService -----> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
+TemplateService.TemplateService ------> Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions
+
+TemplateService.TemplateService -up----> ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+
 
 @enduml

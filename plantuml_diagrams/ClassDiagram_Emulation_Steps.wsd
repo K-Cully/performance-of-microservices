@@ -75,7 +75,7 @@ namespace ClusterEmulator.Emulation.Steps {
         - GenerateLoad(seconds, percentage)
     }
 
-    class RequestStep implements SimulationStep, IRequestStep {
+    class RequestStep {
         - {static} ChunkChars : integer
         - configured : boolean
         - policy : IAsyncPolicy
@@ -119,5 +119,9 @@ ClusterEmulator.Emulation.Steps.RequestStep o--> System.Net.Http.IHttpClientFact
 ClusterEmulator.Emulation.Steps.RequestStep --> System.Net.Http.HttpClient
 ClusterEmulator.Emulation.Steps.RequestStep --> Polly.IAsyncPolicy
 ClusterEmulator.Emulation.Steps.RequestStep --> ClusterEmulator.Models.AdaptableRequest
+
+ClusterEmulator.Emulation.Steps.RequestStep .up..|> ClusterEmulator.Emulation.Steps.IRequestStep
+ClusterEmulator.Emulation.Steps.RequestStep .up..|> ClusterEmulator.Emulation.Steps.SimulationStep
+
 
 @enduml

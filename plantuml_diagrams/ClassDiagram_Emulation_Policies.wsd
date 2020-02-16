@@ -84,7 +84,7 @@ namespace ClusterEmulator.Emulation.HttpClientConfiguration {
     }
 
     CacheConfig *-left-> CacheTime
-    CacheConfig -[hidden]> IPolicyConfiguration
+    CacheConfig -[hidden]down- IPolicyConfiguration
 
     AdvancedCircuitBreakerConfig -up-> PolicyExtensions
     CircuitBreakerConfig -up-> PolicyExtensions
@@ -120,23 +120,27 @@ namespace Polly #whitesmoke {
     class AsyncAdvancedCircuitBreakerTResultSyntax
     class AsyncCircuitBreakerTResultSyntax
     class AsyncFallbackTResultSyntax
+
+    IAsyncPolicy -[hidden]-> AsyncAdvancedCircuitBreakerTResultSyntax
+    AsyncAdvancedCircuitBreakerTResultSyntax -[hidden]> AsyncCircuitBreakerTResultSyntax
+    AsyncCircuitBreakerTResultSyntax -[hidden]> AsyncFallbackTResultSyntax
 }
 
 'layout fix'
-ClusterEmulator.Emulation.Core.IConfigModel -[hidden]-> ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration
-ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -[hidden]left-> ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
+ClusterEmulator.Emulation.Core.IConfigModel -[hidden]--> ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration
+ClusterEmulator.Emulation.HttpClientConfiguration.CacheConfig -[hidden]-> ClusterEmulator.Emulation.HttpClientConfiguration.ClientConfig
 Microsoft.Extensions.Caching.Memory -[hidden]right-> ClusterEmulator.Emulation.Core
 Microsoft.Extensions.Caching.Memory.IMemoryCache -[hidden]> Polly.Caching.SlidingTtl
 
 'connections'
 ClusterEmulator.Emulation.HttpClientConfiguration.IPolicyConfiguration -----> Polly.IAsyncPolicy : creates
 
-ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions --> Polly.Policy
+ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions ---> Polly.Policy
 ClusterEmulator.Emulation.HttpClientConfiguration.PolicyExtensions --> Polly.PolicyBuilder
 
 ClusterEmulator.Emulation.HttpClientConfiguration.RetryConfig --> Polly.PolicyBuilder
-ClusterEmulator.Emulation.HttpClientConfiguration.TimeoutConfig --> Polly.Policy
-ClusterEmulator.Emulation.HttpClientConfiguration.BulkheadConfig --> Polly.Policy
+ClusterEmulator.Emulation.HttpClientConfiguration.TimeoutConfig ----> Polly.Policy
+ClusterEmulator.Emulation.HttpClientConfiguration.BulkheadConfig ----> Polly.Policy
 
 ClusterEmulator.Emulation.HttpClientConfiguration.AdvancedCircuitBreakerConfig --> Polly.AsyncAdvancedCircuitBreakerTResultSyntax
 ClusterEmulator.Emulation.HttpClientConfiguration.CircuitBreakerConfig --> Polly.AsyncCircuitBreakerTResultSyntax

@@ -37,6 +37,8 @@ namespace TemplateService {
 
     Program --> TemplateService
     Startup --> TemplateService.Telemetry.CorrelatedLogContext
+
+    Program -[hidden]up- TemplateService.Controllers.TemplateController
 }
 
 namespace Serilog.Context #whitesmoke {
@@ -56,6 +58,9 @@ namespace ClusterEmulator.Emulation {
     namespace Extensions {
         class ServiceCollectionExtensions << (S,#DDAA00) static >>
     }
+
+    ClusterEmulator.Emulation.Core.IEngine -[hidden]- ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions
+    ClusterEmulator.Emulation.Extensions.Extensions -[hidden]- ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
 }
 
 namespace Microsoft.Extensions.Primitives #whitesmoke {
@@ -79,7 +84,11 @@ namespace Microsoft.AspNetCore #whitesmoke {
         interface IApplicationBuilder
         class MvcApplicationBuilderExtensions << (S,#DDAA00) static >>
         class HealthCheckApplicationBuilderExtensions << (S,#DDAA00) static >>
+
+        IApplicationBuilder -[hidden]- HealthCheckApplicationBuilderExtensions
     }
+
+    Microsoft.AspNetCore.Mvc -[hidden]- Microsoft.AspNetCore.Builder
 }
 
 'layout Microsoft.Extensions namespaces'
@@ -87,13 +96,11 @@ Microsoft.Extensions.DependencyInjection.IServiceCollection -[hidden]-> Microsof
 Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions -[hidden]> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
 Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions -[hidden]-> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
 
-'layout Microsoft.AspNetCore namespaces'
-Microsoft.AspNetCore.Builder -[hidden]-> Microsoft.AspNetCore.Mvc
 
 'Template Service Connections'
 TemplateService.Telemetry.CorrelatedLogContext .up..|> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
-TemplateService.Telemetry.CorrelatedLogContext -> Microsoft.Extensions.Primitives.StringValues
-TemplateService.Telemetry.CorrelatedLogContext --> Serilog.Context.LogContext
+TemplateService.Telemetry.CorrelatedLogContext ---> Microsoft.Extensions.Primitives.StringValues
+TemplateService.Telemetry.CorrelatedLogContext ---> Serilog.Context.LogContext
 
 TemplateService.Startup o-up-> ClusterEmulator.Emulation.Core.IRegistry
 TemplateService.Startup -up-> ClusterEmulator.Emulation.Core.IEngine
@@ -104,9 +111,9 @@ TemplateService.Startup -up---> Microsoft.Extensions.DependencyInjection.MvcCore
 TemplateService.Startup -up--> Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions
 TemplateService.Startup -up--> Microsoft.Extensions.DependencyInjection.HealthCheckServiceCollectionExtensions
 TemplateService.Startup -up-> Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions
-TemplateService.Startup ---> Microsoft.AspNetCore.Builder.IApplicationBuilder
-TemplateService.Startup ---> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
-TemplateService.Startup ---> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
+TemplateService.Startup -----> Microsoft.AspNetCore.Builder.IApplicationBuilder
+TemplateService.Startup -----> Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions
+TemplateService.Startup ------> Microsoft.AspNetCore.Builder.HealthCheckApplicationBuilderExtensions
 TemplateService.Startup ----> Microsoft.AspNetCore.Mvc.CompatibilityVersion
 TemplateService.Startup -> System.Net.Http.IHttpClientFactory
 

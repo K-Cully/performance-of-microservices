@@ -36,11 +36,14 @@ namespace ClusterEmulator.ServiceFabric {
 
 namespace System.Fabric #whitesmoke {
     class StatelessServiceContext
+    class ServiceContext
 
     namespace Description {
         class ConfigurationSettings
         class ConfigurationSection
     }
+
+    ServiceContext -[hidden]-> System.Fabric.Description.ConfigurationSettings
 }
 
 namespace Serilog.Core #whitesmoke {

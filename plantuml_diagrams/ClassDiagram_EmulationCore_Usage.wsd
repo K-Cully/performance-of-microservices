@@ -102,9 +102,9 @@ namespace Microsoft.Extensions.DependencyInjection #whitesmoke {
 
 'ClusterEmulator.Emulation.Controllers connections'
 ClusterEmulator.Emulation.Controllers.AdaptableController o--> ClusterEmulator.Emulation.Core.IEngine
-ClusterEmulator.Emulation.Controllers.AdaptableController o-> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
-ClusterEmulator.Emulation.Controllers.AdaptableController -> Microsoft.AspNetCore.Mvc.IActionResult
-ClusterEmulator.Emulation.Controllers.AdaptableController -> Microsoft.AspNetCore.Mvc.ProducesAttribute
+ClusterEmulator.Emulation.Controllers.AdaptableController o-up-> ClusterEmulator.Emulation.Logging.IScopedLogContextFactory
+ClusterEmulator.Emulation.Controllers.AdaptableController -up-> Microsoft.AspNetCore.Mvc.IActionResult
+ClusterEmulator.Emulation.Controllers.AdaptableController -up-> Microsoft.AspNetCore.Mvc.ProducesAttribute
 
 'ClusterEmulator.Emulation.Core connections'
 ClusterEmulator.Emulation.Core.Engine -> ClusterEmulator.Emulation.Processors.IRequestProcessor
@@ -114,9 +114,9 @@ ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.Execut
 ClusterEmulator.Emulation.Core.Engine --> ClusterEmulator.Emulation.Steps.GroupClause
 ClusterEmulator.Emulation.Core.Engine -up-> Microsoft.AspNetCore.Mvc.IActionResult
 
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions --> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IRegistry : registers type
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]> ClusterEmulator.Emulation.Core.IEngine : registers type
-ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.Engine : registers implementation of IEngine
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions -up-> Microsoft.Extensions.DependencyInjection.IServiceCollection: extends
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.IRegistry : registers type
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888].> ClusterEmulator.Emulation.Core.IEngine : registers type
+ClusterEmulator.Emulation.Extensions.ServiceCollectionExtensions .[#888888]..> ClusterEmulator.Emulation.Core.Engine : registers implementation of IEngine
 
 @enduml
