@@ -21,26 +21,32 @@ skinparam component {
 skinparam database {
   BorderColor CornflowerBlue
   BackgroundColor white
+  FontSize 16
 }
 
 skinparam interface {
   BorderColor black
   BackgroundColor whitesmoke
+  FontSize 16
 }
 
 skinparam actor {
   BorderColor black
   BackgroundColor whitesmoke
+  FontSize 14
 }
 
 skinparam file {
   BorderColor black
   BackgroundColor whitesmoke
+  FontSize 16
 }
 
 skinparam agent {
   BorderColor CornflowerBlue
   BackgroundColor LightSkyBlue
+  FontSize 16
+  FontStyle bold
 }
 
 @enduml
