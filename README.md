@@ -18,18 +18,19 @@ This project was developed in part fulfilment of the degree of MSc Advanced Soft
 The core libraries are cross platform and can be build using the dotnet CLI.
 1. Install the .NET Core 2.2 SDK.
 2. Clone the repo.
-3. run "dotnet build" then "dotnet test"
+3. Run "dotnet build" then "dotnet test".
 
 ## Service Fabric Debugging
 To debug the Service Fabric projects, you must have the Service Fabric SDK to be installed.
-See [this documentaiton](https://github.com/uglide/azure-content/blob/master/articles/service-fabric/service-fabric-get-started-with-a-local-cluster.md) on settin up your development environment for Service Fabric.
+See [this documentaiton](https://github.com/uglide/azure-content/blob/master/articles/service-fabric/service-fabric-get-started-with-a-local-cluster.md) on setting up your development environment for Service Fabric.
 
 ## Generating a Service Fabric Application Package
 To generate a Service Fabric Application, define your configuration as per the "Application and service configuration" documentation above, then:
 1. Install the .NET Core 2.2 SDK. 
 2. Install and launch PowerShell Core. 
-3. Install the Service Fabric PowerShell modules: Install-Module -Name Microsoft.ServiceFabric.Powershell.Http -AllowPrerelease -Scope CurrentUser 
+3. Install the Service Fabric PowerShell modules:
+> Install-Module -Name Microsoft.ServiceFabric.Powershell.Http -AllowPrerelease -Scope CurrentUser
 4. Open a PowerShell Core session in the ClusterGeneration folder of the repository. 
-5. Run “.\AppGenerator.ps1 -Name <ApplicationName> -ConfigFile <AbsolutePathToConfigFile>” 
-6. Run “.\AppPacker.ps1 -Name <ApplicationName>” 
-7. This will generate a folder at <repositoryRoot>\generated\<ApplicationName>\pkg. This folder is a Service Fabric application package which can be deployed to any Service Fabric cluster
+5. Run “.\AppGenerator.ps1 -Name <ApplicationName> -ConfigFile <AbsolutePathToConfigFile>”.
+6. Run “.\AppPacker.ps1 -Name <ApplicationName>”.
+7. This will generate a folder at <repositoryRoot>\generated\<ApplicationName>\pkg. This folder is a Service Fabric application package which can be deployed to any Service Fabric cluster.
